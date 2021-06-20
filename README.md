@@ -1,6 +1,6 @@
-# shop
+# Accounting
 
-A new Flutter project.
+A new Flutter project base on Maximillian shop app.
 
 ## Getting Started
 
