@@ -12,3 +12,7 @@ const AUTOLOGINSAEID =
     true; // if true you never see login screen; it use default email/pass to login
 const SAEIDEMAIL = 'test1@test.com';
 const SAEIDPASSWORD = '123456';
+
+// Switch between Shop and Accounting
+const RUN_SHOP_APP = true;
+const RUN_ACCOUNTING_APP = false;
