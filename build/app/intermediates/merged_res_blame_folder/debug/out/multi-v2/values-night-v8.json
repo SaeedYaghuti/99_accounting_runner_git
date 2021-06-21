@@ -1,10 +1,10 @@
 {
     "logs": [
         {
-            "outputFile": "/Users/saeid/Documents/programming/flutter/flutter_projects/01_accounting/99_accounting_runner/build/app/intermediates/incremental/mergeDebugResources/merged.dir/values-night-v8/values-night-v8.xml",
+            "outputFile": "/Users/saeid/Documents/GitHub/99_accounting_runner_git/build/app/intermediates/incremental/mergeDebugResources/merged.dir/values-night-v8/values-night-v8.xml",
             "map": [
                 {
-                    "source": "/Users/saeid/Documents/programming/flutter/flutter_projects/01_accounting/99_accounting_runner/android/app/src/main/res/values-night/styles.xml",
+                    "source": "/Users/saeid/Documents/GitHub/99_accounting_runner_git/android/app/src/main/res/values-night/styles.xml",
                     "from": {
                         "startLines": "3,14",
                         "startColumns": "4,4",

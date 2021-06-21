@@ -1,18 +1,18 @@
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:shop/auth/auth_provider.dart';
-import 'package:shop/auth/auth_screen.dart';
-import 'package:shop/common/loading_screen.dart';
-import 'package:shop/order/order_provider.dart';
-import 'package:shop/order/order_screen.dart';
-import 'package:shop/product/manage/manage_product_screen.dart';
-import 'package:shop/product/manage/product_form_screen.dart';
-import './cart/cart_screen.dart';
+import './auth/auth_provider.dart';
+import './auth/auth_screen.dart';
+import './shared/loading_screen.dart';
+import './shop/order/order_provider.dart';
+import './shop/order/order_screen.dart';
+import './shop/product/manage_product_screen.dart';
+import './shop/product/product_form_screen.dart';
+import './shop/cart/cart_screen.dart';
 
-import 'product/product_provider.dart';
-import './products_overview_screen/products_overview_screen.dart';
-import 'product_details_screen/product_detail_screen.dart';
-import 'cart/cart_provider.dart';
+import './shop/product/product_provider.dart';
+import './shop/products_overview_screen/products_overview_screen.dart';
+import './shop/product_details_screen/product_detail_screen.dart';
+import './shop/cart/cart_provider.dart';
 
 void main() {
   runApp(MyApp());

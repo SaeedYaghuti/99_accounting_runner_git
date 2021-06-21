@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/auth/auth_provider.dart';
-import 'package:shop/config/app_constants.dart';
+import 'package:shop/constants.dart';
 
 import 'auth_mode.dart';
 
