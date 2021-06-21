@@ -14,5 +14,5 @@ const SAEIDEMAIL = 'test1@test.com';
 const SAEIDPASSWORD = '123456';
 
 // Switch between Shop and Accounting
-const RUN_SHOP_APP = true;
-const RUN_ACCOUNTING_APP = false;
+const RUN_SHOP_APP = false;
+const RUN_ACCOUNTING_APP = true;
