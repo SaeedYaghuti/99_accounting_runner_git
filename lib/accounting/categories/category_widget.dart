@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/accounting/categories/category_model.dart';
+import 'package:shop/accounting/categories/sub_categories_screen.dart';
+import 'package:shop/accounting/common/multi_language_category_title.dart';
 import 'package:shop/accounting/common/supported_language.dart';
 import 'package:shop/accounting/environment/environment_provider.dart';
 
@@ -16,17 +18,12 @@ class CategoryWidget extends StatelessWidget {
       child: Container(
         padding: EdgeInsets.all(10),
         child: Center(
-          child: _buildTextListenToSelectedLanguage(),
+          child: _buildTitle(),
         ),
         decoration: _buildRoundedColorfullBackground(),
       ),
       onTap: () => categoryTapHandler(context),
     );
-  }
-
-  void categoryTapHandler(BuildContext context) {
-    print('Tap on Category event!');
-    // Navigator.of(context).pushNamed(SubcategoriesOverviewScreen.routeName, arguments: {'id', category.id, 'title': category.titleEnglish,);
   }
 
   BoxDecoration _buildRoundedColorfullBackground() {
@@ -36,6 +33,17 @@ class CategoryWidget extends StatelessWidget {
         colors: [category.color.withOpacity(0.7), category.color],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,
+      ),
+    );
+  }
+
+  Widget _buildTitle() {
+    return MultiLanguageCategoryTitle(
+      category: category,
+      style: TextStyle(
+        color: Colors.white,
+        fontSize: 36,
+        fontFamily: 'Lato',
       ),
     );
   }
@@ -57,6 +65,13 @@ class CategoryWidget extends StatelessWidget {
           fontFamily: 'Lato',
         ),
       ),
+    );
+  }
+
+  void categoryTapHandler(BuildContext context) {
+    Navigator.of(context).pushNamed(
+      SubCategoriesScreen.routeName,
+      arguments: category,
     );
   }
 }

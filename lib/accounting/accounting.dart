@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/accounting/categories/categories_overview_screen.dart';
+import 'package:shop/accounting/categories/sub_categories_screen.dart';
 import 'package:shop/accounting/environment/environment_provider.dart';
 import 'package:shop/auth/auth_provider.dart';
 import 'package:shop/auth/auth_screen.dart';
@@ -20,7 +21,16 @@ class AccountingApp extends StatelessWidget {
         title: 'Accounting App',
         theme: _buildTheme(),
         home: _buildCategoriesOverviewScreenOrAuth(),
+        routes: _buildRoutes(),
       ),
+    );
+  }
+
+  ThemeData _buildTheme() {
+    return ThemeData(
+      primarySwatch: Colors.purple,
+      accentColor: Colors.deepOrange,
+      fontFamily: 'Lato',
     );
   }
 
@@ -38,11 +48,9 @@ class AccountingApp extends StatelessWidget {
     );
   }
 
-  ThemeData _buildTheme() {
-    return ThemeData(
-      primarySwatch: Colors.purple,
-      accentColor: Colors.deepOrange,
-      fontFamily: 'Lato',
-    );
+  _buildRoutes() {
+    return {
+      SubCategoriesScreen.routeName: (ctx) => SubCategoriesScreen(),
+    };
   }
 }

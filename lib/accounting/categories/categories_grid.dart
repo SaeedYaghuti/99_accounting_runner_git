@@ -4,7 +4,8 @@ import 'package:shop/accounting/categories/category_model.dart';
 import 'package:shop/accounting/categories/category_widget.dart';
 
 class CategoriesGrid extends StatelessWidget {
-  const CategoriesGrid({Key? key}) : super(key: key);
+  final String parentId;
+  const CategoriesGrid(this.parentId, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,15 +17,9 @@ class CategoriesGrid extends StatelessWidget {
         crossAxisSpacing: 30,
         mainAxisSpacing: 30,
       ),
-      children: getSubcategoryOf('root')
+      children: getSubcategoriesOf(parentId)
           .map((category) => CategoryWidget(category: category))
           .toList(),
     );
-  }
-
-  List<CategoryModel> getSubcategoryOf(String parentId) {
-    return CATEGORIES_TREE
-        .where((category) => category.parentId == parentId)
-        .toList();
   }
 }

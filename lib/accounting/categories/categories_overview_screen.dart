@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/accounting/common/multi_language_text_widget.dart';
 import 'package:shop/accounting/common/supported_language.dart';
 import 'package:shop/accounting/environment/environment_provider.dart';
 
@@ -24,7 +25,7 @@ class _CategoriesOverviewScreenState extends State<CategoriesOverviewScreen> {
         Provider.of<EnvironmentProvider>(context, listen: true);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Categories'),
+        title: _buildTitle(),
         actions: [
           _buildPopupMenuButton(environmenProvider),
         ],
@@ -32,7 +33,16 @@ class _CategoriesOverviewScreenState extends State<CategoriesOverviewScreen> {
       // drawer: ,
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
-          : CategoriesGrid(),
+          : CategoriesGrid('root'),
+    );
+  }
+
+  Widget _buildTitle() {
+    return MultiLanguageTextWidget(
+      english: 'Categories',
+      persian: 'كروه هاى مالى',
+      arabic: 'عناوين',
+      style: Theme.of(context).textTheme.headline3,
     );
   }
 

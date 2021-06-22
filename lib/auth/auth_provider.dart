@@ -117,7 +117,7 @@ class AuthProvider with ChangeNotifier {
       }
     }
     final extractedAuthData = prefs.getString('authData');
-    print('AP21| tryToAutoLogin() > extractedAuthData: $extractedAuthData');
+    // print('AP21| tryToAutoLogin() > extractedAuthData: $extractedAuthData');
     final decode = json.decode(extractedAuthData!) as Map<String, dynamic>;
     final expiryDate = DateTime.parse(decode['expiryDate']);
     if (expiryDate.isBefore(DateTime.now())) {

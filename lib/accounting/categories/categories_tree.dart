@@ -91,3 +91,9 @@ const CATEGORIES_TREE = const [
     parentId: 'items',
   ),
 ];
+
+List<CategoryModel> getSubcategoriesOf(String parentId) {
+  return CATEGORIES_TREE
+      .where((category) => category.parentId == parentId)
+      .toList();
+}
