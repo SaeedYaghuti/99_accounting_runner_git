@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/accounting/categories/categories_drawer.dart';
 import 'package:shop/accounting/common/multi_language_text_widget.dart';
 import 'package:shop/accounting/common/supported_language.dart';
 import 'package:shop/accounting/environment/environment_provider.dart';
@@ -30,7 +31,7 @@ class _CategoriesOverviewScreenState extends State<CategoriesOverviewScreen> {
           _buildPopupMenuButton(environmenProvider),
         ],
       ),
-      // drawer: ,
+      drawer: CategoriesDrawer(),
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : CategoriesGrid('root'),
