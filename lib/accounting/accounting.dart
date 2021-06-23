@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shop/accounting/categories/categories_overview_screen.dart';
 import 'package:shop/accounting/categories/sub_categories_screen.dart';
 import 'package:shop/accounting/environment/environment_provider.dart';
+import 'package:shop/accounting/sell_point/sell_point_screen.dart';
 import 'package:shop/auth/auth_provider.dart';
 import 'package:shop/auth/auth_screen.dart';
 import 'package:shop/shared/loading_screen.dart';
@@ -51,6 +52,7 @@ class AccountingApp extends StatelessWidget {
   _buildRoutes() {
     return {
       SubCategoriesScreen.routeName: (ctx) => SubCategoriesScreen(),
+      SellPoint.routeName: (ctx) => SellPoint(),
     };
   }
 }
