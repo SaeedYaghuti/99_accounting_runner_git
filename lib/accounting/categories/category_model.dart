@@ -7,6 +7,7 @@ class CategoryModel {
   final String titleArabic;
   final Color color;
   final String parentId;
+  final String routeName;
   // final Icon icon;
   // final String imageUrl;
   const CategoryModel({
@@ -16,5 +17,6 @@ class CategoryModel {
     required this.titleArabic,
     required this.color,
     required this.parentId,
+    this.routeName = '',
   });
 }

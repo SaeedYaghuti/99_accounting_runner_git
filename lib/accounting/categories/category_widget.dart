@@ -69,9 +69,16 @@ class CategoryWidget extends StatelessWidget {
   }
 
   void categoryTapHandler(BuildContext context) {
-    Navigator.of(context).pushNamed(
-      SubCategoriesScreen.routeName,
-      arguments: category,
-    );
+    if (category.routeName.isEmpty) {
+      Navigator.of(context).pushNamed(
+        SubCategoriesScreen.routeName,
+        arguments: category,
+      );
+    } else {
+      Navigator.of(context).pushNamed(
+        category.routeName,
+        arguments: category,
+      );
+    }
   }
 }
