@@ -15,20 +15,21 @@ class AccountingDB {
       version: 1,
       onCreate: (db, version) async {
         // define bool: BOOLEAN NOT NULL CHECK (mycolumn IN (0, 1))
-        await db.execute(
-          AccountModel.CREATE_ACCOUNT_TABLE_QUERY,
-        );
+        await db.execute(AccountModel.QUERY_CREATE_ACCOUNT_TABLE);
+        await insertPredefinedAccounts(db);
       },
     );
-
-    // account_table should have predefined data
-    await insertPredefinedAccounts(db);
     return db;
   }
 
   static Future<int> insert(String table, Map<String, Object> data) async {
     final db = await AccountingDB.database();
     return db.insert(table, data, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  static Future<List<Map<String, Object?>>> getData(String table) async {
+    final db = await AccountingDB.database();
+    return db.query(table);
   }
 
   static Future<void> insertPredefinedAccounts(Database db) async {
@@ -40,10 +41,5 @@ class AccountingDB {
       );
       print('ADB10| insertResult: $insertResult');
     }
-  }
-
-  static Future<List<Map<String, Object?>>> getData(String table) async {
-    final db = await AccountingDB.database();
-    return db.query(table);
   }
 }

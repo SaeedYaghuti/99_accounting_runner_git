@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop/accounting/categories/category_model.dart';
+import 'package:shop/accounting/expenditure/expenditure_screen.dart';
 import 'package:shop/accounting/sell_point/sell_point_screen.dart';
 
 const CATEGORIES_TREE = const [
@@ -10,7 +11,6 @@ const CATEGORIES_TREE = const [
     titleArabic: 'مبيعات',
     color: Colors.green,
     parentId: 'root',
-    routeName: SellPoint.routeName,
   ),
   CategoryModel(
     id: 'expences',
@@ -19,6 +19,7 @@ const CATEGORIES_TREE = const [
     titleArabic: 'مصاريف',
     color: Colors.pink,
     parentId: 'root',
+    routeName: ExpenditureScreen.routeName,
   ),
   CategoryModel(
     id: 'purchas',
@@ -67,6 +68,7 @@ const CATEGORIES_TREE = const [
     titleArabic: 'بيع بالجزء',
     color: Colors.blueGrey,
     parentId: 'sell-point',
+    routeName: RetailScreen.routeName,
   ),
   CategoryModel(
     id: 'wholesale',

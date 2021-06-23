@@ -2,20 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:shop/accounting/account/account_model.dart';
 import 'package:shop/accounting/db/accounting_db.dart';
 
-class SellPoint extends StatefulWidget {
+class RetailScreen extends StatefulWidget {
   static const routeName = '/sell-point';
-  const SellPoint({Key? key}) : super(key: key);
+  const RetailScreen({Key? key}) : super(key: key);
 
   @override
-  _SellPointState createState() => _SellPointState();
+  _RetailScreenState createState() => _RetailScreenState();
 }
 
-class _SellPointState extends State<SellPoint> {
+class _RetailScreenState extends State<RetailScreen> {
   @override
   Widget build(BuildContext context) {
     AccountingDB.getData(AccountModel.tableName);
-    return Container(
-      child: Text('Welcome to sell point'),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Sell Point'),
+      ),
+      body: Center(
+        child: Text('Welcome to sell point'),
+      ),
     );
   }
 }

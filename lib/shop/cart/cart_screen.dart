@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop/shared/show_dialog.dart';
+import 'package:shop/shared/show_error_dialog.dart';
 import '../order/order_provider.dart';
 import '../order/order_screen.dart';
 

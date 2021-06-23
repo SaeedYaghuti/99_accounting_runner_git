@@ -23,13 +23,14 @@ class AccountModel {
   static const String columnTitleArabic = 'titleArabic';
   static const String columnNote = 'note';
 
-  static const String CREATE_ACCOUNT_TABLE_QUERY = '''CREATE TABLE $tableName (
+  static const String QUERY_CREATE_ACCOUNT_TABLE = '''CREATE TABLE $tableName (
     $columnId TEXT PRIMARY KEY, 
-    $columnParentId TEXT PRIMARY KEY, 
+    $columnParentId TEXT, 
     $columnTitleEnglish TEXT, 
     $columnTitlePersian TEXT, 
     $columnTitleArabic TEXT, 
     $columnNote TEXT,
+    FOREIGN KEY ($columnParentId) REFERENCES $tableName ($columnId)
   )''';
 
   Map<String, Object> toMap() {
