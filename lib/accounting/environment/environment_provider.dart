@@ -12,4 +12,6 @@ class EnvironmentProvider with ChangeNotifier {
   SuportedLanguage get selectedLanguage {
     return _selectedLanguage;
   }
+
+  static const initializeExpenditureForm = true;
 }

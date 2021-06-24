@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop/accounting/environment/environment_provider.dart';
 import 'package:shop/shared/show_error_dialog.dart';
 
 import 'expenditure_form_fields.dart';
@@ -16,9 +17,17 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   final _noteFocusNode = FocusNode();
   final _paidByFocusNode = FocusNode();
   final _dateFocusNode = FocusNode();
-  final expenditureExample = ExpenditurFormFields.expenditureExample;
-  DateTime? selectedDate;
+  var _expenditureFormFields = ExpenditurFormFields();
+  DateTime? _selectedDate;
   var _isLoading = false;
+
+  @override
+  void initState() {
+    if (EnvironmentProvider.initializeExpenditureForm) {
+      initializeForm();
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,25 +56,13 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   Widget _buildAmount(BuildContext context) {
     return TextFormField(
-      decoration: InputDecoration(
-        border: OutlineInputBorder(),
-        labelText: 'Amount',
-        labelStyle: TextStyle(
-          fontSize: 30,
-        ),
-        // hintText: 'number',
-        // helperText: 'paid amount',
-        // counterText: '0.0',
-        // prefixIcon: Icon(Icons.money_outlined),
-        // icon: Icon(Icons.monetization_on_rounded),
-        // suffixIcon: Icon(Icons.account_balance_outlined),
-        // prefix: Text('Prefix:'),
-      ),
+      decoration: _buildInputDecoration('Amount'),
+      style: _buildTextStyle(),
       focusNode: _amountFocusNode,
       textInputAction: TextInputAction.next,
       keyboardType: TextInputType.number,
-      initialValue: (expenditureExample.amount != null)
-          ? expenditureExample.amount.toString()
+      initialValue: (_expenditureFormFields.amount != null)
+          ? _expenditureFormFields.amount.toString()
           : '',
       onFieldSubmitted: (value) {
         FocusScope.of(context).requestFocus(_noteFocusNode);
@@ -85,28 +82,19 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       },
       onSaved: (amount) {
         // print('title-field.onSaved: amount: $amount');
-        expenditureExample.amount = double.parse(amount!);
+        _expenditureFormFields.amount = double.parse(amount!);
       },
     );
   }
 
   Widget _buildNote(BuildContext context) {
     return TextFormField(
-      decoration: InputDecoration(
-        border: OutlineInputBorder(),
-        labelText: 'Note',
-        // hintText: 'text',
-        // helperText: 'what did you buy',
-        // counterText: '0.0',
-        // prefixIcon: Icon(Icons.money_outlined),
-        // icon: Icon(Icons.monetization_on_rounded),
-        // suffixIcon: Icon(Icons.account_balance_outlined),
-        // prefix: Text('Prefix:'),
-      ),
+      decoration: _buildInputDecoration('Note'),
+      style: _buildTextStyle(),
       maxLines: 2,
       keyboardType: TextInputType.multiline,
       textInputAction: TextInputAction.next,
-      initialValue: expenditureExample.note.toString(),
+      initialValue: _expenditureFormFields.note ?? '',
       onFieldSubmitted: (value) {
         FocusScope.of(context).requestFocus(_paidByFocusNode);
       },
@@ -118,26 +106,17 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       },
       onSaved: (note) {
         // print('titleField.onSaved: titleField: $titleField');
-        expenditureExample.note = note;
+        _expenditureFormFields.note = note;
       },
     );
   }
 
   Widget _buildPaidBy(BuildContext context) {
     return TextFormField(
-      decoration: InputDecoration(
-        border: OutlineInputBorder(),
-        labelText: 'Paid by',
-        // hintText: 'text',
-        // helperText: 'what did you buy',
-        // counterText: '0.0',
-        // prefixIcon: Icon(Icons.money_outlined),
-        // icon: Icon(Icons.monetization_on_rounded),
-        // suffixIcon: Icon(Icons.account_balance_outlined),
-        // prefix: Text('Prefix:'),
-      ),
+      decoration: _buildInputDecoration('Paid By ...'),
+      style: _buildTextStyle(),
       keyboardType: TextInputType.multiline,
-      initialValue: expenditureExample.paidBy,
+      initialValue: _expenditureFormFields.paidBy,
       focusNode: _paidByFocusNode,
       validator: (paidBy) {
         if (paidBy == null || paidBy.isEmpty) {
@@ -147,21 +126,25 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       },
       onSaved: (paidBy) {
         // print('title-field.onSaved: descriptionField: $descriptionField');
-        expenditureExample.paidBy = paidBy;
+        _expenditureFormFields.paidBy = paidBy;
       },
     );
   }
 
   Widget _buildDatePicker(BuildContext context) {
     return Container(
-      height: 80,
+      height: 150,
       child: Row(
         children: [
           Expanded(
-            child: selectedDate == null
-                ? const Text('DATE NOT CHOOSEN')
+            child: _selectedDate == null
+                ? const Text(
+                    'DATE NOT CHOOSEN',
+                    style: TextStyle(fontSize: 26),
+                  )
                 : Text(
-                    'Date: ${selectedDate!.day}/${selectedDate!.month}/${selectedDate!.year}',
+                    'Date: ${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
+                    style: TextStyle(fontSize: 26),
                   ),
           ),
           TextButton(
@@ -170,6 +153,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
               'SELECT ANOTHER DATE',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
+                fontSize: 26,
               ),
             ),
           ),
@@ -179,13 +163,21 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   Widget _buildSaveButton(BuildContext context) {
-    return TextButton(
-      onPressed: _saveForm,
-      child: Text(
-        'SAVE',
-        style: TextStyle(fontSize: 22),
+    return SizedBox(
+      width: 200,
+      child: ElevatedButton(
+        onPressed: _saveForm,
+        child: Text(
+          'SAVE',
+          style: TextStyle(fontSize: 30),
+        ),
+        style: ElevatedButton.styleFrom(
+          primary: Theme.of(context).primaryColor,
+          padding: EdgeInsets.symmetric(
+            vertical: 8,
+          ),
+        ),
       ),
-      style: TextButton.styleFrom(primary: Theme.of(context).primaryColor),
     );
   }
 
@@ -231,10 +223,39 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       lastDate: DateTime.now(),
     ).then((date) {
       setState(() {
-        selectedDate = date;
-        expenditureExample.date = date;
+        _selectedDate = date;
+        _expenditureFormFields.date = date;
       });
     });
+  }
+
+  void initializeForm() {
+    _expenditureFormFields = ExpenditurFormFields.expenditureExample;
+    _selectedDate = _expenditureFormFields.date;
+  }
+
+  InputDecoration _buildInputDecoration(String labelText) {
+    return InputDecoration(
+      border: OutlineInputBorder(),
+      labelText: labelText,
+      labelStyle: TextStyle(
+        fontSize: 26,
+      ),
+      // hintText: 'number',
+      // helperText: 'paid amount',
+      // counterText: '0.0',
+      // prefixIcon: Icon(Icons.money_outlined),
+      // icon: Icon(Icons.monetization_on_rounded),
+      // suffixIcon: Icon(Icons.account_balance_outlined),
+      // prefix: Text('Prefix:'),
+    );
+  }
+
+  TextStyle _buildTextStyle() {
+    return TextStyle(
+      fontSize: 23,
+      color: Colors.black,
+    );
   }
 
   @override
