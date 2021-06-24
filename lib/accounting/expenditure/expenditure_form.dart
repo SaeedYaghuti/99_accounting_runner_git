@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shop/accounting/db/accounting_db.dart';
 import 'package:shop/accounting/environment/environment_provider.dart';
+import 'package:shop/accounting/expenditure/expenditure_model.dart';
 import 'package:shop/shared/show_error_dialog.dart';
 
 import 'expenditure_form_fields.dart';
@@ -48,6 +50,10 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
             SizedBox(height: 20),
             _buildSaveButton(context),
             SizedBox(height: 20),
+            TextButton(
+              onPressed: AccountingDB.deleteDB,
+              child: Text('DELETE DB'),
+            ),
           ],
         ),
       ),
@@ -199,7 +205,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       startLoading();
       try {
         // save expences in database
-        // ...
+        ExpenditureModel.createExpenditureInDB(_expenditureFormFields);
         endLoading();
       } catch (e) {
         endLoading();

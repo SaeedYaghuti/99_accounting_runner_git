@@ -1,25 +1,31 @@
 import 'package:shop/accounting/account/voucher_model.dart';
+import 'package:shop/accounting/db/accounting_db.dart';
 
 import 'account_model.dart';
 
 class TransactionModel {
-  final String id;
+  int? id;
   final String accountId;
-  final String voucherId;
+  final int voucherId;
   final double amount;
   final bool isDebit;
   final DateTime date;
   final String note;
 
-  const TransactionModel({
-    required this.id,
+  TransactionModel({
+    this.id,
     required this.accountId,
     required this.voucherId,
     required this.amount,
     required this.isDebit,
     required this.date,
-    this.note = '',
+    required this.note,
   });
+
+  Future<int> insertInDB() async {
+    // do some logic on variables
+    return AccountingDB.insert(tableName, toMapForDB());
+  }
 
   static const String tableName = 'transactions';
   static const String column1Id = 'id';
@@ -40,12 +46,12 @@ class TransactionModel {
     $column6Date INTEGER NOT NULL, 
     $column7Note TEXT, 
     FOREIGN KEY ($column2AccountId) REFERENCES ${AccountModel.tableName} (${AccountModel.columnId}),
-    FOREIGN KEY ($column3VoucherId) REFERENCES ${VoucherModel.tableName} (${VoucherModel.column1Id}),
+    FOREIGN KEY ($column3VoucherId) REFERENCES ${VoucherModel.tableName} (${VoucherModel.column1Id})
   )''';
 
   Map<String, Object> toMapForDB() {
     return {
-      column1Id: id,
+      column1Id: id ?? '',
       column2AccountId: accountId,
       column3VoucherId: voucherId,
       column4Amount: amount,

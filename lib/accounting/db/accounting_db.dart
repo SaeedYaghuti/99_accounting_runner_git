@@ -43,7 +43,15 @@ class AccountingDB {
         account.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-      print('ADB10| insertResult: $insertResult');
     }
+  }
+
+  static Future<void> deleteDB() async {
+    final db = await AccountingDB.database();
+    db.close();
+    final dbName = 'accounting.db';
+    final dbDirectory = await getDatabasesPath();
+    final dbPath = path.join(dbDirectory, dbName);
+    deleteDatabase(dbPath);
   }
 }

@@ -1,7 +1,7 @@
 import 'expenditure_tag.dart';
 
 class ExpenditurFormFields {
-  String? id;
+  int? id;
   double? amount;
   String? paidBy;
   String? note;
@@ -19,7 +19,7 @@ class ExpenditurFormFields {
 
   static ExpenditurFormFields get expenditureExample {
     return ExpenditurFormFields(
-      id: '10?',
+      id: null,
       amount: 3.750,
       paidBy: 'cash-drawer',
       note: 'nescafee and cup',
