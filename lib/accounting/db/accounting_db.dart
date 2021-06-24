@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 import 'package:shop/accounting/account/account_model.dart';
 import 'package:shop/accounting/account/accounts_tree.dart';
@@ -26,7 +25,7 @@ class AccountingDB {
     return db;
   }
 
-  static Future<int> insert(String table, Map<String, Object> data) async {
+  static Future<int> insert(String table, Map<String, Object?> data) async {
     final db = await AccountingDB.database();
     return db.insert(table, data, conflictAlgorithm: ConflictAlgorithm.replace);
   }
@@ -53,5 +52,11 @@ class AccountingDB {
     final dbDirectory = await getDatabasesPath();
     final dbPath = path.join(dbDirectory, dbName);
     deleteDatabase(dbPath);
+  }
+
+  static Future<List<Map<String, Object?>>> runRawQuery(String query,
+      [List<Object?>? arguments]) async {
+    final db = await AccountingDB.database();
+    return db.rawQuery(query, arguments);
   }
 }

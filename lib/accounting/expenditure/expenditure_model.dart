@@ -5,6 +5,7 @@ import 'package:shop/shared/DBException.dart';
 
 class ExpenditureModel {
   static const EXPENDITURE_ACCOUNT_ID = 'expenditure';
+
   static Future<void> createExpenditureInDB(ExpenditurFormFields fields) async {
     // DO: we should track voucher number in db; increasig
 
@@ -12,7 +13,10 @@ class ExpenditureModel {
     VoucherModel voucher = VoucherModel(
       voucherNumber: 'vn#001',
       date: fields.date!,
+      note: '${fields.paidBy} paid for Expence',
     );
+    print('EM01| voucher before save in db >');
+    print(voucher);
 
     try {
       int voucherId = await voucher.insertInDB();
@@ -26,7 +30,7 @@ class ExpenditureModel {
         amount: fields.amount!,
         isDebit: true,
         date: fields.date!,
-        note: 'Paid for Expences: ${fields.note}',
+        note: fields.note!,
       );
       try {
         int debitTransactionId = await debitTransaction.insertInDB();

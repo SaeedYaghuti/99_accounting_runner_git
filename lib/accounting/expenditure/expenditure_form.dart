@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shop/accounting/account/transaction_model.dart';
+import 'package:shop/accounting/account/voucher_model.dart';
 import 'package:shop/accounting/db/accounting_db.dart';
 import 'package:shop/accounting/environment/environment_provider.dart';
 import 'package:shop/accounting/expenditure/expenditure_model.dart';
@@ -53,6 +55,11 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
             TextButton(
               onPressed: AccountingDB.deleteDB,
               child: Text('DELETE DB'),
+            ),
+            SizedBox(height: 20),
+            TextButton(
+              onPressed: runCode,
+              child: Text('RUN QUERY'),
             ),
           ],
         ),
@@ -266,6 +273,13 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       fontSize: 23,
       color: Colors.black,
     );
+  }
+
+  void runCode() async {
+    await VoucherModel.fetchAllVouchers();
+    await TransactionModel.fetchAllTransactions();
+    await TransactionModel.fetchAllTransactionsJoinedVoucher();
+    // await VoucherModel.fetchAllVouchersJoin();
   }
 
   @override

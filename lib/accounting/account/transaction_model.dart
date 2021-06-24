@@ -38,7 +38,7 @@ class TransactionModel {
 
   static const String QUERY_CREATE_TRANSACTION_TABLE =
       '''CREATE TABLE $tableName (
-    $column1Id TEXT PRIMARY KEY, 
+    $column1Id INTEGER PRIMARY KEY, 
     $column2AccountId TEXT NOT NULL, 
     $column3VoucherId TEXT NOT NULL, 
     $column4Amount REAL NOT NULL, 
@@ -49,16 +49,49 @@ class TransactionModel {
     FOREIGN KEY ($column3VoucherId) REFERENCES ${VoucherModel.tableName} (${VoucherModel.column1Id})
   )''';
 
-  Map<String, Object> toMapForDB() {
-    return {
-      column1Id: id ?? '',
-      column2AccountId: accountId,
-      column3VoucherId: voucherId,
-      column4Amount: amount,
-      column5IsDebit: isDebit ? 1 : 0,
-      column6Date: date.toUtc().millisecondsSinceEpoch,
-      column7Note: note,
-    };
+  static Future<void> fetchAllTransactions() async {
+    final query = '''
+    SELECT *
+    FROM $tableName
+    ''';
+    var result = await AccountingDB.runRawQuery(query);
+    print('TM11| SELECT * FROM $tableName >');
+    print(result);
+  }
+
+  static Future<void> fetchAllTransactionsJoinedVoucher() async {
+    final query = '''
+    SELECT *
+    FROM $tableName
+    LEFT JOIN ${VoucherModel.tableName}
+    ON $tableName.$column1Id = ${VoucherModel.tableName}.${VoucherModel.column1Id}
+    ''';
+    var result = await AccountingDB.runRawQuery(query);
+    print('VM11| $tableName JOIN result >');
+    print(result);
+  }
+
+  Map<String, Object?> toMapForDB() {
+    if (id == null) {
+      return {
+        column2AccountId: accountId,
+        column3VoucherId: voucherId,
+        column4Amount: amount,
+        column5IsDebit: isDebit ? 1 : 0,
+        column6Date: date.toUtc().millisecondsSinceEpoch,
+        column7Note: note,
+      };
+    } else {
+      return {
+        column1Id: id ?? null,
+        column2AccountId: accountId,
+        column3VoucherId: voucherId,
+        column4Amount: amount,
+        column5IsDebit: isDebit ? 1 : 0,
+        column6Date: date.toUtc().millisecondsSinceEpoch,
+        column7Note: note,
+      };
+    }
   }
 
   String toString() {

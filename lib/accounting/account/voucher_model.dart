@@ -1,3 +1,4 @@
+import 'package:shop/accounting/account/transaction_model.dart';
 import 'package:shop/accounting/db/accounting_db.dart';
 
 class VoucherModel {
@@ -15,7 +16,31 @@ class VoucherModel {
 
   Future<int> insertInDB() async {
     // do some logic on variables
-    return AccountingDB.insert(tableName, toMapForDB());
+    var map = this.toMapForDB();
+    print('VM10| map: $map');
+    return AccountingDB.insert('vouchers', map);
+  }
+
+  static Future<void> fetchAllVouchers() async {
+    final query = '''
+    SELECT *
+    FROM $tableName
+    ''';
+    var result = await AccountingDB.runRawQuery(query);
+    print('VM11| SELECT * FROM $tableName >');
+    print(result);
+  }
+
+  static Future<void> fetchAllVouchersJoin() async {
+    final query = '''
+    SELECT *
+    FROM $tableName
+    LEFT JOIN ${TransactionModel.tableName}
+    ON $tableName.$column1Id = ${TransactionModel.tableName}.${TransactionModel.column3VoucherId}
+    ''';
+    var result = await AccountingDB.runRawQuery(query);
+    print('VM11| $tableName JOIN result >');
+    print(result);
   }
 
   static const String tableName = 'vouchers';
@@ -25,19 +50,27 @@ class VoucherModel {
   static const String column4Note = 'note';
 
   static const String QUERY_CREATE_VOUCHER_TABLE = '''CREATE TABLE $tableName (
-    $column1Id TEXT PRIMARY KEY, 
+    $column1Id INTEGER PRIMARY KEY, 
     $column2VoucherNumber TEXT NOT NULL, 
     $column3Date INTEGER  NOT NULL, 
     $column4Note TEXT
   )''';
 
   Map<String, Object> toMapForDB() {
-    return {
-      column1Id: id ?? '',
-      column2VoucherNumber: voucherNumber,
-      column3Date: date.toUtc().millisecondsSinceEpoch,
-      column4Note: note,
-    };
+    if (id == null) {
+      return {
+        column2VoucherNumber: voucherNumber,
+        column3Date: date.toUtc().millisecondsSinceEpoch,
+        column4Note: note,
+      };
+    } else {
+      return {
+        column1Id: id ?? '',
+        column2VoucherNumber: voucherNumber,
+        column3Date: date.toUtc().millisecondsSinceEpoch,
+        column4Note: note,
+      };
+    }
   }
 
   String toString() {
