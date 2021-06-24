@@ -239,7 +239,11 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       border: OutlineInputBorder(),
       labelText: labelText,
       labelStyle: TextStyle(
+        color: Colors.black,
         fontSize: 26,
+      ),
+      hintStyle: TextStyle(
+        color: Colors.black,
       ),
       // hintText: 'number',
       // helperText: 'paid amount',
