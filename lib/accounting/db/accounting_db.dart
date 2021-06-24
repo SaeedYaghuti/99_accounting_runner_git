@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path;
 import 'package:shop/accounting/account/account_model.dart';
 import 'package:shop/accounting/account/accounts_tree.dart';
+import 'package:shop/accounting/account/transaction_model.dart';
 import 'package:shop/accounting/account/voucher_model.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -15,10 +16,11 @@ class AccountingDB {
       dbPath,
       version: 1,
       onCreate: (db, version) async {
-        // define bool: BOOLEAN NOT NULL CHECK (mycolumn IN (0, 1))
+        print('ADB10| onCreate runing...');
         await db.execute(AccountModel.QUERY_CREATE_ACCOUNT_TABLE);
         await insertPredefinedAccounts(db);
         await db.execute(VoucherModel.QUERY_CREATE_VOUCHER_TABLE);
+        await db.execute(TransactionModel.QUERY_CREATE_TRANSACTION_TABLE);
       },
     );
     return db;
