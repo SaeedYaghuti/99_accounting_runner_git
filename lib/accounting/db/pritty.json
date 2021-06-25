@@ -1,0 +1,26 @@
+[
+    {
+        "vch_id": 1,
+        "voucherNumber": "vn#001",
+        "vch_date": 1624598463217,
+        "vch_note": "nbo paid for Expence"
+    },
+    {
+        "tran_id": 1,
+        "tran_accountId": "nbo",
+        "tran_voucherId": 1,
+        "tran_amount": 3.75,
+        "isDebit": 1,
+        "tran_date": 1624598463217,
+        "tran_note": "cup"
+    },
+    {
+        "tran_id": 2,
+        "tran_accountId": "expenditure",
+        "tran_voucherId": 1,
+        "tran_amount": 3.75,
+        "isDebit": 0,
+        "tran_date": 1624598463217,
+        "tran_note": "cup"
+    }
+]

@@ -28,13 +28,13 @@ class TransactionModel {
   }
 
   static const String tableName = 'transactions';
-  static const String column1Id = 'id';
-  static const String column2AccountId = 'accountId';
-  static const String column3VoucherId = 'voucherId';
-  static const String column4Amount = 'amount';
+  static const String column1Id = 'tran_id';
+  static const String column2AccountId = 'tran_accountId';
+  static const String column3VoucherId = 'tran_voucherId';
+  static const String column4Amount = 'tran_amount';
   static const String column5IsDebit = 'isDebit';
-  static const String column6Date = 'date';
-  static const String column7Note = 'note';
+  static const String column6Date = 'tran_date';
+  static const String column7Note = 'tran_note';
 
   static const String QUERY_CREATE_TRANSACTION_TABLE =
       '''CREATE TABLE $tableName (
@@ -55,19 +55,32 @@ class TransactionModel {
     FROM $tableName
     ''';
     var result = await AccountingDB.runRawQuery(query);
-    print('TM11| SELECT * FROM $tableName >');
+    print('TM10| SELECT * FROM $tableName >');
     print(result);
   }
 
-  static Future<void> fetchAllTransactionsJoinedVoucher() async {
+  static Future<void> allTranJoinVch() async {
     final query = '''
     SELECT *
     FROM $tableName
     LEFT JOIN ${VoucherModel.tableName}
-    ON $tableName.$column1Id = ${VoucherModel.tableName}.${VoucherModel.column1Id}
+    ON $tableName.$column3VoucherId = ${VoucherModel.tableName}.${VoucherModel.column1Id}
     ''';
     var result = await AccountingDB.runRawQuery(query);
-    print('VM11| $tableName JOIN result >');
+    print('TM16| $tableName JOIN result >');
+    print(result);
+  }
+
+  static Future<void> allTranJoinVchForAccount(String rAccountId) async {
+    final query = '''
+    SELECT *
+    FROM $tableName
+    LEFT JOIN ${VoucherModel.tableName}
+    ON $tableName.$column3VoucherId = ${VoucherModel.tableName}.${VoucherModel.column1Id}
+    WHERE $tableName.$column2AccountId = ?
+    ''';
+    var result = await AccountingDB.runRawQuery(query, [rAccountId]);
+    print('TM20| $tableName and Vouchers for $rAccountId >');
     print(result);
   }
 

@@ -44,10 +44,10 @@ class VoucherModel {
   }
 
   static const String tableName = 'vouchers';
-  static const String column1Id = 'id';
+  static const String column1Id = 'vch_id';
   static const String column2VoucherNumber = 'voucherNumber';
-  static const String column3Date = 'date';
-  static const String column4Note = 'note';
+  static const String column3Date = 'vch_date';
+  static const String column4Note = 'vch_note';
 
   static const String QUERY_CREATE_VOUCHER_TABLE = '''CREATE TABLE $tableName (
     $column1Id INTEGER PRIMARY KEY, 
