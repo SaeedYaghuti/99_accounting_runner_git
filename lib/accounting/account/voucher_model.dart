@@ -35,8 +35,8 @@ class VoucherModel {
     final query = '''
     SELECT *
     FROM $tableName
-    LEFT JOIN ${TransactionModel.tableName}
-    ON $tableName.$column1Id = ${TransactionModel.tableName}.${TransactionModel.column3VoucherId}
+    LEFT JOIN ${TransactionModel.transactionTableName}
+    ON $tableName.$column1Id = ${TransactionModel.transactionTableName}.${TransactionModel.column3VoucherId}
     ''';
     var result = await AccountingDB.runRawQuery(query);
     print('VM11| $tableName JOIN result >');

@@ -1,5 +1,7 @@
+import 'package:shop/accounting/account/accounts.dart';
 import 'package:shop/accounting/account/voucher_model.dart';
 import 'package:shop/accounting/db/accounting_db.dart';
+import 'package:shop/shared/DBException.dart';
 
 import 'account_model.dart';
 
@@ -24,10 +26,10 @@ class TransactionModel {
 
   Future<int> insertInDB() async {
     // do some logic on variables
-    return AccountingDB.insert(tableName, toMapForDB());
+    return AccountingDB.insert(transactionTableName, toMapForDB());
   }
 
-  static const String tableName = 'transactions';
+  static const String transactionTableName = 'transactions';
   static const String column1Id = 'tran_id';
   static const String column2AccountId = 'tran_accountId';
   static const String column3VoucherId = 'tran_voucherId';
@@ -37,10 +39,10 @@ class TransactionModel {
   static const String column7Note = 'tran_note';
 
   static const String QUERY_CREATE_TRANSACTION_TABLE =
-      '''CREATE TABLE $tableName (
+      '''CREATE TABLE $transactionTableName (
     $column1Id INTEGER PRIMARY KEY, 
     $column2AccountId TEXT NOT NULL, 
-    $column3VoucherId TEXT NOT NULL, 
+    $column3VoucherId INTEGER NOT NULL, 
     $column4Amount REAL NOT NULL, 
     $column5IsDebit BOOLEAN NOT NULL CHECK( $column5IsDebit IN (0, 1) ),
     $column6Date INTEGER NOT NULL, 
@@ -52,36 +54,80 @@ class TransactionModel {
   static Future<void> fetchAllTransactions() async {
     final query = '''
     SELECT *
-    FROM $tableName
+    FROM $transactionTableName
     ''';
     var result = await AccountingDB.runRawQuery(query);
-    print('TM10| SELECT * FROM $tableName >');
+    print('TM10| SELECT * FROM $transactionTableName >');
     print(result);
+  }
+
+  static Future<List<Map<String, Object?>>> fetchAllTransactionsForAccount(
+    String accountId,
+  ) async {
+    final query = '''
+    SELECT *
+    FROM $transactionTableName
+    WHERE $transactionTableName.$column2AccountId = ?
+    ''';
+    var result = await AccountingDB.runRawQuery(query, [accountId]);
+    print('TM11| SELECT * FROM $transactionTableName for $accountId>');
+    print(result);
+    return result;
   }
 
   static Future<void> allTranJoinVch() async {
     final query = '''
     SELECT *
-    FROM $tableName
+    FROM $transactionTableName
     LEFT JOIN ${VoucherModel.tableName}
-    ON $tableName.$column3VoucherId = ${VoucherModel.tableName}.${VoucherModel.column1Id}
+    ON $transactionTableName.$column3VoucherId = ${VoucherModel.tableName}.${VoucherModel.column1Id}
     ''';
     var result = await AccountingDB.runRawQuery(query);
-    print('TM16| $tableName JOIN result >');
+    print('TM16| $transactionTableName JOIN result >');
     print(result);
   }
 
-  static Future<void> allTranJoinVchForAccount(String rAccountId) async {
+  static Future<void> allTranJoinVchForAccount(String accountId) async {
     final query = '''
     SELECT *
-    FROM $tableName
+    FROM $transactionTableName
     LEFT JOIN ${VoucherModel.tableName}
-    ON $tableName.$column3VoucherId = ${VoucherModel.tableName}.${VoucherModel.column1Id}
-    WHERE $tableName.$column2AccountId = ?
+    ON $transactionTableName.$column3VoucherId = ${VoucherModel.tableName}.${VoucherModel.column1Id}
+    WHERE $transactionTableName.$column2AccountId = ?
     ''';
-    var result = await AccountingDB.runRawQuery(query, [rAccountId]);
-    print('TM20| $tableName and Vouchers for $rAccountId >');
+    var result = await AccountingDB.runRawQuery(query, [accountId]);
+    print('TM20| $transactionTableName and Vouchers for $accountId >');
     print(result);
+  }
+
+  static Future<List<TransactionModel>> allExpences() async {
+    var dbTransactions =
+        await fetchAllTransactionsForAccount(AccountsId.EXPENDITURE_ID);
+    print('TM26| allExpences() >');
+    print(dbTransactions);
+    return fromMapOfTransactions(dbTransactions);
+  }
+
+  static List<TransactionModel> fromMapOfTransactions(
+      List<Map<String, Object?>> dbResult) {
+    return dbResult
+        .map(
+          (tran) => TransactionModel(
+            id: tran[TransactionModel.column1Id] as int,
+            accountId: tran[TransactionModel.column2AccountId] as String,
+            voucherId: tran[TransactionModel.column3VoucherId]
+                as int, // Error type 'String' is not a subtype of type 'int' in type cast
+            amount: tran[TransactionModel.column4Amount] as double,
+            isDebit: intToBoolean(
+              tran[TransactionModel.column5IsDebit] as int,
+            ),
+            date: DateTime.fromMicrosecondsSinceEpoch(
+              tran[TransactionModel.column6Date] as int,
+            ),
+            note: tran[TransactionModel.column7Note] as String,
+          ),
+        )
+        .toList();
   }
 
   Map<String, Object?> toMapForDB() {
@@ -96,7 +142,7 @@ class TransactionModel {
       };
     } else {
       return {
-        column1Id: id ?? null,
+        column1Id: id!,
         column2AccountId: accountId,
         column3VoucherId: voucherId,
         column4Amount: amount,
@@ -117,5 +163,15 @@ class TransactionModel {
     ${TransactionModel.column6Date}: ${date.day}/${date.month}/${date.year},
     ${TransactionModel.column7Note}: $note,
     ''';
+  }
+
+  static bool intToBoolean(int num) {
+    if (num == 0) {
+      return false;
+    } else if (num == 1) {
+      return true;
+    } else {
+      throw DBException('TM50| $num is stored at database as boolean value!');
+    }
   }
 }

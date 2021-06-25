@@ -3,6 +3,7 @@ import 'package:shop/accounting/account/account_model.dart';
 import 'package:shop/accounting/common/flexible_popup_menu_button.dart';
 import 'package:shop/accounting/common/multi_language_text_widget.dart';
 import 'package:shop/accounting/db/accounting_db.dart';
+import 'package:shop/accounting/expenditure/expenditure_data_table.dart';
 import 'package:shop/accounting/expenditure/expenditure_form.dart';
 import 'package:shop/accounting/expenditure/expenditure_tag.dart';
 
@@ -32,7 +33,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
           ),
           Expanded(
             flex: 8,
-            child: Text('Data Table comes here'),
+            child: ExpenditurDataTable(),
           ),
         ],
       ),
