@@ -1,6 +1,6 @@
 import 'package:shop/accounting/accounting_logic/accounts.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
-import 'package:shop/accounting/db/accounting_db.dart';
+import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/shared/DBException.dart';
 
 import 'account_model.dart';

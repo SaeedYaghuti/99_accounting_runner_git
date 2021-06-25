@@ -1,5 +1,5 @@
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
-import 'package:shop/accounting/db/accounting_db.dart';
+import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 
 class VoucherModel {
   int? id;
@@ -18,7 +18,7 @@ class VoucherModel {
     // do some logic on variables
     var map = this.toMapForDB();
     print('VM10| map: $map');
-    return AccountingDB.insert('vouchers', map);
+    return AccountingDB.insert(tableName, map);
   }
 
   static Future<void> fetchAllVouchers() async {

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
+import 'package:shop/accounting/accounting_logic/voucher_management.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
-import 'package:shop/accounting/db/accounting_db.dart';
+import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/accounting/environment/environment_provider.dart';
 import 'package:shop/accounting/expenditure/expenditure_model.dart';
 import 'package:shop/shared/show_error_dialog.dart';
@@ -301,11 +302,11 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   void runCode() async {
-    await VoucherModel.fetchAllVouchers();
-    await TransactionModel.allTransactions();
-    await TransactionModel.allTranJoinVch();
-    await TransactionModel.allTranJoinVchForAccount('expenditure');
-    // await VoucherModel.fetchAllVouchersJoin();
+    // await VoucherModel.fetchAllVouchers();
+    // await TransactionModel.allTransactions();
+    // await TransactionModel.allTranJoinVch();
+    // await TransactionModel.allTranJoinVchForAccount('expenditure');
+    await VoucherManagement.createVoucher();
   }
 
   bool isToday(DateTime date) {

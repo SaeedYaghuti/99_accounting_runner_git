@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop/accounting/accounting_logic/account_model.dart';
-import 'package:shop/accounting/db/accounting_db.dart';
+import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 
 class RetailScreen extends StatefulWidget {
   static const routeName = '/sell-point';
