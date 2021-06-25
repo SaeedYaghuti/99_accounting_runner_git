@@ -27,11 +27,11 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       body: Row(
         children: [
           Expanded(
-            flex: 3,
+            flex: 2,
             child: ExpenditureForm(),
           ),
           Expanded(
-            flex: 7,
+            flex: 8,
             child: Text('Data Table comes here'),
           ),
         ],

@@ -53,7 +53,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
               SizedBox(height: 20, width: 20),
               _buildPaidBy(context),
               SizedBox(height: 20, width: 20),
-              _buildDatePicker(context),
+              _buildDatePicker2(context),
               SizedBox(height: 20, width: 20),
               _buildSaveButton(context),
               SizedBox(height: 20, width: 20),
@@ -74,87 +74,96 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   } // build
 
   Widget _buildAmount(BuildContext context) {
-    return SizedBox(
-      width: 50,
-      child: TextFormField(
-        decoration: _buildInputDecoration('Amount'),
-        style: _buildTextStyle(),
-        focusNode: _amountFocusNode,
-        textInputAction: TextInputAction.next,
-        keyboardType: TextInputType.number,
-        initialValue: (_expenditureFormFields.amount != null)
-            ? _expenditureFormFields.amount.toString()
-            : '',
-        onFieldSubmitted: (value) {
-          FocusScope.of(context).requestFocus(_noteFocusNode);
-        },
-        validator: (amount) {
-          if (amount == null || amount.isEmpty) {
-            return 'amount should not be empty';
-          }
-          var num = double.tryParse(amount);
-          if (num == null) {
-            return 'amount should be valid number';
-          }
-          if (num <= 0) {
-            return 'amount should be greater than Zero';
-          }
-          return null;
-        },
-        onSaved: (amount) {
-          // print('title-field.onSaved: amount: $amount');
-          _expenditureFormFields.amount = double.parse(amount!);
-        },
-      ),
+    return TextFormField(
+      decoration: _buildInputDecoration('Amount'),
+      style: _buildTextStyle(),
+      focusNode: _amountFocusNode,
+      textInputAction: TextInputAction.next,
+      keyboardType: TextInputType.number,
+      initialValue: (_expenditureFormFields.amount != null)
+          ? _expenditureFormFields.amount.toString()
+          : '',
+      onFieldSubmitted: (value) {
+        FocusScope.of(context).requestFocus(_noteFocusNode);
+      },
+      validator: (amount) {
+        if (amount == null || amount.isEmpty) {
+          return 'amount should not be empty';
+        }
+        var num = double.tryParse(amount);
+        if (num == null) {
+          return 'amount should be valid number';
+        }
+        if (num <= 0) {
+          return 'amount should be greater than Zero';
+        }
+        return null;
+      },
+      onSaved: (amount) {
+        // print('title-field.onSaved: amount: $amount');
+        _expenditureFormFields.amount = double.parse(amount!);
+      },
     );
   }
 
   Widget _buildNote(BuildContext context) {
-    return SizedBox(
-      width: 100,
-      child: TextFormField(
-        decoration: _buildInputDecoration('Note'),
-        style: _buildTextStyle(),
-        maxLines: 2,
-        keyboardType: TextInputType.multiline,
-        textInputAction: TextInputAction.next,
-        initialValue: _expenditureFormFields.note ?? '',
-        onFieldSubmitted: (value) {
-          FocusScope.of(context).requestFocus(_paidByFocusNode);
-        },
-        validator: (note) {
-          if (note == null || note.isEmpty) {
-            return 'Note should not be empty';
-          }
-          return null;
-        },
-        onSaved: (note) {
-          // print('titleField.onSaved: titleField: $titleField');
-          _expenditureFormFields.note = note;
-        },
-      ),
+    return TextFormField(
+      decoration: _buildInputDecoration('Note'),
+      style: _buildTextStyle(),
+      maxLines: 2,
+      keyboardType: TextInputType.multiline,
+      textInputAction: TextInputAction.next,
+      initialValue: _expenditureFormFields.note ?? '',
+      onFieldSubmitted: (value) {
+        FocusScope.of(context).requestFocus(_paidByFocusNode);
+      },
+      validator: (note) {
+        if (note == null || note.isEmpty) {
+          return 'Note should not be empty';
+        }
+        return null;
+      },
+      onSaved: (note) {
+        // print('titleField.onSaved: titleField: $titleField');
+        _expenditureFormFields.note = note;
+      },
     );
   }
 
   Widget _buildPaidBy(BuildContext context) {
-    return SizedBox(
-      width: 100,
-      child: TextFormField(
-        decoration: _buildInputDecoration('Paid By ...'),
-        style: _buildTextStyle(),
-        keyboardType: TextInputType.multiline,
-        initialValue: _expenditureFormFields.paidBy,
-        focusNode: _paidByFocusNode,
-        validator: (paidBy) {
-          if (paidBy == null || paidBy.isEmpty) {
-            return 'paidBy should not be empty';
-          }
-          return null;
-        },
-        onSaved: (paidBy) {
-          // print('title-field.onSaved: descriptionField: $descriptionField');
-          _expenditureFormFields.paidBy = paidBy;
-        },
+    return TextFormField(
+      decoration: _buildInputDecoration('Paid By ...'),
+      style: _buildTextStyle(),
+      keyboardType: TextInputType.multiline,
+      initialValue: _expenditureFormFields.paidBy,
+      focusNode: _paidByFocusNode,
+      validator: (paidBy) {
+        if (paidBy == null || paidBy.isEmpty) {
+          return 'paidBy should not be empty';
+        }
+        return null;
+      },
+      onSaved: (paidBy) {
+        // print('title-field.onSaved: descriptionField: $descriptionField');
+        _expenditureFormFields.paidBy = paidBy;
+      },
+    );
+  }
+
+  Widget _buildDatePicker2(BuildContext context) {
+    return OutlineButton.icon(
+      onPressed: pickDate,
+      icon: Icon(
+        Icons.date_range_rounded,
+        color: Theme.of(context).primaryColor,
+      ),
+      label: Text(
+        _buildTextForDatePicker(),
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+          color: Theme.of(context).primaryColor,
+        ),
       ),
     );
   }
@@ -169,20 +178,20 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
             child: _selectedDate == null
                 ? const Text(
                     'DATE NOT CHOOSEN',
-                    style: TextStyle(fontSize: 26),
+                    style: TextStyle(fontSize: 16),
                   )
                 : Text(
                     'Date: ${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
-                    style: TextStyle(fontSize: 26),
+                    style: TextStyle(fontSize: 16),
                   ),
           ),
           TextButton(
             onPressed: pickDate,
             child: Text(
-              'SELECT ANOTHER DATE',
+              'CHANGE DATE',
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 26,
+                fontSize: 20,
               ),
             ),
           ),
@@ -297,6 +306,26 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     await TransactionModel.allTranJoinVch();
     await TransactionModel.allTranJoinVchForAccount('expenditure');
     // await VoucherModel.fetchAllVouchersJoin();
+  }
+
+  bool isToday(DateTime date) {
+    var now = DateTime.now();
+    if (date.day == now.day &&
+        date.month == now.month &&
+        date.year == now.year) {
+      return true;
+    }
+    return false;
+  }
+
+  String _buildTextForDatePicker() {
+    if (_selectedDate == null) {
+      return 'SELECT A DAY';
+    }
+    if (isToday(_selectedDate!)) {
+      return 'Today';
+    }
+    return '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}';
   }
 
   @override
