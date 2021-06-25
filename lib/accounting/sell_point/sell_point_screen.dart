@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shop/accounting/account/account_model.dart';
+import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/db/accounting_db.dart';
 
 class RetailScreen extends StatefulWidget {

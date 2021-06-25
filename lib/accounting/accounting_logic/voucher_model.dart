@@ -1,4 +1,4 @@
-import 'package:shop/accounting/account/transaction_model.dart';
+import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/db/accounting_db.dart';
 
 class VoucherModel {

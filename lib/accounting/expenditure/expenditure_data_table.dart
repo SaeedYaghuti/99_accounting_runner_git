@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shop/accounting/account/transaction_model.dart';
+import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/shared/readible_date.dart';
 import 'package:shop/shared/show_error_dialog.dart';
 

@@ -1,8 +1,8 @@
 import 'package:path/path.dart' as path;
-import 'package:shop/accounting/account/account_model.dart';
-import 'package:shop/accounting/account/accounts.dart';
-import 'package:shop/accounting/account/transaction_model.dart';
-import 'package:shop/accounting/account/voucher_model.dart';
+import 'package:shop/accounting/accounting_logic/account_model.dart';
+import 'package:shop/accounting/accounting_logic/accounts.dart';
+import 'package:shop/accounting/accounting_logic/transaction_model.dart';
+import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AccountingDB {

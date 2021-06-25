@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shop/accounting/account/account_model.dart';
+import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/common/flexible_popup_menu_button.dart';
 import 'package:shop/accounting/common/multi_language_text_widget.dart';
 import 'package:shop/accounting/db/accounting_db.dart';

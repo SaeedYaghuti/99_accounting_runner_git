@@ -1,4 +1,4 @@
-import 'package:shop/accounting/account/account_model.dart';
+import 'package:shop/accounting/accounting_logic/account_model.dart';
 
 class AccountsId {
   static const MAIN_ID = 'main';

@@ -1,5 +1,5 @@
-import 'package:shop/accounting/account/transaction_model.dart';
-import 'package:shop/accounting/account/voucher_model.dart';
+import 'package:shop/accounting/accounting_logic/transaction_model.dart';
+import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/expenditure/expenditure_form_fields.dart';
 import 'package:shop/shared/DBException.dart';
 
