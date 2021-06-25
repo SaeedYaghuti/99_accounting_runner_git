@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop/accounting/account/transaction_model.dart';
+import 'package:shop/shared/readible_date.dart';
 import 'package:shop/shared/show_error_dialog.dart';
 
 class ExpenditurDataTable extends StatefulWidget {
@@ -48,24 +49,27 @@ class _ExpenditurDataTableState extends State<ExpenditurDataTable> {
         DataColumn(label: Text('Paid By')),
         DataColumn(label: Text('Date')),
       ],
-      rows: [
-        DataRow(
-          cells: [
-            DataCell(Text('3.75')),
-            DataCell(Text('Nescfee')),
-            DataCell(Text('nbo')),
-            DataCell(Text('today')),
-          ],
-        ),
-        DataRow(
-          cells: [
-            DataCell(Text('1.2')),
-            DataCell(Text('Mask')),
-            DataCell(Text('cash-draw')),
-            DataCell(Text('24/05/2021')),
-          ],
-        ),
-      ],
+      rows: expenses
+          .map((exp) => DataRow(
+                cells: [
+                  DataCell(Text(exp.amount.toString())),
+                  DataCell(Text(exp.note)),
+                  DataCell(Text('paid by _')),
+                  DataCell(Text(readibleDate(exp.date))),
+                ],
+              ))
+          .toList(),
+      // [
+
+      //   DataRow(
+      //     cells: [
+      //       DataCell(Text('1.2')),
+      //       DataCell(Text('Mask')),
+      //       DataCell(Text('cash-draw')),
+      //       DataCell(Text('24/05/2021')),
+      //     ],
+      //   ),
+      // ],
     );
   }
 

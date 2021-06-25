@@ -26,6 +26,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       ),
       // drawer: ,
       body: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
             flex: 2,
