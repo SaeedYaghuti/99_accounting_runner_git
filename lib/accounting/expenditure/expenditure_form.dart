@@ -35,118 +35,134 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    return Container(
+      width: 1200,
       padding: EdgeInsets.all(16),
       child: Form(
         key: _form,
         autovalidate: true,
-        child: ListView(
-          children: [
-            _buildAmount(context),
-            SizedBox(height: 20),
-            _buildNote(context),
-            SizedBox(height: 20),
-            _buildPaidBy(context),
-            SizedBox(height: 20),
-            _buildDatePicker(context),
-            SizedBox(height: 20),
-            _buildSaveButton(context),
-            SizedBox(height: 20),
-            TextButton(
-              onPressed: AccountingDB.deleteDB,
-              child: Text('DELETE DB'),
-            ),
-            SizedBox(height: 20),
-            TextButton(
-              onPressed: runCode,
-              child: Text('RUN QUERY'),
-            ),
-          ],
+        child: Container(
+          width: 1200,
+          // height: 300,
+          child: ListView(
+            // scrollDirection: Axis.horizontal,
+            children: [
+              _buildAmount(context),
+              SizedBox(height: 20, width: 20),
+              _buildNote(context),
+              SizedBox(height: 20, width: 20),
+              _buildPaidBy(context),
+              SizedBox(height: 20, width: 20),
+              _buildDatePicker(context),
+              SizedBox(height: 20, width: 20),
+              _buildSaveButton(context),
+              SizedBox(height: 20, width: 20),
+              TextButton(
+                onPressed: AccountingDB.deleteDB,
+                child: Text('DELETE DB'),
+              ),
+              SizedBox(height: 20, width: 20),
+              TextButton(
+                onPressed: runCode,
+                child: Text('RUN QUERY'),
+              ),
+            ],
+          ),
         ),
       ),
     );
   } // build
 
   Widget _buildAmount(BuildContext context) {
-    return TextFormField(
-      decoration: _buildInputDecoration('Amount'),
-      style: _buildTextStyle(),
-      focusNode: _amountFocusNode,
-      textInputAction: TextInputAction.next,
-      keyboardType: TextInputType.number,
-      initialValue: (_expenditureFormFields.amount != null)
-          ? _expenditureFormFields.amount.toString()
-          : '',
-      onFieldSubmitted: (value) {
-        FocusScope.of(context).requestFocus(_noteFocusNode);
-      },
-      validator: (amount) {
-        if (amount == null || amount.isEmpty) {
-          return 'amount should not be empty';
-        }
-        var num = double.tryParse(amount);
-        if (num == null) {
-          return 'amount should be valid number';
-        }
-        if (num <= 0) {
-          return 'amount should be greater than Zero';
-        }
-        return null;
-      },
-      onSaved: (amount) {
-        // print('title-field.onSaved: amount: $amount');
-        _expenditureFormFields.amount = double.parse(amount!);
-      },
+    return SizedBox(
+      width: 50,
+      child: TextFormField(
+        decoration: _buildInputDecoration('Amount'),
+        style: _buildTextStyle(),
+        focusNode: _amountFocusNode,
+        textInputAction: TextInputAction.next,
+        keyboardType: TextInputType.number,
+        initialValue: (_expenditureFormFields.amount != null)
+            ? _expenditureFormFields.amount.toString()
+            : '',
+        onFieldSubmitted: (value) {
+          FocusScope.of(context).requestFocus(_noteFocusNode);
+        },
+        validator: (amount) {
+          if (amount == null || amount.isEmpty) {
+            return 'amount should not be empty';
+          }
+          var num = double.tryParse(amount);
+          if (num == null) {
+            return 'amount should be valid number';
+          }
+          if (num <= 0) {
+            return 'amount should be greater than Zero';
+          }
+          return null;
+        },
+        onSaved: (amount) {
+          // print('title-field.onSaved: amount: $amount');
+          _expenditureFormFields.amount = double.parse(amount!);
+        },
+      ),
     );
   }
 
   Widget _buildNote(BuildContext context) {
-    return TextFormField(
-      decoration: _buildInputDecoration('Note'),
-      style: _buildTextStyle(),
-      maxLines: 2,
-      keyboardType: TextInputType.multiline,
-      textInputAction: TextInputAction.next,
-      initialValue: _expenditureFormFields.note ?? '',
-      onFieldSubmitted: (value) {
-        FocusScope.of(context).requestFocus(_paidByFocusNode);
-      },
-      validator: (note) {
-        if (note == null || note.isEmpty) {
-          return 'Note should not be empty';
-        }
-        return null;
-      },
-      onSaved: (note) {
-        // print('titleField.onSaved: titleField: $titleField');
-        _expenditureFormFields.note = note;
-      },
+    return SizedBox(
+      width: 100,
+      child: TextFormField(
+        decoration: _buildInputDecoration('Note'),
+        style: _buildTextStyle(),
+        maxLines: 2,
+        keyboardType: TextInputType.multiline,
+        textInputAction: TextInputAction.next,
+        initialValue: _expenditureFormFields.note ?? '',
+        onFieldSubmitted: (value) {
+          FocusScope.of(context).requestFocus(_paidByFocusNode);
+        },
+        validator: (note) {
+          if (note == null || note.isEmpty) {
+            return 'Note should not be empty';
+          }
+          return null;
+        },
+        onSaved: (note) {
+          // print('titleField.onSaved: titleField: $titleField');
+          _expenditureFormFields.note = note;
+        },
+      ),
     );
   }
 
   Widget _buildPaidBy(BuildContext context) {
-    return TextFormField(
-      decoration: _buildInputDecoration('Paid By ...'),
-      style: _buildTextStyle(),
-      keyboardType: TextInputType.multiline,
-      initialValue: _expenditureFormFields.paidBy,
-      focusNode: _paidByFocusNode,
-      validator: (paidBy) {
-        if (paidBy == null || paidBy.isEmpty) {
-          return 'paidBy should not be empty';
-        }
-        return null;
-      },
-      onSaved: (paidBy) {
-        // print('title-field.onSaved: descriptionField: $descriptionField');
-        _expenditureFormFields.paidBy = paidBy;
-      },
+    return SizedBox(
+      width: 100,
+      child: TextFormField(
+        decoration: _buildInputDecoration('Paid By ...'),
+        style: _buildTextStyle(),
+        keyboardType: TextInputType.multiline,
+        initialValue: _expenditureFormFields.paidBy,
+        focusNode: _paidByFocusNode,
+        validator: (paidBy) {
+          if (paidBy == null || paidBy.isEmpty) {
+            return 'paidBy should not be empty';
+          }
+          return null;
+        },
+        onSaved: (paidBy) {
+          // print('title-field.onSaved: descriptionField: $descriptionField');
+          _expenditureFormFields.paidBy = paidBy;
+        },
+      ),
     );
   }
 
   Widget _buildDatePicker(BuildContext context) {
     return Container(
       height: 150,
+      width: 100,
       child: Row(
         children: [
           Expanded(
@@ -177,7 +193,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   Widget _buildSaveButton(BuildContext context) {
     return SizedBox(
-      width: 200,
+      width: 50,
       child: ElevatedButton(
         onPressed: _saveForm,
         child: Text(

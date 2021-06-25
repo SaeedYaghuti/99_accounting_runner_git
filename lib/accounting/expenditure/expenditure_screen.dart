@@ -24,8 +24,17 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
         actions: [FlexiblePopupMenuButton()],
       ),
       // drawer: ,
-      body: Center(
-        child: ExpenditureForm(),
+      body: Row(
+        children: [
+          Expanded(
+            flex: 3,
+            child: ExpenditureForm(),
+          ),
+          Expanded(
+            flex: 7,
+            child: Text('Data Table comes here'),
+          ),
+        ],
       ),
     );
   }
