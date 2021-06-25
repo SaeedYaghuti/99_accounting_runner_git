@@ -24,34 +24,12 @@ class TransactionModel {
     required this.note,
   });
 
-  Future<int> insertInDB() async {
+  Future<int> insertTransactionToDB() async {
     // do some logic on variables
     return AccountingDB.insert(transactionTableName, toMapForDB());
   }
 
-  static const String transactionTableName = 'transactions';
-  static const String column1Id = 'tran_id';
-  static const String column2AccountId = 'tran_accountId';
-  static const String column3VoucherId = 'tran_voucherId';
-  static const String column4Amount = 'tran_amount';
-  static const String column5IsDebit = 'isDebit';
-  static const String column6Date = 'tran_date';
-  static const String column7Note = 'tran_note';
-
-  static const String QUERY_CREATE_TRANSACTION_TABLE =
-      '''CREATE TABLE $transactionTableName (
-    $column1Id INTEGER PRIMARY KEY, 
-    $column2AccountId TEXT NOT NULL, 
-    $column3VoucherId INTEGER NOT NULL, 
-    $column4Amount REAL NOT NULL, 
-    $column5IsDebit BOOLEAN NOT NULL CHECK( $column5IsDebit IN (0, 1) ),
-    $column6Date INTEGER NOT NULL, 
-    $column7Note TEXT, 
-    FOREIGN KEY ($column2AccountId) REFERENCES ${AccountModel.tableName} (${AccountModel.columnId}),
-    FOREIGN KEY ($column3VoucherId) REFERENCES ${VoucherModel.tableName} (${VoucherModel.column1Id})
-  )''';
-
-  static Future<void> fetchAllTransactions() async {
+  static Future<void> allTransactions() async {
     final query = '''
     SELECT *
     FROM $transactionTableName
@@ -61,7 +39,7 @@ class TransactionModel {
     print(result);
   }
 
-  static Future<List<Map<String, Object?>>> fetchAllTransactionsForAccount(
+  static Future<List<Map<String, Object?>>> allTransactionsForAccount(
     String accountId,
   ) async {
     final query = '''
@@ -102,14 +80,15 @@ class TransactionModel {
 
   static Future<List<TransactionModel>> allExpences() async {
     var dbTransactions =
-        await fetchAllTransactionsForAccount(AccountsId.EXPENDITURE_ID);
+        await allTransactionsForAccount(AccountsId.EXPENDITURE_ID);
     print('TM26| allExpences() >');
     print(dbTransactions);
     return fromMapOfTransactions(dbTransactions);
   }
 
   static List<TransactionModel> fromMapOfTransactions(
-      List<Map<String, Object?>> dbResult) {
+    List<Map<String, Object?>> dbResult,
+  ) {
     return dbResult
         .map(
           (tran) => TransactionModel(
@@ -118,7 +97,7 @@ class TransactionModel {
             voucherId: tran[TransactionModel.column3VoucherId]
                 as int, // Error type 'String' is not a subtype of type 'int' in type cast
             amount: tran[TransactionModel.column4Amount] as double,
-            isDebit: intToBoolean(
+            isDebit: convertIntToBoolean(
               tran[TransactionModel.column5IsDebit] as int,
             ),
             date: DateTime.fromMicrosecondsSinceEpoch(
@@ -165,7 +144,7 @@ class TransactionModel {
     ''';
   }
 
-  static bool intToBoolean(int num) {
+  static bool convertIntToBoolean(int num) {
     if (num == 0) {
       return false;
     } else if (num == 1) {
@@ -174,4 +153,26 @@ class TransactionModel {
       throw DBException('TM50| $num is stored at database as boolean value!');
     }
   }
+
+  static const String transactionTableName = 'transactions';
+  static const String column1Id = 'tran_id';
+  static const String column2AccountId = 'tran_accountId';
+  static const String column3VoucherId = 'tran_voucherId';
+  static const String column4Amount = 'tran_amount';
+  static const String column5IsDebit = 'isDebit';
+  static const String column6Date = 'tran_date';
+  static const String column7Note = 'tran_note';
+
+  static const String QUERY_CREATE_TRANSACTION_TABLE =
+      '''CREATE TABLE $transactionTableName (
+    $column1Id INTEGER PRIMARY KEY, 
+    $column2AccountId TEXT NOT NULL, 
+    $column3VoucherId INTEGER NOT NULL, 
+    $column4Amount REAL NOT NULL, 
+    $column5IsDebit BOOLEAN NOT NULL CHECK( $column5IsDebit IN (0, 1) ),
+    $column6Date INTEGER NOT NULL, 
+    $column7Note TEXT, 
+    FOREIGN KEY ($column2AccountId) REFERENCES ${AccountModel.tableName} (${AccountModel.columnId}),
+    FOREIGN KEY ($column3VoucherId) REFERENCES ${VoucherModel.tableName} (${VoucherModel.column1Id})
+  )''';
 }

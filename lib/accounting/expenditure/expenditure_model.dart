@@ -33,7 +33,7 @@ class ExpenditureModel {
         note: fields.note!,
       );
       try {
-        int debitTransactionId = await debitTransaction.insertInDB();
+        int debitTransactionId = await debitTransaction.insertTransactionToDB();
         debitTransaction.id = debitTransactionId;
         print('EM21| debitTransactionId: $debitTransactionId');
 
@@ -47,7 +47,8 @@ class ExpenditureModel {
           note: fields.note!,
         );
         try {
-          int creditTransactionId = await creditTransaction.insertInDB();
+          int creditTransactionId =
+              await creditTransaction.insertTransactionToDB();
           creditTransaction.id = creditTransactionId;
           print('EM22| creditTransactionId: $creditTransactionId');
 

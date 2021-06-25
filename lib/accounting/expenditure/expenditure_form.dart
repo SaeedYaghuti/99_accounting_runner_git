@@ -302,7 +302,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   void runCode() async {
     await VoucherModel.fetchAllVouchers();
-    await TransactionModel.fetchAllTransactions();
+    await TransactionModel.allTransactions();
     await TransactionModel.allTranJoinVch();
     await TransactionModel.allTranJoinVchForAccount('expenditure');
     // await VoucherModel.fetchAllVouchersJoin();
