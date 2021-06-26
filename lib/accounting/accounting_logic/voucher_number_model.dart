@@ -62,13 +62,38 @@ class VoucherNumberModel {
     if (voucherNumberModel!.voucherNumber == number &&
         voucherNumberModel.status == VoucherNumberStatus.LOCK) {
       // increase number and make it free
-      await _increaseAndFreeVoucherNumber(number);
+      await _freeVoucherNumberAndIncrease(number);
     } else {
       print(
         'VNM30| ERROR: voucher_number_db is not as expected! check created voucher numbers',
       );
       DBException(
-          'VNM30| ERROR: voucher_number_db is not as expected! check created voucher numbers');
+        'VNM30| ERROR: voucher_number_db is not as expected! check created voucher numbers',
+      );
+    }
+  }
+
+  static Future<void> emergencyUnlockVoucherNumber() async {
+    final query = '''
+    SELECT *
+    FROM $tableName
+    WHERE $column1Id = 1
+    ''';
+    // fetch voucher model
+    var result = await AccountingDB.runRawQuery(query);
+    var voucherNumberModel = fromDBResult(result);
+
+    // check status
+    if (voucherNumberModel!.status == VoucherNumberStatus.LOCK) {
+      // make it free
+      await _freeVoucherNumberWithoutIncrease();
+    } else {
+      print(
+        'VNM40| ERROR: voucher_number_db is not as expected! check created voucher numbers',
+      );
+      DBException(
+        'VNM40| ERROR: voucher_number_db is not as expected! check created voucher numbers',
+      );
     }
   }
 
@@ -82,7 +107,7 @@ class VoucherNumberModel {
     await AccountingDB.runRawQuery(query);
   }
 
-  static Future<void> _increaseAndFreeVoucherNumber(int oldNumber) async {
+  static Future<void> _freeVoucherNumberAndIncrease(int oldNumber) async {
     var query = '''
     UPDATE $tableName
     SET 
@@ -99,6 +124,18 @@ class VoucherNumberModel {
     column2Number: 1,
     column3Status: FREE,
   };
+
+  // when some one lock the number and lost the current number
+  static Future<void> _freeVoucherNumberWithoutIncrease() async {
+    var query = '''
+    UPDATE $tableName
+    SET 
+      $column3Status = '$FREE'
+    WHERE
+    $column1Id = 1 
+    ''';
+    await AccountingDB.runRawQuery(query);
+  }
 
   static Map<String, Object> mapForDb(int number, VoucherNumberStatus status) {
     return {
