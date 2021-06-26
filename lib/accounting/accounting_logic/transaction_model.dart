@@ -78,7 +78,9 @@ class TransactionModel {
     print(result);
   }
 
-  static Future<void> allTranJoinVchForAccount(String accountId) async {
+  static Future<List<Map<String, Object?>>> allTranJoinVchForAccount(
+    String accountId,
+  ) async {
     final query = '''
     SELECT *
     FROM $transactionTableName
@@ -89,13 +91,21 @@ class TransactionModel {
     var result = await AccountingDB.runRawQuery(query, [accountId]);
     print('TM20| $transactionTableName and Vouchers for $accountId >');
     print(result);
+    return result;
   }
 
   static Future<List<TransactionModel>> allExpences() async {
-    var dbTransactions =
-        await allTransactionsForAccount(AccountsId.EXPENDITURE_ACCOUNT_ID);
-    print(dbTransactions);
+    var dbTransactions = await allTransactionsForAccount(
+      AccountsId.EXPENDITURE_ACCOUNT_ID,
+    );
     return fromMapOfTransactions(dbTransactions);
+  }
+
+  static Future<List<Map<String, dynamic>>> allExpencesVoucher() async {
+    var dbTransactions = await allTranJoinVchForAccount(
+      AccountsId.EXPENDITURE_ACCOUNT_ID,
+    );
+    return fromMapOfVoucherJoinTransactions(dbTransactions);
   }
 
   static List<TransactionModel> fromMapOfTransactions(
@@ -106,8 +116,7 @@ class TransactionModel {
           (tran) => TransactionModel(
             id: tran[TransactionModel.column1Id] as int,
             accountId: tran[TransactionModel.column2AccountId] as String,
-            voucherId: tran[TransactionModel.column3VoucherId]
-                as int, // Error type 'String' is not a subtype of type 'int' in type cast
+            voucherId: tran[TransactionModel.column3VoucherId] as int,
             amount: tran[TransactionModel.column4Amount] as double,
             isDebit: convertIntToBoolean(
               tran[TransactionModel.column5IsDebit] as int,
@@ -117,6 +126,40 @@ class TransactionModel {
             ),
             note: tran[TransactionModel.column7Note] as String,
           ),
+        )
+        .toList();
+  }
+
+  static TransactionModel fromMapOfTransaction(
+    Map<String, Object?> tran,
+  ) {
+    var transaction = TransactionModel(
+      id: tran[TransactionModel.column1Id] as int,
+      accountId: tran[TransactionModel.column2AccountId] as String,
+      voucherId: tran[TransactionModel.column3VoucherId] as int,
+      amount: tran[TransactionModel.column4Amount] as double,
+      isDebit: convertIntToBoolean(
+        tran[TransactionModel.column5IsDebit] as int,
+      ),
+      date: DateTime.fromMicrosecondsSinceEpoch(
+        tran[TransactionModel.column6Date] as int,
+      ),
+      note: tran[TransactionModel.column7Note] as String,
+    );
+    print('TM 52 | fromMapOfTransaction');
+    print(transaction);
+    return transaction;
+  }
+
+  static List<Map<String, dynamic>> fromMapOfVoucherJoinTransactions(
+    List<Map<String, Object?>> dbResult,
+  ) {
+    return dbResult
+        .map(
+          (voucherJointran) => {
+            'voucher': VoucherModel.fromMapOfVoucher(voucherJointran),
+            'transaction': fromMapOfTransaction(voucherJointran),
+          },
         )
         .toList();
   }

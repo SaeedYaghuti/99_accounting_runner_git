@@ -1,5 +1,6 @@
-import 'package:shop/accounting/accounting_logic/transaction_model.dart';
+import 'package:shop/accounting/accounting_logic/Voucher_model.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
+import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 
 class VoucherModel {
   int? id;
@@ -82,7 +83,7 @@ class VoucherModel {
 
   static const String QUERY_CREATE_VOUCHER_TABLE = '''CREATE TABLE $tableName (
     $column1Id INTEGER PRIMARY KEY, 
-    $column2VoucherNumber TEXT NOT NULL, 
+    $column2VoucherNumber INTEGER NOT NULL, 
     $column3Date INTEGER  NOT NULL, 
     $column4Note TEXT
   )''';
@@ -102,6 +103,30 @@ class VoucherModel {
         column4Note: note,
       };
     }
+  }
+
+  static VoucherModel fromMapOfVoucher(
+    Map<String, Object?> voucher,
+  ) {
+    try {
+      // int id = voucher[VoucherModel.column1Id] as int;
+      int voucherNumber = voucher[VoucherModel.column2VoucherNumber] as int;
+      // DateTime date = DateTime.fromMicrosecondsSinceEpoch(
+      //   voucher[VoucherModel.column3Date] as int,
+      // );
+      // String note = voucher[VoucherModel.column4Note] as String;
+    } catch (e) {
+      print('VM 30| fromMapOfVoucher');
+      print(e);
+    }
+    return VoucherModel(
+      id: voucher[VoucherModel.column1Id] as int,
+      voucherNumber: voucher[VoucherModel.column2VoucherNumber] as int,
+      date: DateTime.fromMicrosecondsSinceEpoch(
+        voucher[VoucherModel.column3Date] as int,
+      ),
+      note: voucher[VoucherModel.column4Note] as String,
+    );
   }
 
   String toString() {

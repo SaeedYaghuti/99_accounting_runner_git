@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop/accounting/accounting_logic/accounts.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/shared/readible_date.dart';
 import 'package:shop/shared/show_error_dialog.dart';
@@ -16,6 +17,30 @@ class _ExpenditurDataTableState extends State<ExpenditurDataTable> {
 
   @override
   void initState() {
+    _loadingStart();
+    TransactionModel.allExpencesVoucher().then(
+      (result) {
+        _loadingEnd();
+        print('EDT01 | allTranJoinVchForAccount result');
+        print(result);
+        // expenses = result;
+        // print('EDT10| allExpences() result >');
+        // print(expenses);
+      },
+    ).catchError((e) {
+      _loadingEnd();
+      showErrorDialog(
+        context,
+        'ExpenditurDataTable',
+        '@initState() #allExpences()',
+        e,
+      );
+      print(e.toString());
+    });
+    super.initState();
+  }
+
+  void initState1() {
     _loadingStart();
     TransactionModel.allExpences().then(
       (result) {
