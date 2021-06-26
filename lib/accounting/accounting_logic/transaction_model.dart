@@ -1,7 +1,7 @@
 import 'package:shop/accounting/accounting_logic/accounts.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
-import 'package:shop/shared/DBException.dart';
+import 'package:shop/accounting/accounting_logic/DBException.dart';
 
 import 'account_model.dart';
 
@@ -39,6 +39,19 @@ class TransactionModel {
     print(result);
   }
 
+  Future<int> deleteMeFromDB() async {
+    if (id == null) {
+      return 0;
+    }
+    final query = '''
+    DELETE FROM $transactionTableName
+    WHERE $column1Id = $id ;
+    ''';
+    var count = await AccountingDB.deleteRawQuery(query);
+    print('TM10| DELETE $id; count: $count');
+    return count;
+  }
+
   static Future<List<Map<String, Object?>>> allTransactionsForAccount(
     String accountId,
   ) async {
@@ -48,8 +61,8 @@ class TransactionModel {
     WHERE $transactionTableName.$column2AccountId = ?
     ''';
     var result = await AccountingDB.runRawQuery(query, [accountId]);
-    print('TM11| SELECT * FROM $transactionTableName for $accountId>');
-    print(result);
+    // print('TM11| SELECT * FROM $transactionTableName for $accountId>');
+    // print(result);
     return result;
   }
 
@@ -80,8 +93,7 @@ class TransactionModel {
 
   static Future<List<TransactionModel>> allExpences() async {
     var dbTransactions =
-        await allTransactionsForAccount(AccountsId.EXPENDITURE_ID);
-    print('TM26| allExpences() >');
+        await allTransactionsForAccount(AccountsId.EXPENDITURE_ACCOUNT_ID);
     print(dbTransactions);
     return fromMapOfTransactions(dbTransactions);
   }

@@ -18,7 +18,23 @@ class VoucherModel {
     // do some logic on variables
     var map = this.toMapForDB();
     print('VM10| map: $map');
-    return AccountingDB.insert(tableName, map);
+    id = await AccountingDB.insert(tableName, map);
+    print('VM10| insertInDB() id: $id');
+    return id!;
+  }
+
+  Future<int> deleteMeFromDB() async {
+    if (id == null) {
+      return 0;
+    }
+
+    final query = '''
+    DELETE FROM $tableName
+    WHERE $column1Id = $id ;
+    ''';
+    var count = await AccountingDB.deleteRawQuery(query);
+    print('TM10| DELETE $id; count: $count');
+    return count;
   }
 
   static Future<void> fetchAllVouchers() async {
@@ -29,6 +45,21 @@ class VoucherModel {
     var result = await AccountingDB.runRawQuery(query);
     print('VM11| SELECT * FROM $tableName >');
     print(result);
+  }
+
+  static Future<int> maxVoucherNumber() async {
+    final query = '''
+    SELECT MAX($column2VoucherNumber) as max
+    FROM $tableName
+    ''';
+    var result = await AccountingDB.runRawQuery(query);
+    print('VM 21| SELECT MAX FROM $tableName >');
+    print(result);
+
+    var maxResult = int.tryParse(result[0]['max'] as String);
+    var max = (maxResult == null) ? 0 : maxResult;
+    print(max);
+    return max;
   }
 
   static Future<void> fetchAllVouchersJoin() async {

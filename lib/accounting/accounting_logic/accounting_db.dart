@@ -48,6 +48,12 @@ class AccountingDB {
     return db.rawQuery(query, arguments);
   }
 
+  static Future<int> deleteRawQuery(String query,
+      [List<Object?>? arguments]) async {
+    final db = await AccountingDB.database();
+    return db.rawDelete(query, arguments);
+  }
+
   static Future<List<Map<String, Object?>>> getData(String table) async {
     final db = await AccountingDB.database();
     return db.query(table);

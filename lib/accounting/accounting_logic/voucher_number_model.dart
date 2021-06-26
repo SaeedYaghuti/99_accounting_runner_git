@@ -1,6 +1,7 @@
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
-import 'package:shop/shared/DBException.dart';
-import 'package:shop/shared/voucher_number_exception.dart';
+import 'package:shop/accounting/accounting_logic/voucher_model.dart';
+import 'package:shop/accounting/accounting_logic/DBException.dart';
+import 'package:shop/accounting/accounting_logic/voucher_number_exception.dart';
 
 class VoucherNumberModel {
   final int id = 1;
@@ -27,7 +28,8 @@ class VoucherNumberModel {
   )''';
 
   // throw error if currently is locked
-  static Future<int> getAndLockVoucherNumber() async {
+  static Future<int> borrowNumber() async {
+    print('VN-M 00| borrowing Number...');
     final query = '''
     SELECT *
     FROM $tableName
@@ -36,7 +38,7 @@ class VoucherNumberModel {
     // fetch voucher model
     var result = await AccountingDB.runRawQuery(query);
     var voucherNumberModel = fromDBResult(result);
-    print('VN-M 01| @ DB: $voucherNumberModel');
+    print('VN-M 01| before _lockVoucherNumber() > $voucherNumberModel');
 
     // check status
     if (voucherNumberModel!.status == VoucherNumberStatus.FREE) {
@@ -51,7 +53,8 @@ class VoucherNumberModel {
     }
   }
 
-  static Future<void> unlockVoucherNumberAndIcrease(int number) async {
+  static Future<void> numberConsumed(int number) async {
+    print('VNM 28| numberConsumed ...');
     final query = '''
     SELECT *
     FROM $tableName
@@ -59,6 +62,9 @@ class VoucherNumberModel {
     ''';
     // fetch voucher model
     var result = await AccountingDB.runRawQuery(query);
+    print(
+      'VNM 29| voucher_number before _freeVoucherNumberAndIncrease() > $result',
+    );
     var voucherNumberModel = fromDBResult(result);
 
     // check status
@@ -76,7 +82,8 @@ class VoucherNumberModel {
     }
   }
 
-  static Future<void> emergencyUnlockVoucherNumber() async {
+  static Future<void> numberNotConsumed(int number) async {
+    print('VNM 34| numberNotConsumed ...');
     final query = '''
     SELECT *
     FROM $tableName
@@ -87,17 +94,24 @@ class VoucherNumberModel {
     var voucherNumberModel = fromDBResult(result);
 
     // check status
-    if (voucherNumberModel!.status == VoucherNumberStatus.LOCK) {
-      // make it free
+    if (voucherNumberModel!.voucherNumber == number &&
+        voucherNumberModel.status == VoucherNumberStatus.LOCK) {
+      // increase number and make it free
       await _freeVoucherNumberWithoutIncrease();
     } else {
       print(
-        'VNM40| ERROR: voucher_number_db is not as expected! check created voucher numbers',
+        'VNM 35| ERROR: voucher_number_db is not as expected! check created voucher numbers',
       );
       VoucherNumberException(
-        'VNM40| ERROR: voucher_number_db is not as expected! check created voucher numbers',
+        'VNM 35| ERROR: voucher_number_db is not as expected! check created voucher numbers',
       );
     }
+  }
+
+  static Future<void> reset() async {
+    print('VNM 40| reset ...');
+    var max = await VoucherModel.maxVoucherNumber();
+    await VoucherNumberModel._freeVoucherNumberAndIncrease(max);
   }
 
   static Future<void> _lockVoucherNumber() async {

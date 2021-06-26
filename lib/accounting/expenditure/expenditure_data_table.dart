@@ -21,8 +21,8 @@ class _ExpenditurDataTableState extends State<ExpenditurDataTable> {
       (result) {
         _loadingEnd();
         expenses = result;
-        print('EDT10| allExpences() result >');
-        print(expenses);
+        // print('EDT10| allExpences() result >');
+        // print(expenses);
       },
     ).catchError((e) {
       _loadingEnd();
@@ -59,17 +59,6 @@ class _ExpenditurDataTableState extends State<ExpenditurDataTable> {
                 ],
               ))
           .toList(),
-      // [
-
-      //   DataRow(
-      //     cells: [
-      //       DataCell(Text('1.2')),
-      //       DataCell(Text('Mask')),
-      //       DataCell(Text('cash-draw')),
-      //       DataCell(Text('24/05/2021')),
-      //     ],
-      //   ),
-      // ],
     );
   }
 

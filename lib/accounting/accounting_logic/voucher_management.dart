@@ -1,9 +1,11 @@
 import 'package:shop/accounting/accounting_logic/transaction_feed.dart';
+import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_feed.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_number_model.dart';
-import 'package:shop/shared/DBException.dart';
+import 'package:shop/accounting/accounting_logic/DBException.dart';
 import 'package:shop/shared/ValidationException.dart';
+import 'package:shop/accounting/accounting_logic/voucher_exception.dart';
 
 class VoucherManagement {
   static Future<void> createVoucher(
@@ -17,84 +19,73 @@ class VoucherManagement {
       );
     }
 
-    // step 2# get and lock voucherNumber
+    // step 2# borrow voucherNumber
     var voucherNumber;
     try {
-      voucherNumber = await VoucherNumberModel.getAndLockVoucherNumber();
+      voucherNumber = await VoucherNumberModel.borrowNumber();
       print('V_MG 03| voucherNumber: $voucherNumber');
     } catch (e) {
       print('V_MG 04| voucherNumber: $e');
+      print('V_MG 04| we did VoucherNumberModel.reset() try again!');
+      await VoucherNumberModel.reset();
       throw e;
-      // maybe we want to use emergency unlock
-      // ...
     }
 
-    // step 1# create voucher
+    // step 3# create voucher
     VoucherModel voucher = VoucherModel(
       voucherNumber: voucherNumber,
       date: voucherFeed.date,
       note: makeVoucherNote(transactionFeeds),
     );
-    print('V_MG 04| voucher before save in db >');
+    print('V_MG 07| voucher before save in db >');
     print(voucher);
 
     try {
-      int voucherId = await voucher.insertInDB();
-      voucher.id = voucherId;
-      print('V_MG 06| voucherId in db: $voucherId');
+      await voucher.insertInDB();
     } catch (e) {
-      // unlock voucher number
-      ...
+      await VoucherNumberModel.numberNotConsumed(voucherNumber);
       throw DBException(
-        'V_MG 02| Unable to create voucher: e: ${e.toString()}',
+        'V_MG 10| Unable to create voucher: e: ${e.toString()}',
       );
     }
 
-    /// step 2 # unlock voucher number and increase
-    await VoucherNumberModel.unlockVoucherNumberAndIcrease(voucherNumber);
+    // step 4# create transactions
+    List<TransactionModel> successTransactions = [];
 
-    // step 2# create debit transaction
-    TransactionModel debitTransaction = TransactionModel(
-      accountId: fields.paidBy!,
-      voucherId: voucherId,
-      amount: fields.amount!,
-      isDebit: true,
-      date: fields.date!,
-      note: fields.note!,
-    );
-    try {
-      int debitTransactionId = await debitTransaction.insertTransactionToDB();
-      debitTransaction.id = debitTransactionId;
-      print('V_MG 02| debitTransactionId: $debitTransactionId');
-
-      // step 3# create credit transaction
-      TransactionModel creditTransaction = TransactionModel(
-        accountId: EXPENDITURE_ACCOUNT_ID,
-        voucherId: voucherId,
-        amount: fields.amount!,
-        isDebit: false,
-        date: fields.date!,
-        note: fields.note!,
+    for (var feed in transactionFeeds) {
+      var transaction = TransactionModel(
+        accountId: feed.accountId,
+        voucherId: voucher.id!,
+        amount: feed.amount,
+        isDebit: feed.isDebit,
+        date: feed.date,
+        note: feed.note,
       );
       try {
-        int creditTransactionId =
-            await creditTransaction.insertTransactionToDB();
-        creditTransaction.id = creditTransactionId;
-        print('V_MG 02| creditTransactionId: $creditTransactionId');
-
-        // End: all steps were successfull
+        await transaction.insertTransactionToDB();
+        successTransactions.add(transaction);
       } catch (e) {
-        // do: delete debitTransaction from db
-        throw DBException(
-          'V_MG 02| Unable to create creditTransaction: e: ${e.toString()}',
+        // delete all transactions and voucher
+        try {
+          await voucher.deleteMeFromDB();
+          for (var transaction in successTransactions) {
+            await transaction.deleteMeFromDB();
+          }
+        } catch (e) {
+          // we have dirty data in voucher or transactions
+          // do log at error_log ...
+          throw VoucherException(
+            'V_MG 13| We have dirty data at voucher or transactions table',
+          );
+        }
+        throw VoucherException(
+          'V_MG 16| Voucher did not saved at db!  we do not have dirty data at db e: ${e.toString()}',
         );
       }
-    } catch (e) {
-      // do: delete voucher from db
-      throw DBException(
-        'V_MG 02| Unable to create debitTransaction: e: ${e.toString()}',
-      );
     }
+    // step #5 voucher has mad Successfully
+    await VoucherNumberModel.numberConsumed(voucherNumber);
+    print('V_MG 19| voucher and all its transactions saved Successfully!');
   }
 
   static bool validateTransactionsAmount(List<TransactionFeed> feeds) {
@@ -102,7 +93,12 @@ class VoucherManagement {
     var totalCredit = 0.0;
 
     for (var feed in feeds) {
-      if (feed.amount <= 0.0) {
+      // maybe redundent
+      if (feed.amount < 0.0) {
+        return false;
+      }
+      // maybe redundent
+      if (feed.amount == 0.0) {
         return false;
       }
       if (feed.isDebit) {
