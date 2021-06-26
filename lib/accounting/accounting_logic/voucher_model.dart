@@ -3,7 +3,7 @@ import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 
 class VoucherModel {
   int? id;
-  final String voucherNumber;
+  final int voucherNumber;
   final DateTime date;
   final String note;
 

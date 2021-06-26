@@ -1,5 +1,6 @@
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/shared/DBException.dart';
+import 'package:shop/shared/voucher_number_exception.dart';
 
 class VoucherNumberModel {
   final int id = 1;
@@ -25,7 +26,8 @@ class VoucherNumberModel {
     $column3Status TEXT NOT NULL
   )''';
 
-  static Future<int> getVoucherNumberAndLock() async {
+  // throw error if currently is locked
+  static Future<int> getAndLockVoucherNumber() async {
     final query = '''
     SELECT *
     FROM $tableName
@@ -34,7 +36,7 @@ class VoucherNumberModel {
     // fetch voucher model
     var result = await AccountingDB.runRawQuery(query);
     var voucherNumberModel = fromDBResult(result);
-    print('VNM01| @ DB: $voucherNumberModel');
+    print('VN-M 01| @ DB: $voucherNumberModel');
 
     // check status
     if (voucherNumberModel!.status == VoucherNumberStatus.FREE) {
@@ -43,12 +45,13 @@ class VoucherNumberModel {
 
       // 2) return number
       return voucherNumberModel.voucherNumber;
+    } else {
+      throw VoucherNumberException(
+          'VN-M 02| voucher-number status expected to be FREE but it is LOCK');
     }
-    // number is lock
-    return -1;
   }
 
-  static Future<void> unlockVoucherNumber(int number) async {
+  static Future<void> unlockVoucherNumberAndIcrease(int number) async {
     final query = '''
     SELECT *
     FROM $tableName
@@ -67,7 +70,7 @@ class VoucherNumberModel {
       print(
         'VNM30| ERROR: voucher_number_db is not as expected! check created voucher numbers',
       );
-      DBException(
+      VoucherNumberException(
         'VNM30| ERROR: voucher_number_db is not as expected! check created voucher numbers',
       );
     }
@@ -91,7 +94,7 @@ class VoucherNumberModel {
       print(
         'VNM40| ERROR: voucher_number_db is not as expected! check created voucher numbers',
       );
-      DBException(
+      VoucherNumberException(
         'VNM40| ERROR: voucher_number_db is not as expected! check created voucher numbers',
       );
     }
