@@ -157,8 +157,10 @@ class TransactionModel {
     return dbResult
         .map(
           (voucherJointran) => {
-            'voucher': VoucherModel.fromMapOfVoucher(voucherJointran),
-            'transaction': fromMapOfTransaction(voucherJointran),
+            VoucherModel.tableName:
+                VoucherModel.fromMapOfVoucher(voucherJointran),
+            TransactionModel.transactionTableName:
+                fromMapOfTransaction(voucherJointran),
           },
         )
         .toList();
@@ -189,13 +191,13 @@ class TransactionModel {
 
   String toString() {
     return '''
-    ${TransactionModel.column1Id}: $id, 
-    ${TransactionModel.column2AccountId}: $accountId,
-    ${TransactionModel.column3VoucherId}: $voucherId,
-    ${TransactionModel.column4Amount}: $amount,
-    ${TransactionModel.column5IsDebit}: $isDebit,
-    ${TransactionModel.column6Date}: ${date.day}/${date.month}/${date.year},
-    ${TransactionModel.column7Note}: $note,
+    id: $id, 
+    accountId: $accountId,
+    voucherId: $voucherId,
+    amount: $amount,
+    isDebit: $isDebit,
+    date: ${date.day}/${date.month}/${date.year},
+    note: $note,
     ''';
   }
 

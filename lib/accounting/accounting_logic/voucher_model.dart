@@ -57,8 +57,10 @@ class VoucherModel {
     print('VM 21| SELECT MAX FROM $tableName >');
     print(result);
 
-    var maxResult = int.tryParse(result[0]['max'] as String);
-    var max = (maxResult == null) ? 0 : maxResult;
+    var maxResult =
+        (result[0]['max'] == null) ? '0' : (result[0]['max'] as String);
+    var parse = int.tryParse(maxResult);
+    var max = (parse == null) ? 0 : parse;
     print(max);
     return max;
   }
@@ -106,35 +108,31 @@ class VoucherModel {
   }
 
   static VoucherModel fromMapOfVoucher(
-    Map<String, Object?> voucher,
+    Map<String, Object?> voucherMap,
   ) {
-    try {
-      // int id = voucher[VoucherModel.column1Id] as int;
-      int voucherNumber = voucher[VoucherModel.column2VoucherNumber] as int;
-      // DateTime date = DateTime.fromMicrosecondsSinceEpoch(
-      //   voucher[VoucherModel.column3Date] as int,
-      // );
-      // String note = voucher[VoucherModel.column4Note] as String;
-    } catch (e) {
-      print('VM 30| fromMapOfVoucher');
-      print(e);
-    }
-    return VoucherModel(
-      id: voucher[VoucherModel.column1Id] as int,
-      voucherNumber: voucher[VoucherModel.column2VoucherNumber] as int,
+    print('VM 20| fromMapOfVoucher; voucherMap:');
+    print(voucherMap);
+
+    var voucher = VoucherModel(
+      id: voucherMap[VoucherModel.column1Id] as int,
+      voucherNumber: voucherMap[VoucherModel.column2VoucherNumber] as int,
       date: DateTime.fromMicrosecondsSinceEpoch(
-        voucher[VoucherModel.column3Date] as int,
+        voucherMap[VoucherModel.column3Date] as int,
       ),
-      note: voucher[VoucherModel.column4Note] as String,
+      note: voucherMap[VoucherModel.column4Note] as String,
     );
+    print('VM 21| fromMapOfVoucher; voucher:');
+
+    print(voucher);
+    return voucher;
   }
 
   String toString() {
     return '''
-    ${VoucherModel.column1Id}: $id, 
-    ${VoucherModel.column2VoucherNumber}: $voucherNumber,
-    ${VoucherModel.column3Date}: ${date.day}/${date.month}/${date.year},
-    ${VoucherModel.column4Note}: $note,
+    id: $id, 
+    voucherNumber: $voucherNumber,
+    date: ${date.day}/${date.month}/${date.year},
+    note: $note,
     ''';
   }
 }
