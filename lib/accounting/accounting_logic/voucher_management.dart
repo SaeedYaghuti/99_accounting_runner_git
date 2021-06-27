@@ -86,6 +86,9 @@ class VoucherManagement {
     // step #5 voucher has mad Successfully
     await VoucherNumberModel.numberConsumed(voucherNumber);
     print('V_MG 19| voucher and all its transactions saved Successfully!');
+
+    // TODO: remove me
+    await voucher.fetchMyTransactions();
   }
 
   static bool validateTransactionsAmount(List<TransactionFeed> feeds) {

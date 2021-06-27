@@ -24,7 +24,7 @@ class _ExpenditurDataTableState extends State<ExpenditurDataTable> {
         _loadingEnd();
         print('EDT01 | allTranJoinVchForAccount result');
         print(result);
-        print(result[0][VoucherModel.tableName] as VoucherModel);
+        print(result[0][VoucherModel.voucherTableName] as VoucherModel);
         print(result[0][TransactionModel.transactionTableName]
             as TransactionModel);
         // expenses = result;

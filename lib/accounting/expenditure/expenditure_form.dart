@@ -307,7 +307,8 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     // await TransactionModel.allTranJoinVch();
     // await TransactionModel.allTranJoinVchForAccount('expenditure');
     // await VoucherManagement.createVoucher();
-    await VoucherModel.maxVoucherNumber();
+    // await VoucherModel.maxVoucherNumber();
+    // await VoucherModel.vouchersOfAccountIncludeTransactions('expenditure');
   }
 
   bool isToday(DateTime date) {

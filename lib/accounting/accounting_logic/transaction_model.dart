@@ -70,8 +70,8 @@ class TransactionModel {
     final query = '''
     SELECT *
     FROM $transactionTableName
-    LEFT JOIN ${VoucherModel.tableName}
-    ON $transactionTableName.$column3VoucherId = ${VoucherModel.tableName}.${VoucherModel.column1Id}
+    LEFT JOIN ${VoucherModel.voucherTableName}
+    ON $transactionTableName.$column3VoucherId = ${VoucherModel.voucherTableName}.${VoucherModel.column1Id}
     ''';
     var result = await AccountingDB.runRawQuery(query);
     print('TM16| $transactionTableName JOIN result >');
@@ -84,8 +84,8 @@ class TransactionModel {
     final query = '''
     SELECT *
     FROM $transactionTableName
-    LEFT JOIN ${VoucherModel.tableName}
-    ON $transactionTableName.$column3VoucherId = ${VoucherModel.tableName}.${VoucherModel.column1Id}
+    LEFT JOIN ${VoucherModel.voucherTableName}
+    ON $transactionTableName.$column3VoucherId = ${VoucherModel.voucherTableName}.${VoucherModel.column1Id}
     WHERE $transactionTableName.$column2AccountId = ?
     ''';
     var result = await AccountingDB.runRawQuery(query, [accountId]);
@@ -157,7 +157,7 @@ class TransactionModel {
     return dbResult
         .map(
           (voucherJointran) => {
-            VoucherModel.tableName:
+            VoucherModel.voucherTableName:
                 VoucherModel.fromMapOfVoucher(voucherJointran),
             TransactionModel.transactionTableName:
                 fromMapOfTransaction(voucherJointran),
@@ -230,6 +230,6 @@ class TransactionModel {
     $column6Date INTEGER NOT NULL, 
     $column7Note TEXT, 
     FOREIGN KEY ($column2AccountId) REFERENCES ${AccountModel.tableName} (${AccountModel.columnId}),
-    FOREIGN KEY ($column3VoucherId) REFERENCES ${VoucherModel.tableName} (${VoucherModel.column1Id})
+    FOREIGN KEY ($column3VoucherId) REFERENCES ${VoucherModel.voucherTableName} (${VoucherModel.column1Id})
   )''';
 }

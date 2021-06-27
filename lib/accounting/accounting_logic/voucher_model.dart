@@ -7,6 +7,7 @@ class VoucherModel {
   final int voucherNumber;
   final DateTime date;
   final String note;
+  List<TransactionModel?> transactions = [];
 
   VoucherModel({
     this.id,
@@ -19,7 +20,7 @@ class VoucherModel {
     // do some logic on variables
     var map = this.toMapForDB();
     print('VM10| map: $map');
-    id = await AccountingDB.insert(tableName, map);
+    id = await AccountingDB.insert(voucherTableName, map);
     print('VM10| insertInDB() id: $id');
     return id!;
   }
@@ -30,31 +31,50 @@ class VoucherModel {
     }
 
     final query = '''
-    DELETE FROM $tableName
+    DELETE FROM $voucherTableName
     WHERE $column1Id = $id ;
     ''';
     var count = await AccountingDB.deleteRawQuery(query);
-    print('TM10| DELETE $id; count: $count');
+    print('VM 20| DELETE $id; count: $count');
     return count;
+  }
+
+  Future<void> fetchMyTransactions() async {
+    if (id == null) {
+      print('VM 29| Warn: id is null: fetchMyTransactions()');
+      return;
+    }
+
+    final query = '''
+      SELECT *
+      FROM ${TransactionModel.transactionTableName}
+      WHERE ${TransactionModel.column3VoucherId} = $id
+    ''';
+    var result = await AccountingDB.runRawQuery(query);
+    transactions = result
+        .map(
+          (tranMap) => TransactionModel.fromMapOfTransaction(tranMap),
+        )
+        .toList();
   }
 
   static Future<void> fetchAllVouchers() async {
     final query = '''
     SELECT *
-    FROM $tableName
+    FROM $voucherTableName
     ''';
     var result = await AccountingDB.runRawQuery(query);
-    print('VM11| SELECT * FROM $tableName >');
+    print('VM11| SELECT * FROM $voucherTableName >');
     print(result);
   }
 
   static Future<int> maxVoucherNumber() async {
     final query = '''
     SELECT MAX($column2VoucherNumber) as max
-    FROM $tableName
+    FROM $voucherTableName
     ''';
     var result = await AccountingDB.runRawQuery(query);
-    print('VM 21| SELECT MAX FROM $tableName >');
+    print('VM 21| SELECT MAX FROM $voucherTableName >');
     print(result);
 
     var maxResult =
@@ -68,22 +88,69 @@ class VoucherModel {
   static Future<void> fetchAllVouchersJoin() async {
     final query = '''
     SELECT *
-    FROM $tableName
+    FROM $voucherTableName
     LEFT JOIN ${TransactionModel.transactionTableName}
-    ON $tableName.$column1Id = ${TransactionModel.transactionTableName}.${TransactionModel.column3VoucherId}
+    ON $voucherTableName.$column1Id = ${TransactionModel.transactionTableName}.${TransactionModel.column3VoucherId}
     ''';
     var result = await AccountingDB.runRawQuery(query);
-    print('VM11| $tableName JOIN result >');
+    print('VM11| $voucherTableName JOIN result >');
     print(result);
   }
 
-  static const String tableName = 'vouchers';
+  static Future<void> vouchersOfAccountIncludeTransactions(
+    String accountId,
+  ) async {
+    final query = '''
+    SELECT *
+    FROM $voucherTableName
+    LEFT JOIN (
+      SELECT 
+        ${TransactionModel.column3VoucherId}, 
+        group_concat(
+          ${TransactionModel.column2AccountId}
+        ) 
+      FROM ${TransactionModel.transactionTableName}
+      WHERE ${TransactionModel.column2AccountId} = ?
+      GROUP BY ${TransactionModel.column3VoucherId}
+    ) AS subquery 
+    ON $voucherTableName.$column1Id = subquery.${TransactionModel.column3VoucherId}
+    ''';
+
+    final q = '''
+    SELECT 
+      ${TransactionModel.column3VoucherId}, 
+      group_concat(
+        ${TransactionModel.column1Id},
+        ${TransactionModel.column2AccountId},
+        ${TransactionModel.column3VoucherId},
+        ${TransactionModel.column4Amount},
+        ${TransactionModel.column5IsDebit},
+        ${TransactionModel.column6Date},
+        ${TransactionModel.column7Note}
+      )
+    FROM $voucherTableName
+    LEFT JOIN (
+      SELECT * 
+      FROM ${TransactionModel.transactionTableName}
+      WHERE ${TransactionModel.column2AccountId} = ?
+      GROUP BY ${TransactionModel.column3VoucherId}
+    ) AS subquery 
+    ON $voucherTableName.$column1Id = subquery.${TransactionModel.column3VoucherId}
+    ''';
+    var result = await AccountingDB.runRawQuery(query, [accountId]);
+    print('VM 30| vouchersOfAccountIncludeTransactions() result >');
+    print(result);
+  }
+
+  static const String voucherTableName = 'vouchers';
   static const String column1Id = 'vch_id';
   static const String column2VoucherNumber = 'voucherNumber';
   static const String column3Date = 'vch_date';
   static const String column4Note = 'vch_note';
+  static const String column5Transactions = 'transactions';
 
-  static const String QUERY_CREATE_VOUCHER_TABLE = '''CREATE TABLE $tableName (
+  static const String QUERY_CREATE_VOUCHER_TABLE =
+      '''CREATE TABLE $voucherTableName (
     $column1Id INTEGER PRIMARY KEY, 
     $column2VoucherNumber INTEGER NOT NULL, 
     $column3Date INTEGER  NOT NULL, 
