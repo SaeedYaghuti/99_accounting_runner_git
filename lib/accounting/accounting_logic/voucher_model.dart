@@ -228,9 +228,6 @@ class VoucherModel {
     var voucher = VoucherModel(
       id: voucherMap[VoucherModel.column1Id] as int,
       voucherNumber: voucherMap[VoucherModel.column2VoucherNumber] as int,
-      // date: DateTime.fromMicrosecondsSinceEpoch(
-      //   voucherMap[VoucherModel.column3Date] as int,
-      // ),
       date: secondsToDateTime(
         voucherMap[VoucherModel.column3Date] as int,
       ),

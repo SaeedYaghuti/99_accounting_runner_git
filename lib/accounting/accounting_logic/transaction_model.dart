@@ -2,6 +2,7 @@ import 'package:shop/accounting/accounting_logic/accounts.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/accounting/accounting_logic/DBException.dart';
+import 'package:shop/shared/seconds_of_time.dart';
 
 import 'account_model.dart';
 
@@ -108,7 +109,10 @@ class TransactionModel {
             isDebit: convertIntToBoolean(
               tran[TransactionModel.column5IsDebit] as int,
             ),
-            date: DateTime.fromMicrosecondsSinceEpoch(
+            // date: DateTime.fromMicrosecondsSinceEpoch(
+            //   tran[TransactionModel.column6Date] as int,
+            // ),
+            date: secondsToDateTime(
               tran[TransactionModel.column6Date] as int,
             ),
             note: tran[TransactionModel.column7Note] as String,
@@ -128,7 +132,7 @@ class TransactionModel {
       isDebit: convertIntToBoolean(
         tran[TransactionModel.column5IsDebit] as int,
       ),
-      date: DateTime.fromMicrosecondsSinceEpoch(
+      date: secondsToDateTime(
         tran[TransactionModel.column6Date] as int,
       ),
       note: tran[TransactionModel.column7Note] as String,
@@ -160,8 +164,7 @@ class TransactionModel {
         column3VoucherId: voucherId,
         column4Amount: amount,
         column5IsDebit: isDebit ? 1 : 0,
-        // column6Date: date.toUtc().millisecondsSinceEpoch,
-        column6Date: date.millisecondsSinceEpoch,
+        column6Date: seconsdOfDateTime(date),
         column7Note: note,
       };
     } else {
@@ -171,8 +174,7 @@ class TransactionModel {
         column3VoucherId: voucherId,
         column4Amount: amount,
         column5IsDebit: isDebit ? 1 : 0,
-        // column6Date: date.toUtc().millisecondsSinceEpoch,
-        column6Date: date.millisecondsSinceEpoch,
+        column6Date: seconsdOfDateTime(date),
         column7Note: note,
       };
     }
