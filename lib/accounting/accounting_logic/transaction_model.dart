@@ -95,20 +95,6 @@ class TransactionModel {
     return result;
   }
 
-  static Future<List<TransactionModel>> allExpences() async {
-    var dbTransactions = await allTransactionsForAccount(
-      AccountsId.EXPENDITURE_ACCOUNT_ID,
-    );
-    return fromMapOfTransactions(dbTransactions);
-  }
-
-  static Future<List<Map<String, dynamic>>> allExpencesVoucher() async {
-    var dbTransactions = await allTranJoinVchForAccount(
-      AccountsId.EXPENDITURE_ACCOUNT_ID,
-    );
-    return fromMapOfVoucherJoinTransactions(dbTransactions);
-  }
-
   static List<TransactionModel> fromMapOfTransactions(
     List<Map<String, Object?>> dbResult,
   ) {
@@ -147,8 +133,8 @@ class TransactionModel {
       ),
       note: tran[TransactionModel.column7Note] as String,
     );
-    print('TM 52 | @ fromMapOfTransaction() > after conversion');
-    print(transaction);
+    // print('TM 52 | @ fromMapOfTransaction() > after conversion');
+    // print(transaction);
     return transaction;
   }
 
@@ -174,7 +160,8 @@ class TransactionModel {
         column3VoucherId: voucherId,
         column4Amount: amount,
         column5IsDebit: isDebit ? 1 : 0,
-        column6Date: date.toUtc().millisecondsSinceEpoch,
+        // column6Date: date.toUtc().millisecondsSinceEpoch,
+        column6Date: date.millisecondsSinceEpoch,
         column7Note: note,
       };
     } else {
@@ -184,7 +171,8 @@ class TransactionModel {
         column3VoucherId: voucherId,
         column4Amount: amount,
         column5IsDebit: isDebit ? 1 : 0,
-        column6Date: date.toUtc().millisecondsSinceEpoch,
+        // column6Date: date.toUtc().millisecondsSinceEpoch,
+        column6Date: date.millisecondsSinceEpoch,
         column7Note: note,
       };
     }

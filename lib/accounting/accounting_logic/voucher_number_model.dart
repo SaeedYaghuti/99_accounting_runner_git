@@ -38,7 +38,7 @@ class VoucherNumberModel {
     // fetch voucher model
     var result = await AccountingDB.runRawQuery(query);
     var voucherNumberModel = fromDBResult(result);
-    print('VN-M 01| before _lockVoucherNumber() > $voucherNumberModel');
+    // print('VN-M 01| before _lockVoucherNumber() > $voucherNumberModel');
 
     // check status
     if (voucherNumberModel!.status == VoucherNumberStatus.FREE) {
@@ -62,9 +62,9 @@ class VoucherNumberModel {
     ''';
     // fetch voucher model
     var result = await AccountingDB.runRawQuery(query);
-    print(
-      'VNM 29| voucher_number before _freeVoucherNumberAndIncrease() > $result',
-    );
+    // print(
+    //   'VNM 29| voucher_number before _freeVoucherNumberAndIncrease() > $result',
+    // );
     var voucherNumberModel = fromDBResult(result);
 
     // check status

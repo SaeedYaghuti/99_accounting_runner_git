@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shop/accounting/accounting_logic/accounts.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
+import 'package:shop/accounting/expenditure/expenditure_model.dart';
 import 'package:shop/shared/readible_date.dart';
 import 'package:shop/shared/show_error_dialog.dart';
 
@@ -13,45 +14,18 @@ class ExpenditurDataTable extends StatefulWidget {
 }
 
 class _ExpenditurDataTableState extends State<ExpenditurDataTable> {
-  List<TransactionModel> expenses = [];
+  List<VoucherModel> vouchers = [];
   var _isLoading = false;
 
   @override
   void initState() {
     _loadingStart();
-    TransactionModel.allExpencesVoucher().then(
-      (result) {
+    ExpenditureModel.expenditureVouchers().then(
+      (voucherResults) {
         _loadingEnd();
-        print('EDT01 | allTranJoinVchForAccount result');
-        print(result);
-        print(result[0][VoucherModel.voucherTableName] as VoucherModel);
-        print(result[0][TransactionModel.transactionTableName]
-            as TransactionModel);
-        // expenses = result;
-        // print('EDT10| allExpences() result >');
-        // print(expenses);
-      },
-    ).catchError((e) {
-      _loadingEnd();
-      showErrorDialog(
-        context,
-        'ExpenditurDataTable',
-        '@initState() #allExpences()',
-        e,
-      );
-      print(e.toString());
-    });
-    super.initState();
-  }
-
-  void initState1() {
-    _loadingStart();
-    TransactionModel.allExpences().then(
-      (result) {
-        _loadingEnd();
-        expenses = result;
-        // print('EDT10| allExpences() result >');
-        // print(expenses);
+        print('EDT01 | initState recived vouchers:');
+        print(vouchers);
+        vouchers = voucherResults;
       },
     ).catchError((e) {
       _loadingEnd();
@@ -68,6 +42,7 @@ class _ExpenditurDataTableState extends State<ExpenditurDataTable> {
 
   @override
   Widget build(BuildContext context) {
+    // print('EDT 10| data-tabe build again ...');
     return DataTable(
       columns: [
         DataColumn(
@@ -78,17 +53,30 @@ class _ExpenditurDataTableState extends State<ExpenditurDataTable> {
         DataColumn(label: Text('Paid By')),
         DataColumn(label: Text('Date')),
       ],
-      rows: expenses
-          .map((exp) => DataRow(
-                cells: [
-                  DataCell(Text(exp.amount.toString())),
-                  DataCell(Text(exp.note)),
-                  DataCell(Text('paid by _')),
-                  DataCell(Text(readibleDate(exp.date))),
-                ],
-              ))
-          .toList(),
+      rows: vouchersDataRow(),
     );
+  }
+
+  List<DataRow> vouchersDataRow() {
+    List<DataRow> dataRows = [];
+    vouchers.forEach((voucher) {
+      voucher
+          .accountTransactions(AccountsId.EXPENDITURE_ACCOUNT_ID)
+          .forEach((exp) {
+        if (exp == null) {
+          return;
+        }
+        dataRows.add(DataRow(
+          cells: [
+            DataCell(Text(exp.amount.toString())),
+            DataCell(Text(exp.note)),
+            DataCell(Text(voucher.paidBy())),
+            DataCell(Text(readibleDate(voucher.date))),
+          ],
+        ));
+      });
+    });
+    return dataRows;
   }
 
   void _loadingStart() {

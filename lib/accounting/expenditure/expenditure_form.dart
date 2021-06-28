@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:shop/accounting/accounting_logic/run_code.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
@@ -11,7 +13,9 @@ import 'package:shop/shared/show_error_dialog.dart';
 import 'expenditure_form_fields.dart';
 
 class ExpenditureForm extends StatefulWidget {
-  const ExpenditureForm({Key? key}) : super(key: key);
+  final Function expenseCreationHandler;
+  const ExpenditureForm(this.expenseCreationHandler, {Key? key})
+      : super(key: key);
 
   @override
   _ExpenditureFormState createState() => _ExpenditureFormState();
@@ -221,7 +225,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     );
   }
 
-  void _saveForm() {
+  Future<void> _saveForm() async {
     if (_form.currentState == null) {
       print('EF20| Warn: _form.currentState == null');
       return;
@@ -239,7 +243,9 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       startLoading();
       try {
         // save expences in database
-        ExpenditureModel.createExpenditureInDB(_expenditureFormFields);
+        await ExpenditureModel.createExpenditureInDB(_expenditureFormFields);
+        // notify expenditur-screen to rebuild data-table
+        widget.expenseCreationHandler();
         endLoading();
       } catch (e) {
         endLoading();

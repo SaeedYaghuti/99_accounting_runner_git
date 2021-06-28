@@ -32,4 +32,8 @@ class ExpenditureModel {
       ],
     );
   }
+
+  static Future<List<VoucherModel>> expenditureVouchers() {
+    return VoucherModel.accountVouchers(AccountsId.EXPENDITURE_ACCOUNT_ID);
+  }
 }

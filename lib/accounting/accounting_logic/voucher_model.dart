@@ -1,5 +1,7 @@
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
+import 'package:shop/shared/readible_date.dart';
+import 'package:shop/shared/seconds_of_time.dart';
 
 class VoucherModel {
   int? id;
@@ -18,9 +20,9 @@ class VoucherModel {
   Future<int> insertInDB() async {
     // do some logic on variables
     var map = this.toMapForDB();
-    print('VM10| map: $map');
+    // print('VM10| map: $map');
     id = await AccountingDB.insert(voucherTableName, map);
-    print('VM10| insertInDB() id: $id');
+    // print('VM10| insertInDB() id: $id');
     return id!;
   }
 
@@ -34,7 +36,7 @@ class VoucherModel {
     WHERE $column1Id = $id ;
     ''';
     var count = await AccountingDB.deleteRawQuery(query);
-    print('VM 20| DELETE $id; count: $count');
+    // print('VM 20| DELETE $id; count: $count');
     return count;
   }
 
@@ -57,6 +59,41 @@ class VoucherModel {
         .toList();
   }
 
+  List<TransactionModel?> debitTransactions() {
+    return transactions.where((tran) {
+      if (tran == null) {
+        return false;
+      }
+      return tran.isDebit;
+    }).toList();
+  }
+
+  List<TransactionModel?> creditTransactions() {
+    return transactions.where((tran) {
+      if (tran == null) {
+        return false;
+      }
+      return !tran.isDebit;
+    }).toList();
+  }
+
+  List<TransactionModel?> accountTransactions(String accountId) {
+    return transactions.where((tran) {
+      if (tran == null) {
+        return false;
+      }
+      return tran.accountId == accountId;
+    }).toList();
+  }
+
+  String paidBy() {
+    var debitIds = [];
+    debitTransactions().forEach((tran) {
+      debitIds.add(tran?.accountId);
+    });
+    return debitIds.join(', ');
+  }
+
   static Future<void> fetchAllVouchers() async {
     final query = '''
     SELECT *
@@ -73,7 +110,7 @@ class VoucherModel {
     FROM $voucherTableName
     ''';
     var result = await AccountingDB.runRawQuery(query);
-    print('VM 21| SELECT MAX FROM $voucherTableName >');
+    // print('VM 21| SELECT MAX FROM $voucherTableName >');
     print(result);
 
     var maxResult =
@@ -125,8 +162,8 @@ class VoucherModel {
       await voucher.fetchMyTransactions();
     }
 
-    print('VM 30| voucherModels: $voucherModels');
-    print(voucherModels);
+    // print('VM 30| voucherModels: $voucherModels');
+    // print(voucherModels);
 
     return voucherModels;
   }
@@ -163,17 +200,20 @@ class VoucherModel {
     )''';
 
   Map<String, Object> toMapForDB() {
+    print('VM 44| date: ${readibleDate(date)}');
     if (id == null) {
       return {
         column2VoucherNumber: voucherNumber,
-        column3Date: date.toUtc().millisecondsSinceEpoch,
+        // column3Date: date.toUtc().millisecondsSinceEpoch,
+        // column3Date: date.millisecondsSinceEpoch,
+        column3Date: seconsdOfDateTime(date),
         column4Note: note,
       };
     } else {
       return {
         column1Id: id ?? '',
         column2VoucherNumber: voucherNumber,
-        column3Date: date.toUtc().millisecondsSinceEpoch,
+        column3Date: date.millisecondsSinceEpoch,
         column4Note: note,
       };
     }
@@ -182,22 +222,23 @@ class VoucherModel {
   static VoucherModel fromMapOfVoucher(
     Map<String, Object?> voucherMap,
   ) {
-    print('VM 20| @ fromMapOfVoucher(); before conversion');
+    // print('VM 20| @ fromMapOfVoucher(); before conversion');
     print(voucherMap);
 
     var voucher = VoucherModel(
       id: voucherMap[VoucherModel.column1Id] as int,
       voucherNumber: voucherMap[VoucherModel.column2VoucherNumber] as int,
-      date: DateTime.fromMicrosecondsSinceEpoch(
+      // date: DateTime.fromMicrosecondsSinceEpoch(
+      //   voucherMap[VoucherModel.column3Date] as int,
+      // ),
+      date: secondsToDateTime(
         voucherMap[VoucherModel.column3Date] as int,
       ),
       note: voucherMap[VoucherModel.column4Note] as String,
-
-      // voucherNumber: 1,
     );
-    print('VM 21| @ fromMapOfVoucher(); after conversion');
+    // print('VM 21| @ fromMapOfVoucher(); after conversion');
+    // print(voucher);
 
-    print(voucher);
     return voucher;
   }
 

@@ -23,7 +23,8 @@ class VoucherManagement {
     var voucherNumber;
     try {
       voucherNumber = await VoucherNumberModel.borrowNumber();
-      print('V_MG 03| voucherNumber: $voucherNumber');
+      // print('V_MG 03| voucherNumber: $voucherNumber');
+
     } catch (e) {
       print('V_MG 04| voucherNumber: $e');
       print('V_MG 04| we did VoucherNumberModel.reset() try again!');
@@ -37,8 +38,8 @@ class VoucherManagement {
       date: voucherFeed.date,
       note: makeVoucherNote(transactionFeeds),
     );
-    print('V_MG 07| voucher before save in db >');
-    print(voucher);
+    // print('V_MG 07| voucher before save in db >');
+    // print(voucher);
 
     try {
       await voucher.insertInDB();

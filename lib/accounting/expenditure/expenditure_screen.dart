@@ -16,6 +16,7 @@ class ExpenditureScreen extends StatefulWidget {
 }
 
 class _ExpenditureScreenState extends State<ExpenditureScreen> {
+  Object redrawObject = Object();
   @override
   Widget build(BuildContext context) {
     AccountingDB.getData(AccountModel.tableName);
@@ -30,15 +31,24 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
         children: [
           Expanded(
             flex: 2,
-            child: ExpenditureForm(),
+            child: ExpenditureForm(expenseCreationHandler),
           ),
           Expanded(
             flex: 8,
-            child: ExpenditurDataTable(),
+            child: ExpenditurDataTable(
+              key: ValueKey<Object>(redrawObject),
+            ),
           ),
         ],
       ),
     );
+  } // build
+
+  void expenseCreationHandler() {
+    print('ES 10| expenseCreationHandler  ...');
+    setState(() {
+      redrawObject = Object();
+    });
   }
 
   Widget _buildFlexibleTitle() {
