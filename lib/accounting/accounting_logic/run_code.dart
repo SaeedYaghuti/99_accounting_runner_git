@@ -7,5 +7,5 @@ void runCode() async {
   // await TransactionModel.allTranJoinVchForAccount('expenditure');
   // await VoucherManagement.createVoucher();
   // await VoucherModel.maxVoucherNumber();
-  await VoucherModel.vouchersOfAccountIncludeTransactions('expenditure');
+  await VoucherModel.accountVouchers('expenditure');
 }

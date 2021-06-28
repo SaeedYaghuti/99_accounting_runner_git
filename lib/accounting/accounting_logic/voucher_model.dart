@@ -1,4 +1,3 @@
-import 'package:shop/accounting/accounting_logic/Voucher_model.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 
@@ -97,52 +96,43 @@ class VoucherModel {
     print(result);
   }
 
-  static Future<void> X_vouchersOfAccountIncludeTransactions(
+  static Future<List<VoucherModel>> accountVouchers(
     String accountId,
   ) async {
     final query = '''
-    SELECT *
-    FROM $voucherTableName
-    LEFT JOIN (
-      SELECT 
-        ${TransactionModel.column3VoucherId}, 
-        group_concat(
-          ${TransactionModel.column2AccountId}
-        ) 
-      FROM ${TransactionModel.transactionTableName}
-      WHERE ${TransactionModel.column2AccountId} = ?
-      GROUP BY ${TransactionModel.column3VoucherId}
-    ) AS subquery 
-    ON $voucherTableName.$column1Id = subquery.${TransactionModel.column3VoucherId}
-    ''';
-
-    final q = '''
     SELECT 
-      ${TransactionModel.column3VoucherId}, 
-      group_concat(
-        ${TransactionModel.column1Id},
-        ${TransactionModel.column2AccountId},
-        ${TransactionModel.column3VoucherId},
-        ${TransactionModel.column4Amount},
-        ${TransactionModel.column5IsDebit},
-        ${TransactionModel.column6Date},
-        ${TransactionModel.column7Note}
-      )
-    FROM $voucherTableName
-    LEFT JOIN (
-      SELECT * 
-      FROM ${TransactionModel.transactionTableName}
-      WHERE ${TransactionModel.column2AccountId} = ?
-      GROUP BY ${TransactionModel.column3VoucherId}
-    ) AS subquery 
-    ON $voucherTableName.$column1Id = subquery.${TransactionModel.column3VoucherId}
+      $column1Id,
+      $column2VoucherNumber,
+      $column3Date,
+      $column4Note
+    FROM 
+      $voucherTableName 
+    LEFT JOIN 
+      ${TransactionModel.transactionTableName}
+    ON ${TransactionModel.column3VoucherId} = $column1Id
+    AND ${TransactionModel.column2AccountId} = ?
     ''';
-    var result = await AccountingDB.runRawQuery(query, [accountId]);
-    print('VM 30| vouchersOfAccountIncludeTransactions() result >');
-    print(result);
+    var vouchersMap = await AccountingDB.runRawQuery(query, [accountId]);
+
+    // convert map to voucherModel
+    List<VoucherModel> voucherModels = [];
+    vouchersMap.forEach(
+      (vchMap) => voucherModels.add(fromMapOfVoucher(vchMap)),
+    );
+
+    // fetch transaction for each voucher
+    for (var voucher in voucherModels) {
+      await voucher.fetchMyTransactions();
+    }
+
+    print('VM 30| voucherModels: $voucherModels');
+    print(voucherModels);
+
+    return voucherModels;
   }
 
-  static Future<void> vouchersOfAccountIncludeTransactions(
+  // json_object only work if json1 extension installed
+  static Future<void> xVouchersOfAccountIncludeTransactions(
     String accountId,
   ) async {
     final query = '''
@@ -162,15 +152,15 @@ class VoucherModel {
   static const String column2VoucherNumber = 'voucherNumber';
   static const String column3Date = 'vch_date';
   static const String column4Note = 'vch_note';
-  static const String column5Transactions = 'transactions';
+  // static const String column5Transactions = 'transactions';
 
   static const String QUERY_CREATE_VOUCHER_TABLE =
       '''CREATE TABLE $voucherTableName (
-    $column1Id INTEGER PRIMARY KEY, 
-    $column2VoucherNumber INTEGER NOT NULL, 
-    $column3Date INTEGER  NOT NULL, 
-    $column4Note TEXT
-  )''';
+      $column1Id INTEGER PRIMARY KEY, 
+      $column2VoucherNumber INTEGER NOT NULL, 
+      $column3Date INTEGER  NOT NULL, 
+      $column4Note TEXT
+    )''';
 
   Map<String, Object> toMapForDB() {
     if (id == null) {
@@ -192,7 +182,7 @@ class VoucherModel {
   static VoucherModel fromMapOfVoucher(
     Map<String, Object?> voucherMap,
   ) {
-    print('VM 20| fromMapOfVoucher; voucherMap:');
+    print('VM 20| @ fromMapOfVoucher(); before conversion');
     print(voucherMap);
 
     var voucher = VoucherModel(
@@ -202,8 +192,10 @@ class VoucherModel {
         voucherMap[VoucherModel.column3Date] as int,
       ),
       note: voucherMap[VoucherModel.column4Note] as String,
+
+      // voucherNumber: 1,
     );
-    print('VM 21| fromMapOfVoucher; voucher:');
+    print('VM 21| @ fromMapOfVoucher(); after conversion');
 
     print(voucher);
     return voucher;
@@ -215,6 +207,7 @@ class VoucherModel {
     voucherNumber: $voucherNumber,
     date: ${date.day}/${date.month}/${date.year},
     note: $note,
+    transactions: $transactions,
     ''';
   }
 }

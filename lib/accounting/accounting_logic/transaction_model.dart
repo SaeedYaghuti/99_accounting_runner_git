@@ -78,6 +78,7 @@ class TransactionModel {
     print(result);
   }
 
+  // not_good: only fetch voucher with some of it's transactions not all of them
   static Future<List<Map<String, Object?>>> allTranJoinVchForAccount(
     String accountId,
   ) async {
@@ -146,7 +147,7 @@ class TransactionModel {
       ),
       note: tran[TransactionModel.column7Note] as String,
     );
-    print('TM 52 | fromMapOfTransaction');
+    print('TM 52 | @ fromMapOfTransaction() > after conversion');
     print(transaction);
     return transaction;
   }
