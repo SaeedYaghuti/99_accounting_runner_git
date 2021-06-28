@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop/accounting/accounting_logic/run_code.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_management.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
@@ -299,16 +300,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       fontSize: 23,
       color: Colors.black,
     );
-  }
-
-  void runCode() async {
-    // await VoucherModel.fetchAllVouchers();
-    // await TransactionModel.allTransactions();
-    // await TransactionModel.allTranJoinVch();
-    // await TransactionModel.allTranJoinVchForAccount('expenditure');
-    // await VoucherManagement.createVoucher();
-    // await VoucherModel.maxVoucherNumber();
-    // await VoucherModel.vouchersOfAccountIncludeTransactions('expenditure');
   }
 
   bool isToday(DateTime date) {

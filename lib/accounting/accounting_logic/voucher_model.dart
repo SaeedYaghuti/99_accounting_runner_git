@@ -97,7 +97,7 @@ class VoucherModel {
     print(result);
   }
 
-  static Future<void> vouchersOfAccountIncludeTransactions(
+  static Future<void> X_vouchersOfAccountIncludeTransactions(
     String accountId,
   ) async {
     final query = '''
@@ -138,6 +138,21 @@ class VoucherModel {
     ON $voucherTableName.$column1Id = subquery.${TransactionModel.column3VoucherId}
     ''';
     var result = await AccountingDB.runRawQuery(query, [accountId]);
+    print('VM 30| vouchersOfAccountIncludeTransactions() result >');
+    print(result);
+  }
+
+  static Future<void> vouchersOfAccountIncludeTransactions(
+    String accountId,
+  ) async {
+    final query = '''
+      SELECT 
+        json_object('voucher_id', ${TransactionModel.column3VoucherId})
+      FROM ${TransactionModel.transactionTableName}
+      -- WHERE ${TransactionModel.column2AccountId} = ?
+      GROUP BY ${TransactionModel.column3VoucherId}
+    ''';
+    var result = await AccountingDB.runRawQuery(query /*, [accountId] */);
     print('VM 30| vouchersOfAccountIncludeTransactions() result >');
     print(result);
   }
