@@ -17,6 +17,8 @@ class _ExpenditurDataTableState extends State<ExpenditurDataTable> {
   List<VoucherModel> vouchers = [];
   var _isLoading = false;
 
+  int? _selectedExpenseId;
+
   @override
   void initState() {
     _loadingStart();
@@ -42,7 +44,6 @@ class _ExpenditurDataTableState extends State<ExpenditurDataTable> {
 
   @override
   Widget build(BuildContext context) {
-    // print('EDT 10| data-tabe build again ...');
     return DataTable(
       columns: [
         DataColumn(
@@ -52,7 +53,8 @@ class _ExpenditurDataTableState extends State<ExpenditurDataTable> {
         DataColumn(label: Text('Note')),
         DataColumn(label: Text('Paid By')),
         DataColumn(label: Text('Date')),
-        // DataColumn(label: Text('Id')),
+        DataColumn(label: Text('Tran-Id')),
+        DataColumn(label: Text('Voucher-Id')),
       ],
       rows: vouchersDataRow(),
       dataTextStyle: TextStyle(
@@ -70,7 +72,7 @@ class _ExpenditurDataTableState extends State<ExpenditurDataTable> {
 
   List<DataRow> vouchersDataRow() {
     List<DataRow> dataRows = [];
-    vouchers.forEach((voucher) {
+    vouchers.asMap().forEach((index, voucher) {
       voucher
           .accountTransactions(AccountsId.EXPENDITURE_ACCOUNT_ID)
           .forEach((exp) {
@@ -83,19 +85,36 @@ class _ExpenditurDataTableState extends State<ExpenditurDataTable> {
             DataCell(Text(exp.note)),
             DataCell(Text(voucher.paidBy())),
             DataCell(Text(readibleDate(voucher.date))),
-            // DataCell(Text(exp.id.toString())),
+            DataCell(Text(exp.id.toString())),
+            DataCell(Text(voucher.id.toString())),
           ],
+          selected: _selectedExpenseId == exp.id,
+          onSelectChanged: (isSelected) {
+            if (isSelected == null) {
+              return;
+            }
+            setState(() {
+              if (isSelected) {
+                _selectedExpenseId = exp.id ?? 0;
+                // notify form to show expense data
+                // ...
+              } else {
+                _selectedExpenseId = 0;
+              }
+            });
+          },
           color: MaterialStateProperty.resolveWith<Color?>(
               (Set<MaterialState> states) {
             // All rows will have the same selected color.
             if (states.contains(MaterialState.selected)) {
               // return Theme.of(context).colorScheme.primary.withOpacity(0.08);
-              return Colors.amber;
+              return Theme.of(context).accentColor.withOpacity(0.5);
             }
             // Even rows will have a grey color.
-            // if (index.isEven) {
-            //   return Colors.grey.withOpacity(0.3);
-            // }
+            if (index.isEven) {
+              // return Colors.grey.withOpacity(0.3);
+              return Theme.of(context).primaryColor.withOpacity(0.1);
+            }
             return null; // Use default value for other states and odd rows.
           }),
         ));
