@@ -89,7 +89,8 @@ class _ExpenditurDataTableState extends State<ExpenditurDataTable> {
               (Set<MaterialState> states) {
             // All rows will have the same selected color.
             if (states.contains(MaterialState.selected)) {
-              return Theme.of(context).colorScheme.primary.withOpacity(0.08);
+              // return Theme.of(context).colorScheme.primary.withOpacity(0.08);
+              return Colors.amber;
             }
             // Even rows will have a grey color.
             // if (index.isEven) {
