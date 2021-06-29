@@ -1,6 +1,6 @@
 import 'package:path/path.dart' as path;
 import 'package:shop/accounting/accounting_logic/account_model.dart';
-import 'package:shop/accounting/accounting_logic/accounts.dart';
+import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_number_model.dart';

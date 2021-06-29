@@ -1,4 +1,5 @@
-import 'package:shop/accounting/accounting_logic/accounts.dart';
+import 'package:shop/accounting/accounting_logic/account_ids.dart';
+import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
 import 'package:shop/accounting/accounting_logic/transaction_feed.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_feed.dart';
@@ -15,10 +16,10 @@ class ExpenditureModel {
       amount: fields.amount!,
       isDebit: true,
       date: fields.date!,
-      note: '${fields.paidBy} paid for ${AccountsId.EXPENDITURE_ACCOUNT_ID}',
+      note: '${fields.paidBy} paid for ${ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID}',
     );
     var transactionFeedCredit = TransactionFeed(
-      accountId: AccountsId.EXPENDITURE_ACCOUNT_ID,
+      accountId: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
       amount: fields.amount!,
       isDebit: false,
       date: fields.date!,
@@ -34,6 +35,6 @@ class ExpenditureModel {
   }
 
   static Future<List<VoucherModel>> expenditureVouchers() {
-    return VoucherModel.accountVouchers(AccountsId.EXPENDITURE_ACCOUNT_ID);
+    return VoucherModel.accountVouchers(ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID);
   }
 }

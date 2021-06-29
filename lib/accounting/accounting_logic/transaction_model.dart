@@ -1,4 +1,4 @@
-import 'package:shop/accounting/accounting_logic/accounts.dart';
+import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/accounting/accounting_logic/DBException.dart';

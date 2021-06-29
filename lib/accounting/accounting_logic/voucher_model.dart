@@ -111,13 +111,13 @@ class VoucherModel {
     ''';
     var result = await AccountingDB.runRawQuery(query);
     // print('VM 21| SELECT MAX FROM $voucherTableName >');
-    print(result);
+    // print(result);
 
     var maxResult =
         (result[0]['max'] == null) ? '0' : (result[0]['max'] as String);
     var parse = int.tryParse(maxResult);
     var max = (parse == null) ? 0 : parse;
-    print(max);
+    // print(max);
     return max;
   }
 
@@ -223,7 +223,7 @@ class VoucherModel {
     Map<String, Object?> voucherMap,
   ) {
     // print('VM 20| @ fromMapOfVoucher(); before conversion');
-    print(voucherMap);
+    // print(voucherMap);
 
     var voucher = VoucherModel(
       id: voucherMap[VoucherModel.column1Id] as int,

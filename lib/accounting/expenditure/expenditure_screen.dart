@@ -45,7 +45,6 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
   } // build
 
   void expenseCreationHandler() {
-    print('ES 10| expenseCreationHandler  ...');
     setState(() {
       redrawObject = Object();
     });

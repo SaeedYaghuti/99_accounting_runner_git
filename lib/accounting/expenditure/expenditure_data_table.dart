@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shop/accounting/accounting_logic/accounts.dart';
+import 'package:shop/accounting/accounting_logic/account_ids.dart';
+import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/common/multi_language_text_widget.dart';
@@ -26,8 +27,8 @@ class _ExpenditurDataTableState extends State<ExpenditurDataTable> {
     ExpenditureModel.expenditureVouchers().then(
       (voucherResults) {
         _loadingEnd();
-        print('EDT01 | initState recived vouchers:');
-        print(vouchers);
+        // print('EDT01 | initState recived vouchers:');
+        // print(vouchers);
         vouchers = voucherResults;
       },
     ).catchError((e) {
@@ -104,7 +105,7 @@ class _ExpenditurDataTableState extends State<ExpenditurDataTable> {
     List<DataRow> dataRows = [];
     vouchers.asMap().forEach((index, voucher) {
       voucher
-          .accountTransactions(AccountsId.EXPENDITURE_ACCOUNT_ID)
+          .accountTransactions(ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID)
           .forEach((exp) {
         if (exp == null) {
           return;

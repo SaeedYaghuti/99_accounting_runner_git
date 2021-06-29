@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:shop/accounting/accounting_logic/account_ids.dart';
 import 'package:shop/accounting/accounting_logic/run_code.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_management.dart';
@@ -27,7 +28,9 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   final _noteFocusNode = FocusNode();
   final _paidByFocusNode = FocusNode();
   final _dateFocusNode = FocusNode();
-  var _expenditureFormFields = ExpenditurFormFields();
+  var _expenditureFormFields = ExpenditurFormFields(
+    paidBy: ACCOUNTS_ID.CASH_DRAWER_ACCOUNT_ID,
+  );
   DateTime? _selectedDate;
   var _isLoading = false;
 
@@ -137,6 +140,39 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   Widget _buildPaidBy(BuildContext context) {
+    return FormField<String>(
+      builder: (FormFieldState<String> state) {
+        return InputDecorator(
+          decoration: _buildInputDecoration('Paid By'),
+          isEmpty: _expenditureFormFields.paidBy == '',
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: _expenditureFormFields.paidBy,
+              isDense: true,
+              onChanged: (String? newValue) {
+                setState(() {
+                  _expenditureFormFields.paidBy =
+                      newValue ?? ACCOUNTS_ID.CASH_DRAWER_ACCOUNT_ID;
+                  state.didChange(newValue);
+                });
+              },
+              items: payerAccounts.map((String value) {
+                return DropdownMenuItem<String>(
+                  value: value,
+                  child: Text(
+                    value,
+                    style: _buildTextStyle(),
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPaidBy0(BuildContext context) {
     return TextFormField(
       decoration: _buildInputDecoration('Paid By ...'),
       style: _buildTextStyle(),
@@ -210,7 +246,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     return SizedBox(
       width: 50,
       child: ElevatedButton(
-        onPressed: _saveForm,
         child: Text(
           'SAVE',
           style: TextStyle(fontSize: 30),
@@ -221,6 +256,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
             vertical: 8,
           ),
         ),
+        onPressed: _saveForm,
       ),
     );
   }
