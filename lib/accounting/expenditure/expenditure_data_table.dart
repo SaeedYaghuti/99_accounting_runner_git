@@ -52,8 +52,19 @@ class _ExpenditurDataTableState extends State<ExpenditurDataTable> {
         DataColumn(label: Text('Note')),
         DataColumn(label: Text('Paid By')),
         DataColumn(label: Text('Date')),
+        // DataColumn(label: Text('Id')),
       ],
       rows: vouchersDataRow(),
+      dataTextStyle: TextStyle(
+        fontSize: 20,
+        color: Colors.black,
+      ),
+      headingTextStyle: TextStyle(
+        fontSize: 24,
+        color: Colors.purple,
+      ),
+      sortAscending: true,
+      dividerThickness: 2,
     );
   }
 
@@ -72,7 +83,20 @@ class _ExpenditurDataTableState extends State<ExpenditurDataTable> {
             DataCell(Text(exp.note)),
             DataCell(Text(voucher.paidBy())),
             DataCell(Text(readibleDate(voucher.date))),
+            // DataCell(Text(exp.id.toString())),
           ],
+          color: MaterialStateProperty.resolveWith<Color?>(
+              (Set<MaterialState> states) {
+            // All rows will have the same selected color.
+            if (states.contains(MaterialState.selected)) {
+              return Theme.of(context).colorScheme.primary.withOpacity(0.08);
+            }
+            // Even rows will have a grey color.
+            // if (index.isEven) {
+            //   return Colors.grey.withOpacity(0.3);
+            // }
+            return null; // Use default value for other states and odd rows.
+          }),
         ));
       });
     });
