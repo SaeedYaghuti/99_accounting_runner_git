@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shop/accounting/accounting_logic/accounts.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
+import 'package:shop/accounting/common/multi_language_text_widget.dart';
 import 'package:shop/accounting/expenditure/expenditure_model.dart';
 import 'package:shop/shared/readible_date.dart';
 import 'package:shop/shared/show_error_dialog.dart';
@@ -47,14 +48,43 @@ class _ExpenditurDataTableState extends State<ExpenditurDataTable> {
     return DataTable(
       columns: [
         DataColumn(
-          label: Text('Amount'),
+          label: MultiLanguageTextWidget(
+            english: 'Amount',
+            persian: 'مبلغ',
+            arabic: 'مبلغ',
+          ),
           numeric: true,
         ),
-        DataColumn(label: Text('Note')),
-        DataColumn(label: Text('Paid By')),
-        DataColumn(label: Text('Date')),
-        DataColumn(label: Text('Tran-Id')),
-        DataColumn(label: Text('Voucher-Id')),
+        DataColumn(
+            label: MultiLanguageTextWidget(
+          english: 'Note',
+          persian: 'توضیحات',
+          arabic: 'شرح',
+        )),
+        DataColumn(
+            label: MultiLanguageTextWidget(
+          english: 'Paid By',
+          persian: 'پرداخت کننده',
+          arabic: 'دافع',
+        )),
+        DataColumn(
+            label: MultiLanguageTextWidget(
+          english: 'Date',
+          persian: 'تاریخ',
+          arabic: 'تاریخ',
+        )),
+        DataColumn(
+            label: MultiLanguageTextWidget(
+          english: 'Tran ID',
+          persian: 'شناسه تراکنش',
+          arabic: 'رقم ایصال',
+        )),
+        DataColumn(
+            label: MultiLanguageTextWidget(
+          english: 'Voucher ID',
+          persian: 'شناسه سند',
+          arabic: 'رقم سند',
+        )),
       ],
       rows: vouchersDataRow(),
       dataTextStyle: TextStyle(
