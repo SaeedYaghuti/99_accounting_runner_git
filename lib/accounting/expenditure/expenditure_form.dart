@@ -147,6 +147,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
           isEmpty: _expenditureFormFields.paidBy == '',
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
+              focusNode: _paidByFocusNode,
               value: _expenditureFormFields.paidBy,
               isDense: true,
               onChanged: (String? newValue) {
@@ -193,7 +194,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   Widget _buildDatePicker2(BuildContext context) {
-    return OutlineButton.icon(
+    return OutlinedButton.icon(
       onPressed: pickDate,
       icon: Icon(
         Icons.date_range_rounded,
