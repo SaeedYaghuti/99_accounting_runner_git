@@ -17,9 +17,9 @@ class ExpenditurDataTable extends StatefulWidget {
 
 class _ExpenditurDataTableState extends State<ExpenditurDataTable> {
   List<VoucherModel> vouchers = [];
-  var _isLoading = false;
-
   int? _selectedExpenseId;
+
+  var _isLoading = false;
 
   @override
   void initState() {
@@ -47,47 +47,6 @@ class _ExpenditurDataTableState extends State<ExpenditurDataTable> {
   @override
   Widget build(BuildContext context) {
     return DataTable(
-      columns: [
-        DataColumn(
-          label: MultiLanguageTextWidget(
-            english: 'Amount',
-            persian: 'مبلغ',
-            arabic: 'مبلغ',
-          ),
-          numeric: true,
-        ),
-        DataColumn(
-            label: MultiLanguageTextWidget(
-          english: 'Note',
-          persian: 'توضیحات',
-          arabic: 'شرح',
-        )),
-        DataColumn(
-            label: MultiLanguageTextWidget(
-          english: 'Paid By',
-          persian: 'پرداخت کننده',
-          arabic: 'دافع',
-        )),
-        DataColumn(
-            label: MultiLanguageTextWidget(
-          english: 'Date',
-          persian: 'تاریخ',
-          arabic: 'تاریخ',
-        )),
-        DataColumn(
-            label: MultiLanguageTextWidget(
-          english: 'Tran ID',
-          persian: 'شناسه تراکنش',
-          arabic: 'رقم ایصال',
-        )),
-        DataColumn(
-            label: MultiLanguageTextWidget(
-          english: 'Voucher ID',
-          persian: 'شناسه سند',
-          arabic: 'رقم سند',
-        )),
-      ],
-      rows: vouchersDataRow(),
       dataTextStyle: TextStyle(
         fontSize: 20,
         color: Colors.black,
@@ -98,10 +57,12 @@ class _ExpenditurDataTableState extends State<ExpenditurDataTable> {
       ),
       sortAscending: true,
       dividerThickness: 2,
+      columns: _buildTableColumns(),
+      rows: _buildTableRows(),
     );
   }
 
-  List<DataRow> vouchersDataRow() {
+  List<DataRow> _buildTableRows() {
     List<DataRow> dataRows = [];
     vouchers.asMap().forEach((index, voucher) {
       voucher
@@ -152,6 +113,49 @@ class _ExpenditurDataTableState extends State<ExpenditurDataTable> {
       });
     });
     return dataRows;
+  }
+
+  List<DataColumn> _buildTableColumns() {
+    return [
+      DataColumn(
+        label: MultiLanguageTextWidget(
+          english: 'Amount',
+          persian: 'مبلغ',
+          arabic: 'مبلغ',
+        ),
+        numeric: true,
+      ),
+      DataColumn(
+          label: MultiLanguageTextWidget(
+        english: 'Note',
+        persian: 'توضیحات',
+        arabic: 'شرح',
+      )),
+      DataColumn(
+          label: MultiLanguageTextWidget(
+        english: 'Paid By',
+        persian: 'پرداخت کننده',
+        arabic: 'دافع',
+      )),
+      DataColumn(
+          label: MultiLanguageTextWidget(
+        english: 'Date',
+        persian: 'تاریخ',
+        arabic: 'تاریخ',
+      )),
+      DataColumn(
+          label: MultiLanguageTextWidget(
+        english: 'Tran ID',
+        persian: 'شناسه تراکنش',
+        arabic: 'رقم ایصال',
+      )),
+      DataColumn(
+          label: MultiLanguageTextWidget(
+        english: 'Voucher ID',
+        persian: 'شناسه سند',
+        arabic: 'رقم سند',
+      )),
+    ];
   }
 
   void _loadingStart() {
