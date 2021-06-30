@@ -14,15 +14,23 @@ import 'package:shop/shared/show_error_dialog.dart';
 import 'expenditure_form_fields.dart';
 
 class ExpenditureForm extends StatefulWidget {
-  final Function expenseCreationHandler;
-  const ExpenditureForm(this.expenseCreationHandler, {Key? key})
-      : super(key: key);
+  final VoucherModel? voucherToShowInForm;
+  final int? expenseIdToShowInForm;
+  final Function notifyNewVoucher;
+
+  const ExpenditureForm({
+    Key? key,
+    this.voucherToShowInForm,
+    this.expenseIdToShowInForm,
+    required this.notifyNewVoucher,
+  }) : super(key: key);
 
   @override
   _ExpenditureFormState createState() => _ExpenditureFormState();
 }
 
 class _ExpenditureFormState extends State<ExpenditureForm> {
+  FormDuty _formDuty = FormDuty.CREATE;
   final _form = GlobalKey<FormState>();
   final _amountFocusNode = FocusNode();
   final _noteFocusNode = FocusNode();
@@ -36,9 +44,10 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   @override
   void initState() {
-    if (EnvironmentProvider.initializeExpenditureForm) {
-      initializeForm();
-    }
+    initializeForm(
+      widget.voucherToShowInForm,
+      widget.expenseIdToShowInForm,
+    );
     super.initState();
   }
 
@@ -49,7 +58,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       padding: EdgeInsets.all(16),
       child: Form(
         key: _form,
-        autovalidate: true,
+        // autovalidate: true,
         child: Container(
           width: 1200,
           // height: 300,
@@ -282,7 +291,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         // save expences in database
         await ExpenditureModel.createExpenditureInDB(_expenditureFormFields);
         // notify expenditur-screen to rebuild data-table
-        widget.expenseCreationHandler();
+        widget.notifyNewVoucher();
         endLoading();
       } catch (e) {
         endLoading();
@@ -312,9 +321,46 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     });
   }
 
-  void initializeForm() {
-    _expenditureFormFields = ExpenditurFormFields.expenditureExample;
-    _selectedDate = _expenditureFormFields.date;
+  void initializeForm(
+    VoucherModel? voucherToShowInForm,
+    int? expenseIdToShowInForm,
+  ) {
+    setState(() {
+      if (voucherToShowInForm == null || expenseIdToShowInForm == null) {
+        print('EF 01| we need form for create new voucher ...');
+        _formDuty = FormDuty.CREATE;
+        if (EnvironmentProvider.initializeExpenditureForm) {
+          // _expenditureFormFields = ExpenditurFormFields.expenditureExample;
+          _selectedDate = ExpenditurFormFields.expenditureExample.date;
+        }
+      } else if (voucherToShowInForm.transactions.length > 2) {
+        print(
+          'EF 02| we can not show voucher with more than two transactions in this form ...',
+        );
+        _formDuty = FormDuty.CREATE;
+        // maybe show money_movement form
+        // ...
+      } else {
+        print(
+          'EF 03| we need form read an existing voucher ...',
+        );
+        _formDuty = FormDuty.READ;
+        var debitTransaction = voucherToShowInForm.transactions
+            .firstWhere((tran) => tran!.isDebit);
+        var creditTransaction = voucherToShowInForm.transactions
+            .firstWhere((tran) => !tran!.isDebit);
+        _expenditureFormFields = ExpenditurFormFields(
+          id: creditTransaction!.id,
+          amount: creditTransaction.amount,
+          // do: accountId should be sync with list of PaidByAccounts
+          paidBy: debitTransaction!.accountId,
+          note: creditTransaction.note,
+          date: creditTransaction.date,
+          // tag: creditTransaction.tag,
+        );
+        _selectedDate = creditTransaction.date;
+      }
+    });
   }
 
   InputDecoration _buildInputDecoration(String labelText) {
@@ -386,4 +432,11 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       _isLoading = false;
     });
   }
+}
+
+enum FormDuty {
+  READ,
+  CREATE,
+  UPDATE,
+  DELETE,
 }

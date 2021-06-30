@@ -24,7 +24,8 @@ class ExpenditureScreen extends StatefulWidget {
 class _ExpenditureScreenState extends State<ExpenditureScreen> {
   Object redrawObject = Object();
   List<VoucherModel> vouchers = [];
-  int? _selectedExpenseId;
+  VoucherModel? _voucherToShowInForm;
+  int? _expenseIdToShowInForm;
 
   var _vouchersAreLoading = false;
 
@@ -65,7 +66,12 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
         children: [
           Expanded(
             flex: 2,
-            child: ExpenditureForm(expenseCreationHandler),
+            child: ExpenditureForm(
+              key: ValueKey(redrawObject),
+              voucherToShowInForm: _voucherToShowInForm,
+              expenseIdToShowInForm: _expenseIdToShowInForm,
+              notifyNewVoucher: notifyNewVoucher,
+            ),
           ),
           Expanded(
             flex: 8,
@@ -127,18 +133,17 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
             DataCell(Text(exp.id.toString())),
             DataCell(Text(voucher.id.toString())),
           ],
-          selected: _selectedExpenseId == exp.id,
+          selected: _expenseIdToShowInForm == exp.id,
           onSelectChanged: (isSelected) {
             if (isSelected == null) {
               return;
             }
             setState(() {
               if (isSelected) {
-                _selectedExpenseId = exp.id ?? 0;
-                // notify form to show expense data
-                // ...
+                _expenseIdToShowInForm = exp.id ?? 0;
+                voucherSelectionHandler(voucher, exp.id);
               } else {
-                _selectedExpenseId = 0;
+                voucherSelectionHandler(null, null);
               }
             });
           },
@@ -209,11 +214,24 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
     ];
   }
 
-  void expenseCreationHandler() {
-    reloadExpenseVouchers();
+  void notifyNewVoucher() {
+    reloadVouchers();
   }
 
-  void reloadExpenseVouchers() async {
+  void voucherSelectionHandler(
+    VoucherModel? voucherToShowInForm,
+    int? expenseIdToShowInForm,
+  ) {
+    //
+    // print('ES 50| expenseIdToShowInForm: $expenseIdToShowInForm');
+    // print('ES 51| voucherToShowInForm: ${voucherToShowInForm?.voucherNumber}');
+
+    _voucherToShowInForm = voucherToShowInForm;
+    _expenseIdToShowInForm = expenseIdToShowInForm;
+    redrawObject = new Object();
+  }
+
+  void reloadVouchers() async {
     try {
       _vouchersLoadingStart();
       var fetchedVouchers = await ExpenditureModel.expenditureVouchers();
