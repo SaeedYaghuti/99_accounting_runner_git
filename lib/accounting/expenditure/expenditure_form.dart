@@ -73,7 +73,8 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
               SizedBox(height: 20, width: 20),
               _buildDatePicker2(context),
               SizedBox(height: 20, width: 20),
-              _buildSaveButton(context),
+              // _buildSaveButton(context),
+              _buildSubmitButtons(context),
               SizedBox(height: 20, width: 20),
               TextButton(
                 onPressed: AccountingDB.deleteDB,
@@ -257,7 +258,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       width: 50,
       child: ElevatedButton(
         child: Text(
-          'SAVE',
+          _formDuty == FormDuty.CREATE ? 'CREATE' : 'READ',
           style: TextStyle(fontSize: 30),
         ),
         style: ElevatedButton.styleFrom(
@@ -269,6 +270,189 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         onPressed: _saveForm,
       ),
     );
+  }
+
+  Widget _buildButtonElevatedRectangle(
+    BuildContext context,
+    String text,
+    Color color,
+    Function function,
+  ) {
+    return ElevatedButton(
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 26,
+          wordSpacing: 2.0,
+          letterSpacing: 2.0,
+        ),
+      ),
+      style: ElevatedButton.styleFrom(
+        primary: color,
+        padding: EdgeInsets.symmetric(
+          vertical: 8,
+          horizontal: 6,
+        ),
+      ),
+      onPressed: () => function(),
+    );
+  }
+
+  Widget _buildButton(
+    BuildContext context,
+    String text,
+    Color color,
+    Function function,
+  ) {
+    // return ElevatedButton(
+    return OutlinedButton(
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 26,
+          wordSpacing: 2.0,
+          letterSpacing: 2.0,
+        ),
+      ),
+      style: ButtonStyle(
+        backgroundColor: MaterialStateProperty.all(color),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18.0),
+            side: BorderSide(color: color),
+          ),
+        ),
+      ),
+      onPressed: () => function(),
+    );
+  }
+
+  Widget _buildIconButton(
+    BuildContext context,
+    String text,
+    Color color,
+    Widget icon,
+    Function onPressed,
+  ) {
+    return ElevatedButton.icon(
+      icon: icon,
+      label: Text(
+        text,
+        style: TextStyle(
+          fontSize: 26,
+          letterSpacing: 2.0,
+          wordSpacing: 2.0,
+        ),
+      ),
+      style: ElevatedButton.styleFrom(
+        primary: color,
+        padding: EdgeInsets.symmetric(
+          vertical: 8,
+          horizontal: 6,
+        ),
+      ),
+      onPressed: () => onPressed(),
+    );
+  }
+
+  Widget _buildSubmitButtons(BuildContext context) {
+    if (_formDuty == FormDuty.READ) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: [
+          // _buildIconButton(
+          //   context,
+          //   'Edit',
+          //   Colors.blue,
+          //   Icon(Icons.edit),
+          //   () {
+          //     setState(() {
+          //       print('EF 40| Edit Clicked ...');
+          //       _formDuty = FormDuty.EDIT;
+          //     });
+          //   },
+          // ),
+          _buildButton(
+            context,
+            'Edit',
+            Colors.blue,
+            () {
+              setState(() {
+                print('EF 40| Edit Clicked ...');
+                _formDuty = FormDuty.EDIT;
+              });
+            },
+          ),
+          _buildButton(
+            context,
+            'Exit',
+            Colors.blueGrey,
+            () {
+              setState(() {
+                _formDuty = FormDuty.CREATE;
+              });
+            },
+          ),
+        ],
+      );
+    } else if (_formDuty == FormDuty.CREATE) {
+      return _buildButton(
+        context,
+        'Create',
+        Colors.green,
+        () {
+          setState(() {
+            _formDuty = FormDuty.EDIT;
+          });
+        },
+      );
+    } else if (_formDuty == FormDuty.EDIT) {
+      return Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _buildButton(
+                context,
+                'Save Changes',
+                Colors.green,
+                () {
+                  setState(() {
+                    _formDuty = FormDuty.CREATE;
+                  });
+                },
+              ),
+              _buildButton(
+                context,
+                'Delete',
+                Colors.pinkAccent,
+                () {
+                  setState(() {
+                    _formDuty = FormDuty.CREATE;
+                  });
+                },
+              ),
+            ],
+          ),
+          _buildButton(
+            context,
+            'Cancel Editing',
+            Colors.grey,
+            () {
+              setState(() {
+                _formDuty = FormDuty.CREATE;
+                // clear form data
+                // ...
+              });
+            },
+          ),
+        ],
+      );
+    } else if (_formDuty == FormDuty.DELETE) {
+      return Text('No Button in DELETE');
+    } else {
+      return Text('Not Handled Status');
+    }
   }
 
   Future<void> _saveForm() async {
@@ -437,6 +621,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 enum FormDuty {
   READ,
   CREATE,
-  UPDATE,
+  EDIT,
   DELETE,
 }
