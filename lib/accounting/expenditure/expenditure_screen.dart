@@ -6,6 +6,7 @@ import 'package:shop/accounting/common/flexible_popup_menu_button.dart';
 import 'package:shop/accounting/common/multi_language_text_widget.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/accounting/expenditure/expenditure_form.dart';
+import 'package:shop/shared/confirm_dialog.dart';
 import 'package:shop/shared/not_handled_exception.dart';
 import 'package:shop/shared/readible_date.dart';
 import 'package:shop/shared/show_error_dialog.dart';
@@ -321,6 +322,19 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
         expId,
         FormDuty.DELETE,
       );
+      // confirmed dialog ...
+      var confirmResult = await confirmDialog(
+        context,
+        'Are sure to delete this expense?',
+        'This would delete voucher and all it is transactions from database',
+        'No',
+        'Delete it!',
+        () {
+          print('deleted ...');
+        },
+        () {},
+      );
+      print('ES 70| confirmResult: $confirmResult');
     } else {
       throw NotHandledException('ES 80| ');
     }

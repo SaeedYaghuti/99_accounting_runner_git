@@ -348,12 +348,13 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         text,
         style: TextStyle(
           fontSize: 26,
-          wordSpacing: 2.0,
-          letterSpacing: 2.0,
+          // wordSpacing: 2.0,
+          // letterSpacing: 2.0,
           color: Colors.white,
         ),
       ),
       style: ButtonStyle(
+        padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(10)),
         backgroundColor: MaterialStateProperty.all(color),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
@@ -449,6 +450,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
                 });
               },
             ),
+            SizedBox(height: 10),
             _buildButton(
               context,
               'Cancel Editing',
