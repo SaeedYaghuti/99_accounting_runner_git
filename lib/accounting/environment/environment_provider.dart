@@ -13,5 +13,5 @@ class EnvironmentProvider with ChangeNotifier {
     return _selectedLanguage;
   }
 
-  static const initializeExpenditureForm = true;
+  static const initializeExpenditureForm = false;
 }

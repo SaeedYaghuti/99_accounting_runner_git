@@ -5,9 +5,7 @@ import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/common/flexible_popup_menu_button.dart';
 import 'package:shop/accounting/common/multi_language_text_widget.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
-import 'package:shop/accounting/expenditure/expenditure_data_table.dart';
 import 'package:shop/accounting/expenditure/expenditure_form.dart';
-import 'package:shop/accounting/expenditure/expenditure_tag.dart';
 import 'package:shop/shared/not_handled_exception.dart';
 import 'package:shop/shared/readible_date.dart';
 import 'package:shop/shared/show_error_dialog.dart';
@@ -37,8 +35,6 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
     ExpenditureModel.expenditureVouchers().then(
       (voucherResults) {
         _vouchersLoadingEnd();
-        // print('EDT01 | initState recived vouchers:');
-        // print(vouchers);
         vouchers = voucherResults;
       },
     ).catchError((e) {
@@ -62,19 +58,21 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
         title: _buildFlexibleTitle(),
         actions: [FlexiblePopupMenuButton()],
       ),
-      // drawer: ,
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // FORM
           Expanded(
             flex: 2,
             child: ExpenditureForm(
               key: ValueKey(redrawObject),
-              voucherToShowInForm: _voucherToShowInForm,
-              expenseIdToShowInForm: _expenseIdToShowInForm,
+              voucher: _voucherToShowInForm,
+              expenseId: _expenseIdToShowInForm,
+              formDuty: _formDuty ?? FormDuty.CREATE,
               notifyNewVoucher: notifyNewVoucher,
             ),
           ),
+          // DATA TABLE
           Expanded(
             flex: 8,
             child: SingleChildScrollView(

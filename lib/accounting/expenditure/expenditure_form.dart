@@ -3,25 +3,25 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shop/accounting/accounting_logic/account_ids.dart';
 import 'package:shop/accounting/accounting_logic/run_code.dart';
-import 'package:shop/accounting/accounting_logic/transaction_model.dart';
-import 'package:shop/accounting/accounting_logic/voucher_management.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/accounting/environment/environment_provider.dart';
 import 'package:shop/accounting/expenditure/expenditure_model.dart';
+import 'package:shop/shared/not_handled_exception.dart';
 import 'package:shop/shared/show_error_dialog.dart';
-
 import 'expenditure_form_fields.dart';
 
 class ExpenditureForm extends StatefulWidget {
-  final VoucherModel? voucherToShowInForm;
-  final int? expenseIdToShowInForm;
+  final VoucherModel? voucher;
+  final int? expenseId;
+  final FormDuty formDuty;
   final Function notifyNewVoucher;
 
   const ExpenditureForm({
     Key? key,
-    this.voucherToShowInForm,
-    this.expenseIdToShowInForm,
+    this.voucher,
+    this.expenseId,
+    required this.formDuty,
     required this.notifyNewVoucher,
   }) : super(key: key);
 
@@ -44,10 +44,48 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   @override
   void initState() {
-    initializeForm(
-      widget.voucherToShowInForm,
-      widget.expenseIdToShowInForm,
-    );
+    _selectedDate = DateTime.now();
+    _formDuty = widget.formDuty;
+
+    switch (_formDuty) {
+      case FormDuty.READ:
+      case FormDuty.CREATE:
+        print('EF | init_state | form rebuild for READ or CREATE ...');
+        if (EnvironmentProvider.initializeExpenditureForm) {
+          _expenditureFormFields = ExpenditurFormFields.expenditureExample;
+        }
+        break;
+      case FormDuty.DELETE:
+        print('EF | init_state | form rebuild for DELETE');
+        // run deletion operation and show result as module ...
+        break;
+      case FormDuty.EDIT:
+        print('EF | init_state | form rebuild for EDITE');
+        if (widget.voucher!.transactions.length > 2) {
+          print(
+            'EF 02| we can not show voucher with more than two transactions in this form ...',
+          );
+          _formDuty = FormDuty.CREATE;
+          // maybe show money_movement form
+          // ...
+        }
+        var debitTransaction =
+            widget.voucher!.transactions.firstWhere((tran) => tran!.isDebit);
+        var creditTransaction =
+            widget.voucher!.transactions.firstWhere((tran) => !tran!.isDebit);
+        _expenditureFormFields = ExpenditurFormFields(
+          id: creditTransaction!.id,
+          amount: creditTransaction.amount,
+          // do: accountId should be sync with list of PaidByAccounts
+          paidBy: debitTransaction!.accountId,
+          note: creditTransaction.note,
+          date: creditTransaction.date,
+          // tag: creditTransaction.tag,
+        );
+        _selectedDate = creditTransaction.date;
+        break;
+      default:
+    }
     super.initState();
   }
 
@@ -356,102 +394,91 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   Widget _buildSubmitButtons(BuildContext context) {
-    if (_formDuty == FormDuty.READ) {
-      return Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [
-          // _buildIconButton(
-          //   context,
-          //   'Edit',
-          //   Colors.blue,
-          //   Icon(Icons.edit),
-          //   () {
-          //     setState(() {
-          //       print('EF 40| Edit Clicked ...');
-          //       _formDuty = FormDuty.EDIT;
-          //     });
-          //   },
-          // ),
-          _buildButton(
-            context,
-            'Edit',
-            Colors.blue,
-            () {
-              setState(() {
-                print('EF 40| Edit Clicked ...');
-                _formDuty = FormDuty.EDIT;
-              });
-            },
-          ),
-          _buildButton(
-            context,
-            'Exit',
-            Colors.blueGrey,
-            () {
-              setState(() {
-                _formDuty = FormDuty.CREATE;
-              });
-            },
-          ),
-        ],
-      );
-    } else if (_formDuty == FormDuty.CREATE) {
-      return _buildButton(
-        context,
-        'Create',
-        Colors.green,
-        () {
-          setState(() {
-            _formDuty = FormDuty.EDIT;
-          });
-        },
-      );
-    } else if (_formDuty == FormDuty.EDIT) {
-      return Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              _buildButton(
-                context,
-                'Save Changes',
-                Colors.green,
-                () {
-                  setState(() {
-                    _formDuty = FormDuty.CREATE;
-                  });
-                },
-              ),
-              _buildButton(
-                context,
-                'Delete',
-                Colors.pinkAccent,
-                () {
-                  setState(() {
-                    _formDuty = FormDuty.CREATE;
-                  });
-                },
-              ),
-            ],
-          ),
-          _buildButton(
-            context,
-            'Cancel Editing',
-            Colors.grey,
-            () {
-              setState(() {
-                _formDuty = FormDuty.CREATE;
-                // clear form data
-                // ...
-              });
-            },
-          ),
-        ],
-      );
-    } else if (_formDuty == FormDuty.DELETE) {
-      return Text('No Button in DELETE');
-    } else {
-      return Text('Not Handled Status');
+    switch (_formDuty) {
+      case FormDuty.READ: // like CREATE
+      // return Row(
+      //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+      //   children: [
+      //     _buildButton(
+      //       context,
+      //       'Edit',
+      //       Colors.blue,
+      //       () {
+      //         setState(() {
+      //           print('EF 40| Edit Clicked ...');
+      //           _formDuty = FormDuty.EDIT;
+      //         });
+      //       },
+      //     ),
+      //     _buildButton(
+      //       context,
+      //       'Exit',
+      //       Colors.blueGrey,
+      //       () {
+      //         setState(() {
+      //           _formDuty = FormDuty.CREATE;
+      //         });
+      //       },
+      //     ),
+      //   ],
+      // );
+      case FormDuty.CREATE:
+        return _buildButton(
+          context,
+          'Create',
+          Colors.green,
+          () {
+            setState(() {
+              _formDuty = FormDuty.EDIT;
+            });
+          },
+        );
+      case FormDuty.EDIT:
+        return Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildButton(
+                  context,
+                  'Save Changes',
+                  Colors.green,
+                  () {
+                    setState(() {
+                      _formDuty = FormDuty.CREATE;
+                    });
+                  },
+                ),
+                _buildButton(
+                  context,
+                  'Delete',
+                  Colors.pinkAccent,
+                  () {
+                    setState(() {
+                      _formDuty = FormDuty.CREATE;
+                    });
+                  },
+                ),
+              ],
+            ),
+            _buildButton(
+              context,
+              'Cancel Editing',
+              Colors.grey,
+              () {
+                setState(() {
+                  _formDuty = FormDuty.CREATE;
+                  // clear form data
+                  // ...
+                });
+              },
+            ),
+          ],
+        );
+      case FormDuty.DELETE:
+        return Text('No Button in DELETE');
+      default:
+        throw NotHandledException('EF 40| _buildSubmitButtons');
     }
   }
 
@@ -508,6 +535,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   void initializeForm(
     VoucherModel? voucherToShowInForm,
     int? expenseIdToShowInForm,
+    FormDuty formDuty,
   ) {
     setState(() {
       if (voucherToShowInForm == null || expenseIdToShowInForm == null) {
@@ -624,3 +652,9 @@ enum FormDuty {
   EDIT,
   DELETE,
 }
+
+/*
+HELP FORM DATA FLOW
+1# by selection in data-table form re-build
+2# 
+*/
