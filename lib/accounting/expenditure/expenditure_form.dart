@@ -350,6 +350,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
           fontSize: 26,
           wordSpacing: 2.0,
           letterSpacing: 2.0,
+          color: Colors.white,
         ),
       ),
       style: ButtonStyle(
@@ -395,6 +396,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   Widget _buildSubmitButtons(BuildContext context) {
     switch (_formDuty) {
+      case FormDuty.DELETE:
       case FormDuty.READ: // like CREATE
       // return Row(
       //   mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -436,30 +438,16 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       case FormDuty.EDIT:
         return Column(
           children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                _buildButton(
-                  context,
-                  'Save Changes',
-                  Colors.green,
-                  () {
-                    setState(() {
-                      _formDuty = FormDuty.CREATE;
-                    });
-                  },
-                ),
-                _buildButton(
-                  context,
-                  'Delete',
-                  Colors.pinkAccent,
-                  () {
-                    setState(() {
-                      _formDuty = FormDuty.CREATE;
-                    });
-                  },
-                ),
-              ],
+            _buildButton(
+              context,
+              'Save Changes',
+              Colors.green,
+              () {
+                // save at db ...
+                setState(() {
+                  _formDuty = FormDuty.CREATE;
+                });
+              },
             ),
             _buildButton(
               context,
@@ -475,8 +463,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
             ),
           ],
         );
-      case FormDuty.DELETE:
-        return Text('No Button in DELETE');
+
       default:
         throw NotHandledException('EF 40| _buildSubmitButtons');
     }
