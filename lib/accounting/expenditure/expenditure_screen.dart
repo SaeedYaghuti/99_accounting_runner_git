@@ -8,6 +8,7 @@ import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/accounting/expenditure/expenditure_data_table.dart';
 import 'package:shop/accounting/expenditure/expenditure_form.dart';
 import 'package:shop/accounting/expenditure/expenditure_tag.dart';
+import 'package:shop/shared/not_handled_exception.dart';
 import 'package:shop/shared/readible_date.dart';
 import 'package:shop/shared/show_error_dialog.dart';
 
@@ -26,6 +27,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
   List<VoucherModel> vouchers = [];
   VoucherModel? _voucherToShowInForm;
   int? _expenseIdToShowInForm;
+  FormDuty? _formDuty;
 
   var _vouchersAreLoading = false;
 
@@ -115,60 +117,11 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
     );
   }
 
-  List<DataRow> _buildTableRows() {
-    List<DataRow> dataRows = [];
-    vouchers.asMap().forEach((index, voucher) {
-      voucher
-          .accountTransactions(ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID)
-          .forEach((exp) {
-        if (exp == null) {
-          return;
-        }
-        dataRows.add(DataRow(
-          cells: [
-            DataCell(Text(exp.amount.toString())),
-            DataCell(Text(exp.note)),
-            DataCell(Text(voucher.paidBy())),
-            DataCell(Text(readibleDate(voucher.date))),
-            DataCell(Text(exp.id.toString())),
-            DataCell(Text(voucher.id.toString())),
-          ],
-          selected: _expenseIdToShowInForm == exp.id,
-          onSelectChanged: (isSelected) {
-            if (isSelected == null) {
-              return;
-            }
-            setState(() {
-              if (isSelected) {
-                _expenseIdToShowInForm = exp.id ?? 0;
-                voucherSelectionHandler(voucher, exp.id);
-              } else {
-                voucherSelectionHandler(null, null);
-              }
-            });
-          },
-          color: MaterialStateProperty.resolveWith<Color?>(
-              (Set<MaterialState> states) {
-            // All rows will have the same selected color.
-            if (states.contains(MaterialState.selected)) {
-              // return Theme.of(context).colorScheme.primary.withOpacity(0.08);
-              return Theme.of(context).accentColor.withOpacity(0.5);
-            }
-            // Even rows will have a grey color.
-            if (index.isEven) {
-              // return Colors.grey.withOpacity(0.3);
-              return Theme.of(context).primaryColor.withOpacity(0.1);
-            }
-            return null; // Use default value for other states and odd rows.
-          }),
-        ));
-      });
-    });
-    return dataRows;
-  }
-
   List<DataColumn> _buildTableColumns() {
     return [
+      DataColumn(
+        label: Icon(Icons.settings),
+      ),
       DataColumn(
         label: MultiLanguageTextWidget(
           english: 'Amount',
@@ -221,14 +174,158 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
   void voucherSelectionHandler(
     VoucherModel? voucherToShowInForm,
     int? expenseIdToShowInForm,
+    FormDuty? duty,
   ) {
-    //
-    // print('ES 50| expenseIdToShowInForm: $expenseIdToShowInForm');
-    // print('ES 51| voucherToShowInForm: ${voucherToShowInForm?.voucherNumber}');
+    setState(() {
+      _voucherToShowInForm = voucherToShowInForm;
+      _expenseIdToShowInForm = expenseIdToShowInForm;
+      _formDuty = duty;
+      redrawObject = new Object();
+    });
+  }
 
-    _voucherToShowInForm = voucherToShowInForm;
-    _expenseIdToShowInForm = expenseIdToShowInForm;
-    redrawObject = new Object();
+  List<DataRow> _buildTableRows() {
+    List<DataRow> dataRows = [];
+    vouchers.asMap().forEach((index, voucher) {
+      voucher
+          .accountTransactions(ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID)
+          .forEach((exp) {
+        if (exp == null) {
+          return;
+        }
+        dataRows.add(DataRow(
+          cells: [
+            DataCell(_buildEditDeleteMenu(voucher, exp.id)),
+            DataCell(Text(exp.amount.toString())),
+            DataCell(Text(exp.note)),
+            DataCell(Text(voucher.paidBy())),
+            DataCell(Text(readibleDate(voucher.date))),
+            DataCell(Text(exp.id.toString())),
+            DataCell(Text(voucher.id.toString())),
+          ],
+          selected: _expenseIdToShowInForm == exp.id,
+          onSelectChanged: (isSelected) {
+            if (isSelected == null) {
+              return;
+            }
+            setState(() {
+              if (isSelected) {
+                _expenseIdToShowInForm = exp.id ?? 0;
+                voucherSelectionHandler(voucher, exp.id, FormDuty.CREATE);
+              } else {
+                voucherSelectionHandler(null, null, null);
+              }
+            });
+          },
+          color: MaterialStateProperty.resolveWith<Color?>(
+              (Set<MaterialState> states) {
+            // All rows will have the same selected color.
+            if (states.contains(MaterialState.selected)) {
+              // return Theme.of(context).colorScheme.primary.withOpacity(0.08);
+              return Theme.of(context).accentColor.withOpacity(0.5);
+            }
+            // Even rows will have a grey color.
+            if (index.isEven) {
+              // return Colors.grey.withOpacity(0.3);
+              return Theme.of(context).primaryColor.withOpacity(0.1);
+            }
+            return null; // Use default value for other states and odd rows.
+          }),
+        ));
+      });
+    });
+    return dataRows;
+  }
+
+  Widget _buildEditDeleteMenu(VoucherModel? voucher, int? expId) {
+    return GestureDetector(
+      child: Icon(Icons.more_vert),
+      onTapDown: (TapDownDetails details) {
+        voucherSelectionHandler(
+          voucher,
+          expId,
+          FormDuty.READ,
+        );
+        double left = details.globalPosition.dx;
+        double top = details.globalPosition.dy;
+        _showEditDeletePopupMenu(details.globalPosition, voucher, expId);
+      },
+    );
+  }
+
+  _showEditDeletePopupMenu(
+    Offset offset,
+    VoucherModel? voucher,
+    int? expId,
+  ) async {
+    double left = offset.dx;
+    double top = offset.dy;
+    String? selectedItem = await showMenu<String>(
+      elevation: 8.0,
+      context: context,
+      position: RelativeRect.fromLTRB(left, top, left, top),
+      items: [
+        PopupMenuItem(
+          child: Row(
+            children: [
+              Icon(
+                Icons.edit,
+                color: Colors.blue,
+              ),
+              SizedBox(width: 10),
+              Text(
+                'Edit',
+                style: TextStyle(
+                  color: Colors.blue,
+                ),
+              ),
+            ],
+          ),
+          value: 'edit',
+        ),
+        PopupMenuItem(
+          child: Row(
+            children: [
+              Icon(
+                Icons.delete,
+                color: Colors.pinkAccent,
+              ),
+              SizedBox(width: 10),
+              Text(
+                'Delete',
+                style: TextStyle(
+                  color: Colors.pinkAccent,
+                ),
+              ),
+            ],
+          ),
+          value: 'delete',
+        ),
+      ],
+    );
+    if (selectedItem == null) {
+      print('ES 80| you select nothing ...');
+      voucherSelectionHandler(null, null, null);
+      return;
+    }
+
+    if (selectedItem == "edit") {
+      print('ES 80| you edit ...');
+      voucherSelectionHandler(
+        voucher,
+        expId,
+        FormDuty.EDIT,
+      );
+    } else if (selectedItem == "delete") {
+      print('ES 80| you delete ...');
+      voucherSelectionHandler(
+        voucher,
+        expId,
+        FormDuty.DELETE,
+      );
+    } else {
+      throw NotHandledException('ES 80| ');
+    }
   }
 
   void reloadVouchers() async {
