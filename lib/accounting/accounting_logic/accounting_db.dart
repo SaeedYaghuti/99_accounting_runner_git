@@ -17,6 +17,7 @@ class AccountingDB {
       version: 1,
       onCreate: (db, version) async {
         print('ADB10| onCreate runing...');
+        await db.execute('PRAGMA foreign_keys = ON;');
         await db.execute(AccountModel.QUERY_CREATE_ACCOUNT_TABLE);
         await insertPredefinedAccounts(db);
         await db.execute(VoucherModel.QUERY_CREATE_VOUCHER_TABLE);
@@ -25,6 +26,7 @@ class AccountingDB {
         await insertPredefinedVoucherNumbers(db);
       },
     );
+    await db.execute('PRAGMA foreign_keys = ON;');
     return db;
   }
 

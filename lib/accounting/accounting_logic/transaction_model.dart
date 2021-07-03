@@ -36,8 +36,9 @@ class TransactionModel {
     FROM $transactionTableName
     ''';
     var result = await AccountingDB.runRawQuery(query);
-    print('TM10| SELECT * FROM $transactionTableName >');
+    print('TM10| All DB $transactionTableName: ########');
     print(result);
+    print('##################');
   }
 
   Future<int> deleteMeFromDB() async {
@@ -217,7 +218,7 @@ class TransactionModel {
     $column5IsDebit BOOLEAN NOT NULL CHECK( $column5IsDebit IN (0, 1) ),
     $column6Date INTEGER NOT NULL, 
     $column7Note TEXT, 
-    FOREIGN KEY ($column2AccountId) REFERENCES ${AccountModel.tableName} (${AccountModel.columnId}) ON DELETE CASCADE,
-    FOREIGN KEY ($column3VoucherId) REFERENCES ${VoucherModel.voucherTableName} (${VoucherModel.column1Id}) ON DELETE CASCADE
+    CONSTRAINT fk_${AccountModel.tableName} FOREIGN KEY ($column2AccountId) REFERENCES ${AccountModel.tableName} (${AccountModel.columnId}) ON DELETE CASCADE,
+    CONSTRAINT fk_${VoucherModel.voucherTableName} FOREIGN KEY ($column3VoucherId) REFERENCES ${VoucherModel.voucherTableName} (${VoucherModel.column1Id}) ON DELETE CASCADE
   )''';
 }

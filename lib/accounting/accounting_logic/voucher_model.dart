@@ -111,7 +111,7 @@ class VoucherModel {
       await voucher.fetchMyTransactions();
     }
 
-    print('VM 30| voucherModels: ##################');
+    print('VM 30| All DB Vouchers: ###########');
     print(voucherModels);
     print('##################');
   }
