@@ -17,12 +17,13 @@ class VoucherModel {
     this.note = '',
   });
 
-  Future<int> insertInDB() async {
+  Future<int> insertMeInDB() async {
     // do some logic on variables
+    // ...
     var map = this.toMapForDB();
     // print('VM10| map: $map');
     id = await AccountingDB.insert(voucherTableName, map);
-    // print('VM10| insertInDB() id: $id');
+    // print('VM10| insertMeInDB() id: $id');
     return id!;
   }
 
@@ -86,7 +87,7 @@ class VoucherModel {
     }).toList();
   }
 
-  String paidBy() {
+  String paidByText() {
     var debitIds = [];
     debitTransactions().forEach((tran) {
       debitIds.add(tran?.accountId);
@@ -114,6 +115,38 @@ class VoucherModel {
     print('VM 30| All DB Vouchers: ###########');
     print(voucherModels);
     print('##################');
+  }
+
+  static Future<VoucherModel?> fetchVoucherById(int voucherId) async {
+    final query = '''
+    SELECT *
+    FROM $voucherTableName
+    WHERE $column1Id = $voucherId
+    ''';
+    var vouchersMap = await AccountingDB.runRawQuery(query);
+    // convert map to voucherModel
+    List<VoucherModel> voucherModels = [];
+    vouchersMap.forEach(
+      (vchMap) => voucherModels.add(fromMapOfVoucher(vchMap)),
+    );
+
+    if (voucherModels.isEmpty) {
+      return null;
+    }
+    // if (voucherModels.length > 1) {
+    //   throw
+    // }
+
+    // fetch transaction for each voucher
+    for (var voucher in voucherModels) {
+      await voucher.fetchMyTransactions();
+    }
+
+    print('VM 30| All DB Vouchers: ###########');
+    print(voucherModels);
+    print('##################');
+
+    return voucherModels[0];
   }
 
   static Future<int> maxVoucherNumber() async {

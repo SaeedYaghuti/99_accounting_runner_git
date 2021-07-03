@@ -197,7 +197,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
             DataCell(_buildEditDeleteMenu(voucher, exp.id)),
             DataCell(Text(exp.amount.toString())),
             DataCell(Text(exp.note)),
-            DataCell(Text(voucher.paidBy())),
+            DataCell(Text(voucher.paidByText())),
             DataCell(Text(readibleDate(voucher.date))),
             DataCell(Text(exp.id.toString())),
             DataCell(Text(voucher.id.toString())),

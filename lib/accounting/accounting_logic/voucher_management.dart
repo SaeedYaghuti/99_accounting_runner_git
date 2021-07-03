@@ -42,7 +42,94 @@ class VoucherManagement {
     // print(voucher);
 
     try {
-      await voucher.insertInDB();
+      await voucher.insertMeInDB();
+    } catch (e) {
+      await VoucherNumberModel.numberNotConsumed(voucherNumber);
+      throw DBException(
+        'V_MG 10| Unable to create voucher: e: ${e.toString()}',
+      );
+    }
+
+    // step 4# create transactions
+    List<TransactionModel> successTransactions = [];
+
+    for (var feed in transactionFeeds) {
+      var transaction = TransactionModel(
+        accountId: feed.accountId,
+        voucherId: voucher.id!,
+        amount: feed.amount,
+        isDebit: feed.isDebit,
+        date: feed.date,
+        note: feed.note,
+      );
+      try {
+        await transaction.insertTransactionToDB();
+        successTransactions.add(transaction);
+      } catch (e) {
+        // delete all transactions and voucher
+        try {
+          await voucher.deleteMeFromDB();
+          for (var transaction in successTransactions) {
+            await transaction.deleteMeFromDB();
+          }
+        } catch (e) {
+          // we have dirty data in voucher or transactions
+          // do log at error_log ...
+          throw VoucherException(
+            'V_MG 13| We have dirty data at voucher or transactions table',
+          );
+        }
+        throw VoucherException(
+          'V_MG 16| Voucher did not saved at db!  we do not have dirty data at db e: ${e.toString()}',
+        );
+      }
+    }
+    // step #5 voucher has mad Successfully
+    await VoucherNumberModel.numberConsumed(voucherNumber);
+    print('V_MG 19| voucher and all its transactions saved Successfully!');
+
+    // TODO: remove me
+    await voucher.fetchMyTransactions();
+  }
+
+  static Future<void> updateVoucher(
+    VoucherFeed voucherFeed,
+    List<TransactionFeed> transactionFeeds,
+  ) async {
+    // step 1# validate amount
+    if (!validateTransactionsAmount(transactionFeeds)) {
+      throw ValidationException(
+        'V_MG 30| amount in transactionFeeds are not valid',
+      );
+    }
+
+    // step 2# we should have voucher with voucher_id and voucher_number
+    VoucherModel.
+
+    // step 2# borrow voucherNumber
+    var voucherNumber;
+    try {
+      voucherNumber = await VoucherNumberModel.borrowNumber();
+      // print('V_MG 03| voucherNumber: $voucherNumber');
+
+    } catch (e) {
+      print('V_MG 04| voucherNumber: $e');
+      print('V_MG 04| we did VoucherNumberModel.reset() try again!');
+      await VoucherNumberModel.reset();
+      throw e;
+    }
+
+    // step 3# create voucher
+    VoucherModel voucher = VoucherModel(
+      voucherNumber: voucherNumber,
+      date: voucherFeed.date,
+      note: makeVoucherNote(transactionFeeds),
+    );
+    // print('V_MG 07| voucher before save in db >');
+    // print(voucher);
+
+    try {
+      await voucher.insertMeInDB();
     } catch (e) {
       await VoucherNumberModel.numberNotConsumed(voucherNumber);
       throw DBException(
