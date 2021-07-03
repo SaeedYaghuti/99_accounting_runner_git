@@ -317,24 +317,22 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       );
     } else if (selectedItem == "delete") {
       print('ES 80| you delete ...');
-      voucherSelectionHandler(
-        voucher,
-        expId,
-        FormDuty.DELETE,
-      );
-      // confirmed dialog ...
       var confirmResult = await confirmDialog(
-        context,
-        'Are sure to delete this expense?',
-        'This would delete voucher and all it is transactions from database',
-        'No',
-        'Delete it!',
-        () {
-          print('deleted ...');
-        },
-        () {},
+        context: context,
+        title: 'Are sure to delete this expense?',
+        content:
+            'This would delete voucher and all it is transactions from database',
+        noTitle: 'No',
+        yesTitle: 'Delete it!',
       );
       print('ES 70| confirmResult: $confirmResult');
+      if (confirmResult == true) {
+        voucherSelectionHandler(
+          voucher,
+          expId,
+          FormDuty.DELETE,
+        );
+      }
     } else {
       throw NotHandledException('ES 80| ');
     }

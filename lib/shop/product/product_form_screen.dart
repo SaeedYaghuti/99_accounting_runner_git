@@ -194,21 +194,6 @@ class _ProductFormScreenState extends State<ProductFormScreen> {
             'source: ProductFormScreen.dart <PFS_L>',
             e,
           );
-          // await showDialog<Null>(
-          //   context: context,
-          //   builder: (ctx) => AlertDialog(
-          //     title: Text('Error while addProduct'),
-          //     content: Text(
-          //         'source: ProductFormScreen.dart <PFS_L> Error: ${e.toString()}'),
-          //     actions: [
-          //       FlatButton(
-          //           child: Text('OK'),
-          //           onPressed: () {
-          //             Navigator.of(context).pop();
-          //           })
-          //     ],
-          //   ),
-          // );
         }
       }
       // mod: updating product

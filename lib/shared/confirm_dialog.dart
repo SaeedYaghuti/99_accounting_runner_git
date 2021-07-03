@@ -1,34 +1,34 @@
 import 'package:flutter/material.dart';
 
-Future<dynamic> confirmDialog(
-  BuildContext context,
-  String title,
-  String content,
-  String noTitle,
-  String yesTitle,
-  Function yesHandler,
-  Function noHandler,
-) {
+Future<dynamic> confirmDialog({
+  required BuildContext context,
+  required String title,
+  required String content,
+  required String noTitle,
+  required String yesTitle,
+  Function? yesHandler,
+  Function? noHandler,
+}) {
   return showDialog(
     context: context,
     builder: (ctx) => AlertDialog(
-      title: Text(title),
-      content: Text(content),
+      title: Text(title, style: TextStyle(fontSize: 24)),
+      content: Text(content, style: TextStyle(fontSize: 24)),
       actions: [
         FlatButton(
-          child: Text(noTitle),
+          child: Text(noTitle, style: TextStyle(fontSize: 24)),
           onPressed: () {
-            // close dilog and send back no
+            // close dilog and send back false
             Navigator.of(ctx).pop(false);
-            noHandler();
+            if (noHandler != null) noHandler();
           },
         ),
         FlatButton(
-          child: Text(yesTitle),
+          child: Text(yesTitle, style: TextStyle(fontSize: 24)),
           onPressed: () {
-            // close dilog and send back no
+            // close dilog and send back true
             Navigator.of(ctx).pop(true);
-            yesHandler();
+            if (yesHandler != null) yesHandler();
           },
         ),
       ],

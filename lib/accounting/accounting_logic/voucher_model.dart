@@ -99,9 +99,21 @@ class VoucherModel {
     SELECT *
     FROM $voucherTableName
     ''';
-    var result = await AccountingDB.runRawQuery(query);
-    print('VM11| SELECT * FROM $voucherTableName >');
-    print(result);
+    var vouchersMap = await AccountingDB.runRawQuery(query);
+    // convert map to voucherModel
+    List<VoucherModel> voucherModels = [];
+    vouchersMap.forEach(
+      (vchMap) => voucherModels.add(fromMapOfVoucher(vchMap)),
+    );
+
+    // fetch transaction for each voucher
+    for (var voucher in voucherModels) {
+      await voucher.fetchMyTransactions();
+    }
+
+    print('VM 30| voucherModels: ##################');
+    print(voucherModels);
+    print('##################');
   }
 
   static Future<int> maxVoucherNumber() async {
@@ -162,9 +174,9 @@ class VoucherModel {
       await voucher.fetchMyTransactions();
     }
 
-    // print('VM 30| voucherModels: $voucherModels');
-    // print(voucherModels);
-
+    print('VM 30| voucherModels: ##################');
+    print(voucherModels);
+    print('##################');
     return voucherModels;
   }
 
@@ -241,11 +253,11 @@ class VoucherModel {
 
   String toString() {
     return '''
-    id: $id, 
-    voucherNumber: $voucherNumber,
-    date: ${date.day}/${date.month}/${date.year},
-    note: $note,
-    transactions: $transactions,
+    voucherId: $id, voucherNumber: $voucherNumber,
+    voucherNote: $note, voucherDate: ${date.day}/${date.month}/${date.year},
+    transactions: ++++
+    $transactions,
+    =================
     ''';
   }
 }

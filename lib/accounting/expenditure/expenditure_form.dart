@@ -45,6 +45,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   @override
   void initState() {
     _selectedDate = DateTime.now();
+    _expenditureFormFields.date = DateTime.now();
     _formDuty = widget.formDuty;
 
     switch (_formDuty) {
@@ -57,7 +58,21 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         break;
       case FormDuty.DELETE:
         print('EF | init_state | form rebuild for DELETE');
-        // run deletion operation and show result as module ...
+        if (widget.voucher == null) return;
+        loadingStart();
+        widget.voucher!.deleteMeFromDB().then((deleteResult) {
+          loadingEnd();
+          print('EF 66| deleteResult: $deleteResult');
+          widget.notifyNewVoucher();
+        }).catchError((e) {
+          loadingEnd();
+          showErrorDialog(
+            context,
+            'voucher .deleteMeFromDB()',
+            'ExpenditureForm at initState while deleting a voucher happend error:',
+            e,
+          );
+        });
         break;
       case FormDuty.EDIT:
         print('EF | init_state | form rebuild for EDITE');
@@ -109,7 +124,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
               SizedBox(height: 20, width: 20),
               _buildPaidBy(context),
               SizedBox(height: 20, width: 20),
-              _buildDatePicker2(context),
+              _buildDatePickerButton(context),
               SizedBox(height: 20, width: 20),
               // _buildSaveButton(context),
               _buildSubmitButtons(context),
@@ -241,7 +256,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     );
   }
 
-  Widget _buildDatePicker2(BuildContext context) {
+  Widget _buildDatePickerButton(BuildContext context) {
     return OutlinedButton.icon(
       onPressed: pickDate,
       icon: Icon(
@@ -342,14 +357,13 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     Color color,
     Function function,
   ) {
-    // return ElevatedButton(
     return OutlinedButton(
       child: Text(
         text,
         style: TextStyle(
           fontSize: 26,
           // wordSpacing: 2.0,
-          // letterSpacing: 2.0,
+          letterSpacing: 1.0,
           color: Colors.white,
         ),
       ),
@@ -358,7 +372,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         backgroundColor: MaterialStateProperty.all(color),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(18.0),
+            borderRadius: BorderRadius.circular(30),
             side: BorderSide(color: color),
           ),
         ),
@@ -430,10 +444,8 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
           context,
           'Create',
           Colors.green,
-          () {
-            setState(() {
-              _formDuty = FormDuty.EDIT;
-            });
+          () async {
+            await _saveForm();
           },
         );
       case FormDuty.EDIT:
@@ -486,19 +498,20 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     // add/edit expences in db
     // mod: new product creation
     if (true) {
-      startLoading();
+      loadingStart();
       try {
         // save expences in database
+        print('EF23| _expenditureFormFields: $_expenditureFormFields');
         await ExpenditureModel.createExpenditureInDB(_expenditureFormFields);
         // notify expenditur-screen to rebuild data-table
         widget.notifyNewVoucher();
-        endLoading();
+        loadingEnd();
       } catch (e) {
-        endLoading();
+        loadingEnd();
         showErrorDialog(
           context,
-          'Error while addProduct',
-          'source: ProductFormScreen.dart <PFS_L>',
+          'Error while _saveForm',
+          'source: createExpenditureInDB <EF22>',
           e,
         );
       }
@@ -622,13 +635,13 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     super.dispose();
   }
 
-  void startLoading() {
+  void loadingStart() {
     setState(() {
       _isLoading = true;
     });
   }
 
-  void endLoading() {
+  void loadingEnd() {
     setState(() {
       _isLoading = false;
     });

@@ -182,13 +182,10 @@ class TransactionModel {
 
   String toString() {
     return '''
-    id: $id, 
-    accountId: $accountId,
-    voucherId: $voucherId,
-    amount: $amount,
-    isDebit: $isDebit,
-    date: ${date.day}/${date.month}/${date.year},
-    note: $note,
+    voucherId: $voucherId, tranId: $id, 
+    accountId: $accountId, amount: $amount, isDebit: $isDebit,
+    note: $note, date: ${date.day}/${date.month}/${date.year},
+    ****
     ''';
   }
 
@@ -220,7 +217,7 @@ class TransactionModel {
     $column5IsDebit BOOLEAN NOT NULL CHECK( $column5IsDebit IN (0, 1) ),
     $column6Date INTEGER NOT NULL, 
     $column7Note TEXT, 
-    FOREIGN KEY ($column2AccountId) REFERENCES ${AccountModel.tableName} (${AccountModel.columnId}),
-    FOREIGN KEY ($column3VoucherId) REFERENCES ${VoucherModel.voucherTableName} (${VoucherModel.column1Id})
+    FOREIGN KEY ($column2AccountId) REFERENCES ${AccountModel.tableName} (${AccountModel.columnId}) ON DELETE CASCADE,
+    FOREIGN KEY ($column3VoucherId) REFERENCES ${VoucherModel.voucherTableName} (${VoucherModel.column1Id}) ON DELETE CASCADE
   )''';
 }

@@ -38,7 +38,7 @@ class ExpenditurFormFields {
       id: $id,
       amoutn: $amount, 
       paidBy: $paidBy, 
-      note: $note,} 
+      note: $note,
       expenditureTag: $expenditureTag, 
       date: $date, 
     ''';
