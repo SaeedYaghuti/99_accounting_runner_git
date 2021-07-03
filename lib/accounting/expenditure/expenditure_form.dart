@@ -236,26 +236,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     );
   }
 
-  Widget _buildPaidBy0(BuildContext context) {
-    return TextFormField(
-      decoration: _buildInputDecoration('Paid By ...'),
-      style: _buildTextStyle(),
-      keyboardType: TextInputType.multiline,
-      initialValue: _expenditureFormFields.paidBy,
-      focusNode: _paidByFocusNode,
-      validator: (paidBy) {
-        if (paidBy == null || paidBy.isEmpty) {
-          return 'paidBy should not be empty';
-        }
-        return null;
-      },
-      onSaved: (paidBy) {
-        // print('title-field.onSaved: descriptionField: $descriptionField');
-        _expenditureFormFields.paidBy = paidBy;
-      },
-    );
-  }
-
   Widget _buildDatePickerButton(BuildContext context) {
     return OutlinedButton.icon(
       onPressed: pickDate,
@@ -274,171 +254,10 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     );
   }
 
-  Widget _buildDatePicker(BuildContext context) {
-    return Container(
-      height: 150,
-      width: 100,
-      child: Row(
-        children: [
-          Expanded(
-            child: _selectedDate == null
-                ? const Text(
-                    'DATE NOT CHOOSEN',
-                    style: TextStyle(fontSize: 16),
-                  )
-                : Text(
-                    'Date: ${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
-                    style: TextStyle(fontSize: 16),
-                  ),
-          ),
-          TextButton(
-            onPressed: pickDate,
-            child: Text(
-              'CHANGE DATE',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSaveButton(BuildContext context) {
-    return SizedBox(
-      width: 50,
-      child: ElevatedButton(
-        child: Text(
-          _formDuty == FormDuty.CREATE ? 'CREATE' : 'READ',
-          style: TextStyle(fontSize: 30),
-        ),
-        style: ElevatedButton.styleFrom(
-          primary: Theme.of(context).primaryColor,
-          padding: EdgeInsets.symmetric(
-            vertical: 8,
-          ),
-        ),
-        onPressed: _saveForm,
-      ),
-    );
-  }
-
-  Widget _buildButtonElevatedRectangle(
-    BuildContext context,
-    String text,
-    Color color,
-    Function function,
-  ) {
-    return ElevatedButton(
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 26,
-          wordSpacing: 2.0,
-          letterSpacing: 2.0,
-        ),
-      ),
-      style: ElevatedButton.styleFrom(
-        primary: color,
-        padding: EdgeInsets.symmetric(
-          vertical: 8,
-          horizontal: 6,
-        ),
-      ),
-      onPressed: () => function(),
-    );
-  }
-
-  Widget _buildButton(
-    BuildContext context,
-    String text,
-    Color color,
-    Function function,
-  ) {
-    return OutlinedButton(
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 26,
-          // wordSpacing: 2.0,
-          letterSpacing: 1.0,
-          color: Colors.white,
-        ),
-      ),
-      style: ButtonStyle(
-        padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(10)),
-        backgroundColor: MaterialStateProperty.all(color),
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-          RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(30),
-            side: BorderSide(color: color),
-          ),
-        ),
-      ),
-      onPressed: () => function(),
-    );
-  }
-
-  Widget _buildIconButton(
-    BuildContext context,
-    String text,
-    Color color,
-    Widget icon,
-    Function onPressed,
-  ) {
-    return ElevatedButton.icon(
-      icon: icon,
-      label: Text(
-        text,
-        style: TextStyle(
-          fontSize: 26,
-          letterSpacing: 2.0,
-          wordSpacing: 2.0,
-        ),
-      ),
-      style: ElevatedButton.styleFrom(
-        primary: color,
-        padding: EdgeInsets.symmetric(
-          vertical: 8,
-          horizontal: 6,
-        ),
-      ),
-      onPressed: () => onPressed(),
-    );
-  }
-
   Widget _buildSubmitButtons(BuildContext context) {
     switch (_formDuty) {
       case FormDuty.DELETE:
       case FormDuty.READ: // like CREATE
-      // return Row(
-      //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-      //   children: [
-      //     _buildButton(
-      //       context,
-      //       'Edit',
-      //       Colors.blue,
-      //       () {
-      //         setState(() {
-      //           print('EF 40| Edit Clicked ...');
-      //           _formDuty = FormDuty.EDIT;
-      //         });
-      //       },
-      //     ),
-      //     _buildButton(
-      //       context,
-      //       'Exit',
-      //       Colors.blueGrey,
-      //       () {
-      //         setState(() {
-      //           _formDuty = FormDuty.CREATE;
-      //         });
-      //       },
-      //     ),
-      //   ],
-      // );
       case FormDuty.CREATE:
         return _buildButton(
           context,
@@ -457,8 +276,13 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
               Colors.green,
               () {
                 // save at db ...
-                setState(() {
-                  _formDuty = FormDuty.CREATE;
+                ExpenditureModel.updateVoucher(
+                        widget.voucher!, _expenditureFormFields)
+                    .then((value) {
+                  print('EF 40| Save Change Button | update successfully');
+                }).catchError((e) {
+                  print('EF 41| Save Change Button | error while updating');
+                  print(e);
                 });
               },
             ),
@@ -518,6 +342,36 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     }
     // mod: updating product
     // ...
+  }
+
+  Widget _buildButton(
+    BuildContext context,
+    String text,
+    Color color,
+    Function function,
+  ) {
+    return OutlinedButton(
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 26,
+          // wordSpacing: 2.0,
+          letterSpacing: 1.0,
+          color: Colors.white,
+        ),
+      ),
+      style: ButtonStyle(
+        padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(10)),
+        backgroundColor: MaterialStateProperty.all(color),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30),
+            side: BorderSide(color: color),
+          ),
+        ),
+      ),
+      onPressed: () => function(),
+    );
   }
 
   void pickDate() {
@@ -645,6 +499,131 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     setState(() {
       _isLoading = false;
     });
+  }
+
+  Widget _buildPaidBy0(BuildContext context) {
+    return TextFormField(
+      decoration: _buildInputDecoration('Paid By ...'),
+      style: _buildTextStyle(),
+      keyboardType: TextInputType.multiline,
+      initialValue: _expenditureFormFields.paidBy,
+      focusNode: _paidByFocusNode,
+      validator: (paidBy) {
+        if (paidBy == null || paidBy.isEmpty) {
+          return 'paidBy should not be empty';
+        }
+        return null;
+      },
+      onSaved: (paidBy) {
+        // print('title-field.onSaved: descriptionField: $descriptionField');
+        _expenditureFormFields.paidBy = paidBy;
+      },
+    );
+  }
+
+  Widget _buildDatePicker(BuildContext context) {
+    return Container(
+      height: 150,
+      width: 100,
+      child: Row(
+        children: [
+          Expanded(
+            child: _selectedDate == null
+                ? const Text(
+                    'DATE NOT CHOOSEN',
+                    style: TextStyle(fontSize: 16),
+                  )
+                : Text(
+                    'Date: ${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
+                    style: TextStyle(fontSize: 16),
+                  ),
+          ),
+          TextButton(
+            onPressed: pickDate,
+            child: Text(
+              'CHANGE DATE',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 20,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSaveButton(BuildContext context) {
+    return SizedBox(
+      width: 50,
+      child: ElevatedButton(
+        child: Text(
+          _formDuty == FormDuty.CREATE ? 'CREATE' : 'READ',
+          style: TextStyle(fontSize: 30),
+        ),
+        style: ElevatedButton.styleFrom(
+          primary: Theme.of(context).primaryColor,
+          padding: EdgeInsets.symmetric(
+            vertical: 8,
+          ),
+        ),
+        onPressed: _saveForm,
+      ),
+    );
+  }
+
+  Widget _buildButtonElevatedRectangle(
+    BuildContext context,
+    String text,
+    Color color,
+    Function function,
+  ) {
+    return ElevatedButton(
+      child: Text(
+        text,
+        style: TextStyle(
+          fontSize: 26,
+          wordSpacing: 2.0,
+          letterSpacing: 2.0,
+        ),
+      ),
+      style: ElevatedButton.styleFrom(
+        primary: color,
+        padding: EdgeInsets.symmetric(
+          vertical: 8,
+          horizontal: 6,
+        ),
+      ),
+      onPressed: () => function(),
+    );
+  }
+
+  Widget _buildIconButton(
+    BuildContext context,
+    String text,
+    Color color,
+    Widget icon,
+    Function onPressed,
+  ) {
+    return ElevatedButton.icon(
+      icon: icon,
+      label: Text(
+        text,
+        style: TextStyle(
+          fontSize: 26,
+          letterSpacing: 2.0,
+          wordSpacing: 2.0,
+        ),
+      ),
+      style: ElevatedButton.styleFrom(
+        primary: color,
+        padding: EdgeInsets.symmetric(
+          vertical: 8,
+          horizontal: 6,
+        ),
+      ),
+      onPressed: () => onPressed(),
+    );
   }
 }
 

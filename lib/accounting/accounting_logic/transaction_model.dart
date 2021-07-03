@@ -1,7 +1,7 @@
 import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
-import 'package:shop/accounting/accounting_logic/DBException.dart';
+import 'package:shop/exceptions/DBException.dart';
 import 'package:shop/shared/seconds_of_time.dart';
 
 import 'account_model.dart';

@@ -97,7 +97,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
                   ),
                   SizedBox(height: 10),
                   _vouchersAreLoading
-                      ? CircularProgressIndicator()
+                      ? Center(child: CircularProgressIndicator())
                       : Container(),
                 ],
               ),

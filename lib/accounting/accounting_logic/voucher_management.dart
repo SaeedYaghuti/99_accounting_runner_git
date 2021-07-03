@@ -3,12 +3,12 @@ import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_feed.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_number_model.dart';
-import 'package:shop/accounting/accounting_logic/DBException.dart';
+import 'package:shop/exceptions/DBException.dart';
 import 'package:shop/exceptions/curropted_input.dart';
 import 'package:shop/exceptions/db_operation.dart';
 import 'package:shop/exceptions/dirty_database.dart';
 import 'package:shop/shared/ValidationException.dart';
-import 'package:shop/accounting/accounting_logic/voucher_exception.dart';
+import 'package:shop/exceptions/voucher_exception.dart';
 
 class VoucherManagement {
   static Future<void> createVoucher(

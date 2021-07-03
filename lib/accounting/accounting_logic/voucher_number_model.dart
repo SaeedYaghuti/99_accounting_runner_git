@@ -1,7 +1,7 @@
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
-import 'package:shop/accounting/accounting_logic/DBException.dart';
-import 'package:shop/accounting/accounting_logic/voucher_number_exception.dart';
+import 'package:shop/exceptions/DBException.dart';
+import 'package:shop/exceptions/voucher_number_exception.dart';
 
 class VoucherNumberModel {
   final int id = 1;
