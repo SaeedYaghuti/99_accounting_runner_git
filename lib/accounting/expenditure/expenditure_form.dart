@@ -39,12 +39,12 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   var _expenditureFormFields = ExpenditurFormFields(
     paidBy: ACCOUNTS_ID.CASH_DRAWER_ACCOUNT_ID,
   );
-  DateTime? _selectedDate;
+  // DateTime? _selectedDate;
   var _isLoading = false;
 
   @override
   void initState() {
-    _selectedDate = DateTime.now();
+    // _selectedDate = DateTime.now();
     _expenditureFormFields.date = DateTime.now();
     _formDuty = widget.formDuty;
 
@@ -97,7 +97,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
           date: creditTransaction.date,
           // tag: creditTransaction.tag,
         );
-        _selectedDate = creditTransaction.date;
+        // _selectedDate = creditTransaction.date;
         break;
       default:
     }
@@ -295,8 +295,12 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
               () {
                 setState(() {
                   _formDuty = FormDuty.CREATE;
-                  // clear form data
-                  // ...
+                  _expenditureFormFields = ExpenditurFormFields(
+                    amount: 0,
+                    note: '',
+                    date: DateTime.now(),
+                    paidBy: ACCOUNTS_ID.CASH_DRAWER_ACCOUNT_ID,
+                  );
                 });
               },
             ),
@@ -327,7 +331,8 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       try {
         // save expences in database
         print(
-            'EF23| @ _saveForm() | _expenditureFormFields: $_expenditureFormFields');
+          'EF23| @ _saveForm() | _expenditureFormFields: $_expenditureFormFields',
+        );
         // await ExpenditureModel.createExpenditureInDB(_expenditureFormFields);
         await dbOperationHandler();
         // notify expenditur-screen to rebuild data-table
@@ -385,7 +390,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       lastDate: DateTime.now(),
     ).then((date) {
       setState(() {
-        _selectedDate = date;
+        // _selectedDate = date;
         _expenditureFormFields.date = date;
       });
     });
@@ -402,7 +407,9 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         _formDuty = FormDuty.CREATE;
         if (EnvironmentProvider.initializeExpenditureForm) {
           // _expenditureFormFields = ExpenditurFormFields.expenditureExample;
-          _selectedDate = ExpenditurFormFields.expenditureExample.date;
+          // _selectedDate = ExpenditurFormFields.expenditureExample.date;
+          _expenditureFormFields.date =
+              ExpenditurFormFields.expenditureExample.date;
         }
       } else if (voucherToShowInForm.transactions.length > 2) {
         print(
@@ -429,7 +436,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
           date: creditTransaction.date,
           // tag: creditTransaction.tag,
         );
-        _selectedDate = creditTransaction.date;
+        // _selectedDate = creditTransaction.date;
       }
     });
   }
@@ -473,13 +480,20 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   String _buildTextForDatePicker() {
-    if (_selectedDate == null) {
+    if (_expenditureFormFields.date == null) {
       return 'SELECT A DAY';
     }
-    if (isToday(_selectedDate!)) {
+    if (isToday(_expenditureFormFields.date!)) {
       return 'Today';
     }
-    return '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}';
+    return '${_expenditureFormFields.date!.day}/${_expenditureFormFields.date!.month}/${_expenditureFormFields.date!.year}';
+    // if (_selectedDate == null) {
+    //   return 'SELECT A DAY';
+    // }
+    // if (isToday(_selectedDate!)) {
+    //   return 'Today';
+    // }
+    // return '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}';
   }
 
   @override
@@ -531,13 +545,15 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       child: Row(
         children: [
           Expanded(
-            child: _selectedDate == null
+            // child: _selectedDate == null
+            child: _expenditureFormFields.date == null
                 ? const Text(
                     'DATE NOT CHOOSEN',
                     style: TextStyle(fontSize: 16),
                   )
                 : Text(
-                    'Date: ${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
+                    // 'Date: ${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
+                    'Date: ${_expenditureFormFields.date!.day}/${_expenditureFormFields.date!.month}/${_expenditureFormFields.date!.year}',
                     style: TextStyle(fontSize: 16),
                   ),
           ),
