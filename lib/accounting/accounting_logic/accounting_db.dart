@@ -32,6 +32,12 @@ class AccountingDB {
 
   static Future<int> insert(String table, Map<String, Object?> data) async {
     final db = await AccountingDB.database();
+    return db.insert(table, data,
+        conflictAlgorithm: ConflictAlgorithm.rollback);
+  }
+
+  static Future<int> update(String table, Map<String, Object?> data) async {
+    final db = await AccountingDB.database();
     return db.insert(table, data, conflictAlgorithm: ConflictAlgorithm.replace);
   }
 

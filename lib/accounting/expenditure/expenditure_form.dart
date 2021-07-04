@@ -264,7 +264,10 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
           'Create',
           Colors.green,
           () async {
-            await _saveForm();
+            await _saveForm(
+              () => ExpenditureModel.createExpenditureInDB(
+                  _expenditureFormFields),
+            );
           },
         );
       case FormDuty.EDIT:
@@ -274,16 +277,14 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
               context,
               'Save Changes',
               Colors.green,
-              () {
+              () async {
                 // save at db ...
-                ExpenditureModel.updateVoucher(
-                        widget.voucher!, _expenditureFormFields)
-                    .then((value) {
-                  print('EF 40| Save Change Button | update successfully');
-                }).catchError((e) {
-                  print('EF 41| Save Change Button | error while updating');
-                  print(e);
-                });
+                _saveForm(
+                  () => ExpenditureModel.updateVoucher(
+                    widget.voucher!,
+                    _expenditureFormFields,
+                  ),
+                );
               },
             ),
             SizedBox(height: 10),
@@ -307,7 +308,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     }
   }
 
-  Future<void> _saveForm() async {
+  Future<void> _saveForm(Function dbOperationHandler) async {
     if (_form.currentState == null) {
       print('EF20| Warn: _form.currentState == null');
       return;
@@ -325,8 +326,10 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       loadingStart();
       try {
         // save expences in database
-        print('EF23| _expenditureFormFields: $_expenditureFormFields');
-        await ExpenditureModel.createExpenditureInDB(_expenditureFormFields);
+        print(
+            'EF23| @ _saveForm() | _expenditureFormFields: $_expenditureFormFields');
+        // await ExpenditureModel.createExpenditureInDB(_expenditureFormFields);
+        await dbOperationHandler();
         // notify expenditur-screen to rebuild data-table
         widget.notifyNewVoucher();
         loadingEnd();
@@ -567,7 +570,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
             vertical: 8,
           ),
         ),
-        onPressed: _saveForm,
+        onPressed: () => _saveForm,
       ),
     );
   }

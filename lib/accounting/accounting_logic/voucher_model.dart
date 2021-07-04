@@ -27,6 +27,16 @@ class VoucherModel {
     return id!;
   }
 
+  Future<int> updateMeWithoutTransactionsInDB() async {
+    // do some logic on variables
+    // ...
+    var map = this.toMapForDB();
+    // print('VM10| map: $map');
+    id = await AccountingDB.update(voucherTableName, map);
+    // print('VM10| insertMeInDB() id: $id');
+    return id!;
+  }
+
   Future<int> deleteMeFromDB() async {
     if (id == null) {
       return 0;
@@ -112,7 +122,7 @@ class VoucherModel {
       await voucher.fetchMyTransactions();
     }
 
-    print('VM 30| All DB Vouchers: ###########');
+    print('VM FAV 01| All DB Vouchers: ###########');
     print(voucherModels);
     print('##################');
   }
@@ -142,7 +152,7 @@ class VoucherModel {
       await voucher.fetchMyTransactions();
     }
 
-    print('VM 30| All DB Vouchers: ###########');
+    print('VM 30| fetchVoucher for id: <$voucherId>: ###########');
     print(voucherModels);
     print('##################');
 
@@ -207,7 +217,8 @@ class VoucherModel {
       await voucher.fetchMyTransactions();
     }
 
-    print('VM 30| voucherModels: ##################');
+    print(
+        'VM aV 01| accountVouchers for account: $accountId: ##################');
     print(voucherModels);
     print('##################');
     return voucherModels;
@@ -258,7 +269,7 @@ class VoucherModel {
       return {
         column1Id: id ?? '',
         column2VoucherNumber: voucherNumber,
-        column3Date: date.millisecondsSinceEpoch,
+        column3Date: seconsdOfDateTime(date),
         column4Note: note,
       };
     }

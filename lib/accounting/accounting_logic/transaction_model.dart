@@ -25,7 +25,7 @@ class TransactionModel {
     required this.note,
   });
 
-  Future<int> insertTransactionToDB() async {
+  Future<int> insertMeIntoDB() async {
     // do some logic on variables
     return AccountingDB.insert(transactionTableName, toMapForDB());
   }

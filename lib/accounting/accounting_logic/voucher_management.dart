@@ -7,6 +7,7 @@ import 'package:shop/exceptions/DBException.dart';
 import 'package:shop/exceptions/curropted_input.dart';
 import 'package:shop/exceptions/db_operation.dart';
 import 'package:shop/exceptions/dirty_database.dart';
+import 'package:shop/exceptions/lazy_saeid.dart';
 import 'package:shop/shared/ValidationException.dart';
 import 'package:shop/exceptions/voucher_exception.dart';
 
@@ -66,7 +67,7 @@ class VoucherManagement {
         note: feed.note,
       );
       try {
-        await transaction.insertTransactionToDB();
+        await transaction.insertMeIntoDB();
         successTransactions.add(transaction);
       } catch (e) {
         // delete all transactions and voucher
@@ -133,7 +134,7 @@ class VoucherManagement {
         try {
           for (var transaction in successfullDeleted) {
             if (transaction == null) break;
-            await tran.insertTransactionToDB();
+            await tran.insertMeIntoDB();
           }
           throw DBOperationException(
             'VM 35| unsuccessful update vouchr: ${fVoucher.id}! there is no dirty data in db',
@@ -153,7 +154,7 @@ class VoucherManagement {
 
     for (var transaction in rVoucher.transactions) {
       try {
-        await transaction!.insertTransactionToDB();
+        await transaction!.insertMeIntoDB();
         successTransactions.add(transaction);
       } catch (e) {
         // unable to build all new transactions:
@@ -164,7 +165,7 @@ class VoucherManagement {
           }
           // step #b recreate old transactions
           for (var transaction in fVoucher.transactions) {
-            await transaction!.insertTransactionToDB();
+            await transaction!.insertMeIntoDB();
           }
 
           // strp #c notify update problem; without dirty data
@@ -179,6 +180,15 @@ class VoucherManagement {
           );
         }
       }
+    }
+
+    // step #6 update voucher at db
+    try {
+      await rVoucher.updateMeWithoutTransactionsInDB();
+    } catch (e) {
+      throw LazySaeidException(
+        'VM UP39| rVoucher not updated successfuly; And Saeid did not handle this situation',
+      );
     }
   }
 

@@ -49,7 +49,7 @@ class ExpenditureModel {
 
     if (debitTransactions.length > 1 || creditTdransactions.length > 1)
       throw CurroptedInputException(
-        'This form can handle only One debit and One credit transaction',
+        'EM 40| This form can handle only One debit and One credit transaction',
       );
 
     VoucherModel newVoucher = VoucherModel(
@@ -78,6 +78,9 @@ class ExpenditureModel {
         note: fields.note!,
       ),
     ];
+
+    print('EM 43| new Voucher to be updated at db');
+    print(newVoucher);
 
     return VoucherManagement.updateVoucher(newVoucher);
   }
