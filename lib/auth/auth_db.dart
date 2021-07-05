@@ -25,13 +25,20 @@ class AuthDB {
 
   static Future<int> insert(String table, Map<String, Object?> data) async {
     final db = await AuthDB.database();
-    return db.insert(table, data,
-        conflictAlgorithm: ConflictAlgorithm.rollback);
+    return db.insert(
+      table,
+      data,
+      conflictAlgorithm: ConflictAlgorithm.rollback,
+    );
   }
 
   static Future<int> update(String table, Map<String, Object?> data) async {
     final db = await AuthDB.database();
-    return db.insert(table, data, conflictAlgorithm: ConflictAlgorithm.replace);
+    return db.insert(
+      table,
+      data,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   static Future<void> deleteDB() async {

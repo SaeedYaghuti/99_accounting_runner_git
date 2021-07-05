@@ -2,13 +2,14 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:crypto/crypto.dart';
-import 'package:shop/accounting/accounting_logic/accounting_db.dart';
-import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/auth/auth_db.dart';
 import 'package:shop/constants.dart';
 import 'package:shop/exceptions/curropted_input.dart';
 import 'package:shop/exceptions/dirty_database.dart';
+import 'package:shop/exceptions/null_exception.dart';
 import 'package:shop/exceptions/unique_constraint_exception.dart';
+import 'package:shop/shared/result_status.dart';
+import 'package:shop/shared/validation_result.dart';
 
 class AuthModel {
   int? _id;
@@ -18,18 +19,26 @@ class AuthModel {
 
   AuthModel();
 
-  Future<void> createNewUserInDB(String username, String password) async {
+  Future<int> createNewUserInDB(String username, String password) async {
     // print('Auth cr_new_usr 01| username: $username, password: $password');
-    _username = username;
-    _salt = _createSalt();
-    _password = _hashPassword(password, _salt!);
 
-    var map = _toMapForDB();
+    // do validation on username
+    // ..
+
+    var salt = _createSalt();
+    var hashedPassword = _hashPassword(password, _salt!);
+
+    var map = _makeMapForDB(
+      username,
+      hashedPassword,
+      salt,
+    );
     // print('Auth cr_new_usr 02| for db prepared map: $map');
     try {
       _id = await AuthDB.insert(authTableName, map);
-      // print('Auth cr_new_usr 03| generated_id _id: $_id');
-
+      _salt = salt;
+      _password = hashedPassword;
+      return _id!;
     } catch (e) {
       print('Auth cr_new_usr 05| catch e: $e');
       if (e.toString().contains('UNIQUE constraint failed'))
@@ -38,32 +47,73 @@ class AuthModel {
     }
   }
 
-  Future<AuthModel?> fetchUserById(int userId) async {
+  Future<ValidationResult> validateUser(
+    String username,
+    String password,
+  ) async {
+    // #1 do we have such a username
+    var fetchStatus = await _fetchUserByUsername(username);
+    if (!fetchStatus.isSuccessful)
+      return ValidationResult(
+        false,
+        'ATH validateUser 01| There is no such a username: $username in db',
+      );
+
+    // #2 validate password
+    var isValidPassword = _validatePassword(password);
+    print('Auth validateUser 02| isValidPassword: $isValidPassword');
+
+    return ValidationResult(
+      isValidPassword,
+      'ATH vUser 03| password is incorrect',
+    );
+  }
+
+  Future<ResultStatus> _fetchUserById(int userId) async {
     final query = '''
     SELECT *
     FROM $authTableName
-    WHERE $column1Id = $userId
+    WHERE $column1Id = ?
     ''';
-    var authesMap = await AuthDB.runRawQuery(query);
+    var authesMap = await AuthDB.runRawQuery(query, [userId]);
 
-    if (authesMap.length == 0) {
-      return null;
-    }
+    if (authesMap.length == 0)
+      return ResultStatus(
+        false,
+        'ATH fUserbyId 01 | There is no such userId: $userId in db',
+      );
+
     if (authesMap.length > 1) {
       throw DirtyDatabaseException(
         'AUTH fuserByid 01| there is more than one row with id: $userId',
       );
     }
 
-    _fromMapOfAuth(authesMap.first);
+    _setVariablesFromMapOfAuth(authesMap.first);
+    return ResultStatus(true);
   }
 
-  void validateUser(String password) {
-    var salt = _createSalt(); // should take from db
-    var pass1 = _hashPassword(password, salt);
+  Future<ResultStatus> _fetchUserByUsername(String username) async {
+    final query = '''
+    SELECT *
+    FROM $authTableName
+    WHERE $column2Username = ?
+    ''';
+    var authesMap = await AuthDB.runRawQuery(query, [username]);
 
-    var result = _validatePassword(password, salt, pass1.toString());
-    print('Auth validateUser 01| result: $result');
+    if (authesMap.length == 0)
+      return ResultStatus(
+        false,
+        'ATH fuserByUsername 01| There isn\'t any user with username: $username',
+      );
+
+    if (authesMap.length > 1)
+      throw DirtyDatabaseException(
+        'AUTH fuserByid 01| there is more than one row with username: $username',
+      );
+
+    _setVariablesFromMapOfAuth(authesMap.first);
+    return ResultStatus(true);
   }
 
   String _createSalt([int length = 32]) {
@@ -85,9 +135,12 @@ class AuthModel {
     return hashedPassword.toString();
   }
 
-  bool _validatePassword(String password, String salt, String hashedPassword) {
-    var newHash = _hashPassword(password, salt);
-    return newHash.toString() == hashedPassword;
+  bool _validatePassword(String password) {
+    if (_salt == null || _password == null)
+      throw NullException(
+          'ATH _vPass 01 | _salt or _password is null but it shouldn\'t be null');
+    var newHash = _hashPassword(password, _salt!).toString();
+    return _password == newHash;
   }
 
   set salt(String salt) {
@@ -100,7 +153,7 @@ class AuthModel {
     return _salt ?? 'no-salt';
   }
 
-  void _fromMapOfAuth(
+  void _setVariablesFromMapOfAuth(
     Map<String, Object?> authMap,
   ) {
     print('AUTH from_map_01| input authMap: $authMap');
@@ -112,6 +165,18 @@ class AuthModel {
     _salt = authMap[AuthModel.column4Salt] as String;
 
     print('AUTH from_map_02| output this:\n${toString()}');
+  }
+
+  Map<String, Object> _makeMapForDB(
+    String username,
+    String password,
+    String salt,
+  ) {
+    return {
+      column2Username: _username!,
+      column3Password: _password!,
+      column4Salt: _salt!,
+    };
   }
 
   Map<String, Object> _toMapForDB() {

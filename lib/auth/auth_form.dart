@@ -2,10 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop/auth/auth_provider.dart';
 import 'package:shop/constants.dart';
 
 import 'auth_mode.dart';
+import 'auth_provider.dart';
 
 class AuthForm extends StatefulWidget {
   const AuthForm({

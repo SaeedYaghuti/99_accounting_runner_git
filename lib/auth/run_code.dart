@@ -15,6 +15,8 @@ void runCode() async {
   // var resault = await AccountingDB.runRawQuery('PRAGMA foreign_keys');
   // print('PRAGMA foreign_keys > $resault');
   var auth = AuthModel();
-  // var result = auth.createNewUserInDB('saeid', '123456');
-  auth.fetchUserById(1);
+  // var result = await auth.createNewUserInDB('saeid', '123456');
+  // print('Ath runCode 01| result: $result');
+  // auth.fetchUserById(1);
+  // auth.fetchUserByUsername('saeid');
 }
