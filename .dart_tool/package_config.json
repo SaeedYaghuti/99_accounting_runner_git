@@ -38,6 +38,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "crypto",
+      "rootUri": "file:///Users/saeid/Documents/tools/flutter/.pub-cache/hosted/pub.dartlang.org/crypto-3.0.1",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "cupertino_icons",
       "rootUri": "file:///Users/saeid/Documents/tools/flutter/.pub-cache/hosted/pub.dartlang.org/cupertino_icons-1.0.3",
       "packageUri": "lib/",
@@ -302,7 +308,7 @@
       "languageVersion": "2.12"
     }
   ],
-  "generated": "2021-06-20T20:21:46.152106Z",
+  "generated": "2021-07-05T04:50:19.636639Z",
   "generator": "pub",
   "generatorVersion": "2.12.3"
 }

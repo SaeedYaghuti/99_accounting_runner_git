@@ -16,3 +16,6 @@ const SAEIDPASSWORD = '123456';
 // Switch between Shop and Accounting
 const RUN_SHOP_APP = false;
 const RUN_ACCOUNTING_APP = true;
+
+// hashing password
+const HASH_PASS = 'ze455MAFIkVygjMGUpLm7fEeeAaxN3Vyv-3r_iXJGgU';
