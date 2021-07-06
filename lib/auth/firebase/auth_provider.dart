@@ -32,7 +32,9 @@ class AuthProvider with ChangeNotifier {
       'password': password,
       'returnSecureToken': true,
     });
+    print('ATH_Provider _authenticate 01| payload: $payload');
     try {
+      print('ATH_Provider _authenticate 02| url: $url');
       final rawResponse = await http.post(url!, body: payload);
       final response = json.decode(rawResponse.body);
 

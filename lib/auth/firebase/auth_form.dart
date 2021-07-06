@@ -181,6 +181,7 @@ class _AuthFormState extends State<AuthForm> {
       }
       _showErrorDialog(errorMessage);
     } catch (e) {
+      print('ATH_Prv _submit 10| error while login/signup e: $e');
       _endLoading();
       const errorMessage =
           'Could not authenticate you. Please try again later.';
