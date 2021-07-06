@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/accounting/common/multi_language_text_widget.dart';
 import 'package:shop/auth/firebase/auth_provider.dart';
+import 'package:shop/auth/local/auth_provider_sql.dart';
 
 class CategoriesDrawer extends StatelessWidget {
   const CategoriesDrawer({Key? key}) : super(key: key);
@@ -30,7 +31,7 @@ class CategoriesDrawer extends StatelessWidget {
             onTap: () {
               Navigator.of(context).pop();
               Navigator.of(context).pushReplacementNamed('/');
-              Provider.of<AuthProvider>(context, listen: false).logout();
+              Provider.of<AuthProviderSQL>(context, listen: false).logout();
             },
           ),
         ],
