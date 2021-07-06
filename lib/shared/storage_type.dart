@@ -1,0 +1,4 @@
+enum StorageType {
+  SQL,
+  FIREBASE,
+}

@@ -1,3 +1,5 @@
+import 'package:shop/shared/storage_type.dart';
+
 const String dbUrl = 'https://flutter-shop-03-default-rtdb.firebaseio.com/';
 const String webApiKey = 'AIzaSyAV9xklqkQKO8Z6F5_tKcva5k9FpBcmBU8';
 
@@ -19,3 +21,6 @@ const RUN_ACCOUNTING_APP = true;
 
 // hashing password
 const HASH_PASS = 'ze455MAFIkVygjMGUpLm7fEeeAaxN3Vyv-3r_iXJGgU';
+
+// select storage TYPE
+const STORAGE_TYPE = StorageType.SQL;
