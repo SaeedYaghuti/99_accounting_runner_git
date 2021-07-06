@@ -22,10 +22,11 @@ class AuthProviderSQL with ChangeNotifier {
   // Timer? _logoutTimer;
 
   Future<void> signup(String username, String password) async {
+    print('ATHPr signup 01| recived $username and $password');
     _auth = AuthModel();
     var insertedId = await _auth!.createNewUserInDB(username, password);
     if (insertedId == 0)
-      throw DBException('ATHPr signup 01| unable to insert $username in db');
+      throw DBException('ATHPr signup 02| unable to insert $username in db');
 
     _userId = _auth!.id;
     // _expiryDate = DateTime.now().add(Duration(hours: 3));

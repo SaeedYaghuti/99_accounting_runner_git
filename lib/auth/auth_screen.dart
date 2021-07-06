@@ -1,7 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:shop/auth/firebase/auth_form.dart';
+import 'package:shop/auth/local/auth_form_sql.dart';
+// import 'package:shop/auth/firebase/auth_form.dart';
 
 class AuthScreen extends StatelessWidget {
   static const routeName = '/auth';
@@ -29,7 +30,7 @@ class AuthScreen extends StatelessWidget {
                   ),
                   Flexible(
                     flex: deviceSize.width > 600 ? 2 : 1,
-                    child: AuthForm(),
+                    child: AuthFormSQL(),
                   ),
                 ],
               ),

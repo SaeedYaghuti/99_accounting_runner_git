@@ -4,20 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/auth/local/auth_provider_sql.dart';
 import 'package:shop/constants.dart';
+import 'package:shop/exceptions/unique_constraint_exception.dart';
 
 import '../auth_mode.dart';
 // import 'auth_provider.dart';
 
-class AuthForm extends StatefulWidget {
-  const AuthForm({
+class AuthFormSQL extends StatefulWidget {
+  const AuthFormSQL({
     Key? key,
   }) : super(key: key);
 
   @override
-  _AuthFormState createState() => _AuthFormState();
+  _AuthFormSQLState createState() => _AuthFormSQLState();
 }
 
-class _AuthFormState extends State<AuthForm> {
+class _AuthFormSQLState extends State<AuthFormSQL> {
   final GlobalKey<FormState> _formKey = GlobalKey();
   AuthMode _authMode = AuthMode.Login;
   Map<String, String> _authData = {
@@ -166,26 +167,19 @@ class _AuthFormState extends State<AuthForm> {
         // after successfull signup; we run notifyListiner() at authProvider; listiner will action themself to new state
 
       }
-    } on HttpException catch (error) {
+    } on UniqueConstraintException catch (e) {
       _endLoading();
-      var errorMessage = 'Authentication failed';
-      if (error.toString().contains('EMAIL_EXISTS')) {
-        errorMessage = 'This email address is already in use.';
-      } else if (error.toString().contains('INVALID_EMAIL')) {
-        errorMessage = 'This is not a valid email address';
-      } else if (error.toString().contains('WEAK_PASSWORD')) {
-        errorMessage = 'This password is too weak.';
-      } else if (error.toString().contains('EMAIL_NOT_FOUND')) {
-        errorMessage = 'Could not find a user with that email.';
-      } else if (error.toString().contains('INVALID_PASSWORD')) {
-        errorMessage = 'Invalid password.';
-      }
-      _showErrorDialog(errorMessage);
+      _showErrorDialog(
+        'ATH_FORM_SQL Catch 02| This username already taken! maybe you want to login! or you should choose another username; \n error: $e',
+      );
     } catch (e) {
+      print(
+        'ATH_FORM_SQL Catch 01| error happend while login Or signup: e: $e',
+      );
       _endLoading();
-      const errorMessage =
-          'Could not authenticate you. Please try again later.';
-      _showErrorDialog(errorMessage);
+      _showErrorDialog(
+        'ATH_FORM_SQL Catch 02| Could not authenticate you. Please try again later.',
+      );
     }
   }
 

@@ -30,14 +30,14 @@ class AuthModel {
     // ..
 
     var salt = _createSalt();
-    var hashedPassword = _hashPassword(password, _salt!);
+    var hashedPassword = _hashPassword(password, salt);
 
     var map = _makeMapForDB(
       username,
       hashedPassword,
       salt,
     );
-    // print('Auth cr_new_usr 02| for db prepared map: $map');
+
     try {
       _id = await AuthDB.insert(authTableName, map);
       _salt = salt;
@@ -121,12 +121,15 @@ class AuthModel {
   }
 
   String _createSalt([int length = 32]) {
+    // print('_createSalt 01| running...');
     final Random _random = Random.secure();
     var values = List<int>.generate(length, (index) => _random.nextInt(256));
+    // print('_createSalt 02| values: $values');
     return base64Url.encode(values);
   }
 
   String _hashPassword(String password, String salt) {
+    // print('Auth hash_pass 00| input password: $password, salt: $salt');
     var saltedPassword = salt + password + HASH_PASS;
     // print('Auth hash_pass 01| saltedPassword: $saltedPassword');
 
@@ -177,9 +180,9 @@ class AuthModel {
     String salt,
   ) {
     return {
-      column2Username: _username!,
-      column3Password: _password!,
-      column4Salt: _salt!,
+      column2Username: username,
+      column3Password: password,
+      column4Salt: salt,
     };
   }
 
