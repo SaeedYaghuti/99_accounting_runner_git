@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:shop/accounting/common/multi_language_text_widget.dart';
 import 'package:shop/auth/firebase/auth_provider.dart';
 import 'package:shop/auth/local/auth_provider_sql.dart';
+import 'package:shop/constants.dart';
+import 'package:shop/shared/storage_type.dart';
 
 class CategoriesDrawer extends StatelessWidget {
   const CategoriesDrawer({Key? key}) : super(key: key);
@@ -31,7 +33,10 @@ class CategoriesDrawer extends StatelessWidget {
             onTap: () {
               Navigator.of(context).pop();
               Navigator.of(context).pushReplacementNamed('/');
-              Provider.of<AuthProviderSQL>(context, listen: false).logout();
+              if (STORAGE_TYPE == StorageType.SQL)
+                Provider.of<AuthProviderSQL>(context, listen: false).logout();
+              if (STORAGE_TYPE == StorageType.FIREBASE)
+                Provider.of<AuthProvider>(context, listen: false).logout();
             },
           ),
         ],

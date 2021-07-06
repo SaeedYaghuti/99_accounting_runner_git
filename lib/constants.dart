@@ -23,4 +23,4 @@ const RUN_ACCOUNTING_APP = true;
 const HASH_PASS = 'ze455MAFIkVygjMGUpLm7fEeeAaxN3Vyv-3r_iXJGgU';
 
 // select storage TYPE
-const STORAGE_TYPE = StorageType.SQL;
+const STORAGE_TYPE = StorageType.FIREBASE;
