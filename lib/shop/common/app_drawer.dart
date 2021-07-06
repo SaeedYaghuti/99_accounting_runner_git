@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop/auth/auth_provider.dart';
+import 'package:shop/auth/firebase/auth_provider.dart';
 import '../order/order_screen.dart';
 import '../product/manage_product_screen.dart';
 

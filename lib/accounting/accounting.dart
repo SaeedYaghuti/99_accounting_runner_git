@@ -5,7 +5,8 @@ import 'package:shop/accounting/categories/sub_categories_screen.dart';
 import 'package:shop/accounting/environment/environment_provider.dart';
 import 'package:shop/accounting/expenditure/expenditure_screen.dart';
 import 'package:shop/accounting/sell_point/sell_point_screen.dart';
-import 'package:shop/auth/auth_provider.dart';
+// import 'package:shop/auth/auth_provider.dart';
+import 'package:shop/auth/local/auth_provider_sql.dart';
 import 'package:shop/auth/auth_screen.dart';
 import 'package:shop/shared/loading_screen.dart';
 
@@ -16,7 +17,7 @@ class AccountingApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (ctx) => AuthProvider()),
+        ChangeNotifierProvider(create: (ctx) => AuthProviderSQL()),
         ChangeNotifierProvider(create: (ctx) => EnvironmentProvider()),
       ],
       child: MaterialApp(
@@ -37,16 +38,16 @@ class AccountingApp extends StatelessWidget {
   }
 
   Widget _buildCategoriesOverviewScreenOrAuth() {
-    return Consumer<AuthProvider>(
-      builder: (ctx, authProvider, child) => authProvider.isAuth
-          ? CategoriesOverviewScreen()
-          : FutureBuilder(
-              future: authProvider.tryAutoLogin(),
-              builder: (ctx, snapshot) =>
-                  snapshot.connectionState == ConnectionState.waiting
-                      ? LoadingScreen()
-                      : AuthScreen(),
-            ),
+    return Consumer<AuthProviderSQL>(
+      builder: (ctx, authProvider, child) =>
+          authProvider.isAuth ? CategoriesOverviewScreen() : AuthScreen(),
+      // : FutureBuilder(
+      //     future: authProvider.tryAutoLogin(),
+      //     builder: (ctx, snapshot) =>
+      //         snapshot.connectionState == ConnectionState.waiting
+      //             ? LoadingScreen()
+      //             : AuthScreen(),
+      //   ),
     );
   }
 

@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:shop/auth/auth_form.dart';
+import 'package:shop/auth/firebase/auth_form.dart';
 
 class AuthScreen extends StatelessWidget {
   static const routeName = '/auth';

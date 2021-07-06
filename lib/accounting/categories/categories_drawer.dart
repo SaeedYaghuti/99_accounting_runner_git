@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/accounting/common/multi_language_text_widget.dart';
-import 'package:shop/auth/auth_provider.dart';
+import 'package:shop/auth/firebase/auth_provider.dart';
 
 class CategoriesDrawer extends StatelessWidget {
   const CategoriesDrawer({Key? key}) : super(key: key);
