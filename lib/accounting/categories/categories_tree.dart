@@ -4,6 +4,7 @@ import 'package:shop/accounting/categories/category_model.dart';
 import 'package:shop/accounting/expenditure/expenditure_screen.dart';
 import 'package:shop/accounting/sell_point/sell_point_screen.dart';
 import 'package:shop/auth/local/auth_provider_sql.dart';
+import 'package:shop/auth/permissions.dart';
 
 const CATEGORIES_TREE = const [
   CategoryModel(
@@ -13,6 +14,7 @@ const CATEGORIES_TREE = const [
     titleArabic: 'مبيعات',
     color: Colors.green,
     parentId: 'root',
+    requiredPermission: PermissionModel.SELL_POINT_CATEGORY,
   ),
   CategoryModel(
     id: 'expences',
@@ -22,6 +24,7 @@ const CATEGORIES_TREE = const [
     color: Colors.pink,
     parentId: 'root',
     routeName: ExpenditureScreen.routeName,
+    requiredPermission: PermissionModel.EXPENDITURE_CATEGORY,
   ),
   CategoryModel(
     id: 'purchas',
@@ -30,6 +33,7 @@ const CATEGORIES_TREE = const [
     titleArabic: 'مشتريات',
     color: Colors.orange,
     parentId: 'root',
+    requiredPermission: PermissionModel.PURCHAS_CATEGORY,
   ),
   CategoryModel(
     id: 'items',
@@ -38,6 +42,7 @@ const CATEGORIES_TREE = const [
     titleArabic: 'بضاعة',
     color: Colors.grey,
     parentId: 'root',
+    requiredPermission: PermissionModel.ITEM_CATEGORY,
   ),
   CategoryModel(
     id: 'money-movement',
@@ -46,6 +51,7 @@ const CATEGORIES_TREE = const [
     titleArabic: 'حركة مالية',
     color: Colors.purple,
     parentId: 'root',
+    requiredPermission: PermissionModel.MONEY_MOVEMENT_CATEGORY,
   ),
   CategoryModel(
     id: 'reports',
@@ -54,6 +60,7 @@ const CATEGORIES_TREE = const [
     titleArabic: 'تقارير',
     color: Colors.blue,
     parentId: 'root',
+    requiredPermission: PermissionModel.REPORT_CATEGORY,
   ),
   CategoryModel(
     id: 'accounts',
@@ -62,6 +69,7 @@ const CATEGORIES_TREE = const [
     titleArabic: 'نقاط المالية',
     color: Colors.brown,
     parentId: 'root',
+    requiredPermission: PermissionModel.ACCOUNT_CATEGORY,
   ),
   CategoryModel(
     id: 'retail',
@@ -71,6 +79,7 @@ const CATEGORIES_TREE = const [
     color: Colors.blueGrey,
     parentId: 'sell-point',
     routeName: RetailScreen.routeName,
+    requiredPermission: PermissionModel.RETAIL_CATEGORY,
   ),
   CategoryModel(
     id: 'wholesale',
@@ -79,6 +88,7 @@ const CATEGORIES_TREE = const [
     titleArabic: 'بيع بالجملة',
     color: Colors.greenAccent,
     parentId: 'sell-point',
+    requiredPermission: PermissionModel.WHOLESALE_CATEGORY,
   ),
   CategoryModel(
     id: 'manage-items',
@@ -87,6 +97,7 @@ const CATEGORIES_TREE = const [
     titleArabic: 'تصليح اقلام',
     color: Colors.purple,
     parentId: 'items',
+    requiredPermission: PermissionModel.MONEY_MOVEMENT_CATEGORY,
   ),
   CategoryModel(
     id: 'item-summery',
@@ -95,6 +106,7 @@ const CATEGORIES_TREE = const [
     titleArabic: 'حركة اقلام',
     color: Colors.deepOrange,
     parentId: 'items',
+    requiredPermission: PermissionModel.ITEM_SUMMERY_CATEGORY,
   ),
 ];
 

@@ -1,5 +1,6 @@
 import 'package:path/path.dart' as path;
 import 'package:shop/auth/local/auth_model.dart';
+import 'package:shop/auth/permissions.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AuthDB {
@@ -17,10 +18,22 @@ class AuthDB {
         print('AuthDB 01| onCreate runing...');
         await db.execute(QUERY_FOREIGN_KEY_ON);
         await db.execute(AuthModel.QUERY_CREATE_AUTH_TABLE);
+        await db.execute(PermissionModel.QUERY_CREATE_PERMISSION_TABLE);
       },
     );
     await db.execute(QUERY_FOREIGN_KEY_ON);
     return db;
+  }
+
+  static Future<void> insertPredefinedPermissions(Database db) async {
+    for (AccountModel account in ACCOUNTS_TREE) {
+      int insertResult = await db.insert(
+        AccountModel.tableName,
+        account.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      // print('ADB20| @insertPredefinedAccounts() insertResult: $insertResult');
+    }
   }
 
   static Future<int> insert(String table, Map<String, Object?> data) async {
