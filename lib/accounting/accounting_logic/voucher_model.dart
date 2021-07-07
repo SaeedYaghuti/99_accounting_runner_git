@@ -19,6 +19,7 @@ class VoucherModel {
   final DateTime date;
   final String note;
   List<TransactionModel?> transactions = [];
+  // final int userId;
 
   VoucherModel({
     this.id,
