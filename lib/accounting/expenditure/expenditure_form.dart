@@ -366,12 +366,13 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         style: TextStyle(
           fontSize: 26,
           // wordSpacing: 2.0,
-          letterSpacing: 1.0,
+          letterSpacing: 0.7,
           color: Colors.white,
         ),
       ),
       style: ButtonStyle(
-        padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.all(10)),
+        padding: MaterialStateProperty.all<EdgeInsets>(
+            EdgeInsets.symmetric(vertical: 10, horizontal: 20)),
         backgroundColor: MaterialStateProperty.all(color),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
