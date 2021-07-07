@@ -1,6 +1,9 @@
 import 'dart:async';
 
 // import 'package:shop/accounting/accounting_logic/run_code.dart';
+import 'package:provider/provider.dart';
+import 'package:shop/auth/local/auth_model.dart';
+import 'package:shop/auth/local/auth_provider_sql.dart';
 import 'package:shop/auth/run_code.dart';
 
 import 'package:flutter/material.dart';
@@ -41,7 +44,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   var _expenditureFormFields = ExpenditurFormFields(
     paidBy: ACCOUNTS_ID.CASH_DRAWER_ACCOUNT_ID,
   );
-  // DateTime? _selectedDate;
   var _isLoading = false;
 
   @override
@@ -113,12 +115,9 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       padding: EdgeInsets.all(16),
       child: Form(
         key: _form,
-        // autovalidate: true,
         child: Container(
           width: 1200,
-          // height: 300,
           child: ListView(
-            // scrollDirection: Axis.horizontal,
             children: [
               _buildAmount(context),
               SizedBox(height: 20, width: 20),
@@ -259,7 +258,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   Widget _buildSubmitButtons(BuildContext context) {
     switch (_formDuty) {
       case FormDuty.DELETE:
-      case FormDuty.READ: // like CREATE
+      case FormDuty.READ:
       case FormDuty.CREATE:
         return _buildButton(
           context,
@@ -280,7 +279,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
               'Save Changes',
               Colors.green,
               () async {
-                // save at db ...
                 _saveForm(
                   () => ExpenditureModel.updateVoucher(
                     widget.voucher!,
@@ -324,7 +322,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       print('EF21| Warn: some of form feilds are not valid;');
       return;
     }
-    _form.currentState!.save(); // run onSaved method
+    _form.currentState!.save(); // run all onSaved method
 
     // add/edit expences in db
     // mod: new product creation

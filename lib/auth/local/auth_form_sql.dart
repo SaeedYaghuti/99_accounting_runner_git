@@ -144,14 +144,10 @@ class _AuthFormSQLState extends State<AuthFormSQL> {
   }
 
   Future<void> _submit() async {
-    if (_formKey.currentState == null || !_formKey.currentState!.validate()) {
+    if (_formKey.currentState == null || !_formKey.currentState!.validate())
       return;
-    }
-
     _formKey.currentState!.save();
-
     _startLoading();
-
     try {
       if (_authMode == AuthMode.Login) {
         await Provider.of<AuthProviderSQL>(context, listen: false).login(

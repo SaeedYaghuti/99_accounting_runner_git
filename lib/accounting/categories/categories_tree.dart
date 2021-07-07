@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop/accounting/categories/category_model.dart';
 import 'package:shop/accounting/expenditure/expenditure_screen.dart';
 import 'package:shop/accounting/sell_point/sell_point_screen.dart';
+import 'package:shop/auth/local/auth_provider_sql.dart';
 
 const CATEGORIES_TREE = const [
   CategoryModel(
@@ -96,7 +98,14 @@ const CATEGORIES_TREE = const [
   ),
 ];
 
-List<CategoryModel> getSubcategoriesOf(String parentId) {
+List<CategoryModel> getSubcategoriesOf(BuildContext context, String parentId) {
+  print('CAT_TREES getSubcats 01| run ...');
+  var authProvider = Provider.of<AuthProviderSQL>(
+    context,
+    listen: true,
+  );
+
+  print('CAT_TREES getSubcats 02| authProvider.userId: ${authProvider.userId}');
   return CATEGORIES_TREE
       .where((category) => category.parentId == parentId)
       .toList();

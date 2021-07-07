@@ -4,6 +4,7 @@ import 'package:shop/accounting/categories/categories_drawer.dart';
 import 'package:shop/accounting/common/multi_language_text_widget.dart';
 import 'package:shop/accounting/common/supported_language.dart';
 import 'package:shop/accounting/environment/environment_provider.dart';
+import 'package:shop/auth/local/auth_provider_sql.dart';
 
 import 'categories_grid.dart';
 
@@ -22,8 +23,11 @@ class _CategoriesOverviewScreenState extends State<CategoriesOverviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var environmenProvider =
-        Provider.of<EnvironmentProvider>(context, listen: true);
+    var environmenProvider = Provider.of<EnvironmentProvider>(
+      context,
+      listen: true,
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: _buildTitle(),

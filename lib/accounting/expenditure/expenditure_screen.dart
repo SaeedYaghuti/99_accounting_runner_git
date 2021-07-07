@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop/accounting/accounting_logic/account_ids.dart';
 import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
@@ -6,6 +7,8 @@ import 'package:shop/accounting/common/flexible_popup_menu_button.dart';
 import 'package:shop/accounting/common/multi_language_text_widget.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/accounting/expenditure/expenditure_form.dart';
+import 'package:shop/auth/firebase/auth_provider.dart';
+import 'package:shop/auth/local/auth_provider_sql.dart';
 import 'package:shop/shared/confirm_dialog.dart';
 import 'package:shop/shared/not_handled_exception.dart';
 import 'package:shop/shared/readible_date.dart';
@@ -27,6 +30,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
   VoucherModel? _voucherToShowInForm;
   int? _expenseIdToShowInForm;
   FormDuty? _formDuty;
+  AuthProviderSQL? authProvider;
 
   var _vouchersAreLoading = false;
 
@@ -49,6 +53,16 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       print(e.toString());
     });
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    print('ExpScreen didChange 01| run didChangeDependencies() ...');
+    authProvider = Provider.of<AuthProviderSQL>(context, listen: true);
+    print(
+      'ExpScreen didChange 02| authProvider.userId: ${authProvider?.userId}',
+    );
+    super.didChangeDependencies();
   }
 
   @override
