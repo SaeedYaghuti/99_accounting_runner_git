@@ -3,7 +3,7 @@ import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
 import 'package:shop/accounting/accounting_logic/transaction_feed.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_feed.dart';
-import 'package:shop/accounting/accounting_logic/voucher_management.dart';
+// import 'package:shop/accounting/accounting_logic/voucher_management.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/expenditure/expenditure_form_fields.dart';
 import 'package:shop/exceptions/DBException.dart';
@@ -26,7 +26,7 @@ class ExpenditureModel {
       date: fields.date!,
       note: fields.note!,
     );
-    return VoucherManagement.createVoucher(
+    return VoucherModel.createVoucher(
       voucherFeed,
       [
         transactionFeedDebit,
@@ -82,6 +82,6 @@ class ExpenditureModel {
     print('EM 43| new Voucher to be updated at db');
     print(newVoucher);
 
-    return VoucherManagement.updateVoucher(newVoucher);
+    return VoucherModel.updateVoucher(newVoucher);
   }
 }

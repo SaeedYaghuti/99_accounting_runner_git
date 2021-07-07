@@ -11,7 +11,7 @@ import 'package:shop/exceptions/lazy_saeid.dart';
 import 'package:shop/shared/ValidationException.dart';
 import 'package:shop/exceptions/voucher_exception.dart';
 
-class VoucherManagement {
+class XVoucherManagement {
   static Future<void> createVoucher(
     VoucherFeed voucherFeed,
     List<TransactionFeed> transactionFeeds,
