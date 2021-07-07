@@ -32,7 +32,7 @@ class VoucherModel {
     List<TransactionFeed> transactionFeeds,
   ) async {
     // step 1# validate data
-    if (!validateTransactionFeedsAmount(transactionFeeds)) {
+    if (!_validateTransactionFeedsAmount(transactionFeeds)) {
       throw ValidationException(
         'V_MG 00| amount in transactionFeeds are not valid',
       );
@@ -55,13 +55,13 @@ class VoucherModel {
     VoucherModel voucher = VoucherModel(
       voucherNumber: voucherNumber,
       date: voucherFeed.date,
-      note: makeVoucherNote(transactionFeeds),
+      note: _makeVoucherNote(transactionFeeds),
     );
     // print('V_MG 07| voucher before save in db >');
     // print(voucher);
 
     try {
-      await voucher.insertMeInDB();
+      await voucher._insertMeInDB();
     } catch (e) {
       await VoucherNumberModel.numberNotConsumed(voucherNumber);
       throw DBException(
@@ -108,12 +108,12 @@ class VoucherModel {
     print('V_MG 19| voucher and all its transactions saved Successfully!');
 
     // TODO: remove me
-    await voucher.fetchMyTransactions();
+    await voucher._fetchMyTransactions();
   }
 
   static Future<void> updateVoucher(VoucherModel rVoucher) async {
     // step 1# validate amount
-    if (!validateTransactionModelsAmount(rVoucher.transactions)) {
+    if (!_validateTransactionModelsAmount(rVoucher.transactions)) {
       throw ValidationException(
         'V_MG 30| amount in transactionFeeds are not valid',
       );
@@ -123,7 +123,7 @@ class VoucherModel {
     }
 
     // step 2# fetch voucher by id
-    var fVoucher = await VoucherModel.fetchVoucherById(rVoucher.id!);
+    var fVoucher = await VoucherModel._fetchVoucherById(rVoucher.id!);
 
     // step 3# chack validity
     if (fVoucher == null) {
@@ -199,32 +199,12 @@ class VoucherModel {
 
     // step #6 update voucher at db
     try {
-      await rVoucher.updateMeWithoutTransactionsInDB();
+      await rVoucher._updateMeWithoutTransactionsInDB();
     } catch (e) {
       throw LazySaeidException(
         'VM UP39| rVoucher not updated successfuly; And Saeid did not handle this situation',
       );
     }
-  }
-
-  Future<int> insertMeInDB() async {
-    // do some logic on variables
-    // ...
-    var map = this.toMapForDB();
-    // print('VM10| map: $map');
-    id = await AccountingDB.insert(voucherTableName, map);
-    // print('VM10| insertMeInDB() id: $id');
-    return id!;
-  }
-
-  Future<int> updateMeWithoutTransactionsInDB() async {
-    // do some logic on variables
-    // ...
-    var map = this.toMapForDB();
-    // print('VM10| map: $map');
-    id = await AccountingDB.update(voucherTableName, map);
-    // print('VM10| insertMeInDB() id: $id');
-    return id!;
   }
 
   Future<int> deleteMeFromDB() async {
@@ -239,25 +219,6 @@ class VoucherModel {
     var count = await AccountingDB.deleteRawQuery(query);
     // print('VM 20| DELETE $id; count: $count');
     return count;
-  }
-
-  Future<void> fetchMyTransactions() async {
-    if (id == null) {
-      print('VM 29| Warn: id is null: fetchMyTransactions()');
-      return;
-    }
-
-    final query = '''
-      SELECT *
-      FROM ${TransactionModel.transactionTableName}
-      WHERE ${TransactionModel.column3VoucherId} = $id
-    ''';
-    var result = await AccountingDB.runRawQuery(query);
-    transactions = result
-        .map(
-          (tranMap) => TransactionModel.fromMapOfTransaction(tranMap),
-        )
-        .toList();
   }
 
   List<TransactionModel?> debitTransactions() {
@@ -295,89 +256,6 @@ class VoucherModel {
     return debitIds.join(', ');
   }
 
-  static Future<void> fetchAllVouchers() async {
-    final query = '''
-    SELECT *
-    FROM $voucherTableName
-    ''';
-    var vouchersMap = await AccountingDB.runRawQuery(query);
-    // convert map to voucherModel
-    List<VoucherModel> voucherModels = [];
-    vouchersMap.forEach(
-      (vchMap) => voucherModels.add(fromMapOfVoucher(vchMap)),
-    );
-
-    // fetch transaction for each voucher
-    for (var voucher in voucherModels) {
-      await voucher.fetchMyTransactions();
-    }
-
-    print('VM FAV 01| All DB Vouchers: ###########');
-    print(voucherModels);
-    print('##################');
-  }
-
-  static Future<VoucherModel?> fetchVoucherById(int voucherId) async {
-    final query = '''
-    SELECT *
-    FROM $voucherTableName
-    WHERE $column1Id = $voucherId
-    ''';
-    var vouchersMap = await AccountingDB.runRawQuery(query);
-    // convert map to voucherModel
-    List<VoucherModel> voucherModels = [];
-    vouchersMap.forEach(
-      (vchMap) => voucherModels.add(fromMapOfVoucher(vchMap)),
-    );
-
-    if (voucherModels.isEmpty) {
-      return null;
-    }
-    // if (voucherModels.length > 1) {
-    //   throw
-    // }
-
-    // fetch transaction for each voucher
-    for (var voucher in voucherModels) {
-      await voucher.fetchMyTransactions();
-    }
-
-    print('VM 30| fetchVoucher for id: <$voucherId>: ###########');
-    print(voucherModels);
-    print('##################');
-
-    return voucherModels[0];
-  }
-
-  static Future<int> maxVoucherNumber() async {
-    final query = '''
-    SELECT MAX($column2VoucherNumber) as max
-    FROM $voucherTableName
-    ''';
-    var result = await AccountingDB.runRawQuery(query);
-    // print('VM 21| SELECT MAX FROM $voucherTableName >');
-    // print(result);
-
-    var maxResult =
-        (result[0]['max'] == null) ? '0' : (result[0]['max'] as String);
-    var parse = int.tryParse(maxResult);
-    var max = (parse == null) ? 0 : parse;
-    // print(max);
-    return max;
-  }
-
-  static Future<void> fetchAllVouchersJoin() async {
-    final query = '''
-    SELECT *
-    FROM $voucherTableName
-    LEFT JOIN ${TransactionModel.transactionTableName}
-    ON $voucherTableName.$column1Id = ${TransactionModel.transactionTableName}.${TransactionModel.column3VoucherId}
-    ''';
-    var result = await AccountingDB.runRawQuery(query);
-    print('VM11| $voucherTableName JOIN result >');
-    print(result);
-  }
-
   static Future<List<VoucherModel>> accountVouchers(
     String accountId,
   ) async {
@@ -404,7 +282,7 @@ class VoucherModel {
 
     // fetch transaction for each voucher
     for (var voucher in voucherModels) {
-      await voucher.fetchMyTransactions();
+      await voucher._fetchMyTransactions();
     }
 
     // print(
@@ -412,6 +290,128 @@ class VoucherModel {
     // print(voucherModels);
     // print('##################');
     return voucherModels;
+  }
+
+  Future<int> _insertMeInDB() async {
+    // do some logic on variables
+    // ...
+    var map = this._toMapForDB();
+    // print('VM10| map: $map');
+    id = await AccountingDB.insert(voucherTableName, map);
+    // print('VM10| insertMeInDB() id: $id');
+    return id!;
+  }
+
+  Future<int> _updateMeWithoutTransactionsInDB() async {
+    // do some logic on variables
+    // ...
+    var map = this._toMapForDB();
+    // print('VM10| map: $map');
+    id = await AccountingDB.update(voucherTableName, map);
+    // print('VM10| insertMeInDB() id: $id');
+    return id!;
+  }
+
+  Future<void> _fetchMyTransactions() async {
+    if (id == null) {
+      print('VM 29| Warn: id is null: fetchMyTransactions()');
+      return;
+    }
+
+    final query = '''
+      SELECT *
+      FROM ${TransactionModel.transactionTableName}
+      WHERE ${TransactionModel.column3VoucherId} = $id
+    ''';
+    var result = await AccountingDB.runRawQuery(query);
+    transactions = result
+        .map(
+          (tranMap) => TransactionModel.fromMapOfTransaction(tranMap),
+        )
+        .toList();
+  }
+
+  static Future<void> _fetchAllVouchers() async {
+    final query = '''
+    SELECT *
+    FROM $voucherTableName
+    ''';
+    var vouchersMap = await AccountingDB.runRawQuery(query);
+    // convert map to voucherModel
+    List<VoucherModel> voucherModels = [];
+    vouchersMap.forEach(
+      (vchMap) => voucherModels.add(fromMapOfVoucher(vchMap)),
+    );
+
+    // fetch transaction for each voucher
+    for (var voucher in voucherModels) {
+      await voucher._fetchMyTransactions();
+    }
+
+    print('VM FAV 01| All DB Vouchers: ###########');
+    print(voucherModels);
+    print('##################');
+  }
+
+  static Future<VoucherModel?> _fetchVoucherById(int voucherId) async {
+    final query = '''
+    SELECT *
+    FROM $voucherTableName
+    WHERE $column1Id = $voucherId
+    ''';
+    var vouchersMap = await AccountingDB.runRawQuery(query);
+    // convert map to voucherModel
+    List<VoucherModel> voucherModels = [];
+    vouchersMap.forEach(
+      (vchMap) => voucherModels.add(fromMapOfVoucher(vchMap)),
+    );
+
+    if (voucherModels.isEmpty) {
+      return null;
+    }
+    // if (voucherModels.length > 1) {
+    //   throw
+    // }
+
+    // fetch transaction for each voucher
+    for (var voucher in voucherModels) {
+      await voucher._fetchMyTransactions();
+    }
+
+    print('VM 30| fetchVoucher for id: <$voucherId>: ###########');
+    print(voucherModels);
+    print('##################');
+
+    return voucherModels[0];
+  }
+
+  static Future<int> maxVoucherNumber() async {
+    final query = '''
+    SELECT MAX($column2VoucherNumber) as max
+    FROM $voucherTableName
+    ''';
+    var result = await AccountingDB.runRawQuery(query);
+    // print('VM 21| SELECT MAX FROM $voucherTableName >');
+    // print(result);
+
+    var maxResult =
+        (result[0]['max'] == null) ? '0' : (result[0]['max'] as String);
+    var parse = int.tryParse(maxResult);
+    var max = (parse == null) ? 0 : parse;
+    // print(max);
+    return max;
+  }
+
+  static Future<void> _fetchAllVouchersJoin() async {
+    final query = '''
+    SELECT *
+    FROM $voucherTableName
+    LEFT JOIN ${TransactionModel.transactionTableName}
+    ON $voucherTableName.$column1Id = ${TransactionModel.transactionTableName}.${TransactionModel.column3VoucherId}
+    ''';
+    var result = await AccountingDB.runRawQuery(query);
+    print('VM11| $voucherTableName JOIN result >');
+    print(result);
   }
 
   // json_object only work if json1 extension installed
@@ -430,7 +430,7 @@ class VoucherModel {
     print(result);
   }
 
-  static bool validateTransactionFeedsAmount(List<TransactionFeed> feeds) {
+  static bool _validateTransactionFeedsAmount(List<TransactionFeed> feeds) {
     var totalDebit = 0.0;
     var totalCredit = 0.0;
 
@@ -459,7 +459,7 @@ class VoucherModel {
     }
   }
 
-  static bool validateTransactionModelsAmount(
+  static bool _validateTransactionModelsAmount(
       List<TransactionModel?> transactions) {
     var totalDebit = 0.0;
     var totalCredit = 0.0;
@@ -493,7 +493,7 @@ class VoucherModel {
     }
   }
 
-  static String makeVoucherNote(List<TransactionFeed> feeds) {
+  static String _makeVoucherNote(List<TransactionFeed> feeds) {
     List<String> debitNote = [];
     List<String> creditNote = [];
 
@@ -524,7 +524,7 @@ class VoucherModel {
       $column4Note TEXT
     )''';
 
-  Map<String, Object> toMapForDB() {
+  Map<String, Object> _toMapForDB() {
     print('VM 44| date: ${readibleDate(date)}');
     if (id == null) {
       return {
