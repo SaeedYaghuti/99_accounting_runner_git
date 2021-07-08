@@ -1,6 +1,9 @@
 import 'package:shop/auth/auth_model_sql.dart';
 import 'package:shop/auth/permission_model.dart';
+import 'package:shop/auth/permissions_list.dart';
 import 'package:sqflite/sqflite.dart';
+
+import 'auth_db_helper.dart';
 
 class AuthPermissionModel {
   final int? id;
@@ -13,18 +16,32 @@ class AuthPermissionModel {
     required this.permissionId,
   });
 
-  Future<void> giveAllPermissionsToFirstAuth(Database db) async {
+  static Future<void> giveAllPermissionsToFirstAuth(Database db) async {
     try {
-      var query = '''
-      INSERT INTO $tableName ($column1Id, $column2AuthId, $column3PermissionId)
-      VALUES
-      ''';
-      await db.execute(query);
+      for (var permission in PERMISSIONS_LIST) {
+        var query = ''' 
+        INSERT INTO $tableName ($column2AuthId, $column3PermissionId)
+        VALUES (1, '${permission.id}') ;
+        ''';
+        await db.execute(query);
+      }
       await db.close();
     } catch (e) {
-      print('Auth cr_first_usr 01| catch e: $e');
+      print('AuthPerm perm_first_auth 01| e: $e');
       throw e;
     }
+  }
+
+  static Future<void> printAllAuthPermissions() async {
+    final query = '''
+    SELECT *
+    FROM $tableName
+    ''';
+    var authPermsMap = await AuthDB.runRawQuery(query);
+
+    print('ATH_PERM_MDL printAllAuthPERM 01| All DB AuthPerms: ###########');
+    print(authPermsMap);
+    print('##################');
   }
 
   static const String tableName = 'auth_permissions';

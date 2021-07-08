@@ -26,6 +26,7 @@ class AuthDB {
         await db.execute(
           AuthPermissionModel.QUERY_CREATE_JOIN_TABLE_AUTH_PERMISSION,
         );
+        await insertPredefinedPermissionsToFirstAuth(db);
       },
     );
     await db.execute(QUERY_FOREIGN_KEY_ON);
@@ -43,6 +44,12 @@ class AuthDB {
       //   'AuthDB predPerm 01| @insertPredefinedPermissions() insertResult: $insertResult',
       // );
     }
+  }
+
+  static Future<void> insertPredefinedPermissionsToFirstAuth(
+    Database db,
+  ) async {
+    await AuthPermissionModel.giveAllPermissionsToFirstAuth(db);
   }
 
   static Future<void> insertPredefinedAuth(Database db) async {

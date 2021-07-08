@@ -2,6 +2,7 @@ import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/auth/auth_model_sql.dart';
+import 'package:shop/auth/auth_permission_model.dart';
 
 void runCode() async {
   // await VoucherModel.fetchAllVouchers();
@@ -17,4 +18,5 @@ void runCode() async {
   // var auth = AuthModel();
   // var result = await auth.createNewUserInDB('saeid', '123456');
   AuthModel.printAllAuth();
+  AuthPermissionModel.printAllAuthPermissions();
 }
