@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:crypto/crypto.dart';
 import 'package:shop/auth/auth_db_helper.dart';
+import 'package:shop/auth/auth_permission_model.dart';
 import 'package:shop/constants.dart';
 import 'package:shop/exceptions/curropted_input.dart';
 import 'package:shop/exceptions/dirty_database.dart';
@@ -17,11 +18,21 @@ class AuthModel {
   String? _username;
   String? _salt;
   String? _password;
+  List<AuthPermissionModel?>? _permissions;
 
   AuthModel();
 
   int? get id {
     return _id;
+  }
+
+  bool hasPermission(String permissionId) {
+    if (_permissions == null || _permissions!.length == 0) {
+      return false;
+    }
+    return _permissions!.any(
+      (permission) => permission!.permissionId == permissionId,
+    );
   }
 
   // only for development; should be deleted
@@ -86,7 +97,7 @@ class AuthModel {
     String password,
   ) async {
     // #1 do we have such a username
-    var fetchStatus = await _fetchUserByUsername(username);
+    var fetchStatus = await _fetchUserByUsernameAndSetAuth(username);
     if (!fetchStatus.isSuccessful)
       return ValidationResult(
         false,
@@ -103,7 +114,7 @@ class AuthModel {
     );
   }
 
-  Future<ResultStatus> _fetchUserById(int userId) async {
+  Future<ResultStatus> _fetchUserByIdAndSetAuth(int userId) async {
     final query = '''
     SELECT *
     FROM $authTableName
@@ -124,10 +135,13 @@ class AuthModel {
     }
 
     _setVariablesFromMapOfAuth(authesMap.first);
+
+    // fetch permissions
+    _permissions = await AuthPermissionModel.allPermissionsForAuth(userId);
     return ResultStatus(true);
   }
 
-  Future<ResultStatus> _fetchUserByUsername(String username) async {
+  Future<ResultStatus> _fetchUserByUsernameAndSetAuth(String username) async {
     final query = '''
     SELECT *
     FROM $authTableName
@@ -146,7 +160,9 @@ class AuthModel {
         'AUTH fuserByid 01| there is more than one row with username: $username',
       );
 
+    // fetch permissions
     _setVariablesFromMapOfAuth(authesMap.first);
+    _permissions = await AuthPermissionModel.allPermissionsForAuth(_id!);
     return ResultStatus(true);
   }
 

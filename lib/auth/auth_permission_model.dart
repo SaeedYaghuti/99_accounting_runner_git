@@ -16,6 +16,35 @@ class AuthPermissionModel {
     required this.permissionId,
   });
 
+  static Future<List<AuthPermissionModel?>?> allPermissionsForAuth(
+    int authId,
+  ) async {
+    final query = '''
+    SELECT *
+    FROM $tableName
+    WHERE $tableName.$column2AuthId = ?
+    ''';
+    try {
+      var result = await AuthDB.runRawQuery(query, [authId]);
+      if (result.length == 0) {
+        print(
+          'ATH_PERM allPermForAth 01| auth $authId don\'t have any permissions',
+        );
+        return [];
+      } else {
+        return result
+            .map((authPermMap) => fromMapOfAuthPermission(authPermMap))
+            .toList();
+      }
+      // print('TM11| SELECT * FROM $transactionTableName for $accountId>');
+      // print(result);
+    } catch (e) {
+      print(
+        'ATH_PERM allPermForAth 10| @ catch e: $e',
+      );
+    }
+  }
+
   static Future<void> giveAllPermissionsToFirstAuth(Database db) async {
     try {
       for (var permission in PERMISSIONS_LIST) {
@@ -57,6 +86,20 @@ class AuthPermissionModel {
     CONSTRAINT fk_${AuthModel.authTableName} FOREIGN KEY ($column2AuthId) REFERENCES ${AuthModel.authTableName} (${AuthModel.column1Id}) ON DELETE NO ACTION,
     CONSTRAINT fk_${PermissionModel.tableName} FOREIGN KEY ($column3PermissionId) REFERENCES ${PermissionModel.tableName} (${PermissionModel.column1Id}) ON DELETE CASCADE
   )''';
+
+  static AuthPermissionModel fromMapOfAuthPermission(
+    Map<String, Object?> dbResult,
+  ) {
+    var authPermission = AuthPermissionModel(
+      id: dbResult[AuthPermissionModel.column1Id] as int,
+      authId: dbResult[AuthPermissionModel.column2AuthId] as int,
+      permissionId: dbResult[AuthPermissionModel.column3PermissionId] as String,
+    );
+    // print('ATH_PERM_MDL fromMap 01| All DB authPermission');
+    // print(authPermission);
+
+    return authPermission;
+  }
 
   Map<String, Object> toMap() {
     if (id != null) {

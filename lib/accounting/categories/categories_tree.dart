@@ -119,6 +119,8 @@ List<CategoryModel> getSubcategoriesOf(BuildContext context, String parentId) {
 
   print('CAT_TREES getSubcats 02| authProvider.userId: ${authProvider.userId}');
   return CATEGORIES_TREE
-      .where((category) => category.parentId == parentId)
+      .where((category) =>
+          category.parentId == parentId &&
+          authProvider.isPermitted(category.requiredPermission))
       .toList();
 }

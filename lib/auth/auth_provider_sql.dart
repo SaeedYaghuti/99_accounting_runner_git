@@ -18,6 +18,13 @@ class AuthProviderSQL with ChangeNotifier {
     notifyListeners();
   }
 
+  bool isPermitted(String permissionId) {
+    print('ATHPr isPermitted 01| recived $permissionId');
+    if (_auth == null) return false;
+
+    return _auth!.hasPermission(permissionId);
+  }
+
   Future<void> login(String username, String password) async {
     _auth = AuthModel();
     ValidationResult validationResult = await _auth!.validateUser(
