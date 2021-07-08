@@ -19,7 +19,7 @@ class AuthProviderSQL with ChangeNotifier {
   }
 
   bool isPermitted(String permissionId) {
-    print('ATHPr isPermitted 01| recived $permissionId');
+    // print('ATHPr isPermitted 01| recived $permissionId');
     if (_auth == null) return false;
 
     return _auth!.hasPermission(permissionId);

@@ -61,6 +61,20 @@ class AuthPermissionModel {
     }
   }
 
+  static Future<void> givePermissionsToAuth(
+      int authId, String permissionId) async {
+    try {
+      var authPerm = AuthPermissionModel(
+        authId: authId,
+        permissionId: permissionId,
+      );
+      await AuthDB.insert(tableName, authPerm.toMap());
+    } catch (e) {
+      print('AuthPerm give_perm_to_auth 01| e: $e');
+      throw e;
+    }
+  }
+
   static Future<void> printAllAuthPermissions() async {
     final query = '''
     SELECT *

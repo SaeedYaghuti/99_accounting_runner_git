@@ -23,4 +23,8 @@ void runCode() async {
   // print('auth runCode 01| isPermitted: $isPermitted');
   // AuthModel.printAllAuth();
   // AuthPermissionModel.printAllAuthPermissions();
+  AuthPermissionModel.givePermissionsToAuth(
+    2,
+    PermissionModel.EXPENDITURE_CATEGORY,
+  );
 }
