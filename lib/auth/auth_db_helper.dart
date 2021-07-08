@@ -1,5 +1,6 @@
 import 'package:path/path.dart' as path;
 import 'package:shop/auth/auth_model_sql.dart';
+import 'package:shop/auth/auth_permission_model.dart';
 import 'package:shop/auth/predefined_permissions.dart';
 import 'package:shop/auth/permission_model.dart';
 import 'package:sqflite/sqflite.dart';
@@ -19,7 +20,12 @@ class AuthDB {
         print('AuthDB 01| onCreate runing...');
         await db.execute(QUERY_FOREIGN_KEY_ON);
         await db.execute(AuthModel.QUERY_CREATE_AUTH_TABLE);
+        await insertPredefinedAuth(db);
         await db.execute(PermissionModel.QUERY_CREATE_PERMISSION_TABLE);
+        await insertPredefinedPermissions(db);
+        await db.execute(
+          AuthPermissionModel.QUERY_CREATE_JOIN_TABLE_AUTH_PERMISSION,
+        );
       },
     );
     await db.execute(QUERY_FOREIGN_KEY_ON);
@@ -37,6 +43,11 @@ class AuthDB {
         'AuthDB predPerm 01| @insertPredefinedPermissions() insertResult: $insertResult',
       );
     }
+  }
+
+  static Future<void> insertPredefinedAuth(Database db) async {
+    var auth = AuthModel();
+    await auth.createNewUserInDB('saeid', '123456');
   }
 
   static Future<int> insert(String table, Map<String, Object?> data) async {
