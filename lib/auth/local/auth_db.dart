@@ -1,5 +1,6 @@
 import 'package:path/path.dart' as path;
 import 'package:shop/auth/local/auth_model.dart';
+import 'package:shop/auth/permission_models.dart';
 import 'package:shop/auth/permissions.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -26,13 +27,14 @@ class AuthDB {
   }
 
   static Future<void> insertPredefinedPermissions(Database db) async {
-    for (AccountModel account in ACCOUNTS_TREE) {
+    for (PermissionModel permission in PERMISSION_MODELS) {
       int insertResult = await db.insert(
-        AccountModel.tableName,
-        account.toMap(),
+        PermissionModel.tableName,
+        permission.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-      // print('ADB20| @insertPredefinedAccounts() insertResult: $insertResult');
+      print(
+          'AuthDB predPerm 01| @insertPredefinedPermissions() insertResult: $insertResult');
     }
   }
 
