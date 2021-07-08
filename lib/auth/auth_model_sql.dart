@@ -10,6 +10,7 @@ import 'package:shop/exceptions/null_exception.dart';
 import 'package:shop/exceptions/unique_constraint_exception.dart';
 import 'package:shop/shared/result_status.dart';
 import 'package:shop/shared/validation_result.dart';
+import 'package:sqflite/sqflite.dart';
 
 class AuthModel {
   int? _id;
@@ -21,6 +22,19 @@ class AuthModel {
 
   int? get id {
     return _id;
+  }
+
+  // only for development; should be deleted
+  static Future<void> printAllAuth() async {
+    final query = '''
+    SELECT *
+    FROM $authTableName
+    ''';
+    var authesMap = await AuthDB.runRawQuery(query);
+
+    print('ATH_MDL printAllAuth 01| All DB Authes: ###########');
+    print(authesMap);
+    print('##################');
   }
 
   Future<int> createNewUserInDB(String username, String password) async {
@@ -47,6 +61,22 @@ class AuthModel {
       print('Auth cr_new_usr 05| catch e: $e');
       if (e.toString().contains('UNIQUE constraint failed'))
         throw UniqueConstraintException('username has taken!');
+      throw e;
+    }
+  }
+
+  Future<void> createFirstUserInDB(Database db) async {
+    var salt = _createSalt();
+    var hashedPassword = _hashPassword(SAEIDPASSWORD, salt);
+
+    try {
+      await db.execute('''
+        INSERT INTO $authTableName ($column1Id, $column2Username, $column3Password, $column4Salt)
+        VALUES (1, '$SAEIDEMAIL', '$hashedPassword', '$salt');
+        ''');
+      await db.close();
+    } catch (e) {
+      print('Auth cr_first_usr 01| catch e: $e');
       throw e;
     }
   }

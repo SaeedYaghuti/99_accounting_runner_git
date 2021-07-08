@@ -1,5 +1,6 @@
 import 'package:shop/auth/auth_model_sql.dart';
 import 'package:shop/auth/permission_model.dart';
+import 'package:sqflite/sqflite.dart';
 
 class AuthPermissionModel {
   final int? id;
@@ -11,6 +12,20 @@ class AuthPermissionModel {
     required this.authId,
     required this.permissionId,
   });
+
+  Future<void> giveAllPermissionsToFirstAuth(Database db) async {
+    try {
+      var query = '''
+      INSERT INTO $tableName ($column1Id, $column2AuthId, $column3PermissionId)
+      VALUES
+      ''';
+      await db.execute(query);
+      await db.close();
+    } catch (e) {
+      print('Auth cr_first_usr 01| catch e: $e');
+      throw e;
+    }
+  }
 
   static const String tableName = 'auth_permissions';
   static const String column1Id = 'authperm_id';
