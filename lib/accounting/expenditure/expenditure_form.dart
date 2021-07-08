@@ -2,6 +2,7 @@ import 'dart:async';
 
 // import 'package:shop/accounting/accounting_logic/run_code.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/auth/local/auth_db.dart';
 import 'package:shop/auth/local/auth_model.dart';
 import 'package:shop/auth/local/auth_provider_sql.dart';
 import 'package:shop/auth/run_code.dart';
@@ -131,7 +132,10 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
               _buildSubmitButtons(context),
               SizedBox(height: 20, width: 20),
               TextButton(
-                onPressed: AccountingDB.deleteDB,
+                onPressed: () {
+                  AccountingDB.deleteDB();
+                  AuthDB.deleteDB();
+                },
                 child: Text('DELETE DB'),
               ),
               SizedBox(height: 20, width: 20),

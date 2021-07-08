@@ -1,6 +1,6 @@
-import 'package:shop/auth/permissions.dart';
+import 'package:shop/auth/permission_model.dart';
 
-const PERMISSION_MODELS = const [
+const PREDEFINED_PERMISSIONS = const [
   // ## EXPENDITURE
   PermissionModel(
     id: PermissionModel.EXPENDITURE_CATEGORY,
