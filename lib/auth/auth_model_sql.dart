@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:crypto/crypto.dart';
-import 'package:shop/auth/local/auth_db.dart';
+import 'package:shop/auth/auth_db_helper.dart';
 import 'package:shop/constants.dart';
 import 'package:shop/exceptions/curropted_input.dart';
 import 'package:shop/exceptions/dirty_database.dart';

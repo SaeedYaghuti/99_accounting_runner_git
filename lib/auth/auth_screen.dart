@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shop/constants.dart';
 import 'package:shop/shared/storage_type.dart';
 import 'package:shop/auth/firebase/auth_form.dart';
-import 'package:shop/auth/local/auth_form_sql.dart';
+import 'package:shop/auth/auth_form_sql.dart';
 
 class AuthScreen extends StatelessWidget {
   static const routeName = '/auth';

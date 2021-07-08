@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/accounting/common/multi_language_text_widget.dart';
 import 'package:shop/auth/firebase/auth_provider.dart';
-import 'package:shop/auth/local/auth_provider_sql.dart';
+import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/constants.dart';
 import 'package:shop/shared/storage_type.dart';
 

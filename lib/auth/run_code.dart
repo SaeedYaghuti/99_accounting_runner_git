@@ -1,7 +1,7 @@
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
-import 'package:shop/auth/local/auth_model.dart';
+import 'package:shop/auth/auth_model_sql.dart';
 
 void runCode() async {
   // await VoucherModel.fetchAllVouchers();

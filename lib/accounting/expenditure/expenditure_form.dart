@@ -2,9 +2,9 @@ import 'dart:async';
 
 // import 'package:shop/accounting/accounting_logic/run_code.dart';
 import 'package:provider/provider.dart';
-import 'package:shop/auth/local/auth_db.dart';
-import 'package:shop/auth/local/auth_model.dart';
-import 'package:shop/auth/local/auth_provider_sql.dart';
+import 'package:shop/auth/auth_db_helper.dart';
+import 'package:shop/auth/auth_model_sql.dart';
+import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/auth/run_code.dart';
 
 import 'package:flutter/material.dart';

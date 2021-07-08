@@ -2,11 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop/auth/local/auth_provider_sql.dart';
+import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/constants.dart';
 import 'package:shop/exceptions/unique_constraint_exception.dart';
 
-import '../auth_mode.dart';
+import 'auth_mode.dart';
 // import 'auth_provider.dart';
 
 class AuthFormSQL extends StatefulWidget {

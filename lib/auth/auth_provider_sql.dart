@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:shop/auth/local/auth_model.dart';
+import 'package:shop/auth/auth_model_sql.dart';
 import 'package:shop/exceptions/DBException.dart';
 import 'package:shop/shared/ValidationException.dart';
 import 'package:shop/shared/validation_result.dart';

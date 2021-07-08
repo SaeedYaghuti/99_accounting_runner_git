@@ -1,5 +1,5 @@
 import 'package:path/path.dart' as path;
-import 'package:shop/auth/local/auth_model.dart';
+import 'package:shop/auth/auth_model_sql.dart';
 import 'package:shop/auth/predefined_permissions.dart';
 import 'package:shop/auth/permission_model.dart';
 import 'package:sqflite/sqflite.dart';

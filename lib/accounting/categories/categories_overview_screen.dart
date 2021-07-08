@@ -4,7 +4,7 @@ import 'package:shop/accounting/categories/categories_drawer.dart';
 import 'package:shop/accounting/common/multi_language_text_widget.dart';
 import 'package:shop/accounting/common/supported_language.dart';
 import 'package:shop/accounting/environment/environment_provider.dart';
-import 'package:shop/auth/local/auth_provider_sql.dart';
+import 'package:shop/auth/auth_provider_sql.dart';
 
 import 'categories_grid.dart';
 

@@ -8,7 +8,7 @@ import 'package:shop/accounting/common/multi_language_text_widget.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/accounting/expenditure/expenditure_form.dart';
 import 'package:shop/auth/firebase/auth_provider.dart';
-import 'package:shop/auth/local/auth_provider_sql.dart';
+import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/shared/confirm_dialog.dart';
 import 'package:shop/shared/not_handled_exception.dart';
 import 'package:shop/shared/readible_date.dart';

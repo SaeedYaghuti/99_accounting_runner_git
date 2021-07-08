@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shop/accounting/categories/category_model.dart';
 import 'package:shop/accounting/expenditure/expenditure_screen.dart';
 import 'package:shop/accounting/sell_point/sell_point_screen.dart';
-import 'package:shop/auth/local/auth_provider_sql.dart';
+import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/auth/permission_model.dart';
 
 const CATEGORIES_TREE = const [

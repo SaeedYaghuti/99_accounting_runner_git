@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shop/accounting/categories/categories_tree.dart';
 import 'package:shop/accounting/categories/category_model.dart';
 import 'package:shop/accounting/categories/category_widget.dart';
-import 'package:shop/auth/local/auth_provider_sql.dart';
+import 'package:shop/auth/auth_provider_sql.dart';
 
 class CategoriesGrid extends StatelessWidget {
   final String parentId;

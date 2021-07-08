@@ -1,4 +1,4 @@
-import 'package:shop/auth/local/auth_model.dart';
+import 'package:shop/auth/auth_model_sql.dart';
 import 'package:shop/auth/permission_model.dart';
 
 class AuthPermissionModel {

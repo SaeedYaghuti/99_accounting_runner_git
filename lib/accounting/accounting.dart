@@ -7,7 +7,7 @@ import 'package:shop/accounting/expenditure/expenditure_screen.dart';
 import 'package:shop/accounting/sell_point/sell_point_screen.dart';
 import 'package:shop/auth/firebase/auth_provider.dart';
 // import 'package:shop/auth/auth_provider.dart';
-import 'package:shop/auth/local/auth_provider_sql.dart';
+import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/auth/auth_screen.dart';
 import 'package:shop/constants.dart';
 import 'package:shop/shared/loading_screen.dart';
