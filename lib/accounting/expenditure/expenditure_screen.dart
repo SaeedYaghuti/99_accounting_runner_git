@@ -143,18 +143,18 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
 
   List<DataColumn> _buildTableColumns() {
     return [
-      DataColumn(
-        label: SecureWidget(
-          authProviderSQL: authProvider!,
-          anyPermissions: [
-            PermissionModel.EXPENDITURE_DELETE_ALL,
-            PermissionModel.EXPENDITURE_DELETE_OWN,
-            PermissionModel.EXPENDITURE_EDIT_ALL,
-            PermissionModel.EXPENDITURE_EDIT_OWN,
-          ],
-          child: Icon(Icons.settings),
+      if (hasAccess(
+        authProviderSQL: authProvider!,
+        anyPermissions: [
+          PermissionModel.EXPENDITURE_DELETE_ALL,
+          PermissionModel.EXPENDITURE_DELETE_OWN,
+          PermissionModel.EXPENDITURE_EDIT_ALL,
+          PermissionModel.EXPENDITURE_EDIT_OWN,
+        ],
+      ))
+        DataColumn(
+          label: Icon(Icons.settings),
         ),
-      ),
       DataColumn(
         label: MultiLanguageTextWidget(
           english: 'Amount',
@@ -228,7 +228,16 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
         }
         dataRows.add(DataRow(
           cells: [
-            DataCell(_buildEditDeleteMenu(voucher, exp.id)),
+            if (hasAccess(
+              authProviderSQL: authProvider!,
+              anyPermissions: [
+                PermissionModel.EXPENDITURE_DELETE_ALL,
+                PermissionModel.EXPENDITURE_DELETE_OWN,
+                PermissionModel.EXPENDITURE_EDIT_ALL,
+                PermissionModel.EXPENDITURE_EDIT_OWN,
+              ],
+            ))
+              DataCell(_buildEditDeleteMenu(voucher, exp.id)),
             DataCell(Text(exp.amount.toString())),
             DataCell(Text(exp.note)),
             DataCell(Text(voucher.paidByText())),

@@ -31,8 +31,8 @@ void runCode() async {
     2,
     PermissionModel.EXPENDITURE_CREATE,
   );
-  AuthPermissionModel.givePermissionsToAuth(
-    2,
-    PermissionModel.EXPENDITURE_EDIT_OWN,
-  );
+  // AuthPermissionModel.givePermissionsToAuth(
+  //   2,
+  //   PermissionModel.EXPENDITURE_EDIT_OWN,
+  // );
 }
