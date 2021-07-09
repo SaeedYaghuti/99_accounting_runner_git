@@ -13,14 +13,14 @@ class SecureWidget extends StatelessWidget {
   final AuthProviderSQL authProviderSQL;
   final List<String?>? vitalPermissions;
   final List<String?>? anyPermissions;
-  final Widget widget;
+  final Widget child;
   final Widget? alternativeWidget;
   const SecureWidget({
     Key? key,
     required this.authProviderSQL,
-    required this.vitalPermissions,
-    required this.anyPermissions,
-    required this.widget,
+    required this.child,
+    this.vitalPermissions,
+    this.anyPermissions,
     this.alternativeWidget,
   }) : super(key: key);
 
@@ -40,15 +40,15 @@ class SecureWidget extends StatelessWidget {
 
     // if there is not anyPermissions it means OK
     if (anyPermissions == null && anyPermissions!.isEmpty) {
-      return widget;
+      return child;
     }
 
-    // we should at least pass one of anyPerms
-    var isPermitted = false;
+    // if anyPerms passed we return widget
     for (var anyPerm in anyPermissions!) {
-      if (authProviderSQL.isPermitted(anyPerm!)) return widget;
+      if (authProviderSQL.isPermitted(anyPerm!)) return child;
     }
 
+    // nether of anyParm not passed
     return notPermittedWidget!;
   }
 

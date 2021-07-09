@@ -6,9 +6,11 @@ import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/common/flexible_popup_menu_button.dart';
 import 'package:shop/accounting/common/multi_language_text_widget.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
+import 'package:shop/accounting/common/secure_widget.dart';
 import 'package:shop/accounting/expenditure/expenditure_form.dart';
 import 'package:shop/auth/firebase/auth_provider.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
+import 'package:shop/auth/permission_model.dart';
 import 'package:shop/shared/confirm_dialog.dart';
 import 'package:shop/shared/not_handled_exception.dart';
 import 'package:shop/shared/readible_date.dart';
@@ -77,14 +79,22 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // FORM
-          Expanded(
-            flex: 2,
-            child: ExpenditureForm(
-              key: ValueKey(redrawObject),
-              voucher: _voucherToShowInForm,
-              expenseId: _expenseIdToShowInForm,
-              formDuty: _formDuty ?? FormDuty.CREATE,
-              notifyNewVoucher: notifyNewVoucher,
+          SecureWidget(
+            authProviderSQL: authProvider!,
+            anyPermissions: [
+              PermissionModel.EXPENDITURE_CREATE,
+              PermissionModel.EXPENDITURE_EDIT_ALL,
+              PermissionModel.EXPENDITURE_EDIT_OWN,
+            ],
+            child: Expanded(
+              flex: 2,
+              child: ExpenditureForm(
+                key: ValueKey(redrawObject),
+                voucher: _voucherToShowInForm,
+                expenseId: _expenseIdToShowInForm,
+                formDuty: _formDuty ?? FormDuty.CREATE,
+                notifyNewVoucher: notifyNewVoucher,
+              ),
             ),
           ),
           // DATA TABLE
