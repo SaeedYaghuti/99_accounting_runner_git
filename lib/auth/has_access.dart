@@ -1,10 +1,10 @@
 import 'auth_provider_sql.dart';
 
-bool hasAccess(
-  AuthProviderSQL authProviderSQL,
-  List<String?>? vitalPermissions,
+bool hasAccess({
+  required AuthProviderSQL authProviderSQL,
   List<String?>? anyPermissions,
-) {
+  List<String?>? vitalPermissions,
+}) {
   // if there is no vitalPerm we should check anyPermissions
   if (vitalPermissions != null && vitalPermissions!.isNotEmpty) {
     // if any of vitalPerm not satisfied we return notPermittedWidget

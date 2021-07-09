@@ -6,6 +6,7 @@ import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/common/flexible_popup_menu_button.dart';
 import 'package:shop/accounting/common/multi_language_text_widget.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
+import 'package:shop/auth/has_access.dart';
 import 'package:shop/auth/secure_widget.dart';
 import 'package:shop/accounting/expenditure/expenditure_form.dart';
 import 'package:shop/auth/firebase/auth_provider.dart';
@@ -306,13 +307,11 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       context: context,
       position: RelativeRect.fromLTRB(left, top, left, top),
       items: [
-        PopupMenuItem(
-          child: SecureWidget(
-            authProviderSQL: authProvider!,
-            anyPermissions: [
-              PermissionModel.EXPENDITURE_EDIT_OWN,
-              PermissionModel.EXPENDITURE_EDIT_ALL,
-            ],
+        if (hasAccess(authProviderSQL: authProvider!, anyPermissions: [
+          PermissionModel.EXPENDITURE_EDIT_OWN,
+          PermissionModel.EXPENDITURE_EDIT_ALL,
+        ]))
+          PopupMenuItem(
             child: Row(
               children: [
                 Icon(
@@ -328,16 +327,13 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
                 ),
               ],
             ),
+            value: 'edit',
           ),
-          value: 'edit',
-        ),
-        PopupMenuItem(
-          child: SecureWidget(
-            authProviderSQL: authProvider!,
-            anyPermissions: [
-              PermissionModel.EXPENDITURE_DELETE_ALL,
-              PermissionModel.EXPENDITURE_DELETE_OWN,
-            ],
+        if (hasAccess(authProviderSQL: authProvider!, anyPermissions: [
+          PermissionModel.EXPENDITURE_DELETE_OWN,
+          PermissionModel.EXPENDITURE_DELETE_ALL,
+        ]))
+          PopupMenuItem(
             child: Row(
               children: [
                 Icon(
@@ -353,9 +349,8 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
                 ),
               ],
             ),
+            value: 'delete',
           ),
-          value: 'delete',
-        ),
       ],
     );
     if (selectedItem == null) {

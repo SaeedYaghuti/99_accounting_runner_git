@@ -31,7 +31,11 @@ class SecureWidget extends StatelessWidget {
     var notPermittedWidget =
         alternativeWidget != null ? alternativeWidget : Container();
 
-    if (hasAccess(authProviderSQL, vitalPermissions, anyPermissions)) {
+    if (hasAccess(
+      authProviderSQL: authProviderSQL,
+      anyPermissions: anyPermissions,
+      vitalPermissions: vitalPermissions,
+    )) {
       return child;
     } else {
       return notPermittedWidget!;
