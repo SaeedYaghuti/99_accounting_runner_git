@@ -6,7 +6,7 @@ import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/common/flexible_popup_menu_button.dart';
 import 'package:shop/accounting/common/multi_language_text_widget.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
-import 'package:shop/accounting/common/secure_widget.dart';
+import 'package:shop/auth/secure_widget.dart';
 import 'package:shop/accounting/expenditure/expenditure_form.dart';
 import 'package:shop/auth/firebase/auth_provider.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
@@ -143,7 +143,16 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
   List<DataColumn> _buildTableColumns() {
     return [
       DataColumn(
-        label: Icon(Icons.settings),
+        label: SecureWidget(
+          authProviderSQL: authProvider!,
+          anyPermissions: [
+            PermissionModel.EXPENDITURE_DELETE_ALL,
+            PermissionModel.EXPENDITURE_DELETE_OWN,
+            PermissionModel.EXPENDITURE_EDIT_ALL,
+            PermissionModel.EXPENDITURE_EDIT_OWN,
+          ],
+          child: Icon(Icons.settings),
+        ),
       ),
       DataColumn(
         label: MultiLanguageTextWidget(
@@ -261,18 +270,27 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
   }
 
   Widget _buildEditDeleteMenu(VoucherModel? voucher, int? expId) {
-    return GestureDetector(
-      child: Icon(Icons.more_vert),
-      onTapDown: (TapDownDetails details) {
-        voucherSelectionHandler(
-          voucher,
-          expId,
-          FormDuty.READ,
-        );
-        double left = details.globalPosition.dx;
-        double top = details.globalPosition.dy;
-        _showEditDeletePopupMenu(details.globalPosition, voucher, expId);
-      },
+    return SecureWidget(
+      authProviderSQL: authProvider!,
+      anyPermissions: [
+        PermissionModel.EXPENDITURE_DELETE_ALL,
+        PermissionModel.EXPENDITURE_DELETE_OWN,
+        PermissionModel.EXPENDITURE_EDIT_ALL,
+        PermissionModel.EXPENDITURE_EDIT_OWN,
+      ],
+      child: GestureDetector(
+        child: Icon(Icons.more_vert),
+        onTapDown: (TapDownDetails details) {
+          voucherSelectionHandler(
+            voucher,
+            expId,
+            FormDuty.READ,
+          );
+          double left = details.globalPosition.dx;
+          double top = details.globalPosition.dy;
+          _showEditDeletePopupMenu(details.globalPosition, voucher, expId);
+        },
+      ),
     );
   }
 
@@ -289,38 +307,52 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       position: RelativeRect.fromLTRB(left, top, left, top),
       items: [
         PopupMenuItem(
-          child: Row(
-            children: [
-              Icon(
-                Icons.edit,
-                color: Colors.blue,
-              ),
-              SizedBox(width: 10),
-              Text(
-                'Edit',
-                style: TextStyle(
+          child: SecureWidget(
+            authProviderSQL: authProvider!,
+            anyPermissions: [
+              PermissionModel.EXPENDITURE_EDIT_OWN,
+              PermissionModel.EXPENDITURE_EDIT_ALL,
+            ],
+            child: Row(
+              children: [
+                Icon(
+                  Icons.edit,
                   color: Colors.blue,
                 ),
-              ),
-            ],
+                SizedBox(width: 10),
+                Text(
+                  'Edit',
+                  style: TextStyle(
+                    color: Colors.blue,
+                  ),
+                ),
+              ],
+            ),
           ),
           value: 'edit',
         ),
         PopupMenuItem(
-          child: Row(
-            children: [
-              Icon(
-                Icons.delete,
-                color: Colors.pinkAccent,
-              ),
-              SizedBox(width: 10),
-              Text(
-                'Delete',
-                style: TextStyle(
+          child: SecureWidget(
+            authProviderSQL: authProvider!,
+            anyPermissions: [
+              PermissionModel.EXPENDITURE_DELETE_ALL,
+              PermissionModel.EXPENDITURE_DELETE_OWN,
+            ],
+            child: Row(
+              children: [
+                Icon(
+                  Icons.delete,
                   color: Colors.pinkAccent,
                 ),
-              ),
-            ],
+                SizedBox(width: 10),
+                Text(
+                  'Delete',
+                  style: TextStyle(
+                    color: Colors.pinkAccent,
+                  ),
+                ),
+              ],
+            ),
           ),
           value: 'delete',
         ),

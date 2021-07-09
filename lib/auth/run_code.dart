@@ -27,4 +27,12 @@ void runCode() async {
     2,
     PermissionModel.EXPENDITURE_CATEGORY,
   );
+  AuthPermissionModel.givePermissionsToAuth(
+    2,
+    PermissionModel.EXPENDITURE_CREATE,
+  );
+  AuthPermissionModel.givePermissionsToAuth(
+    2,
+    PermissionModel.EXPENDITURE_EDIT_OWN,
+  );
 }
