@@ -29,7 +29,7 @@ void runCode() async {
   );
   AuthPermissionModel.givePermissionsToAuth(
     2,
-    PermissionModel.EXPENDITURE_CREATE,
+    PermissionModel.EXPENDITURE_CREATE_TRANSACTION,
   );
   // AuthPermissionModel.givePermissionsToAuth(
   //   2,

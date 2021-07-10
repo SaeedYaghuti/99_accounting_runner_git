@@ -83,9 +83,9 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
           SecureWidget(
             authProviderSQL: authProvider!,
             anyPermissions: [
-              PermissionModel.EXPENDITURE_CREATE,
-              PermissionModel.EXPENDITURE_EDIT_ALL,
-              PermissionModel.EXPENDITURE_EDIT_OWN,
+              PermissionModel.EXPENDITURE_CREATE_TRANSACTION,
+              PermissionModel.EXPENDITURE_EDIT_ALL_TRANSACTION,
+              PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
             ],
             child: Expanded(
               flex: 2,
@@ -146,10 +146,10 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       if (hasAccess(
         authProviderSQL: authProvider!,
         anyPermissions: [
-          PermissionModel.EXPENDITURE_DELETE_ALL,
-          PermissionModel.EXPENDITURE_DELETE_OWN,
-          PermissionModel.EXPENDITURE_EDIT_ALL,
-          PermissionModel.EXPENDITURE_EDIT_OWN,
+          PermissionModel.EXPENDITURE_DELETE_ALL_TRANSACTION,
+          PermissionModel.EXPENDITURE_DELETE_OWN_TRANSACTION,
+          PermissionModel.EXPENDITURE_EDIT_ALL_TRANSACTION,
+          PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
         ],
       ))
         DataColumn(
@@ -231,10 +231,10 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
             if (hasAccess(
               authProviderSQL: authProvider!,
               anyPermissions: [
-                PermissionModel.EXPENDITURE_DELETE_ALL,
-                PermissionModel.EXPENDITURE_DELETE_OWN,
-                PermissionModel.EXPENDITURE_EDIT_ALL,
-                PermissionModel.EXPENDITURE_EDIT_OWN,
+                PermissionModel.EXPENDITURE_DELETE_ALL_TRANSACTION,
+                PermissionModel.EXPENDITURE_DELETE_OWN_TRANSACTION,
+                PermissionModel.EXPENDITURE_EDIT_ALL_TRANSACTION,
+                PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
               ],
             ))
               DataCell(_buildEditDeleteMenu(voucher, exp.id)),
@@ -283,10 +283,10 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
     return SecureWidget(
       authProviderSQL: authProvider!,
       anyPermissions: [
-        PermissionModel.EXPENDITURE_DELETE_ALL,
-        PermissionModel.EXPENDITURE_DELETE_OWN,
-        PermissionModel.EXPENDITURE_EDIT_ALL,
-        PermissionModel.EXPENDITURE_EDIT_OWN,
+        PermissionModel.EXPENDITURE_DELETE_ALL_TRANSACTION,
+        PermissionModel.EXPENDITURE_DELETE_OWN_TRANSACTION,
+        PermissionModel.EXPENDITURE_EDIT_ALL_TRANSACTION,
+        PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
       ],
       child: GestureDetector(
         child: Icon(Icons.more_vert),
@@ -317,8 +317,8 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       position: RelativeRect.fromLTRB(left, top, left, top),
       items: [
         if (hasAccess(authProviderSQL: authProvider!, anyPermissions: [
-          PermissionModel.EXPENDITURE_EDIT_OWN,
-          PermissionModel.EXPENDITURE_EDIT_ALL,
+          PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
+          PermissionModel.EXPENDITURE_EDIT_ALL_TRANSACTION,
         ]))
           PopupMenuItem(
             child: Row(
@@ -339,8 +339,8 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
             value: 'edit',
           ),
         if (hasAccess(authProviderSQL: authProvider!, anyPermissions: [
-          PermissionModel.EXPENDITURE_DELETE_OWN,
-          PermissionModel.EXPENDITURE_DELETE_ALL,
+          PermissionModel.EXPENDITURE_DELETE_OWN_TRANSACTION,
+          PermissionModel.EXPENDITURE_DELETE_ALL_TRANSACTION,
         ]))
           PopupMenuItem(
             child: Row(

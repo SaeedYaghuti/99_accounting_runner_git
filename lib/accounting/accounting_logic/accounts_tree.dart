@@ -1,4 +1,5 @@
 import 'package:shop/accounting/accounting_logic/account_model.dart';
+import 'package:shop/auth/permission_model.dart';
 
 import 'account_ids.dart';
 
@@ -10,6 +11,12 @@ const ACCOUNTS_TREE = const [
     titleArabic: 'لجر ريبورت',
     titlePersian: 'گزارش گروه های حسابداری',
     note: '',
+    createTransactionPermissionsAny: [
+      PermissionModel.LEDGER_CREATE_TRANSACTION_X
+    ],
+    readTransactionPermissionsAny: [
+      PermissionModel.LEDGER_READ_ALL_TRANSACTION
+    ],
   ),
   AccountModel(
     id: ACCOUNTS_ID.SALES_ACCOUNT_ID,

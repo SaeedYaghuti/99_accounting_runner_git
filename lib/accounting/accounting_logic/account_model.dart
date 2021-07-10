@@ -5,9 +5,10 @@ class AccountModel {
   final String titlePersian;
   final String titleArabic;
   final String note;
-  final List<String?>? createPermissionsAny;
-  final List<String?>? editPermissionsAny;
-  final List<String?>? deletePermissionsAny;
+  final List<String?>? createTransactionPermissionsAny;
+  final List<String?>? readTransactionPermissionsAny;
+  final List<String?>? editTransactionPermissionsAny;
+  final List<String?>? deleteTransactionPermissionsAny;
 
   const AccountModel({
     required this.id,
@@ -16,9 +17,10 @@ class AccountModel {
     required this.titlePersian,
     required this.titleArabic,
     this.note = '',
-    this.createPermissionsAny,
-    this.editPermissionsAny,
-    this.deletePermissionsAny,
+    this.createTransactionPermissionsAny,
+    this.readTransactionPermissionsAny,
+    this.editTransactionPermissionsAny,
+    this.deleteTransactionPermissionsAny,
   });
 
   // TODO: we should store c/e/dPermisionsAny at db
