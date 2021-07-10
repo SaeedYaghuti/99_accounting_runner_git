@@ -31,7 +31,13 @@ class VoucherModel {
   static Future<void> createVoucher(
     VoucherFeed voucherFeed,
     List<TransactionFeed> transactionFeeds,
+    // String creatorId,
   ) async {
+    // step 0# if creator hasAccess to create voucher
+    // we should check transactionFeeds accountId
+    // CATEGORY => EXP_CREATE,MoneyMov_CAT, Purch_CAT
+    // ACCOUNTS =>
+
     // step 1# validate data
     if (!_validateTransactionFeedsAmount(transactionFeeds)) {
       throw ValidationException(

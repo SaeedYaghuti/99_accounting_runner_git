@@ -5,6 +5,9 @@ class AccountModel {
   final String titlePersian;
   final String titleArabic;
   final String note;
+  final List<String?>? createPermissionsAny;
+  final List<String?>? editPermissionsAny;
+  final List<String?>? deletePermissionsAny;
 
   const AccountModel({
     required this.id,
@@ -13,7 +16,14 @@ class AccountModel {
     required this.titlePersian,
     required this.titleArabic,
     this.note = '',
+    this.createPermissionsAny,
+    this.editPermissionsAny,
+    this.deletePermissionsAny,
   });
+
+  // TODO: we should store c/e/dPermisionsAny at db
+  // TODO: currently we read accounts from AccountTree => we should read from DB
+  // TODO: Add account, update account, delete account
 
   static const String tableName = 'accounts';
   static const String columnId = 'id';

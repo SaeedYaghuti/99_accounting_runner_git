@@ -92,6 +92,8 @@ class AuthPermissionModel {
   static const String column2AuthId = 'authperm_auth_id';
   static const String column3PermissionId = 'authperm_permission_id';
 
+  // TODO: combination of authId & permId should be unique
+
   static const String QUERY_CREATE_JOIN_TABLE_AUTH_PERMISSION =
       '''CREATE TABLE $tableName (
     $column1Id INTEGER PRIMARY KEY, 
