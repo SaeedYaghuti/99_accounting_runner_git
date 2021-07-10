@@ -6,7 +6,7 @@ bool hasAccess({
   List<String?>? vitalPermissions,
 }) {
   // if there is no vitalPerm we should check anyPermissions
-  if (vitalPermissions != null && vitalPermissions!.isNotEmpty) {
+  if (vitalPermissions != null && vitalPermissions.isNotEmpty) {
     // if any of vitalPerm not satisfied we return notPermittedWidget
     for (var vPerm in vitalPermissions) {
       if (!authProviderSQL.isPermitted(vPerm!)) return false;
@@ -15,7 +15,7 @@ bool hasAccess({
   // now vaital are passed;
 
   // if there is not anyPermissions it means OK
-  if (anyPermissions == null && anyPermissions!.isEmpty) {
+  if (anyPermissions == null || anyPermissions.isEmpty) {
     return true;
   }
 

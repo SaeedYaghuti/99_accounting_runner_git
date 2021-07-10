@@ -49,6 +49,14 @@ class PermissionModel {
     ''';
   }
 
+  // nobody have this perm
+  static const String LEDGER_CREATE_X = 'LEDGER_CREATE_X';
+  static const String LEDGER_READ_ALL = 'LEDGER_READ_ALL';
+
+  // nobody have this perm
+  static const String SALES_CREATE_X = 'SALES_CREATE_X';
+  static const String SALES_READ_ALL = 'LEDGER_READ_ALL';
+
   static const String EXPENDITURE_CATEGORY = 'EXPENDITURE_CATEGORY';
   static const String EXPENDITURE_CREATE = 'EXPENDITURE_CREATE';
   static const String EXPENDITURE_READ_ALL = 'EXPENDITURE_READ_ALL';
@@ -57,6 +65,46 @@ class PermissionModel {
   static const String EXPENDITURE_EDIT_OWN = 'EXPENDITURE_EDIT_OWN';
   static const String EXPENDITURE_DELETE_ALL = 'EXPENDITURE_DELETE_ALL';
   static const String EXPENDITURE_DELETE_OWN = 'EXPENDITURE_DELETE_OWN';
+
+  // nobody have this perm
+  static const String ASSETS_CREATE_X = 'ASSETS_CREATE_X';
+  static const String ASSETS_READ_ALL = 'ASSETS_READ_ALL';
+
+  // nobody have this perm
+  static const String BANKS_CREATE_X = 'BANKS_CREATE_X';
+  static const String BANKS_READ_ALL = 'BANKS_READ_ALL';
+
+  static const String NBO_CREATE = 'NBO_CREATE';
+  static const String NBO_READ_ALL = 'NBO_READ_ALL';
+  static const String NBO_READ_OWN = 'NBO_READ_OWN';
+  static const String NBO_EDIT_ALL = 'NBO_EDIT_ALL';
+  static const String NBO_EDIT_OWN = 'NBO_EDIT_OWN';
+  static const String NBO_DELETE_ALL = 'NBO_DELETE_ALL';
+  static const String NBO_DELETE_OWN = 'NBO_DELETE_OWN';
+
+  static const String PETTY_CASH_CREATE = 'PETTY_CASH_CREATE';
+  static const String PETTY_CASH_READ_ALL = 'PETTY_CASH_READ_ALL';
+  static const String PETTY_CASH_READ_OWN = 'PETTY_CASH_READ_OWN';
+  static const String PETTY_CASH_EDIT_ALL = 'PETTY_CASH_EDIT_ALL';
+  static const String PETTY_CASH_EDIT_OWN = 'PETTY_CASH_EDIT_OWN';
+  static const String PETTY_CASH_DELETE_ALL = 'PETTY_CASH_DELETE_ALL';
+  static const String PETTY_CASH_DELETE_OWN = 'PETTY_CASH_DELETE_OWN';
+
+  static const String CASH_DRAWER_CREATE = 'CASH_DRAWER_CREATE';
+  static const String CASH_DRAWER_READ_ALL = 'CASH_DRAWER_READ_ALL';
+  static const String CASH_DRAWER_READ_OWN = 'CASH_DRAWER_READ_OWN';
+  static const String CASH_DRAWER_EDIT_ALL = 'CASH_DRAWER_EDIT_ALL';
+  static const String CASH_DRAWER_EDIT_OWN = 'CASH_DRAWER_EDIT_OWN';
+  static const String CASH_DRAWER_DELETE_ALL = 'CASH_DRAWER_DELETE_ALL';
+  static const String CASH_DRAWER_DELETE_OWN = 'CASH_DRAWER_DELETE_OWN';
+
+  // nobody have this perm
+  static const String DEBTORS_CREATE_X = 'DEBTORS_CREATE_X';
+  static const String DEBTORS_READ_ALL = 'DEBTORS_READ_ALL';
+
+  // nobody have this perm
+  static const String LIABILITIES_CREATE_X = 'LIABILITIES_CREATE_X';
+  static const String LIABILITIES_READ_ALL = 'LIABILITIES_READ_ALL';
 
   static const String SELL_POINT_CATEGORY = 'SELL_POINT_CATEGORY';
 
