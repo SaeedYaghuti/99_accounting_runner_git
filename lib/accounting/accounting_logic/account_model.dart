@@ -160,8 +160,8 @@ class AccountModel {
       titleArabic: accountMap[AccountModel.column5TitleArabic] as String,
       note: accountMap[AccountModel.column6Note] as String,
       createTransactionPermissionsAny: json.decode(
-        accountMap[AccountModel.column7CreateTransactionPermissionsAny]
-            as String,
+        accountMap[AccountModel.column7CreateTransactionPermissionsAny]!
+            .cast<String>(),
       ) as List<String?>,
       // readTransactionPermissionsAny: json.decode(
       //   accountMap[AccountModel.column8ReadTransactionPermissionsAny] as String,
