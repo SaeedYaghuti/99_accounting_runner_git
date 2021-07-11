@@ -13,6 +13,8 @@ class PermissionModel {
     this.note = '',
   });
 
+  // TODO: database operation CRUD
+
   static const String tableName = 'permissions';
   static const String column1Id = 'permission_id';
   static const String column2TitleEnglish = 'permission_title_english';

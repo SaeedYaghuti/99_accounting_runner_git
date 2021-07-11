@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/material.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 
 class AccountModel {
@@ -33,31 +34,67 @@ class AccountModel {
 
   Future<int> insertMeIntoDB() async {
     // do some logic on variables
-    return AccountingDB.insert(tableName, toMap());
+    try {
+      return AccountingDB.insert(tableName, toMap());
+    } catch (e) {
+      print('AccountModel insertInDB() 01| error:$e');
+      throw e;
+    }
   }
 
-  static Future<void> allAccounts() async {
+  static Future<List<AccountModel?>?> allAccounts() async {
     final query = '''
     SELECT *
     FROM $tableName
     ''';
     List<AccountModel?> accounts = [];
 
-    var result = await AccountingDB.runRawQuery(query);
-    // print('AccountModel allAccounts 01| all accounts: ########');
-    // print(result);
-    // print('##################');
-    if (result == null || result.isEmpty) return;
-
     try {
+      var result = await AccountingDB.runRawQuery(query);
+      // print('AccountModel allAccounts 01| all accounts: ########');
+      // print(result);
+      // print('##################');
+
+      if (result == null || result.isEmpty) return null;
       result.forEach(
         (accMap) => accounts.add(fromMap(accMap)),
       );
+      print('AccountModel allAccounts 03| fetched Accounts:');
+      print('accounts count: ${accounts.length}');
+      // print(accounts);
+      return accounts;
     } on Exception catch (e) {
       print('AccountModel allAccounts 02| @ catch wile fromMap e: $e');
     }
-    print('AccountModel allAccounts 03| fetched Accounts:');
-    print(accounts);
+  }
+
+  static Future<AccountModel?> fetchAccountById(String accountId) async {
+    final query = '''
+    SELECT *
+    FROM $tableName
+    WHERE $column1Id = ? ;
+    ''';
+    try {
+      var fetchResult = await AccountingDB.runRawQuery(
+        query,
+        [accountId],
+      );
+      // print(
+      //   'AccountModel fetchAccountById 01| fetchResult for accountId: $accountId',
+      // );
+      // print(fetchResult);
+
+      // before list.first always you should check isEmpty
+      if (fetchResult == null || fetchResult.isEmpty) return null;
+
+      AccountModel? account = fromMap(fetchResult.first);
+      print(account);
+      return account;
+      // return fetchResult;
+    } catch (e) {
+      print('ACC_MDL fetchAccountById() 01| e: $e');
+      throw e;
+    }
   }
 
   Future<int> deleteMeFromDB() async {
@@ -71,28 +108,6 @@ class AccountModel {
     var count = await AccountingDB.deleteRawQuery(query, [tableName, id]);
     print('AccountModel deleteMeFromDB 01| DELETE $id; count: $count');
     return count;
-  }
-
-  static Future<void> fetchAccountById(String accountId) async {
-    final query = '''
-    SELECT *
-    FROM $tableName
-    WHERE $column1Id = ? ;
-    ''';
-    var fetchResult = await AccountingDB.runRawQuery(
-      query,
-      [accountId],
-    );
-    // print(
-    //   'AccountModel fetchAccountById 01| fetchResult for accountId: $accountId',
-    // );
-    // print(fetchResult);
-
-    // before list.first always you should check isEmpty
-    if (fetchResult == null || fetchResult.isEmpty) return;
-
-    AccountModel? account = fromMap(fetchResult.first);
-    // return fetchResult;
   }
 
   static const String tableName = 'accounts';
@@ -151,7 +166,6 @@ class AccountModel {
       print('AccountModel fromMap 01| input is null');
       return null;
     }
-    // print('AccountModel fromMap 02| input: $accountMap');
     var account = AccountModel(
       id: accountMap[AccountModel.column1Id] as String,
       parentId: accountMap[AccountModel.column2ParentId] as String,
@@ -159,22 +173,32 @@ class AccountModel {
       titlePersian: accountMap[AccountModel.column4TitlePersian] as String,
       titleArabic: accountMap[AccountModel.column5TitleArabic] as String,
       note: accountMap[AccountModel.column6Note] as String,
-      createTransactionPermissionsAny: json.decode(
-        accountMap[AccountModel.column7CreateTransactionPermissionsAny]!
-            .cast<String>(),
-      ) as List<String?>,
-      // readTransactionPermissionsAny: json.decode(
-      //   accountMap[AccountModel.column8ReadTransactionPermissionsAny] as String,
-      // ) as List<String?>?,
-      // editTransactionPermissionsAny: json.decode(
-      //   accountMap[AccountModel.column9EditTransactionPermissionsAny] as String,
-      // ) as List<String?>?,
-      // deleteTransactionPermissionsAny: json.decode(
-      //   accountMap[AccountModel.column10DeleteTransactionPermissionsAny]
-      //       as String,
-      // ) as List<String?>?,
+      createTransactionPermissionsAny: json
+          .decode(
+            accountMap[AccountModel.column7CreateTransactionPermissionsAny]
+                as String,
+          )
+          .cast<String>(),
+      readTransactionPermissionsAny: json
+          .decode(
+            accountMap[AccountModel.column8ReadTransactionPermissionsAny]
+                as String,
+          )
+          .cast<String>(),
+      editTransactionPermissionsAny: json
+          .decode(
+            accountMap[AccountModel.column9EditTransactionPermissionsAny]
+                as String,
+          )
+          .cast<String>(),
+      deleteTransactionPermissionsAny: json
+          .decode(
+            accountMap[AccountModel.column10DeleteTransactionPermissionsAny]
+                as String,
+          )
+          .cast<String>(),
     );
-    print('AccountModel fromMap 03| output: \n$account');
+    // print('AccountModel fromMap 03| output: \n$account');
     return account;
   }
 
@@ -186,6 +210,10 @@ class AccountModel {
     $column4TitlePersian: $titlePersian,
     $column5TitleArabic: $titleArabic,
     $column6Note: $note,
+    $column7CreateTransactionPermissionsAny: $createTransactionPermissionsAny,
+    $column8ReadTransactionPermissionsAny: $readTransactionPermissionsAny,
+    $column9EditTransactionPermissionsAny: $editTransactionPermissionsAny,
+    $column10DeleteTransactionPermissionsAny: $deleteTransactionPermissionsAny,
     ''';
   }
 }
