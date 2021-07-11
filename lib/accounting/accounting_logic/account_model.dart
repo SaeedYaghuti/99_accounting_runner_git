@@ -28,12 +28,14 @@ class AccountModel {
     this.deleteTransactionPermissionsAny,
   });
 
-  // TODO: we should store c/e/dPermisionsAny at db
   // TODO: currently we read accounts from AccountTree => we should read from DB
-  // TODO: Add account, read account, update account, delete account
 
   Future<int> insertMeIntoDB() async {
     // do some logic on variables
+
+    // TODO: we should create relevant permission for this new acc in db
+    // TODO: give all this perms to auth_id: 1
+
     try {
       return AccountingDB.insert(tableName, toMap());
     } catch (e) {
@@ -102,12 +104,17 @@ class AccountModel {
       return 0;
     }
     final query = '''
-    DELETE FROM ?
+    DELETE FROM $tableName
     WHERE $column1Id = ? ;
     ''';
-    var count = await AccountingDB.deleteRawQuery(query, [tableName, id]);
-    print('AccountModel deleteMeFromDB 01| DELETE $id; count: $count');
-    return count;
+    try {
+      var count = await AccountingDB.deleteRawQuery(query, [id]);
+      print('AccountModel deleteMeFromDB 01| DELETE $id; count: $count');
+      return count;
+    } catch (e) {
+      print('AccountModel deleteMeFromDB 01| e: $e');
+      throw e;
+    }
   }
 
   static const String tableName = 'accounts';

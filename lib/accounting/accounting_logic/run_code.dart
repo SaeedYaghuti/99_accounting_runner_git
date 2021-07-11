@@ -17,22 +17,28 @@ void runCode() async {
   // await VoucherModel.accountVouchers('expenditure');
   // await VoucherModel.fetchAllVouchers();
   // print('PRAGMA foreign_keys > $resault');
-  // var muscat = AccountModel(
-  //   id: 'MUSCAT_BANK',
-  //   parentId: ACCOUNTS_ID.BANKS_ACCOUNT_ID,
-  //   titleEnglish: 'bank muscat',
-  //   titleArabic: 'بنک مسقط',
-  //   titlePersian: 'بانك مسقط',
-  //   note: '٤٥٧٠٣٣١٣٣٠١٧',
-  //   createTransactionPermissionsAny: [],
-  //   readTransactionPermissionsAny: [],
-  //   editTransactionPermissionsAny: [],
-  //   deleteTransactionPermissionsAny: [],
-  // );
+  var muscat = AccountModel(
+    id: 'MUSCAT_BANK',
+    parentId: ACCOUNTS_ID.BANKS_ACCOUNT_ID,
+    titleEnglish: 'bank muscat',
+    titleArabic: 'بنک مسقط',
+    titlePersian: 'بانك مسقط',
+    note: '٤٥٧٠٣٣١٣٣٠١٧',
+    createTransactionPermissionsAny: [],
+    readTransactionPermissionsAny: [],
+    editTransactionPermissionsAny: [],
+    deleteTransactionPermissionsAny: [],
+  );
 
   // var insertResut = await muscat.insertMeIntoDB();
   // print(insertResut);
 
-  // await AccountModel.allAccounts();
-  await AccountModel.fetchAccountById('MUSCAT_BANK');
+  await AccountModel.allAccounts();
+
+  var deleteResut = await muscat.deleteMeFromDB();
+  print(deleteResut);
+
+  await AccountModel.allAccounts();
+
+  // await AccountModel.fetchAccountById('MUSCAT_BANK');
 }
