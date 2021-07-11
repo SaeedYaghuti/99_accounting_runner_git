@@ -1,3 +1,5 @@
+import 'package:shop/auth/auth_db_helper.dart';
+
 class PermissionModel {
   final String id;
   final String titleEnglish;
@@ -13,7 +15,89 @@ class PermissionModel {
     this.note = '',
   });
 
-  // TODO: database operation CRUD
+  Future<int> insertMeIntoDB() async {
+    // do some logic on variables
+    try {
+      return AuthDB.insert(tableName, toMap());
+    } catch (e) {
+      print('PermissionModel insertInDB() 01| error:$e');
+      throw e;
+    }
+  }
+
+  static Future<List<PermissionModel?>?> allPermissions() async {
+    final query = '''
+    SELECT *
+    FROM $tableName
+    ''';
+    List<PermissionModel?> permissions = [];
+
+    try {
+      var result = await AuthDB.runRawQuery(query);
+      // print('PermissionModel allPermissions 01| all Permissions: ########');
+      // print(result);
+      // print('##################');
+
+      if (result == null || result.isEmpty) return null;
+      result.forEach(
+        (permMap) => permissions.add(fromMap(permMap)),
+      );
+      print('PermissionModel allPermissions 03| fetched Permissions:');
+      print('Permissions count: ${permissions.length}');
+      // print(Permissions);
+      return permissions;
+    } on Exception catch (e) {
+      print('PermissionModel allPermissions 02| @ catch wile fromMap e: $e');
+    }
+  }
+
+  static Future<PermissionModel?> fetchPermissionById(
+      String permissionId) async {
+    final query = '''
+    SELECT *
+    FROM $tableName
+    WHERE $column1Id = ? ;
+    ''';
+    try {
+      var fetchResult = await AuthDB.runRawQuery(
+        query,
+        [permissionId],
+      );
+      // print(
+      //   'PermissionModel fetchPermissionById 01| fetchResult for permissionId: $permissionId',
+      // );
+      // print(fetchResult);
+
+      // before list.first always you should check isEmpty
+      if (fetchResult == null || fetchResult.isEmpty) return null;
+
+      PermissionModel? permission = fromMap(fetchResult.first);
+      print(permission);
+      return permission;
+      // return fetchResult;
+    } catch (e) {
+      print('PERM_MDL fetchPermissionById() 01| e: $e');
+      throw e;
+    }
+  }
+
+  Future<int> deleteMeFromDB() async {
+    if (id == null) {
+      return 0;
+    }
+    final query = '''
+    DELETE FROM $tableName
+    WHERE $column1Id = ? ;
+    ''';
+    try {
+      var count = await AuthDB.deleteRawQuery(query, [id]);
+      print('PermissionModel deleteMeFromDB 01| DELETE $id; count: $count');
+      return count;
+    } catch (e) {
+      print('PermissionModel deleteMeFromDB 02| e: $e');
+      throw e;
+    }
+  }
 
   static const String tableName = 'permissions';
   static const String column1Id = 'permission_id';
@@ -39,6 +123,26 @@ class PermissionModel {
       column4TitleArabic: titleArabic,
       column5Note: note,
     };
+  }
+
+  static PermissionModel? fromMap(
+    Map<String, Object?>? permissionMap,
+  ) {
+    if (permissionMap == null) {
+      print('PermissionModel fromMap 01| input is null');
+      return null;
+    }
+    var permission = PermissionModel(
+      id: permissionMap[PermissionModel.column1Id] as String,
+      titleEnglish:
+          permissionMap[PermissionModel.column2TitleEnglish] as String,
+      titlePersian:
+          permissionMap[PermissionModel.column3TitlePersian] as String,
+      titleArabic: permissionMap[PermissionModel.column4TitleArabic] as String,
+      note: permissionMap[PermissionModel.column5Note] as String,
+    );
+    print('PermissionModel fromMap 03| output: \n$permission');
+    return permission;
   }
 
   String toString() {
