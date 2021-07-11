@@ -83,7 +83,8 @@ class AuthDB {
     db.close();
     final dbDirectory = await getDatabasesPath();
     final dbPath = path.join(dbDirectory, authDBName);
-    deleteDatabase(dbPath);
+    await deleteDatabase(dbPath);
+    print('AuthDB deleteDB| AuthDB is deleted ...');
   }
 
   static Future<List<Map<String, Object?>>> runRawQuery(String query,

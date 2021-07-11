@@ -16,7 +16,7 @@ class AccountingDB {
       dbPath,
       version: 1,
       onCreate: (db, version) async {
-        print('ADB10| onCreate runing...');
+        print('AccountingDB 01| onCreate runing...');
         await db.execute('PRAGMA foreign_keys = ON;');
         await db.execute(AccountModel.QUERY_CREATE_ACCOUNT_TABLE);
         await insertPredefinedAccounts(db);
@@ -47,7 +47,8 @@ class AccountingDB {
     final dbName = 'accounting.db';
     final dbDirectory = await getDatabasesPath();
     final dbPath = path.join(dbDirectory, dbName);
-    deleteDatabase(dbPath);
+    await deleteDatabase(dbPath);
+    print('AccountingDB deleteDB| database deleted ...');
   }
 
   static Future<List<Map<String, Object?>>> runRawQuery(String query,
@@ -74,7 +75,7 @@ class AccountingDB {
         account.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-      // print('ADB20| @insertPredefinedAccounts() insertResult: $insertResult');
+      print('ADB20| @insertPredefinedAccounts() insertResult: $insertResult');
     }
   }
 

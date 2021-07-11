@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/accounting/common/multi_language_text_widget.dart';
 import 'package:shop/auth/auth_db_helper.dart';
 import 'package:shop/auth/firebase/auth_provider.dart';
@@ -66,6 +67,7 @@ class CategoriesDrawer extends StatelessWidget {
             onTap: () {
               Navigator.of(context).pop();
               Navigator.of(context).pushReplacementNamed('/');
+              AccountingDB.deleteDB();
               AuthDB.deleteDB();
             },
           ),
