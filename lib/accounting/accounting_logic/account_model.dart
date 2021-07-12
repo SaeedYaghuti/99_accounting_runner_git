@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
+import 'package:shop/auth/permission_model.dart';
 
 class AccountModel {
   final String id;
@@ -34,6 +35,12 @@ class AccountModel {
     // do some logic on variables
 
     // TODO: we should create relevant permission for this new acc in db
+    PermissionModel.createCRUDTransactionPermissionForAccount(
+      id,
+      titleEnglish,
+      titlePersian,
+      titleArabic,
+    );
     // TODO: give all this perms to auth_id: 1
 
     try {

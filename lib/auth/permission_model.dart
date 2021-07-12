@@ -25,6 +25,77 @@ class PermissionModel {
     }
   }
 
+  static Future<void> createCRUDTransactionPermissionForAccount(
+    String accountId,
+    String titleEnglish,
+    String titlePersian,
+    String titleArabic,
+  ) async {
+    // do some logic on variables
+    var accountID = accountId.toUpperCase();
+    var perms = [
+      PermissionModel(
+        id: '${accountID}_CREATE_TRANSACTION',
+        titleEnglish:
+            '${titleEnglish.toUpperCase()} CREATE TRANSACTION PERMISSION',
+        titlePersian: 'ايجاد تراكنش $titlePersian',
+        titleArabic: 'تحديث فاتورة حق $titleArabic',
+      ),
+      PermissionModel(
+        id: '${accountID}_READ_ALL_TRANSACTION',
+        titleEnglish:
+            '${titleEnglish.toUpperCase()} READ ALL TRANSACTION PERMISSION',
+        titlePersian: 'مشاهده تمام تراكنش $titlePersian',
+        titleArabic: 'قراة كل فواتير $titleArabic',
+      ),
+      PermissionModel(
+        id: '${accountID}_READ_OWN_TRANSACTION',
+        titleEnglish:
+            '${titleEnglish.toUpperCase()} READ OWN TRANSACTION PERMISSION',
+        titlePersian: 'مشاهده تراكنش های خودم براي $titlePersian',
+        titleArabic: 'قراه فواتيري حق $titleArabic',
+      ),
+      PermissionModel(
+        id: '${accountID}_EDIT_ALL_TRANSACTION',
+        titleEnglish:
+            '${titleEnglish.toUpperCase()} EDIT ALL TRANSACTION PERMISSION',
+        titlePersian: 'اصلاح تمام تراكنش های $titlePersian',
+        titleArabic: 'تصليح كل فواتير $titleArabic',
+      ),
+      PermissionModel(
+        id: '${accountID}_EDIT_OWN_TRANSACTION',
+        titleEnglish:
+            '${titleEnglish.toUpperCase()} EDIT OWN TRANSACTION PERMISSION',
+        titlePersian: 'اصلاح تراكنش های خودم براي $titlePersian',
+        titleArabic: 'تصليح فواتيري حق $titleArabic',
+      ),
+      PermissionModel(
+        id: '${accountID}_DELETE_ALL_TRANSACTION',
+        titleEnglish:
+            '${titleEnglish.toUpperCase()} DELETE ALL TRANSACTION PERMISSION',
+        titlePersian: 'حذف تمام تراكنش های $titlePersian',
+        titleArabic: 'حذف كل فواتير $titleArabic',
+      ),
+      PermissionModel(
+        id: '${accountID}_DELETE_OWN_TRANSACTION',
+        titleEnglish:
+            '${titleEnglish.toUpperCase()} DELETE OWN TRANSACTION PERMISSION',
+        titlePersian: 'حذف تراكنش های خودم براي $titlePersian',
+        titleArabic: 'حذف فواتيري حق $titleArabic',
+      ),
+    ];
+    try {
+      for (var perm in perms) {
+        print('PER_MDL CRUD 01| inserting ... ${perm.id}');
+        var insertedRow = await AuthDB.insert(tableName, perm.toMap());
+        print(insertedRow);
+      }
+    } catch (e) {
+      print('PermissionModel insertInDB() 01| error:$e');
+      throw e;
+    }
+  }
+
   static Future<List<PermissionModel?>?> allPermissions() async {
     final query = '''
     SELECT *
@@ -141,7 +212,7 @@ class PermissionModel {
       titleArabic: permissionMap[PermissionModel.column4TitleArabic] as String,
       note: permissionMap[PermissionModel.column5Note] as String,
     );
-    print('PermissionModel fromMap 03| output: \n$permission');
+    // print('PermissionModel fromMap 03| output: \n$permission');
     return permission;
   }
 
