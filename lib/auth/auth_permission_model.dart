@@ -62,15 +62,19 @@ class AuthPermissionModel {
   }
 
   static Future<void> givePermissionsToAuth(
-      int authId, String permissionId) async {
+    int authId,
+    List<String> permissionIds,
+  ) async {
     try {
-      var authPerm = AuthPermissionModel(
-        authId: authId,
-        permissionId: permissionId,
-      );
-      await AuthDB.insert(tableName, authPerm.toMap());
+      for (var permId in permissionIds) {
+        var authPerm = AuthPermissionModel(
+          authId: authId,
+          permissionId: permId,
+        );
+        await AuthDB.insert(tableName, authPerm.toMap());
+      }
     } catch (e) {
-      print('AuthPerm give_perm_to_auth 01| e: $e');
+      print('AuthPerm give_perms_to_auth 01| e: $e');
       throw e;
     }
   }
@@ -83,7 +87,7 @@ class AuthPermissionModel {
     var authPermsMap = await AuthDB.runRawQuery(query);
 
     print('ATH_PERM_MDL printAllAuthPERM 01| All DB AuthPerms: ###########');
-    print(authPermsMap);
+    print(authPermsMap.length);
     print('##################');
   }
 

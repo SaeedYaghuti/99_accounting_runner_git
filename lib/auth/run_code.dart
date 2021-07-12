@@ -22,18 +22,10 @@ void runCode() async {
   // var isPermitted = auth.hasPermission(PermissionModel.EXPENDITURE_CATEGORY);
   // print('auth runCode 01| isPermitted: $isPermitted');
   // AuthModel.printAllAuth();
-  // AuthPermissionModel.printAllAuthPermissions();
+  AuthPermissionModel.printAllAuthPermissions();
   // AuthPermissionModel.givePermissionsToAuth(
   //   2,
   //   PermissionModel.EXPENDITURE_CATEGORY,
-  // );
-  // AuthPermissionModel.givePermissionsToAuth(
-  //   2,
-  //   PermissionModel.EXPENDITURE_CREATE_TRANSACTION,
-  // );
-  // AuthPermissionModel.givePermissionsToAuth(
-  //   2,
-  //   PermissionModel.EXPENDITURE_EDIT_OWN,
   // );
 
   // var muscatTrandCreate = PermissionModel(

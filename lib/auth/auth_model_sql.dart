@@ -30,6 +30,9 @@ class AuthModel {
     if (_permissions == null || _permissions!.length == 0) {
       return false;
     }
+    // first auth has all permissions
+    if (_id == 1) return true;
+
     return _permissions!.any(
       (permission) => permission!.permissionId == permissionId,
     );

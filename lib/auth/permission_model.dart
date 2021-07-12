@@ -25,7 +25,7 @@ class PermissionModel {
     }
   }
 
-  static Future<void> createCRUDTransactionPermissionForAccount(
+  static Future<List<String>> createCRUDTransactionPermissionForAccount(
     String accountId,
     String titleEnglish,
     String titlePersian,
@@ -85,11 +85,14 @@ class PermissionModel {
       ),
     ];
     try {
+      List<String> successPermIds = [];
       for (var perm in perms) {
         print('PER_MDL CRUD 01| inserting ... ${perm.id}');
         var insertedRow = await AuthDB.insert(tableName, perm.toMap());
         print(insertedRow);
+        successPermIds.add(perm.id);
       }
+      return successPermIds;
     } catch (e) {
       print('PermissionModel insertInDB() 01| error:$e');
       throw e;

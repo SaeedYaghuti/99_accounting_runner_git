@@ -18,11 +18,11 @@ void runCode() async {
   // await VoucherModel.fetchAllVouchers();
   // print('PRAGMA foreign_keys > $resault');
   var muscat = AccountModel(
-    id: 'AMERICAN_EXPRESS',
+    id: 'SADERAT_IRAN',
     parentId: ACCOUNTS_ID.BANKS_ACCOUNT_ID,
-    titleEnglish: 'american experess',
-    titleArabic: 'امريكن اكسبرس',
-    titlePersian: 'امريكن اكسبرس',
+    titleEnglish: 'saderat iran',
+    titleArabic: 'بانك صادرات ايران',
+    titlePersian: 'بنك صادرات ايران',
     note: '٤٥٧٠٣٣١٣٤٠٦٠',
     createTransactionPermissionsAny: [],
     readTransactionPermissionsAny: [],

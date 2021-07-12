@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
+import 'package:shop/auth/auth_permission_model.dart';
 import 'package:shop/auth/permission_model.dart';
 
 class AccountModel {
@@ -33,17 +34,19 @@ class AccountModel {
 
   Future<int> insertMeIntoDB() async {
     // do some logic on variables
-
-    // TODO: we should create relevant permission for this new acc in db
-    PermissionModel.createCRUDTransactionPermissionForAccount(
-      id,
-      titleEnglish,
-      titlePersian,
-      titleArabic,
-    );
-    // TODO: give all this perms to auth_id: 1
-
     try {
+      // auto-generated permissons for account
+      var permissionIds =
+          await PermissionModel.createCRUDTransactionPermissionForAccount(
+        id,
+        titleEnglish,
+        titlePersian,
+        titleArabic,
+      );
+
+      // give new perms to auth-id = 1
+      await AuthPermissionModel.givePermissionsToAuth(1, permissionIds);
+
       return AccountingDB.insert(tableName, toMap());
     } catch (e) {
       print('AccountModel insertInDB() 01| error:$e');
