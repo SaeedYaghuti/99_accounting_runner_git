@@ -160,7 +160,7 @@ const ACCOUNTS_TREE = const [
     id: ACCOUNTS_ID.DEBTORS_ACCOUNT_ID,
     parentId: ACCOUNTS_ID.ASSETS_ACCOUNT_ID,
     titleEnglish: 'Debtors',
-    titleArabic: 'بنک عمان الوطني',
+    titleArabic: 'بدهكاران',
     titlePersian: 'المدينين',
     note: '',
     createTransactionPermissionsAny: [
@@ -176,7 +176,7 @@ const ACCOUNTS_TREE = const [
     id: ACCOUNTS_ID.LIABILITIES_ACCOUNT_ID,
     parentId: ACCOUNTS_ID.LEDGER_ACCOUNT_ID,
     titleEnglish: 'Liabilities',
-    titleArabic: 'بنک عمان الوطني',
+    titleArabic: 'بستانكاران',
     titlePersian: 'الدين الحالي',
     note: '',
     createTransactionPermissionsAny: [
