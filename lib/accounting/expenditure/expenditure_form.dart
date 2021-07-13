@@ -4,6 +4,8 @@ import 'package:shop/accounting/accounting_logic/run_code.dart';
 // import 'package:shop/auth/run_code.dart';
 
 import 'package:provider/provider.dart';
+import 'package:shop/accounting/common/account_dropdown_menu.dart';
+import 'package:shop/accounting/common/expandble_panel.dart';
 import 'package:shop/auth/auth_db_helper.dart';
 import 'package:shop/auth/auth_model_sql.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
@@ -133,35 +135,19 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
               _buildSubmitButtons(context),
               SizedBox(height: 20, width: 20),
               _buildListViewMeduim(context),
-              // TextButton(
-              //   onPressed: () {
-              //     AccountingDB.deleteDB();
-              //     AuthDB.deleteDB();
-              //   },
-              //   child: Text('DELETE DB'),
-              // ),
-              // SizedBox(height: 20, width: 20),
-              // TextButton(
-              //   onPressed: runCode,
-              //   child: Text('RUN QUERY'),
-              // ),
-              // SizedBox(height: 20, width: 20),
-              // Container(
-              //   width: 300,
-              //   height: 300,
-              //   child: _buildExpandbleListView(context),
-              // ),
-              // SizedBox(height: 20, width: 20),
-              // Container(
-              //   width: 300,
-              //   height: 500,
-              //   child: ListView.builder(
-              //     itemBuilder: (BuildContext context, int index) {
-              //       return ExpandableListView(title: "Title $index");
-              //     },
-              //     itemCount: 5,
-              //   ),
-              // ),
+              SizedBox(height: 20, width: 20),
+              TextButton(
+                onPressed: () {
+                  AccountingDB.deleteDB();
+                  AuthDB.deleteDB();
+                },
+                child: Text('DELETE DB'),
+              ),
+              SizedBox(height: 20, width: 20),
+              TextButton(
+                onPressed: runCode,
+                child: Text('RUN QUERY'),
+              ),
             ],
           ),
         ),
@@ -182,9 +168,9 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
                         context,
                         MaterialPageRoute(
                             builder: (BuildContext context) =>
-                                Expansiontile()));
+                                AccountDropdownMenu()));
                   },
-                  child: Text('ExpansionTile'),
+                  child: Text('Account Dropdown Menu'),
                 ),
               ),
             ],
@@ -559,58 +545,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     // return '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}';
   }
 
-  Widget _buildExpandbleListView(BuildContext context) {
-    return ListView.builder(
-      itemCount: vehicles.length,
-      itemBuilder: (context, i) {
-        return new ExpansionTile(
-          title: new Text(
-            vehicles[i].title,
-            style: new TextStyle(
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-                fontStyle: FontStyle.italic),
-          ),
-          children: <Widget>[
-            new Column(
-              children: _buildExpandableContent(vehicles[i]),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  _buildExpandableContent(Vehicle vehicle) {
-    List<Widget> columnContent = [];
-
-    for (String content in vehicle.contents)
-      columnContent.add(
-        new ListTile(
-          title: new Text(
-            content,
-            style: new TextStyle(fontSize: 18.0),
-          ),
-          leading: new Icon(vehicle.icon),
-        ),
-      );
-
-    return columnContent;
-  }
-
-  List<Vehicle> vehicles = [
-    new Vehicle(
-      'Bike',
-      ['Vehicle no. 1', 'Vehicle no. 2', 'Vehicle no. 7', 'Vehicle no. 10'],
-      Icons.motorcycle,
-    ),
-    new Vehicle(
-      'Cars',
-      ['Vehicle no. 3', 'Vehicle no. 4', 'Vehicle no. 6'],
-      Icons.directions_car,
-    ),
-  ];
-
   @override
   void dispose() {
     // _priceFocusNode.dispose();
@@ -632,133 +566,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       _isLoading = false;
     });
   }
-
-  Widget _buildPaidBy0(BuildContext context) {
-    return TextFormField(
-      decoration: _buildInputDecoration('Paid By ...'),
-      style: _buildTextStyle(),
-      keyboardType: TextInputType.multiline,
-      initialValue: _expenditureFormFields.paidBy,
-      focusNode: _paidByFocusNode,
-      validator: (paidBy) {
-        if (paidBy == null || paidBy.isEmpty) {
-          return 'paidBy should not be empty';
-        }
-        return null;
-      },
-      onSaved: (paidBy) {
-        // print('title-field.onSaved: descriptionField: $descriptionField');
-        _expenditureFormFields.paidBy = paidBy;
-      },
-    );
-  }
-
-  Widget _buildDatePicker(BuildContext context) {
-    return Container(
-      height: 150,
-      width: 100,
-      child: Row(
-        children: [
-          Expanded(
-            // child: _selectedDate == null
-            child: _expenditureFormFields.date == null
-                ? const Text(
-                    'DATE NOT CHOOSEN',
-                    style: TextStyle(fontSize: 16),
-                  )
-                : Text(
-                    // 'Date: ${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}',
-                    'Date: ${_expenditureFormFields.date!.day}/${_expenditureFormFields.date!.month}/${_expenditureFormFields.date!.year}',
-                    style: TextStyle(fontSize: 16),
-                  ),
-          ),
-          TextButton(
-            onPressed: pickDate,
-            child: Text(
-              'CHANGE DATE',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSaveButton(BuildContext context) {
-    return SizedBox(
-      width: 50,
-      child: ElevatedButton(
-        child: Text(
-          _formDuty == FormDuty.CREATE ? 'CREATE' : 'READ',
-          style: TextStyle(fontSize: 30),
-        ),
-        style: ElevatedButton.styleFrom(
-          primary: Theme.of(context).primaryColor,
-          padding: EdgeInsets.symmetric(
-            vertical: 8,
-          ),
-        ),
-        onPressed: () => _saveForm,
-      ),
-    );
-  }
-
-  Widget _buildButtonElevatedRectangle(
-    BuildContext context,
-    String text,
-    Color color,
-    Function function,
-  ) {
-    return ElevatedButton(
-      child: Text(
-        text,
-        style: TextStyle(
-          fontSize: 26,
-          wordSpacing: 2.0,
-          letterSpacing: 2.0,
-        ),
-      ),
-      style: ElevatedButton.styleFrom(
-        primary: color,
-        padding: EdgeInsets.symmetric(
-          vertical: 8,
-          horizontal: 6,
-        ),
-      ),
-      onPressed: () => function(),
-    );
-  }
-
-  Widget _buildIconButton(
-    BuildContext context,
-    String text,
-    Color color,
-    Widget icon,
-    Function onPressed,
-  ) {
-    return ElevatedButton.icon(
-      icon: icon,
-      label: Text(
-        text,
-        style: TextStyle(
-          fontSize: 26,
-          letterSpacing: 2.0,
-          wordSpacing: 2.0,
-        ),
-      ),
-      style: ElevatedButton.styleFrom(
-        primary: color,
-        padding: EdgeInsets.symmetric(
-          vertical: 8,
-          horizontal: 6,
-        ),
-      ),
-      onPressed: () => onPressed(),
-    );
-  }
 }
 
 enum FormDuty {
@@ -766,252 +573,4 @@ enum FormDuty {
   CREATE,
   EDIT,
   DELETE,
-}
-
-class Vehicle {
-  final String title;
-  List<String> contents = [];
-  final IconData icon;
-
-  Vehicle(this.title, this.contents, this.icon);
-}
-
-class ExpandableListView extends StatefulWidget {
-  final String title;
-
-  const ExpandableListView({Key? key, required this.title}) : super(key: key);
-
-  @override
-  _ExpandableListViewState createState() => new _ExpandableListViewState();
-}
-
-class _ExpandableListViewState extends State<ExpandableListView> {
-  bool expandFlag = false;
-
-  @override
-  Widget build(BuildContext context) {
-    return new Container(
-      margin: new EdgeInsets.symmetric(vertical: 1.0),
-      child: new Column(
-        children: <Widget>[
-          new Container(
-            color: Colors.blue,
-            padding: new EdgeInsets.symmetric(horizontal: 5.0),
-            child: new Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                new IconButton(
-                    icon: new Container(
-                      height: 50.0,
-                      width: 50.0,
-                      decoration: new BoxDecoration(
-                        color: Colors.orange,
-                        shape: BoxShape.circle,
-                      ),
-                      child: new Center(
-                        child: new Icon(
-                          expandFlag
-                              ? Icons.keyboard_arrow_up
-                              : Icons.keyboard_arrow_down,
-                          color: Colors.white,
-                          size: 30.0,
-                        ),
-                      ),
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        expandFlag = !expandFlag;
-                      });
-                    }),
-                new Text(
-                  widget.title,
-                  style: new TextStyle(
-                      fontWeight: FontWeight.bold, color: Colors.white),
-                )
-              ],
-            ),
-          ),
-          new ExpandableContainer(
-              expanded: expandFlag,
-              child: new ListView.builder(
-                itemBuilder: (BuildContext context, int index) {
-                  return new Container(
-                    decoration: new BoxDecoration(
-                        border: new Border.all(width: 1.0, color: Colors.grey),
-                        color: Colors.black),
-                    child: new ListTile(
-                      title: new Text(
-                        "Cool $index",
-                        style: new TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.white),
-                      ),
-                      leading: new Icon(
-                        Icons.local_pizza,
-                        color: Colors.white,
-                      ),
-                    ),
-                  );
-                },
-                itemCount: 15,
-              ))
-        ],
-      ),
-    );
-  }
-}
-
-class ExpandableContainer extends StatelessWidget {
-  final bool expanded;
-  final double collapsedHeight;
-  final double expandedHeight;
-  final Widget child;
-
-  ExpandableContainer({
-    required this.child,
-    this.collapsedHeight = 0.0,
-    this.expandedHeight = 300.0,
-    this.expanded = true,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width;
-    return new AnimatedContainer(
-      duration: new Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
-      width: screenWidth,
-      height: expanded ? expandedHeight : collapsedHeight,
-      child: new Container(
-        child: child,
-        decoration: new BoxDecoration(
-            border: new Border.all(width: 1.0, color: Colors.blue)),
-      ),
-    );
-  }
-}
-
-class Expansiontile extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text('Expansion Tile'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30.0),
-        child: Column(
-          children: <Widget>[
-            SizedBox(height: 20.0),
-            ExpansionTile(
-              title: Text(
-                "Title",
-                style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-              ),
-              children: <Widget>[
-                ExpansionTile(
-                  title: Text(
-                    'Sub title',
-                  ),
-                  children: <Widget>[
-                    ListTile(
-                      title: Text('data'),
-                    )
-                  ],
-                ),
-                ListTile(
-                  title: Text('data'),
-                )
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/*
-HELP FORM DATA FLOW
-1# by selection in data-table form re-build
-2# 
-*/
-
-class Expansionpanel extends StatefulWidget {
-  Expansionpaneltate createState() => Expansionpaneltate();
-}
-
-class NewItem {
-  bool isExpanded;
-  final String header;
-  final Widget body;
-  final Icon iconpic;
-  NewItem(this.isExpanded, this.header, this.body, this.iconpic);
-}
-
-class Expansionpaneltate extends State<Expansionpanel> {
-  List<NewItem> items = <NewItem>[
-    NewItem(
-        false, // isExpanded ?
-        'Header', // header
-        Padding(
-            padding: EdgeInsets.all(20.0),
-            child: Column(children: <Widget>[
-              Text('data'),
-              Text('data'),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: <Widget>[
-                  Text('data'),
-                  Text('data'),
-                  Text('data'),
-                ],
-              ),
-              Radio(value: null, groupValue: null, onChanged: null)
-            ])), // body
-        Icon(Icons.image) // iconPic
-        ),
-  ];
-  ListView? List_Criteria;
-  Widget build(BuildContext context) {
-    List_Criteria = ListView(
-      children: [
-        Padding(
-          padding: EdgeInsets.all(10.0),
-          child: ExpansionPanelList(
-            expansionCallback: (int index, bool isExpanded) {
-              setState(() {
-                items[index].isExpanded = !items[index].isExpanded;
-              });
-            },
-            children: items.map((NewItem item) {
-              return ExpansionPanel(
-                headerBuilder: (BuildContext context, bool isExpanded) {
-                  return ListTile(
-                      leading: item.iconpic,
-                      title: Text(
-                        item.header,
-                        textAlign: TextAlign.left,
-                        style: TextStyle(
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ));
-                },
-                isExpanded: item.isExpanded,
-                body: item.body,
-              );
-            }).toList(),
-          ),
-        ),
-      ],
-    );
-    Scaffold scaffold = Scaffold(
-      appBar: AppBar(
-        title: Text("ExpansionPanelList"),
-      ),
-      body: List_Criteria,
-    );
-    return scaffold;
-  }
 }
