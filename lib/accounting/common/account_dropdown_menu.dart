@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-// TODO: convert accounts to Dropdown Menu
-// 1# definition of accounts tree
+// TODO: convert accounts_tree to Dropdown Menu
+// 1# start from Ledger_account and make Tile
 
 class AccountDropdownMenu extends StatelessWidget {
   @override
