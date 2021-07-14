@@ -1,6 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:shop/accounting/accounting_logic/account_model.dart';
-import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
 
 import 'account_ids.dart';
 
@@ -74,7 +75,6 @@ class _AccountDropdownMenuState extends State<AccountDropdownMenu> {
 
   ExpansionTile _buildTileTree(AccountModel parent) {
     return ExpansionTile(
-      initiallyExpanded: widget.expandedAccountIds.contains(parent.id),
       title: Text(
         parent.titleEnglish,
         style: TextStyle(
@@ -82,11 +82,25 @@ class _AccountDropdownMenuState extends State<AccountDropdownMenu> {
           fontWeight: FontWeight.bold,
         ),
       ),
+      initiallyExpanded: widget.expandedAccountIds.contains(parent.id),
+      childrenPadding: EdgeInsets.symmetric(horizontal: 5),
+      // backgroundColor: randomColor(),
       children: childs(parent.id).map((child) {
         if (isParent(child!.id)) return _buildTileTree(child);
 
         return ListTile(
-          title: Text(child.titleEnglish),
+          title: Row(
+            children: [
+              Icon(
+                Icons.filter_tilt_shift_outlined,
+                size: 12,
+              ),
+              SizedBox(
+                width: 3,
+              ),
+              Text(child.titleEnglish),
+            ],
+          ),
         );
       }).toList(),
     );
@@ -100,7 +114,10 @@ class _AccountDropdownMenuState extends State<AccountDropdownMenu> {
     return accounts.where((account) => account.parentId == accountId).toList();
   }
 
+  static Color randomColor() => new Color(new Random().nextInt(0xffffffff));
+
   bool _isLoading = false;
+
   void _loadingStart() {
     setState(() {
       _isLoading = true;
