@@ -4,12 +4,10 @@ import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
 
 import 'account_ids.dart';
 
-// TODO: convert accounts_tree to Dropdown Menu
-// 1# start from Ledger_account and make Tile
-// 2# fetch data from .dart
-// 3# fetch data from db
-
 class AccountDropdownMenu extends StatefulWidget {
+  final List<String?> expandedAccountIds;
+  AccountDropdownMenu(this.expandedAccountIds);
+
   @override
   _AccountDropdownMenuState createState() => _AccountDropdownMenuState();
 }
@@ -76,6 +74,7 @@ class _AccountDropdownMenuState extends State<AccountDropdownMenu> {
 
   ExpansionTile _buildTileTree(AccountModel parent) {
     return ExpansionTile(
+      initiallyExpanded: widget.expandedAccountIds.contains(parent.id),
       title: Text(
         parent.titleEnglish,
         style: TextStyle(

@@ -156,42 +156,42 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   } // build
 
   Widget _buildListViewMeduim(BuildContext context) {
-    return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+    return Column(mainAxisAlignment: MainAxisAlignment.center, children: <
+        Widget>[
+      Row(
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: RaisedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                AccountDropdownMenu()));
-                  },
-                  child: Text('Account Dropdown Menu'),
-                ),
-              ),
-            ],
+          Expanded(
+            child: RaisedButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => AccountDropdownMenu([
+                              ACCOUNTS_ID.ASSETS_ACCOUNT_ID,
+                              ACCOUNTS_ID.BANKS_ACCOUNT_ID,
+                            ])));
+              },
+              child: Text('Account Dropdown Menu'),
+            ),
           ),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: RaisedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                Expansionpanel()));
-                  },
-                  child: Text('ExpansionPanel'),
-                ),
-              ),
-            ],
-          )
-        ]);
+        ],
+      ),
+      Row(
+        children: <Widget>[
+          Expanded(
+            child: RaisedButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (BuildContext context) => Expansionpanel()));
+              },
+              child: Text('ExpansionPanel'),
+            ),
+          ),
+        ],
+      )
+    ]);
   }
 
   Widget _buildAmount(BuildContext context) {
