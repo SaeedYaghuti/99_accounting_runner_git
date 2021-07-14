@@ -13,6 +13,12 @@ class AccountDropdownMenu extends StatefulWidget {
   _AccountDropdownMenuState createState() => _AccountDropdownMenuState();
 }
 
+// TODO: filter by auth perms
+//  # we have required_perm for each account in it
+//  # maybe: take at constructor: authProvider, formMod: edit, create, read, delete
+//  # use hasAccess
+//  # hasAccess only for childs not parent
+
 class _AccountDropdownMenuState extends State<AccountDropdownMenu> {
   late List<AccountModel> accounts;
 
@@ -113,8 +119,6 @@ class _AccountDropdownMenuState extends State<AccountDropdownMenu> {
   List<AccountModel?> childs(String accountId) {
     return accounts.where((account) => account.parentId == accountId).toList();
   }
-
-  static Color randomColor() => new Color(new Random().nextInt(0xffffffff));
 
   bool _isLoading = false;
 
