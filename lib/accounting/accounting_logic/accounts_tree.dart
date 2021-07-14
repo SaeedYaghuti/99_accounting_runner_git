@@ -189,3 +189,13 @@ const ACCOUNTS_TREE = const [
     deleteTransactionPermissionsAny: [],
   ),
 ];
+
+bool isParent(String accountId) {
+  return ACCOUNTS_TREE.any((account) => account.parentId == accountId);
+}
+
+List<AccountModel> childs(String accountId) {
+  return ACCOUNTS_TREE
+      .where((account) => account.parentId == accountId)
+      .toList();
+}

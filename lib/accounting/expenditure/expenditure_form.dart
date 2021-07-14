@@ -4,7 +4,7 @@ import 'package:shop/accounting/accounting_logic/run_code.dart';
 // import 'package:shop/auth/run_code.dart';
 
 import 'package:provider/provider.dart';
-import 'package:shop/accounting/common/account_dropdown_menu.dart';
+import 'package:shop/accounting/accounting_logic/account_dropdown_menu.dart';
 import 'package:shop/accounting/common/expandble_panel.dart';
 import 'package:shop/auth/auth_db_helper.dart';
 import 'package:shop/auth/auth_model_sql.dart';
