@@ -18,11 +18,13 @@ class AccountDropdownMenu extends StatefulWidget {
   final FormDuty? formDuty;
   final List<String?> unwantedAccountIds;
   final List<String?>? expandedAccountIds;
+  final Function(AccountModel) tapHandler;
   AccountDropdownMenu({
     required this.authProvider,
     this.formDuty,
     this.unwantedAccountIds = const [],
     this.expandedAccountIds,
+    required this.tapHandler,
   });
 
   @override
@@ -146,6 +148,7 @@ class _AccountDropdownMenuState extends State<AccountDropdownMenu> {
                         Text(child.titleEnglish),
                       ],
                     ),
+                    onTap: () => widget.tapHandler(child),
                   )
                 : null;
           })

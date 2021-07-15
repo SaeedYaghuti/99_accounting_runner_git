@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/accounting_logic/run_code.dart';
 // import 'package:shop/auth/run_code.dart';
 
@@ -139,8 +140,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
               // _buildSaveButton(context),
               _buildSubmitButtons(context),
               SizedBox(height: 20, width: 20),
-              _buildListViewMeduim(context),
-              SizedBox(height: 20, width: 20),
               TextButton(
                 onPressed: () {
                   AccountingDB.deleteDB();
@@ -168,6 +167,10 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         // ACCOUNTS_ID.ASSETS_ACCOUNT_ID,
         // ACCOUNTS_ID.BANKS_ACCOUNT_ID,
       ],
+      tapHandler: (AccountModel tappedAccount) {
+        print(
+            'ExpForm paidBy tapHandler| tapped of ${tappedAccount.titleEnglish}');
+      },
     );
     // return Column(
     //     mainAxisAlignment: MainAxisAlignment.center,
@@ -272,7 +275,35 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     );
   }
 
-  Widget _buildPaidBy(BuildContext context) {
+  Widget _buildPaidBy2(BuildContext context) {
+    return FormField<String>(
+      builder: (FormFieldState<String> state) {
+        return InputDecorator(
+          decoration: _buildInputDecoration('Paid By'),
+          isEmpty: _expenditureFormFields.paidBy == '',
+          child: DropdownButtonHideUnderline(
+            child: AccountDropdownMenu(
+              authProvider: authProviderSQL,
+              formDuty: _formDuty,
+              unwantedAccountIds: [
+                ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
+              ],
+              expandedAccountIds: [
+                ACCOUNTS_ID.ASSETS_ACCOUNT_ID,
+              ],
+              tapHandler: (AccountModel tappedAccount) {
+                print(
+                  'ExpForm paidBy tapHandler| tapped of ${tappedAccount.titleEnglish}',
+                );
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPaidBy1(BuildContext context) {
     return FormField<String>(
       builder: (FormFieldState<String> state) {
         return InputDecorator(
@@ -287,9 +318,59 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
             expandedAccountIds: [
               ACCOUNTS_ID.ASSETS_ACCOUNT_ID,
             ],
+            tapHandler: (AccountModel tappedAccount) {
+              print(
+                'ExpForm paidBy tapHandler| tapped of ${tappedAccount.titleEnglish}',
+              );
+            },
           ),
         );
       },
+    );
+  }
+
+  Widget _buildPaidBy(BuildContext context) {
+    return OutlinedButton.icon(
+      focusNode: _paidByFocusNode,
+      onPressed: () {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return SimpleDialog(
+                title: Text('SELECT ACCOUNT THAT PAID:'),
+                children: [
+                  AccountDropdownMenu(
+                    authProvider: authProviderSQL,
+                    formDuty: _formDuty,
+                    unwantedAccountIds: [
+                      ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
+                    ],
+                    expandedAccountIds: [
+                      ACCOUNTS_ID.LEDGER_ACCOUNT_ID,
+                    ],
+                    tapHandler: (AccountModel tappedAccount) {
+                      print(
+                        'ExpForm paidBy tapHandler| tapped of ${tappedAccount.titleEnglish}',
+                      );
+                      Navigator.of(context).pop();
+                    },
+                  ),
+                ],
+              );
+            });
+      },
+      icon: Icon(
+        Icons.account_balance_outlined,
+        color: Theme.of(context).primaryColor,
+      ),
+      label: Text(
+        _buildTextForDatePicker(),
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+          color: Theme.of(context).primaryColor,
+        ),
+      ),
     );
   }
 
