@@ -47,13 +47,13 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   final _paidByFocusNode = FocusNode();
   final _dateFocusNode = FocusNode();
   late AuthProviderSQL authProviderSQL;
-  var _expenditureFormFields = ExpenditurFormFields(
-    paidBy: ACCOUNTS_ID.CASH_DRAWER_ACCOUNT_ID,
-  );
+  var _expenditureFormFields = ExpenditurFormFields();
 
   @override
   void initState() {
     _expenditureFormFields.date = DateTime.now();
+    _expenditureFormFields.paidBy =
+        ExpenditurFormFields.expenditureExample.paidBy;
     _formDuty = widget.formDuty;
 
     switch (_formDuty) {
@@ -94,17 +94,28 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         }
         var debitTransaction =
             widget.voucher!.transactions.firstWhere((tran) => tran!.isDebit);
+
         var creditTransaction =
             widget.voucher!.transactions.firstWhere((tran) => !tran!.isDebit);
-        _expenditureFormFields = ExpenditurFormFields(
-          id: creditTransaction!.id,
-          amount: creditTransaction.amount,
-          // do: accountId should be sync with list of PaidByAccounts
-          paidBy: debitTransaction!.accountId,
-          note: creditTransaction.note,
-          date: creditTransaction.date,
-          // tag: creditTransaction.tag,
-        );
+
+        AccountModel.fetchAccountById(debitTransaction!.accountId)
+            .then((paidByAccount) {
+          _expenditureFormFields = ExpenditurFormFields(
+            id: creditTransaction!.id,
+            amount: creditTransaction.amount,
+            paidBy: paidByAccount,
+            note: creditTransaction.note,
+            date: creditTransaction.date,
+            // tag: creditTransaction.tag,
+          );
+        }).catchError((e) {
+          print(
+            'EXP_FRM initState 01| @ catchError while catching account ${debitTransaction.accountId} from db e: $e',
+          );
+          // exit from edit_mode
+          _formDuty = FormDuty.CREATE;
+        });
+
         // _selectedDate = creditTransaction.date;
         break;
       default:
@@ -332,39 +343,13 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   Widget _buildPaidBy(BuildContext context) {
     return OutlinedButton.icon(
       focusNode: _paidByFocusNode,
-      onPressed: () {
-        showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return SimpleDialog(
-                title: Text('SELECT ACCOUNT THAT PAID:'),
-                children: [
-                  AccountDropdownMenu(
-                    authProvider: authProviderSQL,
-                    formDuty: _formDuty,
-                    unwantedAccountIds: [
-                      ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
-                    ],
-                    expandedAccountIds: [
-                      ACCOUNTS_ID.LEDGER_ACCOUNT_ID,
-                    ],
-                    tapHandler: (AccountModel tappedAccount) {
-                      print(
-                        'ExpForm paidBy tapHandler| tapped of ${tappedAccount.titleEnglish}',
-                      );
-                      Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              );
-            });
-      },
+      onPressed: _pickAccount,
       icon: Icon(
         Icons.account_balance_outlined,
         color: Theme.of(context).primaryColor,
       ),
       label: Text(
-        _buildTextForDatePicker(),
+        _expenditureFormFields.paidBy?.titleEnglish ?? 'SELECT ACCOUNT',
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 20,
@@ -383,12 +368,13 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
           child: DropdownButtonHideUnderline(
             child: DropdownButton<String>(
               focusNode: _paidByFocusNode,
-              value: _expenditureFormFields.paidBy,
+              value: _expenditureFormFields.paidBy!.id,
               isDense: true,
               onChanged: (String? newValue) {
                 setState(() {
-                  _expenditureFormFields.paidBy =
-                      newValue ?? ACCOUNTS_ID.CASH_DRAWER_ACCOUNT_ID;
+                  // error
+                  // _expenditureFormFields.paidBy =
+                  //     newValue ?? ACCOUNTS_ID.CASH_DRAWER_ACCOUNT_ID;
                   state.didChange(newValue);
                 });
               },
@@ -471,7 +457,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
                     amount: 0,
                     note: '',
                     date: DateTime.now(),
-                    paidBy: ACCOUNTS_ID.CASH_DRAWER_ACCOUNT_ID,
+                    paidBy: ExpenditurFormFields.expenditureExample.paidBy,
                   );
                 });
               },
@@ -555,6 +541,34 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     );
   }
 
+  void _pickAccount() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            title: Text('SELECT ACCOUNT THAT PAID:'),
+            children: [
+              AccountDropdownMenu(
+                authProvider: authProviderSQL,
+                formDuty: _formDuty,
+                unwantedAccountIds: [
+                  ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
+                ],
+                expandedAccountIds: [
+                  ACCOUNTS_ID.LEDGER_ACCOUNT_ID,
+                ],
+                tapHandler: (AccountModel tappedAccount) {
+                  print(
+                    'ExpForm paidBy tapHandler| tapped of ${tappedAccount.titleEnglish}',
+                  );
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
   void pickDate() {
     showDatePicker(
       context: context,
@@ -563,7 +577,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       lastDate: DateTime.now(),
     ).then((date) {
       setState(() {
-        // _selectedDate = date;
         _expenditureFormFields.date = date;
       });
     });
@@ -592,23 +605,24 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         // maybe show money_movement form
         // ...
       } else {
+        // we don't use form to read data
         print(
           'EF 03| we need form read an existing voucher ...',
         );
-        _formDuty = FormDuty.READ;
-        var debitTransaction = voucherToShowInForm.transactions
-            .firstWhere((tran) => tran!.isDebit);
-        var creditTransaction = voucherToShowInForm.transactions
-            .firstWhere((tran) => !tran!.isDebit);
-        _expenditureFormFields = ExpenditurFormFields(
-          id: creditTransaction!.id,
-          amount: creditTransaction.amount,
-          // do: accountId should be sync with list of PaidByAccounts
-          paidBy: debitTransaction!.accountId,
-          note: creditTransaction.note,
-          date: creditTransaction.date,
-          // tag: creditTransaction.tag,
-        );
+        // _formDuty = FormDuty.READ;
+        // var debitTransaction = voucherToShowInForm.transactions
+        //     .firstWhere((tran) => tran!.isDebit);
+        // var creditTransaction = voucherToShowInForm.transactions
+        //     .firstWhere((tran) => !tran!.isDebit);
+        // _expenditureFormFields = ExpenditurFormFields(
+        //   id: creditTransaction!.id,
+        //   amount: creditTransaction.amount,
+        //   // do: accountId should be sync with list of PaidByAccounts
+        //   paidBy: debitTransaction!.accountId,
+        //   note: creditTransaction.note,
+        //   date: creditTransaction.date,
+        //   // tag: creditTransaction.tag,
+        // );
         // _selectedDate = creditTransaction.date;
       }
     });

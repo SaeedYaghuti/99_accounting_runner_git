@@ -1,9 +1,14 @@
+import 'package:shop/accounting/accounting_logic/account_ids.dart';
+import 'package:shop/accounting/accounting_logic/account_model.dart';
+import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
+import 'package:shop/constants.dart';
+
 import 'expenditure_tag.dart';
 
 class ExpenditurFormFields {
   int? id;
   double? amount;
-  String? paidBy;
+  AccountModel? paidBy;
   String? note;
   ExpenditureTag expenditureTag;
   DateTime? date;
@@ -18,10 +23,14 @@ class ExpenditurFormFields {
   });
 
   static ExpenditurFormFields get expenditureExample {
+    AccountModel cashDrawer = ACCOUNTS_TREE.firstWhere(
+      (acc) => acc.id == PAID_EXPENDITURE_BY,
+    );
+
     return ExpenditurFormFields(
       id: null,
       amount: 3.750,
-      paidBy: 'cash-drawer',
+      paidBy: cashDrawer,
       note: 'nescafee and cup',
       date: DateTime.now(),
       expenditureTag: ExpenditureTag.HOSPITALITY,

@@ -13,7 +13,7 @@ class ExpenditureModel {
   static Future<void> createExpenditureInDB(ExpenditurFormFields fields) async {
     var voucherFeed = VoucherFeed(date: fields.date!);
     var transactionFeedDebit = TransactionFeed(
-      accountId: fields.paidBy!,
+      accountId: fields.paidBy!.id,
       amount: fields.amount!,
       isDebit: true,
       date: fields.date!,
@@ -61,7 +61,7 @@ class ExpenditureModel {
     newVoucher.transactions = [
       // updated debit transaction
       TransactionModel(
-        accountId: fields.paidBy!,
+        accountId: fields.paidBy!.id,
         voucherId: oldVoucher.id!,
         amount: fields.amount!,
         isDebit: true,
