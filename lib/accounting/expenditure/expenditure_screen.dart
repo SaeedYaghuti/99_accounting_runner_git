@@ -13,7 +13,7 @@ import 'package:shop/auth/firebase/auth_provider.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/auth/permission_model.dart';
 import 'package:shop/shared/confirm_dialog.dart';
-import 'package:shop/shared/not_handled_exception.dart';
+import 'package:shop/exceptions/not_handled_exception.dart';
 import 'package:shop/shared/readible_date.dart';
 import 'package:shop/shared/show_error_dialog.dart';
 

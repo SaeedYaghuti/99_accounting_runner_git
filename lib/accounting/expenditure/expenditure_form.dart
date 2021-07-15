@@ -16,7 +16,7 @@ import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/accounting/environment/environment_provider.dart';
 import 'package:shop/accounting/expenditure/expenditure_model.dart';
-import 'package:shop/shared/not_handled_exception.dart';
+import 'package:shop/exceptions/not_handled_exception.dart';
 import 'package:shop/shared/show_error_dialog.dart';
 import 'expenditure_form_fields.dart';
 
@@ -45,14 +45,13 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   final _noteFocusNode = FocusNode();
   final _paidByFocusNode = FocusNode();
   final _dateFocusNode = FocusNode();
+  late AuthProviderSQL authProviderSQL;
   var _expenditureFormFields = ExpenditurFormFields(
     paidBy: ACCOUNTS_ID.CASH_DRAWER_ACCOUNT_ID,
   );
-  var _isLoading = false;
 
   @override
   void initState() {
-    // _selectedDate = DateTime.now();
     _expenditureFormFields.date = DateTime.now();
     _formDuty = widget.formDuty;
 
@@ -113,6 +112,12 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   @override
+  void didChangeDependencies() {
+    authProviderSQL = Provider.of<AuthProviderSQL>(context, listen: true);
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Container(
       width: 1200,
@@ -156,42 +161,50 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   } // build
 
   Widget _buildListViewMeduim(BuildContext context) {
-    return Column(mainAxisAlignment: MainAxisAlignment.center, children: <
-        Widget>[
-      Row(
+    return Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Expanded(
-            child: RaisedButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => AccountDropdownMenu([
-                              ACCOUNTS_ID.ASSETS_ACCOUNT_ID,
-                              ACCOUNTS_ID.BANKS_ACCOUNT_ID,
-                            ])));
-              },
-              child: Text('Account Dropdown Menu'),
-            ),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: RaisedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => AccountDropdownMenu(
+                          authProvider: authProviderSQL,
+                          formDuty: _formDuty,
+                          expandedAccountIds: [
+                            ACCOUNTS_ID.ASSETS_ACCOUNT_ID,
+                            ACCOUNTS_ID.BANKS_ACCOUNT_ID,
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                  child: Text('Account Dropdown Menu'),
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
-      Row(
-        children: <Widget>[
-          Expanded(
-            child: RaisedButton(
-              onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (BuildContext context) => Expansionpanel()));
-              },
-              child: Text('ExpansionPanel'),
-            ),
-          ),
-        ],
-      )
-    ]);
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: RaisedButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (BuildContext context) =>
+                                Expansionpanel()));
+                  },
+                  child: Text('ExpansionPanel'),
+                ),
+              ),
+            ],
+          )
+        ]);
   }
 
   Widget _buildAmount(BuildContext context) {
@@ -287,6 +300,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   Widget _buildDatePickerButton(BuildContext context) {
     return OutlinedButton.icon(
+      focusNode: _dateFocusNode,
       onPressed: pickDate,
       icon: Icon(
         Icons.date_range_rounded,
@@ -554,6 +568,8 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     // _imageURLFocusNode.dispose();
     super.dispose();
   }
+
+  var _isLoading = false;
 
   void loadingStart() {
     setState(() {

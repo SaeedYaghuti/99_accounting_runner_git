@@ -21,12 +21,15 @@ void runCode() async {
   // var result = await auth.validateUser(SAEIDEMAIL, SAEIDPASSWORD);
   // var isPermitted = auth.hasPermission(PermissionModel.EXPENDITURE_CATEGORY);
   // print('auth runCode 01| isPermitted: $isPermitted');
-  // AuthModel.printAllAuth();
-  AuthPermissionModel.printAllAuthPermissions();
-  // AuthPermissionModel.givePermissionsToAuth(
-  //   2,
-  //   PermissionModel.EXPENDITURE_CATEGORY,
-  // );
+  AuthModel.printAllAuth();
+  // AuthPermissionModel.printAllAuthPermissions();
+  AuthPermissionModel.givePermissionsToAuth(
+    2,
+    [
+      PermissionModel.EXPENDITURE_CATEGORY,
+      PermissionModel.EXPENDITURE_CREATE_TRANSACTION,
+    ],
+  );
 
   // var muscatTrandCreate = PermissionModel(
   //   id: 'MUSCAT_CREATE_TRANSACTION',
@@ -38,20 +41,21 @@ void runCode() async {
   // await PermissionModel.allPermissions();
   // await muscatTrandCreate.insertMeIntoDB();
   // await PermissionModel.allPermissions();
-  var permC = await PermissionModel.fetchPermissionById(
-      'AMERICAN_EXPRESS_CREATE_TRANSACTION');
-  var permRA = await PermissionModel.fetchPermissionById(
-      'AMERICAN_EXPRESS_READ_ALL_TRANSACTION');
-  var permROwn = await PermissionModel.fetchPermissionById(
-      'AMERICAN_EXPRESS_READ_OWN_TRANSACTION');
-  var permEA = await PermissionModel.fetchPermissionById(
-      'AMERICAN_EXPRESS_EDIT_ALL_TRANSACTION');
-  var permEO = await PermissionModel.fetchPermissionById(
-      'AMERICAN_EXPRESS_EDIT_OWN_TRANSACTION');
-  var permDA = await PermissionModel.fetchPermissionById(
-      'AMERICAN_EXPRESS_DELETE_ALL_TRANSACTION');
-  var permDO = await PermissionModel.fetchPermissionById(
-      'AMERICAN_EXPRESS_DELETE_OWN_TRANSACTION');
+
+  // var permC = await PermissionModel.fetchPermissionById(
+  //     'AMERICAN_EXPRESS_CREATE_TRANSACTION');
+  // var permRA = await PermissionModel.fetchPermissionById(
+  //     'AMERICAN_EXPRESS_READ_ALL_TRANSACTION');
+  // var permROwn = await PermissionModel.fetchPermissionById(
+  //     'AMERICAN_EXPRESS_READ_OWN_TRANSACTION');
+  // var permEA = await PermissionModel.fetchPermissionById(
+  //     'AMERICAN_EXPRESS_EDIT_ALL_TRANSACTION');
+  // var permEO = await PermissionModel.fetchPermissionById(
+  //     'AMERICAN_EXPRESS_EDIT_OWN_TRANSACTION');
+  // var permDA = await PermissionModel.fetchPermissionById(
+  //     'AMERICAN_EXPRESS_DELETE_ALL_TRANSACTION');
+  // var permDO = await PermissionModel.fetchPermissionById(
+  //     'AMERICAN_EXPRESS_DELETE_OWN_TRANSACTION');
   // print(perm);
   // await muscatTrandCreate.deleteMeFromDB();
 }

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:shop/auth/auth_model_sql.dart';
 import 'package:shop/exceptions/DBException.dart';
-import 'package:shop/shared/ValidationException.dart';
+import 'package:shop/exceptions/ValidationException.dart';
 import 'package:shop/shared/validation_result.dart';
 
 class AuthProviderSQL with ChangeNotifier {

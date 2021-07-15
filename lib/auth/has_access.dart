@@ -7,7 +7,7 @@ bool hasAccess({
 }) {
   // if there is no vitalPerm we should check anyPermissions
   if (vitalPermissions != null && vitalPermissions.isNotEmpty) {
-    // if any of vitalPerm not satisfied we return notPermittedWidget
+    // if any of vitalPerm not satisfied we return false
     for (var vPerm in vitalPermissions) {
       if (!authProviderSQL.isPermitted(vPerm!)) return false;
     }

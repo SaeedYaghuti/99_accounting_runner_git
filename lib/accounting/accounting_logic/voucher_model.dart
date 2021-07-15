@@ -9,7 +9,7 @@ import 'package:shop/exceptions/db_operation.dart';
 import 'package:shop/exceptions/dirty_database.dart';
 import 'package:shop/exceptions/lazy_saeid.dart';
 import 'package:shop/exceptions/voucher_exception.dart';
-import 'package:shop/shared/ValidationException.dart';
+import 'package:shop/exceptions/ValidationException.dart';
 import 'package:shop/shared/readible_date.dart';
 import 'package:shop/shared/seconds_of_time.dart';
 
