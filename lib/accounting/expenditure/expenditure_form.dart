@@ -161,50 +161,58 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   } // build
 
   Widget _buildListViewMeduim(BuildContext context) {
-    return Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: RaisedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (BuildContext context) => AccountDropdownMenu(
-                          authProvider: authProviderSQL,
-                          formDuty: _formDuty,
-                          expandedAccountIds: [
-                            ACCOUNTS_ID.ASSETS_ACCOUNT_ID,
-                            ACCOUNTS_ID.BANKS_ACCOUNT_ID,
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                  child: Text('Account Dropdown Menu'),
-                ),
-              ),
-            ],
-          ),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: RaisedButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (BuildContext context) =>
-                                Expansionpanel()));
-                  },
-                  child: Text('ExpansionPanel'),
-                ),
-              ),
-            ],
-          )
-        ]);
+    return AccountDropdownMenu(
+      authProvider: authProviderSQL,
+      formDuty: _formDuty,
+      expandedAccountIds: [
+        // ACCOUNTS_ID.ASSETS_ACCOUNT_ID,
+        // ACCOUNTS_ID.BANKS_ACCOUNT_ID,
+      ],
+    );
+    // return Column(
+    //     mainAxisAlignment: MainAxisAlignment.center,
+    //     children: <Widget>[
+    //       Row(
+    //         children: <Widget>[
+    //           Expanded(
+    //             child: RaisedButton(
+    //               onPressed: () {
+    //                 Navigator.push(
+    //                   context,
+    //                   MaterialPageRoute(
+    //                     builder: (BuildContext context) => AccountDropdownMenu(
+    //                       authProvider: authProviderSQL,
+    //                       formDuty: _formDuty,
+    //                       expandedAccountIds: [
+    //                         ACCOUNTS_ID.ASSETS_ACCOUNT_ID,
+    //                         ACCOUNTS_ID.BANKS_ACCOUNT_ID,
+    //                       ],
+    //                     ),
+    //                   ),
+    //                 );
+    //               },
+    //               child: Text('Account Dropdown Menu'),
+    //             ),
+    //           ),
+    //         ],
+    //       ),
+    //       Row(
+    //         children: <Widget>[
+    //           Expanded(
+    //             child: RaisedButton(
+    //               onPressed: () {
+    //                 Navigator.push(
+    //                     context,
+    //                     MaterialPageRoute(
+    //                         builder: (BuildContext context) =>
+    //                             Expansionpanel()));
+    //               },
+    //               child: Text('ExpansionPanel'),
+    //             ),
+    //           ),
+    //         ],
+    //       )
+    //     ]);
   }
 
   Widget _buildAmount(BuildContext context) {
@@ -265,6 +273,27 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   Widget _buildPaidBy(BuildContext context) {
+    return FormField<String>(
+      builder: (FormFieldState<String> state) {
+        return InputDecorator(
+          decoration: _buildInputDecoration('Paid By'),
+          isEmpty: _expenditureFormFields.paidBy == '',
+          child: AccountDropdownMenu(
+            authProvider: authProviderSQL,
+            formDuty: _formDuty,
+            unwantedAccountIds: [
+              ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
+            ],
+            expandedAccountIds: [
+              ACCOUNTS_ID.ASSETS_ACCOUNT_ID,
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildPaidBy0(BuildContext context) {
     return FormField<String>(
       builder: (FormFieldState<String> state) {
         return InputDecorator(

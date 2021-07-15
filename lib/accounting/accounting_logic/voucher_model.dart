@@ -438,6 +438,8 @@ class VoucherModel {
   }
 
   static bool _validateTransactionFeedsAmount(List<TransactionFeed> feeds) {
+    // TODO: an account could not be at the same time at debitTrans and creditTran
+
     var totalDebit = 0.0;
     var totalCredit = 0.0;
 
@@ -468,6 +470,8 @@ class VoucherModel {
 
   static bool _validateTransactionModelsAmount(
       List<TransactionModel?> transactions) {
+    // TODO: an account could not be at the same time at debitTrans and creditTran
+
     var totalDebit = 0.0;
     var totalCredit = 0.0;
 

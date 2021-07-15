@@ -10,19 +10,18 @@ import 'package:shop/exceptions/not_handled_exception.dart';
 import 'account_ids.dart';
 
 // TODO: filter by auth perms
-//  # we have required_perm for each account in it
-//  # maybe: take at constructor: authProvider, formMod: edit, create, read, delete
-//  # use hasAccess
 //  # hasAccess only for childs not parent
-//  # if formDuty is empty it means if auht has any  perm of crudperm it has access
+//  # if formDuty is empty it means if auth has one of crud_perm it has access
 
 class AccountDropdownMenu extends StatefulWidget {
-  final List<String?>? expandedAccountIds;
   final AuthProviderSQL authProvider;
   final FormDuty? formDuty;
+  final List<String?> unwantedAccountIds;
+  final List<String?>? expandedAccountIds;
   AccountDropdownMenu({
     required this.authProvider,
     this.formDuty,
+    this.unwantedAccountIds = const [],
     this.expandedAccountIds,
   });
 
@@ -69,31 +68,49 @@ class _AccountDropdownMenuState extends State<AccountDropdownMenu> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text('Account Dropdown Menu'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 30.0),
-        child: Column(
-          children: <Widget>[
-            SizedBox(height: 20.0),
-            _isLoading
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
-                : vriablesAreInitialized
-                    ? _buildTileTree(ledgerAccount)
-                    : Text('Unable to fetch Accounts'),
-          ],
-        ),
-      ),
+    return Column(
+      children: <Widget>[
+        SizedBox(height: 20.0),
+        _isLoading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : vriablesAreInitialized
+                ? _buildTileTree(ledgerAccount)
+                : Text('Unable to fetch Accounts'),
+      ],
     );
   }
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     appBar: AppBar(
+  //       centerTitle: true,
+  //       title: Text('Account Dropdown Menu'),
+  //     ),
+  //     body: Padding(
+  //       padding: const EdgeInsets.symmetric(horizontal: 30.0),
+  //       child: Column(
+  //         children: <Widget>[
+  //           SizedBox(height: 20.0),
+  //           _isLoading
+  //               ? Center(
+  //                   child: CircularProgressIndicator(),
+  //                 )
+  //               : vriablesAreInitialized
+  //                   ? _buildTileTree(ledgerAccount)
+  //                   : Text('Unable to fetch Accounts'),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 
   ExpansionTile _buildTileTree(AccountModel parent) {
     return ExpansionTile(
+      childrenPadding: EdgeInsets.symmetric(horizontal: 5),
+      initiallyExpanded:
+          widget.expandedAccountIds?.contains(parent.id) ?? false,
       title: Text(
         parent.titleEnglish,
         style: TextStyle(
@@ -101,21 +118,21 @@ class _AccountDropdownMenuState extends State<AccountDropdownMenu> {
           fontWeight: FontWeight.bold,
         ),
       ),
-      initiallyExpanded:
-          widget.expandedAccountIds?.contains(parent.id) ?? false,
-      childrenPadding: EdgeInsets.symmetric(horizontal: 5),
       // backgroundColor: randomColor(),
       children: childs(parent.id)
           .map((child) {
-            if (isParent(child!.id)) return _buildTileTree(child);
+            // parent should continue running recursively
+            if (isParent(child!.id) &&
+                !widget.unwantedAccountIds.contains(child.id))
+              return _buildTileTree(child);
 
             // check permition for child
-
             return authHasAccessToAccount(
-              child,
-              widget.authProvider,
-              widget.formDuty,
-            )
+                      child,
+                      widget.authProvider,
+                      widget.formDuty,
+                    ) &&
+                    !widget.unwantedAccountIds.contains(child.id)
                 ? ListTile(
                     title: Row(
                       children: [
