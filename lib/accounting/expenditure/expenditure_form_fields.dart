@@ -1,6 +1,7 @@
 import 'package:shop/accounting/accounting_logic/account_ids.dart';
 import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
+import 'package:shop/accounting/expenditure/payer_account_info.dart';
 import 'package:shop/constants.dart';
 
 import 'expenditure_tag.dart';
@@ -9,6 +10,7 @@ class ExpenditurFormFields {
   int? id;
   double? amount;
   AccountModel? paidBy;
+  // PayerAccountInfo? paidBy;
   String? note;
   ExpenditureTag expenditureTag;
   DateTime? date;
@@ -31,6 +33,12 @@ class ExpenditurFormFields {
       id: null,
       amount: 3.750,
       paidBy: cashDrawer,
+      // paidBy: PayerAccountInfo(
+      //   cashDrawer.id,
+      //   cashDrawer.titleEnglish,
+      //   cashDrawer.titlePersian,
+      //   cashDrawer.titleArabic,
+      // ),
       note: 'nescafee and cup',
       date: DateTime.now(),
       expenditureTag: ExpenditureTag.HOSPITALITY,

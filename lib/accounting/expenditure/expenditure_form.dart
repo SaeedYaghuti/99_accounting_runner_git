@@ -7,6 +7,7 @@ import 'package:shop/accounting/accounting_logic/run_code.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/accounting/accounting_logic/account_dropdown_menu.dart';
 import 'package:shop/accounting/common/expandble_panel.dart';
+import 'package:shop/accounting/expenditure/payer_account_info.dart';
 import 'package:shop/auth/auth_db_helper.dart';
 import 'package:shop/auth/auth_model_sql.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
@@ -51,10 +52,10 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   @override
   void initState() {
+    _formDuty = widget.formDuty;
     _expenditureFormFields.date = DateTime.now();
     _expenditureFormFields.paidBy =
         ExpenditurFormFields.expenditureExample.paidBy;
-    _formDuty = widget.formDuty;
 
     switch (_formDuty) {
       case FormDuty.READ:
@@ -83,7 +84,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         });
         break;
       case FormDuty.EDIT:
-        print('EF | init_state | form rebuild for EDITE');
+        // print('EF | init_state | EDIT ');
         if (widget.voucher!.transactions.length > 2) {
           print(
             'EF 02| we can not show voucher with more than two transactions in this form ...',
@@ -92,11 +93,25 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
           // maybe show money_movement form
           // ...
         }
-        var debitTransaction =
-            widget.voucher!.transactions.firstWhere((tran) => tran!.isDebit);
+        // print('EXP_FRM init_state| EDIT | voucher to edite');
+        // print(widget.voucher!);
 
-        var creditTransaction =
-            widget.voucher!.transactions.firstWhere((tran) => !tran!.isDebit);
+        var debitTransaction = widget.voucher!.transactions.firstWhere(
+          (tran) => tran!.isDebit,
+        );
+
+        var creditTransaction = widget.voucher!.transactions.firstWhere(
+          (tran) => !tran!.isDebit,
+        );
+
+        // _expenditureFormFields = ExpenditurFormFields(
+        //   id: creditTransaction!.id,
+        //   amount: creditTransaction.amount,
+        //   paidBy: PayerAccountInfo(debitTransaction.accountId, debitTransaction.),
+        //   note: creditTransaction.note,
+        //   date: creditTransaction.date,
+        //   // tag: creditTransaction.tag,
+        // );
 
         AccountModel.fetchAccountById(debitTransaction!.accountId)
             .then((paidByAccount) {
@@ -108,6 +123,9 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
             date: creditTransaction.date,
             // tag: creditTransaction.tag,
           );
+          print('EXP_FRM init_state| EDIT 03| prepared _expenditureFormFields');
+          print(_expenditureFormFields);
+          setState(() {});
         }).catchError((e) {
           print(
             'EXP_FRM initState 01| @ catchError while catching account ${debitTransaction.accountId} from db e: $e',
@@ -230,15 +248,22 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   Widget _buildAmount(BuildContext context) {
+    print('EXP_FRM | _buildAmount | run ...');
+    String initValue = (_expenditureFormFields.amount != null)
+        ? _expenditureFormFields.amount.toString()
+        : '0.0';
+    print(initValue);
+
     return TextFormField(
       decoration: _buildInputDecoration('Amount'),
       style: _buildTextStyle(),
       focusNode: _amountFocusNode,
       textInputAction: TextInputAction.next,
       keyboardType: TextInputType.number,
-      initialValue: (_expenditureFormFields.amount != null)
-          ? _expenditureFormFields.amount.toString()
-          : '',
+      // initialValue: (_expenditureFormFields.amount != null)
+      //     ? _expenditureFormFields.amount.toString()
+      //     : '',
+      initialValue: initValue,
       onFieldSubmitted: (value) {
         FocusScope.of(context).requestFocus(_noteFocusNode);
       },
@@ -291,7 +316,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       builder: (FormFieldState<String> state) {
         return InputDecorator(
           decoration: _buildInputDecoration('Paid By'),
-          isEmpty: _expenditureFormFields.paidBy == '',
+          isEmpty: _expenditureFormFields.paidBy == null,
           child: DropdownButtonHideUnderline(
             child: AccountDropdownMenu(
               authProvider: authProviderSQL,
@@ -319,7 +344,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       builder: (FormFieldState<String> state) {
         return InputDecorator(
           decoration: _buildInputDecoration('Paid By'),
-          isEmpty: _expenditureFormFields.paidBy == '',
+          isEmpty: _expenditureFormFields.paidBy == null,
           child: AccountDropdownMenu(
             authProvider: authProviderSQL,
             formDuty: _formDuty,
@@ -562,6 +587,9 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
                     'ExpForm paidBy tapHandler| tapped of ${tappedAccount.titleEnglish}',
                   );
                   Navigator.of(context).pop();
+                  setState(() {
+                    _expenditureFormFields.paidBy = tappedAccount;
+                  });
                 },
               ),
             ],
@@ -609,21 +637,25 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         print(
           'EF 03| we need form read an existing voucher ...',
         );
-        // _formDuty = FormDuty.READ;
-        // var debitTransaction = voucherToShowInForm.transactions
-        //     .firstWhere((tran) => tran!.isDebit);
-        // var creditTransaction = voucherToShowInForm.transactions
-        //     .firstWhere((tran) => !tran!.isDebit);
-        // _expenditureFormFields = ExpenditurFormFields(
-        //   id: creditTransaction!.id,
-        //   amount: creditTransaction.amount,
-        //   // do: accountId should be sync with list of PaidByAccounts
-        //   paidBy: debitTransaction!.accountId,
-        //   note: creditTransaction.note,
-        //   date: creditTransaction.date,
-        //   // tag: creditTransaction.tag,
-        // );
-        // _selectedDate = creditTransaction.date;
+        _formDuty = FormDuty.READ;
+        var debitTransaction = voucherToShowInForm.transactions
+            .firstWhere((tran) => tran!.isDebit);
+        var creditTransaction = voucherToShowInForm.transactions
+            .firstWhere((tran) => !tran!.isDebit);
+        AccountModel.fetchAccountById(debitTransaction!.accountId).then((acc) {
+          _expenditureFormFields = ExpenditurFormFields(
+            id: creditTransaction!.id,
+            amount: creditTransaction.amount,
+            paidBy: acc,
+            note: creditTransaction.note,
+            date: creditTransaction.date,
+            // tag: creditTransaction.tag,
+          );
+        }).catchError((e) {
+          print(
+            'EXP_FRM initializeForm 04| e in fetching account: ${debitTransaction.accountId} e: $e',
+          );
+        });
       }
     });
   }

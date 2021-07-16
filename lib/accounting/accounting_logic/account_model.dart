@@ -81,6 +81,7 @@ class AccountModel {
   }
 
   static Future<AccountModel?> fetchAccountById(String accountId) async {
+    var m = '@ ftchAccById($accountId)';
     final query = '''
     SELECT *
     FROM $tableName
@@ -100,6 +101,7 @@ class AccountModel {
       if (fetchResult == null || fetchResult.isEmpty) return null;
 
       AccountModel? account = fromMap(fetchResult.first);
+      print('$m 01| account:');
       print(account);
       return account;
       // return fetchResult;
