@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:shop/accounting/accounting_logic/account_ids.dart';
 import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
@@ -8,21 +9,57 @@ import 'expenditure_tag.dart';
 
 class ExpenditurFormFields {
   int? id;
-  double? amount;
+  // double? amount;
+  // String? note;
   AccountModel? paidBy;
   // PayerAccountInfo? paidBy;
-  String? note;
-  ExpenditureTag expenditureTag;
+  late ExpenditureTag expenditureTag;
   DateTime? date;
+  TextEditingController amountController = TextEditingController();
+  TextEditingController noteController = TextEditingController();
+
+  // ExpenditurFormFields({
+  //   this.id,
+  //   this.amount,
+  //   this.paidBy,
+  //   this.note,
+  //   this.expenditureTag = ExpenditureTag.DEFAULT,
+  //   this.date,
+  // });
 
   ExpenditurFormFields({
-    this.id,
-    this.amount,
-    this.paidBy,
-    this.note,
-    this.expenditureTag = ExpenditureTag.DEFAULT,
-    this.date,
-  });
+    int? id,
+    double? amount,
+    AccountModel? paidBy,
+    String? note,
+    ExpenditureTag? expenditureTag,
+    DateTime? date,
+  }) {
+    this.id = id;
+    this.amount = amount;
+    this.note = note;
+    this.paidBy = paidBy;
+    this.expenditureTag =
+        (expenditureTag == null) ? ExpenditureTag.DEFAULT : expenditureTag;
+    this.date = date;
+  }
+
+  double? get amount {
+    return double.tryParse(amountController.text);
+  }
+
+  set amount(double? num) {
+    this.amountController.text =
+        (num == null || num == 0.0) ? '' : num.toString();
+  }
+
+  String? get note {
+    return noteController.text;
+  }
+
+  set note(String? text) {
+    this.noteController.text = text ?? '';
+  }
 
   static ExpenditurFormFields get expenditureExample {
     AccountModel cashDrawer = ACCOUNTS_TREE.firstWhere(
