@@ -5,6 +5,7 @@ import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
 import 'package:shop/accounting/expenditure/payer_account_info.dart';
 import 'package:shop/constants.dart';
 
+import 'expenditure_form.dart';
 import 'expenditure_tag.dart';
 
 class ExpenditurFormFields {
@@ -15,6 +16,7 @@ class ExpenditurFormFields {
   final dateFocusNode = FocusNode();
   TextEditingController amountController = TextEditingController();
   TextEditingController noteController = TextEditingController();
+  FormDuty formDuty = FormDuty.CREATE;
 
   int? id;
   AccountModel? paidBy;
