@@ -43,13 +43,28 @@ class ExpenditureForm extends StatefulWidget {
 class _ExpenditureFormState extends State<ExpenditureForm> {
   final _form = GlobalKey<FormState>();
   final _amountFocusNode = FocusNode();
-  // final _amountController = TextEditingController();
+  final _amountController = TextEditingController();
   final _noteFocusNode = FocusNode();
+  final _noteController = TextEditingController();
   final _paidByFocusNode = FocusNode();
   final _dateFocusNode = FocusNode();
   late AuthProviderSQL authProviderSQL;
   FormDuty _formDuty = FormDuty.CREATE;
   var _expenditureFormFields = ExpenditurFormFields();
+
+  ExpenditurFormFields get fields {
+    _expenditureFormFields.amount = double.tryParse(_amountController.text);
+    _expenditureFormFields.note = _noteController.text;
+    return _expenditureFormFields;
+  }
+
+  set fields(ExpenditurFormFields expenditureFormFields) {
+    double? amount = expenditureFormFields.amount;
+    _amountController.text =
+        (amount == null || amount == 0.0) ? '' : amount.toString();
+    _noteController.text = expenditureFormFields.note ?? '';
+    _expenditureFormFields = expenditureFormFields;
+  }
 
   @override
   void initState() {
@@ -193,23 +208,19 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   } // build
 
   Widget _buildAmount(BuildContext context) {
-    print('EXP_FRM | _buildAmount | run ...');
-    String initValue = (_expenditureFormFields.amount != null)
-        ? _expenditureFormFields.amount.toString()
-        : '';
-    print('Amount initValue: $initValue');
+    // print('EXP_FRM | _buildAmount | run ...');
+    fields = _expenditureFormFields;
 
     return TextFormField(
       decoration: _buildInputDecoration('Amount'),
       style: _buildTextStyle(),
       focusNode: _amountFocusNode,
-      controller: TextEditingController()..text = initValue,
+      controller: _amountController,
       textInputAction: TextInputAction.next,
       keyboardType: TextInputType.number,
       // initialValue: (_expenditureFormFields.amount != null)
       //     ? _expenditureFormFields.amount.toString()
-      //     : '',
-      // initialValue: initValue,
+      //     : '',,
       onFieldSubmitted: (value) {
         FocusScope.of(context).requestFocus(_noteFocusNode);
       },
@@ -234,16 +245,14 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   Widget _buildNote(BuildContext context) {
-    String initValue = (_expenditureFormFields.note != null)
-        ? _expenditureFormFields.note!
-        : '';
+    fields = _expenditureFormFields;
     return TextFormField(
       decoration: _buildInputDecoration('Note'),
       style: _buildTextStyle(),
       maxLines: 2,
       keyboardType: TextInputType.multiline,
       textInputAction: TextInputAction.next,
-      controller: TextEditingController()..text = initValue,
+      controller: _noteController,
       // initialValue: _expenditureFormFields.note ?? '',
       onFieldSubmitted: (value) {
         FocusScope.of(context).requestFocus(_paidByFocusNode);
