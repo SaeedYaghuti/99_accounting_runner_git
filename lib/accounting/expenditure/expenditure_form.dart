@@ -96,16 +96,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         var creditTransaction = widget.voucher!.transactions.firstWhere(
           (tran) => !tran!.isDebit,
         );
-
-        // _expenditureFormFields = ExpenditurFormFields(
-        //   id: creditTransaction!.id,
-        //   amount: creditTransaction.amount,
-        //   paidBy: PayerAccountInfo(debitTransaction.accountId, debitTransaction.),
-        //   note: creditTransaction.note,
-        //   date: creditTransaction.date,
-        //   // tag: creditTransaction.tag,
-        // );
-
         AccountModel.fetchAccountById(debitTransaction!.accountId)
             .then((paidByAccount) {
           _fields = ExpenditurFormFields(
@@ -186,7 +176,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   Widget _buildAmount(BuildContext context) {
     // print('EXP_FRM | _buildAmount | run ...');
-
     return TextFormField(
       decoration: _buildInputDecoration('Amount'),
       style: _buildTextStyle(),
@@ -197,21 +186,8 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       onFieldSubmitted: (value) {
         FocusScope.of(context).requestFocus(_fields.noteFocusNode);
       },
-      validator: (amount) {
-        if (amount == null || amount.isEmpty) {
-          return 'amount should not be empty';
-        }
-        var num = double.tryParse(amount);
-        if (num == null) {
-          return 'amount should be valid number';
-        }
-        if (num <= 0) {
-          return 'amount should be greater than Zero';
-        }
-        return null;
-      },
+      validator: _fields.validateAmount,
       onSaved: (amount) {
-        // print('title-field.onSaved: amount: $amount');
         _fields.amount = double.parse(amount!);
       },
     );
@@ -219,7 +195,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   Widget _buildNote(BuildContext context) {
     // fields = _expenditureFormFields;
-
     return TextFormField(
       decoration: _buildInputDecoration('Note'),
       style: _buildTextStyle(),
@@ -230,12 +205,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       onFieldSubmitted: (value) {
         FocusScope.of(context).requestFocus(_fields.paidByFocusNode);
       },
-      validator: (note) {
-        if (note == null || note.isEmpty) {
-          return 'Note should not be empty';
-        }
-        return null;
-      },
+      validator: _fields.validateNote,
       onSaved: (note) {
         // print('titleField.onSaved: titleField: $titleField');
         _fields.note = note;

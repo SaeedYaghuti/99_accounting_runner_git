@@ -61,26 +61,36 @@ class ExpenditurFormFields {
     AccountModel cashDrawer = ACCOUNTS_TREE.firstWhere(
       (acc) => acc.id == PAID_EXPENDITURE_BY,
     );
-
     return ExpenditurFormFields(
       id: null,
       amount: 3.750,
       paidBy: cashDrawer,
-      // paidBy: PayerAccountInfo(
-      //   cashDrawer.id,
-      //   cashDrawer.titleEnglish,
-      //   cashDrawer.titlePersian,
-      //   cashDrawer.titleArabic,
-      // ),
       note: 'nescafee and cup',
       date: DateTime.now(),
       expenditureTag: ExpenditureTag.HOSPITALITY,
     );
   }
 
-  // void initValues(ExpenditureModel ?? expence) {
-  //   id =
-  // }
+  String? validateAmount(String? amount) {
+    if (amount == null || amount.isEmpty) {
+      return 'amount should not be empty';
+    }
+    var num = double.tryParse(amount);
+    if (num == null) {
+      return 'amount should be valid number';
+    }
+    if (num <= 0) {
+      return 'amount should be greater than Zero';
+    }
+    return null;
+  }
+
+  String? validateNote(String? note) {
+    if (note == null || note.isEmpty) {
+      return 'Note should not be empty';
+    }
+    return null;
+  }
 
   @override
   String toString() {
