@@ -111,13 +111,13 @@ const CATEGORIES_TREE = const [
 ];
 
 List<CategoryModel> getSubcategoriesOf(BuildContext context, String parentId) {
-  print('CAT_TREES getSubcats 01| run ...');
+  // print('CAT_TREES getSubcats 01| run ...');
   var authProvider = Provider.of<AuthProviderSQL>(
     context,
     listen: true,
   );
 
-  print('CAT_TREES getSubcats 02| authProvider.userId: ${authProvider.userId}');
+  // print('CAT_TREES getSubcats 02| authProvider.userId: ${authProvider.userId}');
   return CATEGORIES_TREE
       .where((category) =>
           category.parentId == parentId &&

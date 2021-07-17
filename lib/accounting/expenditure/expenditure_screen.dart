@@ -61,11 +61,11 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
 
   @override
   void didChangeDependencies() {
-    print('ExpScreen didChange 01| run didChangeDependencies() ...');
+    // print('ExpScreen didChange 01| run didChangeDependencies() ...');
     authProvider = Provider.of<AuthProviderSQL>(context, listen: true);
-    print(
-      'ExpScreen didChange 02| authProvider.userId: ${authProvider?.userId}',
-    );
+    // print(
+    //   'ExpScreen didChange 02| authProvider.userId: ${authProvider?.userId}',
+    // );
     super.didChangeDependencies();
   }
 

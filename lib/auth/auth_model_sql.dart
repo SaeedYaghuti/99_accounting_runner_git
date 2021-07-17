@@ -109,7 +109,7 @@ class AuthModel {
 
     // #2 validate password
     var isValidPassword = _validatePassword(password);
-    print('Auth validateUser 02| isValidPassword: $isValidPassword');
+    // print('Auth validateUser 02| isValidPassword: $isValidPassword');
 
     return ValidationResult(
       isValidPassword,
@@ -212,15 +212,15 @@ class AuthModel {
   void _setVariablesFromMapOfAuth(
     Map<String, Object?> authMap,
   ) {
-    print('AUTH from_map_01| input authMap: $authMap');
-    print(authMap);
+    // print('AUTH from_map_01| input authMap: $authMap');
+    // print(authMap);
 
     _id = authMap[AuthModel.column1Id] as int;
     _username = authMap[AuthModel.column2Username] as String;
     _password = authMap[AuthModel.column3Password] as String;
     _salt = authMap[AuthModel.column4Salt] as String;
 
-    print('AUTH from_map_02| output this:\n${toString()}');
+    // print('AUTH from_map_02| output this:\n${toString()}');
   }
 
   Map<String, Object> _makeMapForDB(

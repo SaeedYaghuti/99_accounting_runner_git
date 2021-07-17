@@ -149,6 +149,10 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   @override
   Widget build(BuildContext context) {
+    print('***');
+    print('EXP_FRM BUILD | run with data:');
+    print('_expenditureFormFields: $_expenditureFormFields');
+    print('***');
     return Container(
       width: 1200,
       padding: EdgeInsets.all(16),
@@ -251,8 +255,8 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     print('EXP_FRM | _buildAmount | run ...');
     String initValue = (_expenditureFormFields.amount != null)
         ? _expenditureFormFields.amount.toString()
-        : '0.0';
-    print(initValue);
+        : '';
+    print('Amount initValue: $initValue');
 
     return TextFormField(
       decoration: _buildInputDecoration('Amount'),
