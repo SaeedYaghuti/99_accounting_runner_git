@@ -41,44 +41,27 @@ class ExpenditureForm extends StatefulWidget {
 }
 
 class _ExpenditureFormState extends State<ExpenditureForm> {
-  final _form = GlobalKey<FormState>();
-  final _amountFocusNode = FocusNode();
-  // final _amountController = TextEditingController();
-  final _noteFocusNode = FocusNode();
-  // final _noteController = TextEditingController();
-  final _paidByFocusNode = FocusNode();
-  final _dateFocusNode = FocusNode();
+  // final formKey = GlobalKey<FormState>();
+  // final amountFocusNode = FocusNode();
+  // final noteFocusNode = FocusNode();
+  // final paidByFocusNode = FocusNode();
+  // final dateFocusNode = FocusNode();
   late AuthProviderSQL authProviderSQL;
   FormDuty _formDuty = FormDuty.CREATE;
-  var _expenditureFormFields = ExpenditurFormFields();
-
-  // ExpenditurFormFields get fields {
-  //   _expenditureFormFields.amount = double.tryParse(_amountController.text);
-  //   _expenditureFormFields.note = _noteController.text;
-  //   return _expenditureFormFields;
-  // }
-
-  // set fields(ExpenditurFormFields expenditureFormFields) {
-  //   double? amount = expenditureFormFields.amount;
-  //   _amountController.text =
-  //       (amount == null || amount == 0.0) ? '' : amount.toString();
-  //   _noteController.text = expenditureFormFields.note ?? '';
-  //   _expenditureFormFields = expenditureFormFields;
-  // }
+  var _fields = ExpenditurFormFields();
 
   @override
   void initState() {
     _formDuty = widget.formDuty;
-    _expenditureFormFields.date = DateTime.now();
-    _expenditureFormFields.paidBy =
-        ExpenditurFormFields.expenditureExample.paidBy;
+    _fields.date = DateTime.now();
+    _fields.paidBy = ExpenditurFormFields.expenditureExample.paidBy;
 
     switch (_formDuty) {
       case FormDuty.READ:
       case FormDuty.CREATE:
         print('EF | init_state | form rebuild for READ or CREATE ...');
         if (EnvironmentProvider.initializeExpenditureForm) {
-          _expenditureFormFields = ExpenditurFormFields.expenditureExample;
+          _fields = ExpenditurFormFields.expenditureExample;
         }
         break;
       case FormDuty.DELETE:
@@ -131,7 +114,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
         AccountModel.fetchAccountById(debitTransaction!.accountId)
             .then((paidByAccount) {
-          _expenditureFormFields = ExpenditurFormFields(
+          _fields = ExpenditurFormFields(
             id: creditTransaction!.id,
             amount: creditTransaction.amount,
             paidBy: paidByAccount,
@@ -140,7 +123,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
             // tag: creditTransaction.tag,
           );
           print('EXP_FRM init_state| EDIT 03| prepared _expenditureFormFields');
-          print(_expenditureFormFields);
+          print(_fields);
           setState(() {});
         }).catchError((e) {
           print(
@@ -167,13 +150,13 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   Widget build(BuildContext context) {
     print('***');
     print('EXP_FRM build() | current satate ...');
-    print('_expenditureFormFields: $_expenditureFormFields');
+    print('_expenditureFormFields: $_fields');
     print('***');
     return Container(
       width: 1200,
       padding: EdgeInsets.all(16),
       child: Form(
-        key: _form,
+        key: _fields.formKey,
         child: Container(
           width: 1200,
           child: ListView(
@@ -209,20 +192,16 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   Widget _buildAmount(BuildContext context) {
     // print('EXP_FRM | _buildAmount | run ...');
-    // fields = _expenditureFormFields;
 
     return TextFormField(
       decoration: _buildInputDecoration('Amount'),
       style: _buildTextStyle(),
-      focusNode: _amountFocusNode,
-      controller: _expenditureFormFields.amountController,
+      focusNode: _fields.amountFocusNode,
+      controller: _fields.amountController,
       textInputAction: TextInputAction.next,
       keyboardType: TextInputType.number,
-      // initialValue: (_expenditureFormFields.amount != null)
-      //     ? _expenditureFormFields.amount.toString()
-      //     : '',,
       onFieldSubmitted: (value) {
-        FocusScope.of(context).requestFocus(_noteFocusNode);
+        FocusScope.of(context).requestFocus(_fields.noteFocusNode);
       },
       validator: (amount) {
         if (amount == null || amount.isEmpty) {
@@ -239,7 +218,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       },
       onSaved: (amount) {
         // print('title-field.onSaved: amount: $amount');
-        _expenditureFormFields.amount = double.parse(amount!);
+        _fields.amount = double.parse(amount!);
       },
     );
   }
@@ -253,10 +232,9 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       maxLines: 2,
       keyboardType: TextInputType.multiline,
       textInputAction: TextInputAction.next,
-      controller: _expenditureFormFields.noteController,
-      // initialValue: _expenditureFormFields.note ?? '',
+      controller: _fields.noteController,
       onFieldSubmitted: (value) {
-        FocusScope.of(context).requestFocus(_paidByFocusNode);
+        FocusScope.of(context).requestFocus(_fields.paidByFocusNode);
       },
       validator: (note) {
         if (note == null || note.isEmpty) {
@@ -266,21 +244,21 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       },
       onSaved: (note) {
         // print('titleField.onSaved: titleField: $titleField');
-        _expenditureFormFields.note = note;
+        _fields.note = note;
       },
     );
   }
 
   Widget _buildPaidBy(BuildContext context) {
     return OutlinedButton.icon(
-      focusNode: _paidByFocusNode,
+      focusNode: _fields.paidByFocusNode,
       onPressed: _pickAccount,
       icon: Icon(
         Icons.account_balance_outlined,
         color: Theme.of(context).primaryColor,
       ),
       label: Text(
-        _expenditureFormFields.paidBy?.titleEnglish ?? 'SELECT ACCOUNT',
+        _fields.paidBy?.titleEnglish ?? 'SELECT ACCOUNT',
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 20,
@@ -292,7 +270,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   Widget _buildDatePickerButton(BuildContext context) {
     return OutlinedButton.icon(
-      focusNode: _dateFocusNode,
+      focusNode: _fields.dateFocusNode,
       onPressed: pickDate,
       icon: Icon(
         Icons.date_range_rounded,
@@ -322,7 +300,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
           () async {
             await _saveForm(
               () => ExpenditureModel.createExpenditureInDB(
-                _expenditureFormFields,
+                _fields,
               ),
             );
           },
@@ -340,7 +318,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
                 _saveForm(
                   () => ExpenditureModel.updateVoucher(
                     widget.voucher!,
-                    _expenditureFormFields,
+                    _fields,
                   ),
                 );
               },
@@ -353,7 +331,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
               () {
                 setState(() {
                   _formDuty = FormDuty.CREATE;
-                  _expenditureFormFields = ExpenditurFormFields(
+                  _fields = ExpenditurFormFields(
                     amount: 0,
                     note: '',
                     date: DateTime.now(),
@@ -370,16 +348,16 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   Future<void> _saveForm(Function dbOperationHandler) async {
-    if (_form.currentState == null) {
+    if (_fields.formKey.currentState == null) {
       print('EF20| Warn: _form.currentState == null');
       return;
     }
-    final isValid = _form.currentState!.validate();
+    final isValid = _fields.formKey.currentState!.validate();
     if (!isValid) {
       print('EF21| Warn: some of form feilds are not valid;');
       return;
     }
-    _form.currentState!.save(); // run all onSaved method
+    _fields.formKey.currentState!.save(); // run all onSaved method
 
     // add/edit expences in db
     // mod: new product creation
@@ -388,7 +366,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       try {
         // save expences in database
         print(
-          'EF23| @ _saveForm() | _expenditureFormFields: $_expenditureFormFields',
+          'EF23| @ _saveForm() | _expenditureFormFields: $_fields',
         );
         // await ExpenditureModel.createExpenditureInDB(_expenditureFormFields);
         await dbOperationHandler();
@@ -462,7 +440,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
                   );
                   Navigator.of(context).pop();
                   setState(() {
-                    _expenditureFormFields.paidBy = tappedAccount;
+                    _fields.paidBy = tappedAccount;
                   });
                 },
               ),
@@ -479,7 +457,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       lastDate: DateTime.now(),
     ).then((date) {
       setState(() {
-        _expenditureFormFields.date = date;
+        _fields.date = date;
       });
     });
   }
@@ -496,8 +474,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         if (EnvironmentProvider.initializeExpenditureForm) {
           // _expenditureFormFields = ExpenditurFormFields.expenditureExample;
           // _selectedDate = ExpenditurFormFields.expenditureExample.date;
-          _expenditureFormFields.date =
-              ExpenditurFormFields.expenditureExample.date;
+          _fields.date = ExpenditurFormFields.expenditureExample.date;
         }
       } else if (voucherToShowInForm.transactions.length > 2) {
         print(
@@ -517,7 +494,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         var creditTransaction = voucherToShowInForm.transactions
             .firstWhere((tran) => !tran!.isDebit);
         AccountModel.fetchAccountById(debitTransaction!.accountId).then((acc) {
-          _expenditureFormFields = ExpenditurFormFields(
+          _fields = ExpenditurFormFields(
             id: creditTransaction!.id,
             amount: creditTransaction.amount,
             paidBy: acc,
@@ -573,13 +550,13 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   String _buildTextForDatePicker() {
-    if (_expenditureFormFields.date == null) {
+    if (_fields.date == null) {
       return 'SELECT A DAY';
     }
-    if (isToday(_expenditureFormFields.date!)) {
+    if (isToday(_fields.date!)) {
       return 'Today';
     }
-    return '${_expenditureFormFields.date!.day}/${_expenditureFormFields.date!.month}/${_expenditureFormFields.date!.year}';
+    return '${_fields.date!.day}/${_fields.date!.month}/${_fields.date!.year}';
     // if (_selectedDate == null) {
     //   return 'SELECT A DAY';
     // }

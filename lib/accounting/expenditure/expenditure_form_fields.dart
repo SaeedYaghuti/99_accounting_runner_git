@@ -8,24 +8,18 @@ import 'package:shop/constants.dart';
 import 'expenditure_tag.dart';
 
 class ExpenditurFormFields {
-  int? id;
-  // double? amount;
-  // String? note;
-  AccountModel? paidBy;
-  // PayerAccountInfo? paidBy;
-  late ExpenditureTag expenditureTag;
-  DateTime? date;
+  final formKey = GlobalKey<FormState>();
+  final amountFocusNode = FocusNode();
+  final noteFocusNode = FocusNode();
+  final paidByFocusNode = FocusNode();
+  final dateFocusNode = FocusNode();
   TextEditingController amountController = TextEditingController();
   TextEditingController noteController = TextEditingController();
 
-  // ExpenditurFormFields({
-  //   this.id,
-  //   this.amount,
-  //   this.paidBy,
-  //   this.note,
-  //   this.expenditureTag = ExpenditureTag.DEFAULT,
-  //   this.date,
-  // });
+  int? id;
+  AccountModel? paidBy;
+  late ExpenditureTag expenditureTag;
+  DateTime? date;
 
   ExpenditurFormFields({
     int? id,
