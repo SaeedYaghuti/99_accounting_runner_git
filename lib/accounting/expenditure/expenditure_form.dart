@@ -53,75 +53,85 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     switch (_fields.formDuty) {
       case FormDuty.READ:
       case FormDuty.CREATE:
-        print('EF | init_state | form rebuild for READ or CREATE ...');
-        if (EnvironmentProvider.initializeExpenditureForm) {
-          _fields = ExpenditurFormFields.expenditureExample;
-        }
+        initStateCreate();
         break;
       case FormDuty.DELETE:
-        print('EF | init_state | form rebuild for DELETE');
-        if (widget.voucher == null) return;
-        loadingStart();
-        widget.voucher!.deleteMeFromDB().then((deleteResult) {
-          loadingEnd();
-          print('EF 66| deleteResult: $deleteResult');
-          widget.notifyNewVoucher();
-        }).catchError((e) {
-          loadingEnd();
-          showErrorDialog(
-            context,
-            'voucher .deleteMeFromDB()',
-            'ExpenditureForm at initState while deleting a voucher happend error:',
-            e,
-          );
-        });
+        initStateDelete();
         break;
       case FormDuty.EDIT:
-        // print('EF | init_state | EDIT ');
-        if (widget.voucher!.transactions.length > 2) {
-          print(
-            'EF 02| we can not show voucher with more than two transactions in this form ...',
-          );
-          _fields.formDuty = FormDuty.CREATE;
-          // maybe show money_movement form
-          // ...
-        }
-        // print('EXP_FRM init_state| EDIT | voucher to edite');
-        // print(widget.voucher!);
-
-        var debitTransaction = widget.voucher!.transactions.firstWhere(
-          (tran) => tran!.isDebit,
-        );
-
-        var creditTransaction = widget.voucher!.transactions.firstWhere(
-          (tran) => !tran!.isDebit,
-        );
-        AccountModel.fetchAccountById(debitTransaction!.accountId)
-            .then((paidByAccount) {
-          _fields = ExpenditurFormFields(
-            id: creditTransaction!.id,
-            amount: creditTransaction.amount,
-            paidBy: paidByAccount,
-            note: creditTransaction.note,
-            date: creditTransaction.date,
-            // tag: creditTransaction.tag,
-          );
-          print('EXP_FRM init_state| EDIT 03| prepared _expenditureFormFields');
-          print(_fields);
-          setState(() {});
-        }).catchError((e) {
-          print(
-            'EXP_FRM initState 01| @ catchError while catching account ${debitTransaction.accountId} from db e: $e',
-          );
-          // exit from edit_mode
-          _fields.formDuty = FormDuty.CREATE;
-        });
-
-        // _selectedDate = creditTransaction.date;
+        initStateEdit();
         break;
       default:
     }
     super.initState();
+  }
+
+  void initStateCreate() {
+    print('EF | init_state | form rebuild for READ or CREATE ...');
+    if (EnvironmentProvider.initializeExpenditureForm) {
+      _fields = ExpenditurFormFields.expenditureExample;
+    }
+  }
+
+  void initStateDelete() {
+    print('EF | init_state | form rebuild for DELETE');
+    if (widget.voucher == null) return;
+    loadingStart();
+    widget.voucher!.deleteMeFromDB().then((deleteResult) {
+      loadingEnd();
+      print('EF 66| deleteResult: $deleteResult');
+      widget.notifyNewVoucher();
+    }).catchError((e) {
+      loadingEnd();
+      showErrorDialog(
+        context,
+        'voucher .deleteMeFromDB()',
+        'ExpenditureForm at initState while deleting a voucher happend error:',
+        e,
+      );
+    });
+  }
+
+  void initStateEdit() {
+    print('EF | init_state | EDIT ');
+    if (widget.voucher!.transactions.length > 2) {
+      print(
+        'EF 02| we can not show voucher with more than two transactions in this form ...',
+      );
+      _fields.formDuty = FormDuty.CREATE;
+      // maybe show money_movement form
+      // ...
+    }
+    // print('EXP_FRM init_state| EDIT | voucher to edite');
+    // print(widget.voucher!);
+
+    var debitTransaction = widget.voucher!.transactions.firstWhere(
+      (tran) => tran!.isDebit,
+    );
+
+    var creditTransaction = widget.voucher!.transactions.firstWhere(
+      (tran) => !tran!.isDebit,
+    );
+    AccountModel.fetchAccountById(debitTransaction!.accountId)
+        .then((paidByAccount) {
+      _fields = ExpenditurFormFields(
+        id: creditTransaction!.id,
+        amount: creditTransaction.amount,
+        paidBy: paidByAccount,
+        note: creditTransaction.note,
+        date: creditTransaction.date,
+        // tag: creditTransaction.tag,
+      );
+      print('EXP_FRM init_state| EDIT 03| prepared _expenditureFormFields');
+      print(_fields);
+      setState(() {});
+    }).catchError((e) {
+      print(
+        'EXP_FRM initState 01| @ catchError while catching account ${debitTransaction.accountId} from db e: $e',
+      );
+      // exit from edit_mode
+      _fields.formDuty = FormDuty.CREATE;
+    });
   }
 
   @override
@@ -132,10 +142,10 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   @override
   Widget build(BuildContext context) {
-    print('***');
-    print('EXP_FRM build() | current satate ...');
-    print('_expenditureFormFields: $_fields');
-    print('***');
+    // print('***');
+    // print('EXP_FRM build() | current satate ...');
+    // print('_expenditureFormFields: $_fields');
+    // print('***');
     return Container(
       width: 1200,
       padding: EdgeInsets.all(16),
