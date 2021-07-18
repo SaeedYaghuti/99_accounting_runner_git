@@ -338,7 +338,7 @@ class VoucherModel {
         .toList();
   }
 
-  static Future<void> _fetchAllVouchers() async {
+  static Future<void> fetchAllVouchers() async {
     final query = '''
     SELECT *
     FROM $voucherTableName

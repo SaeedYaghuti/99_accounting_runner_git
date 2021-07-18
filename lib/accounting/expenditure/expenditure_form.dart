@@ -43,14 +43,15 @@ class ExpenditureForm extends StatefulWidget {
 class _ExpenditureFormState extends State<ExpenditureForm> {
   late AuthProviderSQL authProviderSQL;
   var _fields = ExpenditurFormFields();
+  var _formDuty = FormDuty.CREATE;
 
   @override
   void initState() {
-    _fields.formDuty = widget.formDuty;
+    _formDuty = widget.formDuty;
     _fields.date = DateTime.now();
     _fields.paidBy = ExpenditurFormFields.expenditureExample.paidBy;
 
-    switch (_fields.formDuty) {
+    switch (widget.formDuty) {
       case FormDuty.READ:
       case FormDuty.CREATE:
         initStateCreate();
@@ -98,7 +99,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       print(
         'EF 02| we can not show voucher with more than two transactions in this form ...',
       );
-      _fields.formDuty = FormDuty.CREATE;
+      _formDuty = FormDuty.CREATE;
       // maybe show money_movement form
       // ...
     }
@@ -114,14 +115,13 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     );
     AccountModel.fetchAccountById(debitTransaction!.accountId)
         .then((paidByAccount) {
-      _fields = ExpenditurFormFields(
-        id: creditTransaction!.id,
-        amount: creditTransaction.amount,
-        paidBy: paidByAccount,
-        note: creditTransaction.note,
-        date: creditTransaction.date,
-        // tag: creditTransaction.tag,
-      );
+      _fields.id = creditTransaction!.id;
+      _fields.amount = creditTransaction.amount;
+      _fields.paidBy = paidByAccount;
+      _fields.note = creditTransaction.note;
+      _fields.date = creditTransaction.date;
+      // tag: creditTransaction.tag,
+
       print('EXP_FRM init_state| EDIT 03| prepared _expenditureFormFields');
       print(_fields);
       setState(() {});
@@ -130,7 +130,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         'EXP_FRM initState 01| @ catchError while catching account ${debitTransaction.accountId} from db e: $e',
       );
       // exit from edit_mode
-      _fields.formDuty = FormDuty.CREATE;
+      _formDuty = FormDuty.CREATE;
     });
   }
 
@@ -204,7 +204,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   Widget _buildNote(BuildContext context) {
-    // fields = _expenditureFormFields;
     return TextFormField(
       decoration: _buildInputDecoration('Note'),
       style: _buildTextStyle(),
@@ -262,7 +261,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   Widget _buildSubmitButtons(BuildContext context) {
-    switch (_fields.formDuty) {
+    switch (_formDuty) {
       case FormDuty.DELETE:
       case FormDuty.READ:
       case FormDuty.CREATE:
@@ -304,7 +303,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
               Colors.grey,
               () {
                 setState(() {
-                  _fields.formDuty = FormDuty.CREATE;
+                  _formDuty = FormDuty.CREATE;
                   _fields = ExpenditurFormFields(
                     amount: 0,
                     note: '',
@@ -401,7 +400,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
             children: [
               AccountDropdownMenu(
                 authProvider: authProviderSQL,
-                formDuty: _fields.formDuty,
+                formDuty: _formDuty,
                 unwantedAccountIds: [
                   ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
                 ],
@@ -444,7 +443,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     setState(() {
       if (voucherToShowInForm == null || expenseIdToShowInForm == null) {
         print('EF 01| we need form for create new voucher ...');
-        _fields.formDuty = FormDuty.CREATE;
+        _formDuty = FormDuty.CREATE;
         if (EnvironmentProvider.initializeExpenditureForm) {
           // _expenditureFormFields = ExpenditurFormFields.expenditureExample;
           // _selectedDate = ExpenditurFormFields.expenditureExample.date;
@@ -454,7 +453,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         print(
           'EF 02| we can not show voucher with more than two transactions in this form ...',
         );
-        _fields.formDuty = FormDuty.CREATE;
+        _formDuty = FormDuty.CREATE;
         // maybe show money_movement form
         // ...
       } else {
@@ -462,7 +461,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         print(
           'EF 03| we need form read an existing voucher ...',
         );
-        _fields.formDuty = FormDuty.READ;
+        _formDuty = FormDuty.READ;
         var debitTransaction = voucherToShowInForm.transactions
             .firstWhere((tran) => tran!.isDebit);
         var creditTransaction = voucherToShowInForm.transactions
@@ -567,7 +566,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   Widget _buildListViewMeduim(BuildContext context) {
     return AccountDropdownMenu(
       authProvider: authProviderSQL,
-      formDuty: _fields.formDuty,
+      formDuty: _formDuty,
       expandedAccountIds: [
         // ACCOUNTS_ID.ASSETS_ACCOUNT_ID,
         // ACCOUNTS_ID.BANKS_ACCOUNT_ID,

@@ -16,7 +16,7 @@ class ExpenditurFormFields {
   final dateFocusNode = FocusNode();
   TextEditingController amountController = TextEditingController();
   TextEditingController noteController = TextEditingController();
-  FormDuty formDuty = FormDuty.CREATE;
+  // FormDuty formDuty = FormDuty.CREATE;
 
   int? id;
   AccountModel? paidBy;

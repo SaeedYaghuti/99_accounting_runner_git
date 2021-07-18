@@ -8,7 +8,7 @@ import 'package:shop/auth/permission_model.dart';
 import 'account_ids.dart';
 
 void runCode() async {
-  // await VoucherModel.fetchAllVouchers();
+  await VoucherModel.fetchAllVouchers();
   // await TransactionModel.allTransactions();
   // await TransactionModel.allTranJoinVch();
   // await TransactionModel.allTranJoinVchForAccount('expenditure');
@@ -17,25 +17,25 @@ void runCode() async {
   // await VoucherModel.accountVouchers('expenditure');
   // await VoucherModel.fetchAllVouchers();
   // print('PRAGMA foreign_keys > $resault');
-  var muscat = AccountModel(
-    id: 'SADERAT_IRAN',
-    parentId: ACCOUNTS_ID.BANKS_ACCOUNT_ID,
-    titleEnglish: 'saderat iran',
-    titleArabic: 'بانك صادرات ايران',
-    titlePersian: 'بنك صادرات ايران',
-    note: '٤٥٧٠٣٣١٣٤٠٦٠',
-    createTransactionPermissionsAny: [],
-    readTransactionPermissionsAny: [],
-    editTransactionPermissionsAny: [],
-    deleteTransactionPermissionsAny: [],
-  );
+  // var muscat = AccountModel(
+  //   id: 'SADERAT_IRAN',
+  //   parentId: ACCOUNTS_ID.BANKS_ACCOUNT_ID,
+  //   titleEnglish: 'saderat iran',
+  //   titleArabic: 'بانك صادرات ايران',
+  //   titlePersian: 'بنك صادرات ايران',
+  //   note: '٤٥٧٠٣٣١٣٤٠٦٠',
+  //   createTransactionPermissionsAny: [],
+  //   readTransactionPermissionsAny: [],
+  //   editTransactionPermissionsAny: [],
+  //   deleteTransactionPermissionsAny: [],
+  // );
 
-  await AccountModel.allAccounts();
+  // await AccountModel.allAccounts();
 
-  var insertResut = await muscat.insertMeIntoDB();
-  print(insertResut);
+  // var insertResut = await muscat.insertMeIntoDB();
+  // print(insertResut);
 
-  await AccountModel.allAccounts();
+  // await AccountModel.allAccounts();
 
   // var deleteResut = await muscat.deleteMeFromDB();
   // print(deleteResut);

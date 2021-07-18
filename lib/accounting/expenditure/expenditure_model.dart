@@ -43,6 +43,8 @@ class ExpenditureModel {
     VoucherModel oldVoucher,
     ExpenditurFormFields fields,
   ) async {
+    print('EXP_MDL updateVoucher()| 01 | oldVoucher: $oldVoucher');
+    print('EXP_MDL updateVoucher()| 02 | fields: $fields');
     // mix oldVoucher with fields data
     var debitTransactions = oldVoucher.debitTransactions();
     var creditTdransactions = oldVoucher.creditTransactions();
