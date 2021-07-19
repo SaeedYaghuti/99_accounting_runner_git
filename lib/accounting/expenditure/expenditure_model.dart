@@ -1,12 +1,9 @@
 import 'package:shop/accounting/accounting_logic/account_ids.dart';
-import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
 import 'package:shop/accounting/accounting_logic/transaction_feed.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_feed.dart';
-// import 'package:shop/accounting/accounting_logic/voucher_management.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/expenditure/expenditure_form_fields.dart';
-import 'package:shop/exceptions/DBException.dart';
 import 'package:shop/exceptions/curropted_input.dart';
 
 class ExpenditureModel {
@@ -17,7 +14,8 @@ class ExpenditureModel {
       amount: fields.amount!,
       isDebit: true,
       date: fields.date!,
-      note: '${fields.paidBy} paid for ${ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID}',
+      note:
+          '${fields.paidBy!.titleEnglish} paid for ${ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID}',
     );
     var transactionFeedCredit = TransactionFeed(
       accountId: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
@@ -58,7 +56,7 @@ class ExpenditureModel {
       id: oldVoucher.id,
       voucherNumber: oldVoucher.voucherNumber,
       date: fields.date!,
-      note: '${fields.paidBy} paid for Expenditure',
+      note: '${fields.paidBy!.titleEnglish} paid for Expenditure',
     );
     newVoucher.transactions = [
       // updated debit transaction
@@ -83,7 +81,10 @@ class ExpenditureModel {
 
     print('EM 43| new Voucher to be updated at db');
     print(newVoucher);
-
-    return VoucherModel.updateVoucher(newVoucher);
+    try {
+      await VoucherModel.updateVoucher(newVoucher);
+    } catch (e) {
+      print('EM 43| updateVoucher() |@ catch e: $e');
+    }
   }
 }

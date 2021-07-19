@@ -94,10 +94,10 @@ class ExpenditurFormFields {
 
   @override
   String toString() {
-    return '''ES10| ExpenditureFormFields: {
+    return '''
       id: $id,
       amoutn: $amount, 
-      paidBy: $paidBy, 
+      paidBy: ${paidBy?.titleEnglish}, 
       note: $note,
       expenditureTag: $expenditureTag, 
       date: $date, 

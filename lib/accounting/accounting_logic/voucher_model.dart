@@ -176,9 +176,15 @@ class VoucherModel {
 
     for (var transaction in rVoucher.transactions) {
       try {
-        await transaction!.insertMeIntoDB();
+        var insertID = await transaction!.insertMeIntoDB();
+        print(
+          'EXP_MDL 350| updateVoucher step #5 |rebuild transaction | insertID: $insertID, transaction: $transaction',
+        );
         successTransactions.add(transaction);
       } catch (e) {
+        print(
+          'EXP_MDL 351| updateVoucher step #5 |@ catch | while rebuild transaction e: $e',
+        );
         // unable to build all new transactions:
         try {
           // step #a delete successTransactions
@@ -376,18 +382,20 @@ class VoucherModel {
     if (voucherModels.isEmpty) {
       return null;
     }
-    // if (voucherModels.length > 1) {
-    //   throw
-    // }
+    if (voucherModels.length > 1) {
+      throw DirtyDatabaseException(
+        'VCH_MDL | _fetchVoucherById($voucherId)| there are more than one voucher with same id',
+      );
+    }
 
     // fetch transaction for each voucher
     for (var voucher in voucherModels) {
       await voucher._fetchMyTransactions();
     }
 
-    print('VM 30| fetchVoucher for id: <$voucherId>: ###########');
-    print(voucherModels);
-    print('##################');
+    // print('VM 30| fetchVoucher for id: <$voucherId>: ###########');
+    // print(voucherModels);
+    // print('##################');
 
     return voucherModels[0];
   }
@@ -579,7 +587,7 @@ class VoucherModel {
     return '''
     voucherId: $id, voucherNumber: $voucherNumber,
     voucherNote: $note, voucherDate: ${date.day}/${date.month}/${date.year},
-    transactions: ++++
+    # transactions:
     $transactions,
     =================
     ''';

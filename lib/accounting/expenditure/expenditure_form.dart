@@ -289,10 +289,21 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
               Colors.green,
               () async {
                 _saveForm(
-                  () => ExpenditureModel.updateVoucher(
-                    widget.voucher!,
-                    _fields,
-                  ),
+                  () {
+                    try {
+                      ExpenditureModel.updateVoucher(
+                        widget.voucher!,
+                        _fields,
+                      );
+                    } catch (e) {
+                      showErrorDialog(
+                        context,
+                        'UpdateVoucher',
+                        'while updating voucher an error accoured',
+                        e,
+                      );
+                    }
+                  },
                 );
               },
             ),

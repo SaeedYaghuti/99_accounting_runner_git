@@ -9,7 +9,7 @@ import 'account_ids.dart';
 
 void runCode() async {
   await VoucherModel.fetchAllVouchers();
-  // await TransactionModel.allTransactions();
+  await TransactionModel.allTransactions();
   // await TransactionModel.allTranJoinVch();
   // await TransactionModel.allTranJoinVchForAccount('expenditure');
   // await VoucherManagement.createVoucher();
