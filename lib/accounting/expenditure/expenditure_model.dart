@@ -41,8 +41,8 @@ class ExpenditureModel {
     VoucherModel oldVoucher,
     ExpenditurFormFields fields,
   ) async {
-    print('EXP_MDL updateVoucher()| 01 | oldVoucher: $oldVoucher');
-    print('EXP_MDL updateVoucher()| 02 | fields: $fields');
+    // print('EXP_MDL updateVoucher()| 01 | oldVoucher: $oldVoucher');
+    // print('EXP_MDL updateVoucher()| 02 | fields: $fields');
     // mix oldVoucher with fields data
     var debitTransactions = oldVoucher.debitTransactions();
     var creditTdransactions = oldVoucher.creditTransactions();
@@ -79,8 +79,8 @@ class ExpenditureModel {
       ),
     ];
 
-    print('EM 43| new Voucher to be updated at db');
-    print(newVoucher);
+    // print('EM 43| new Voucher to be updated at db');
+    // print(newVoucher);
     try {
       await VoucherModel.updateVoucher(newVoucher);
     } catch (e) {

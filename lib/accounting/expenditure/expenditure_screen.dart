@@ -370,14 +370,14 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
     }
 
     if (selectedItem == "edit") {
-      print('ES 80| you edit ...');
+      // print('ES 80| you edit ...');
       voucherSelectionHandler(
         voucher,
         expId,
         FormDuty.EDIT,
       );
     } else if (selectedItem == "delete") {
-      print('ES 80| you delete ...');
+      // print('ES 80| you delete ...');
       var confirmResult = await confirmDialog(
         context: context,
         title: 'Are sure to delete this expense?',

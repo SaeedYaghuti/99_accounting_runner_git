@@ -2,6 +2,7 @@ import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/exceptions/DBException.dart';
+import 'package:shop/exceptions/dirty_database.dart';
 import 'package:shop/shared/seconds_of_time.dart';
 
 import 'account_model.dart';
@@ -39,6 +40,36 @@ class TransactionModel {
     print('TM10| All DB $transactionTableName: ########');
     print(result);
     print('##################');
+  }
+
+  static Future<TransactionModel?> transactionById(int tranId) async {
+    final query = '''
+    SELECT *
+    FROM $transactionTableName
+    WHERE $column1Id = ? ;
+    ''';
+    var transactionsMap = await AccountingDB.runRawQuery(query, [tranId]);
+
+    // convert map to TransactionModel
+    List<TransactionModel> transactionsModels = [];
+    transactionsMap.forEach(
+      (tranMap) => transactionsModels.add(fromMapOfTransaction(tranMap)),
+    );
+
+    if (transactionsModels.isEmpty) {
+      return null;
+    }
+    if (transactionsModels.length > 1) {
+      throw DirtyDatabaseException(
+        'TRAN_MDL | transactionById($tranId)| there are more than one transaction with same id',
+      );
+    }
+
+    print('TRAN_MDL | transactionById($tranId) | 01');
+    print(transactionsModels);
+    print('#');
+
+    return transactionsModels[0];
   }
 
   Future<int> deleteMeFromDB() async {
@@ -183,7 +214,7 @@ class TransactionModel {
 
   String toString() {
     return '''
-    voucherId: $voucherId, tranId: $id, 
+    tranId: $id, voucherId: $voucherId,  
     accountId: $accountId, amount: $amount, isDebit: $isDebit,
     note: $note, date: ${date.day}/${date.month}/${date.year},
     ****
@@ -219,6 +250,6 @@ class TransactionModel {
     $column6Date INTEGER NOT NULL, 
     $column7Note TEXT, 
     CONSTRAINT fk_${AccountModel.tableName} FOREIGN KEY ($column2AccountId) REFERENCES ${AccountModel.tableName} (${AccountModel.column1Id}) ON DELETE CASCADE,
-    CONSTRAINT fk_${VoucherModel.voucherTableName} FOREIGN KEY ($column3VoucherId) REFERENCES ${VoucherModel.voucherTableName} (${VoucherModel.column1Id}) ON DELETE CASCADE
+    CONSTRAINT fk_${VoucherModel.voucherTableName} FOREIGN KEY ($column3VoucherId) REFERENCES ${VoucherModel.voucherTableName} (${VoucherModel.column1Id}) ON DELETE CASCADE ON UPDATE NO ACTION
   )''';
 }

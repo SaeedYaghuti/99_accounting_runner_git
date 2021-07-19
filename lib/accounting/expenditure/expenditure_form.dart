@@ -68,7 +68,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   void initStateCreate() {
-    print('EF | init_state | form rebuild for READ or CREATE ...');
+    // print('EF | init_state | form rebuild for READ or CREATE ...');
     if (EnvironmentProvider.initializeExpenditureForm) {
       _fields = ExpenditurFormFields.expenditureExample;
     }
@@ -94,7 +94,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   void initStateEdit() {
-    print('EF | init_state | EDIT ');
+    // print('EF | init_state | EDIT ');
     if (widget.voucher!.transactions.length > 2) {
       print(
         'EF 02| we can not show voucher with more than two transactions in this form ...',
@@ -122,8 +122,8 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       _fields.date = creditTransaction.date;
       // tag: creditTransaction.tag,
 
-      print('EXP_FRM init_state| EDIT 03| prepared _expenditureFormFields');
-      print(_fields);
+      // print('EXP_FRM init_state| EDIT 03| prepared _expenditureFormFields');
+      // print(_fields);
       setState(() {});
     }).catchError((e) {
       print(
@@ -265,7 +265,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       case FormDuty.DELETE:
       case FormDuty.READ:
       case FormDuty.CREATE:
-        print('_buildSubmitButtons 01| Button: Create');
+        // print('_buildSubmitButtons 01| Button: Create');
         return _buildButton(
           context,
           'Create',
@@ -280,7 +280,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         );
       // do: we should clear form data after create
       case FormDuty.EDIT:
-        print('_buildSubmitButtons 02| Buttons: Save & Cancel');
+        // print('_buildSubmitButtons 02| Buttons: Save & Cancel');
         return Column(
           children: [
             _buildButton(
@@ -349,9 +349,9 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       loadingStart();
       try {
         // save expences in database
-        print(
-          'EF23| @ _saveForm() | _expenditureFormFields: $_fields',
-        );
+        // print(
+        //   'EF23| @ _saveForm() | _expenditureFormFields: $_fields',
+        // );
         // await ExpenditureModel.createExpenditureInDB(_expenditureFormFields);
         await dbOperationHandler();
         // notify expenditur-screen to rebuild data-table

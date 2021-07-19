@@ -8,8 +8,10 @@ import 'package:shop/auth/permission_model.dart';
 import 'account_ids.dart';
 
 void runCode() async {
-  await VoucherModel.fetchAllVouchers();
+  // await VoucherModel.fetchAllVouchers();
   await TransactionModel.allTransactions();
+  // await TransactionModel.transactionById(1);
+  // await VoucherModel.fetchVoucherById(2);
   // await TransactionModel.allTranJoinVch();
   // await TransactionModel.allTranJoinVchForAccount('expenditure');
   // await VoucherManagement.createVoucher();

@@ -29,7 +29,7 @@ class VoucherNumberModel {
 
   // throw error if currently is locked
   static Future<int> borrowNumber() async {
-    print('VN-M 00| borrowing Number...');
+    // print('VN-M 00| borrowing Number...');
     final query = '''
     SELECT *
     FROM $tableName
@@ -54,7 +54,7 @@ class VoucherNumberModel {
   }
 
   static Future<void> numberConsumed(int number) async {
-    print('VNM 28| numberConsumed ...');
+    // print('VNM 28| numberConsumed ...');
     final query = '''
     SELECT *
     FROM $tableName

@@ -112,7 +112,7 @@ class VoucherModel {
     }
     // step #5 voucher has mad Successfully
     await VoucherNumberModel.numberConsumed(voucherNumber);
-    print('V_MG 19| voucher and all its transactions saved Successfully!');
+    // print('V_MG 19| voucher and all its transactions saved Successfully!');
 
     // TODO: remove me
     await voucher._fetchMyTransactions();
@@ -130,7 +130,7 @@ class VoucherModel {
     }
 
     // step 2# fetch voucher by id
-    var fVoucher = await VoucherModel._fetchVoucherById(rVoucher.id!);
+    var fVoucher = await VoucherModel.fetchVoucherById(rVoucher.id!);
 
     // step 3# chack validity
     if (fVoucher == null) {
@@ -174,12 +174,19 @@ class VoucherModel {
     // step #5 recreate new transactions
     List<TransactionModel> successTransactions = [];
 
+    print(
+      'EXP_MDL 351| all trans BEFORE adding new tran ',
+    );
+    await TransactionModel.allTransactions();
+
     for (var transaction in rVoucher.transactions) {
       try {
         var insertID = await transaction!.insertMeIntoDB();
-        print(
-          'EXP_MDL 350| updateVoucher step #5 |rebuild transaction | insertID: $insertID, transaction: $transaction',
-        );
+
+        // var newTran = await TransactionModel.transactionById(insertID);
+        // print(
+        //   'EXP_MDL 350| updateVoucher step #5 |rebuild transaction | insertID: $insertID, transaction: $newTran',
+        // );
         successTransactions.add(transaction);
       } catch (e) {
         print(
@@ -210,9 +217,25 @@ class VoucherModel {
       }
     }
 
+    print(
+      'EXP_MDL 353| all trans AFTER adding new trans ',
+    );
+    await TransactionModel.allTransactions();
+
     // step #6 update voucher at db
     try {
+      // print(
+      //   'EXP_MDL| updateVoucher step #6 |rVoucher before update: $rVoucher',
+      // );
       await rVoucher._updateMeWithoutTransactionsInDB();
+      // print(
+      //   'EXP_MDL| updateVoucher step #6 |rVoucher after update: $rVoucher',
+      // );
+
+      print(
+        'EXP_MDL 354| all trans after update rVoucher',
+      );
+      await TransactionModel.allTransactions();
     } catch (e) {
       throw LazySaeidException(
         'VM UP39| rVoucher not updated successfuly; And Saeid did not handle this situation',
@@ -366,13 +389,13 @@ class VoucherModel {
     print('##################');
   }
 
-  static Future<VoucherModel?> _fetchVoucherById(int voucherId) async {
+  static Future<VoucherModel?> fetchVoucherById(int voucherId) async {
     final query = '''
     SELECT *
     FROM $voucherTableName
-    WHERE $column1Id = $voucherId
+    WHERE $column1Id = ?
     ''';
-    var vouchersMap = await AccountingDB.runRawQuery(query);
+    var vouchersMap = await AccountingDB.runRawQuery(query, [voucherId]);
     // convert map to voucherModel
     List<VoucherModel> voucherModels = [];
     vouchersMap.forEach(
@@ -380,6 +403,7 @@ class VoucherModel {
     );
 
     if (voucherModels.isEmpty) {
+      print('VCH_MDL | _fetchVoucherById($voucherId)| isEmpty');
       return null;
     }
     if (voucherModels.length > 1) {
@@ -544,7 +568,7 @@ class VoucherModel {
     )''';
 
   Map<String, Object> _toMapForDB() {
-    print('VM 44| date: ${readibleDate(date)}');
+    // print('VM 44| date: ${readibleDate(date)}');
     if (id == null) {
       return {
         column2VoucherNumber: voucherNumber,
