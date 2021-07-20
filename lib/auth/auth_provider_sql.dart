@@ -19,6 +19,7 @@ class AuthProviderSQL with ChangeNotifier {
   }
 
   void notifyAuthChanged() {
+    print('AHT_PRV_SQL | notifyAuthChanged() | run ...');
     notifyListeners();
   }
 

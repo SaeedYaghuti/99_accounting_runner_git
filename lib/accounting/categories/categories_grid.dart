@@ -7,7 +7,10 @@ import 'package:shop/auth/auth_provider_sql.dart';
 
 class CategoriesGrid extends StatelessWidget {
   final String parentId;
-  const CategoriesGrid(this.parentId, {Key? key}) : super(key: key);
+  const CategoriesGrid(
+    this.parentId, {
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

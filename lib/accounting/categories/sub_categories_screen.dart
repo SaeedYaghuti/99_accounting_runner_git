@@ -6,6 +6,7 @@ import 'package:shop/accounting/common/multi_language_category_title.dart';
 import 'package:shop/accounting/common/multi_language_text_widget.dart';
 import 'package:shop/accounting/common/supported_language.dart';
 import 'package:shop/accounting/environment/environment_provider.dart';
+import 'package:shop/auth/auth_provider_sql.dart';
 
 import 'categories_grid.dart';
 
@@ -28,6 +29,7 @@ class _SubCategoriesScreenState extends State<SubCategoriesScreen> {
   Widget build(BuildContext context) {
     var environmenProvider =
         Provider.of<EnvironmentProvider>(context, listen: true);
+    var authProvider = Provider.of<AuthProviderSQL>(context, listen: true);
     return Scaffold(
       appBar: AppBar(
         title: _buildTitle(),

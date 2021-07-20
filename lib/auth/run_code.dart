@@ -10,7 +10,7 @@ import 'package:shop/constants.dart';
 
 import 'auth_provider_sql.dart';
 
-void runCode(BuildContext context) async {
+Future<void> runCode(BuildContext context) async {
   var authProvider = Provider.of<AuthProviderSQL>(context, listen: false);
   // await VoucherModel.fetchAllVouchers();
   // await TransactionModel.allTransactions();
@@ -38,8 +38,13 @@ void runCode(BuildContext context) async {
   await AuthPermissionModel.givePermissionToAuth(
     2,
     // PermissionModel.EXPENDITURE_CATEGORY,
-    PermissionModel.ACCOUNT_CATEGORY,
+    // PermissionModel.ACCOUNT_CATEGORY,
+    // PermissionModel.ITEM_CATEGORY,
+    // PermissionModel.REPORT_CATEGORY,
+    // PermissionModel.PURCHAS_CATEGORY,
+    PermissionModel.SELL_POINT_CATEGORY,
   );
+
   authProvider.notifyAuthChanged();
 
   AuthPermissionModel.printAllAuthPermissions(2);

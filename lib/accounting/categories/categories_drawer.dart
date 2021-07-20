@@ -53,9 +53,9 @@ class CategoriesDrawer extends StatelessWidget {
               arabic: "اجراي كد",
             ),
             onTap: () {
+              AccountRunCode.runCode();
               Navigator.of(context).pop();
               Navigator.of(context).pushReplacementNamed('/');
-              AccountRunCode.runCode();
             },
           ),
           Divider(),
@@ -66,10 +66,10 @@ class CategoriesDrawer extends StatelessWidget {
               persian: 'اجراى كد',
               arabic: "اجراي كد",
             ),
-            onTap: () {
+            onTap: () async {
+              await AuthRunCode.runCode(context);
               Navigator.of(context).pop();
               Navigator.of(context).pushReplacementNamed('/');
-              AuthRunCode.runCode(context);
             },
           ),
           Divider(),
