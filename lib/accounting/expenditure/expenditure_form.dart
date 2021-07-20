@@ -6,10 +6,7 @@ import 'package:shop/accounting/accounting_logic/run_code.dart';
 
 import 'package:provider/provider.dart';
 import 'package:shop/accounting/accounting_logic/account_dropdown_menu.dart';
-import 'package:shop/accounting/common/expandble_panel.dart';
-import 'package:shop/accounting/expenditure/payer_account_info.dart';
 import 'package:shop/auth/auth_db_helper.dart';
-import 'package:shop/auth/auth_model_sql.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
 
 import 'package:flutter/material.dart';
@@ -131,6 +128,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       );
       // exit from edit_mode
       _formDuty = FormDuty.CREATE;
+      setState(() {});
     });
   }
 
@@ -142,10 +140,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   @override
   Widget build(BuildContext context) {
-    // print('***');
-    // print('EXP_FRM build() | current satate ...');
-    // print('_expenditureFormFields: $_fields');
-    // print('***');
     return Container(
       width: 1200,
       padding: EdgeInsets.all(16),
@@ -463,49 +457,56 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   void initializeForm(
     VoucherModel? voucherToShowInForm,
     int? expenseIdToShowInForm,
-    FormDuty formDuty,
   ) {
-    setState(() {
-      if (voucherToShowInForm == null || expenseIdToShowInForm == null) {
-        print('EF 01| we need form for create new voucher ...');
-        _formDuty = FormDuty.CREATE;
-        if (EnvironmentProvider.initializeExpenditureForm) {
-          // _expenditureFormFields = ExpenditurFormFields.expenditureExample;
-          // _selectedDate = ExpenditurFormFields.expenditureExample.date;
-          _fields.date = ExpenditurFormFields.expenditureExample.date;
-        }
-      } else if (voucherToShowInForm.transactions.length > 2) {
-        print(
-          'EF 02| we can not show voucher with more than two transactions in this form ...',
-        );
-        _formDuty = FormDuty.CREATE;
-        // maybe show money_movement form
-        // ...
-      } else {
-        // we don't use form to read data
-        print(
-          'EF 03| we need form read an existing voucher ...',
-        );
-        _formDuty = FormDuty.READ;
-        var debitTransaction = voucherToShowInForm.transactions
-            .firstWhere((tran) => tran!.isDebit);
-        var creditTransaction = voucherToShowInForm.transactions
-            .firstWhere((tran) => !tran!.isDebit);
-        AccountModel.fetchAccountById(debitTransaction!.accountId).then((acc) {
-          _fields = ExpenditurFormFields(
-            id: creditTransaction!.id,
-            amount: creditTransaction.amount,
-            paidBy: acc,
-            note: creditTransaction.note,
-            date: creditTransaction.date,
-            // tag: creditTransaction.tag,
-          );
-        }).catchError((e) {
-          print(
-            'EXP_FRM initializeForm 04| e in fetching account: ${debitTransaction.accountId} e: $e',
-          );
-        });
+    // Exp_Form called without passing voucher: means we are in create mode
+    if (voucherToShowInForm == null || expenseIdToShowInForm == null) {
+      print('EF 01| we need form for create new voucher ...');
+      _formDuty = FormDuty.CREATE;
+      if (EnvironmentProvider.initializeExpenditureForm) {
+        // _expenditureFormFields = ExpenditurFormFields.expenditureExample;
+        // _selectedDate = ExpenditurFormFields.expenditureExample.date;
+        _fields.date = ExpenditurFormFields.expenditureExample.date;
       }
+      setState(() {});
+      return;
+    }
+
+    // Exp_Form called with voucher that contains 3 trans or more: we can not show in this simple form
+    if (voucherToShowInForm.transactions.length > 2) {
+      print(
+        'EF 02| we can not show voucher with more than two transactions in this form ...',
+      );
+      _formDuty = FormDuty.CREATE;
+      // show money_movement form
+      // ...
+      setState(() {});
+      return;
+    }
+
+    // we want to edit voucher in form; we don't have read mode for voucher in form
+    _formDuty = FormDuty.EDIT;
+    var debitTransaction =
+        voucherToShowInForm.transactions.firstWhere((tran) => tran!.isDebit);
+    var creditTransaction =
+        voucherToShowInForm.transactions.firstWhere((tran) => !tran!.isDebit);
+    AccountModel.fetchAccountById(debitTransaction!.accountId).then(
+      (acc) {
+        _fields = ExpenditurFormFields(
+          id: creditTransaction!.id,
+          amount: creditTransaction.amount,
+          paidBy: acc,
+          note: creditTransaction.note,
+          date: creditTransaction.date,
+          // tag: creditTransaction.tag,
+        );
+        setState(() {});
+      },
+    ).catchError((e) {
+      print(
+        'EXP_FRM initializeForm 04| e in fetching account: ${debitTransaction.accountId} e: $e',
+      );
+      _formDuty = FormDuty.CREATE;
+      setState(() {});
     });
   }
 
@@ -574,8 +575,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     super.dispose();
   }
 
-  var _isLoading = false;
-
   void loadingStart() {
     setState(() {
       _isLoading = true;
@@ -588,69 +587,11 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     });
   }
 
-  Widget _buildListViewMeduim(BuildContext context) {
-    return AccountDropdownMenu(
-      authProvider: authProviderSQL,
-      formDuty: _formDuty,
-      expandedAccountIds: [
-        // ACCOUNTS_ID.ASSETS_ACCOUNT_ID,
-        // ACCOUNTS_ID.BANKS_ACCOUNT_ID,
-      ],
-      tapHandler: (AccountModel tappedAccount) {
-        print(
-          'ExpForm paidBy tapHandler| tapped of ${tappedAccount.titleEnglish}',
-        );
-      },
-    );
-    // return Column(
-    //     mainAxisAlignment: MainAxisAlignment.center,
-    //     children: <Widget>[
-    //       Row(
-    //         children: <Widget>[
-    //           Expanded(
-    //             child: RaisedButton(
-    //               onPressed: () {
-    //                 Navigator.push(
-    //                   context,
-    //                   MaterialPageRoute(
-    //                     builder: (BuildContext context) => AccountDropdownMenu(
-    //                       authProvider: authProviderSQL,
-    //                       formDuty: _formDuty,
-    //                       expandedAccountIds: [
-    //                         ACCOUNTS_ID.ASSETS_ACCOUNT_ID,
-    //                         ACCOUNTS_ID.BANKS_ACCOUNT_ID,
-    //                       ],
-    //                     ),
-    //                   ),
-    //                 );
-    //               },
-    //               child: Text('Account Dropdown Menu'),
-    //             ),
-    //           ),
-    //         ],
-    //       ),
-    //       Row(
-    //         children: <Widget>[
-    //           Expanded(
-    //             child: RaisedButton(
-    //               onPressed: () {
-    //                 Navigator.push(
-    //                     context,
-    //                     MaterialPageRoute(
-    //                         builder: (BuildContext context) =>
-    //                             Expansionpanel()));
-    //               },
-    //               child: Text('ExpansionPanel'),
-    //             ),
-    //           ),
-    //         ],
-    //       )
-    //     ]);
-  }
+  var _isLoading = false;
 }
 
 enum FormDuty {
-  READ,
+  READ, // currntly we don't have action for read
   CREATE,
   EDIT,
   DELETE,

@@ -365,7 +365,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       ],
     );
     if (selectedItem == null) {
-      print('ES 80| you select nothing ...');
+      // print('ES 80| you select nothing ...');
       voucherSelectionHandler(null, null, null);
       return;
     }
