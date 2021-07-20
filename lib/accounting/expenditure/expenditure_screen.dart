@@ -29,14 +29,12 @@ class ExpenditureScreen extends StatefulWidget {
 }
 
 class _ExpenditureScreenState extends State<ExpenditureScreen> {
-  Object redrawObject = Object();
+  AuthProviderSQL? authProvider;
+  Object redrawFormObject = Object();
   List<VoucherModel> vouchers = [];
   VoucherModel? _voucherToShowInForm;
   int? _expenseIdToShowInForm;
   FormDuty? _formDuty;
-  AuthProviderSQL? authProvider;
-
-  var _vouchersAreLoading = false;
 
   @override
   void initState() {
@@ -61,11 +59,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
 
   @override
   void didChangeDependencies() {
-    // print('ExpScreen didChange 01| run didChangeDependencies() ...');
     authProvider = Provider.of<AuthProviderSQL>(context, listen: true);
-    // print(
-    //   'ExpScreen didChange 02| authProvider.userId: ${authProvider?.userId}',
-    // );
     super.didChangeDependencies();
   }
 
@@ -75,64 +69,19 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
     return Scaffold(
       appBar: AppBar(
         title: _buildFlexibleTitle(),
-        actions: [FlexiblePopupMenuButton()],
+        actions: [
+          FlexiblePopupMenuButton(),
+        ],
       ),
       body: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // FORM
-          SecureWidget(
-            authProviderSQL: authProvider!,
-            anyPermissions: [
-              PermissionModel.EXPENDITURE_CREATE_TRANSACTION,
-              PermissionModel.EXPENDITURE_EDIT_ALL_TRANSACTION,
-              PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
-            ],
-            child: Expanded(
-              flex: 2,
-              child: ExpenditureForm(
-                key: ValueKey(redrawObject),
-                voucher: _voucherToShowInForm,
-                expenseId: _expenseIdToShowInForm,
-                formDuty: _formDuty ?? FormDuty.CREATE,
-                notifyNewVoucher: notifyNewVoucher,
-              ),
-            ),
-          ),
-          // DATA TABLE
-          Expanded(
-            flex: 8,
-            child: SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  DataTable(
-                    showCheckboxColumn: false,
-                    dataTextStyle: TextStyle(
-                      fontSize: 20,
-                      color: Colors.black,
-                    ),
-                    headingTextStyle: TextStyle(
-                      fontSize: 24,
-                      color: Colors.purple,
-                    ),
-                    sortAscending: true,
-                    dividerThickness: 2,
-                    columns: _buildTableColumns(),
-                    rows: _buildTableRows(),
-                  ),
-                  SizedBox(height: 10),
-                  _vouchersAreLoading
-                      ? Center(child: CircularProgressIndicator())
-                      : Container(),
-                ],
-              ),
-            ),
-          ),
+          _buildSecureForm(context),
+          _buildDataTable(),
         ],
       ),
     );
-  } // build
+  }
 
   Widget _buildFlexibleTitle() {
     return MultiLanguageTextWidget(
@@ -142,8 +91,62 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
     );
   }
 
+  Widget _buildSecureForm(BuildContext context) {
+    return SecureWidget(
+      authProviderSQL: authProvider!,
+      anyPermissions: [
+        PermissionModel.EXPENDITURE_CREATE_TRANSACTION,
+        PermissionModel.EXPENDITURE_EDIT_ALL_TRANSACTION,
+        PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
+      ],
+      child: Expanded(
+        flex: 2,
+        child: ExpenditureForm(
+          key: ValueKey(redrawFormObject),
+          voucher: _voucherToShowInForm,
+          expenseId: _expenseIdToShowInForm,
+          formDuty: _formDuty ?? FormDuty.CREATE,
+          notifyNewVoucher: notifyNewVoucher,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDataTable() {
+    return Expanded(
+      flex: 8,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            DataTable(
+              showCheckboxColumn: false,
+              dataTextStyle: TextStyle(
+                fontSize: 20,
+                color: Colors.black,
+              ),
+              headingTextStyle: TextStyle(
+                fontSize: 24,
+                color: Colors.purple,
+              ),
+              sortAscending: true,
+              dividerThickness: 2,
+              columns: _buildTableColumns(),
+              rows: _buildTableRows(),
+            ),
+            SizedBox(height: 10),
+            _vouchersAreLoading
+                ? Center(child: CircularProgressIndicator())
+                : Container(),
+          ],
+        ),
+      ),
+    );
+  } // build
+
   List<DataColumn> _buildTableColumns() {
     return [
+      // decide to show Edit/Delete column
       if (hasAccess(
         authProviderSQL: authProvider!,
         anyPermissions: [
@@ -199,24 +202,6 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
         ),
       )),
     ];
-  }
-
-  void notifyNewVoucher() async {
-    await reloadVouchers();
-    voucherSelectionHandler(null, null, FormDuty.CREATE);
-  }
-
-  void voucherSelectionHandler(
-    VoucherModel? voucherToShowInForm,
-    int? expenseIdToShowInForm,
-    FormDuty? duty,
-  ) {
-    setState(() {
-      _voucherToShowInForm = voucherToShowInForm;
-      _expenseIdToShowInForm = expenseIdToShowInForm;
-      _formDuty = duty;
-      redrawObject = new Object();
-    });
   }
 
   List<DataRow> _buildTableRows() {
@@ -279,6 +264,24 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       });
     });
     return dataRows;
+  }
+
+  void notifyNewVoucher() async {
+    await reloadVouchers();
+    voucherSelectionHandler(null, null, FormDuty.CREATE);
+  }
+
+  void voucherSelectionHandler(
+    VoucherModel? voucherToShowInForm,
+    int? expenseIdToShowInForm,
+    FormDuty? duty,
+  ) {
+    setState(() {
+      _voucherToShowInForm = voucherToShowInForm;
+      _expenseIdToShowInForm = expenseIdToShowInForm;
+      _formDuty = duty;
+      redrawFormObject = new Object();
+    });
   }
 
   Widget _buildEditDeleteMenu(VoucherModel? voucher, int? expId) {
@@ -431,4 +434,6 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       _vouchersAreLoading = false;
     });
   }
+
+  var _vouchersAreLoading = false;
 }
