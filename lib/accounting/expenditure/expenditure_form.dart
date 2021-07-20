@@ -238,7 +238,10 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   Widget _buildDatePickerButton(BuildContext context) {
     return OutlinedButton.icon(
       focusNode: _fields.dateFocusNode,
-      onPressed: pickDate,
+      onPressed: () {
+        pickDate();
+        FocusScope.of(context).requestFocus(_fields.dateFocusNode);
+      },
       icon: Icon(
         Icons.date_range_rounded,
         color: Theme.of(context).primaryColor,
