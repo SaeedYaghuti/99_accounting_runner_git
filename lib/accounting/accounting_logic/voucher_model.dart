@@ -143,19 +143,19 @@ class VoucherModel {
       );
     }
 
-    print(
-      'EXP_MDL 353| print all-transaction before updating voucherModel ',
-    );
-    await TransactionModel.allTransactions();
+    // print(
+    //   'EXP_MDL 353| print all-transaction before updating voucherModel ',
+    // );
+    // await TransactionModel.allTransactions();
 
-    // step #4 update voucher at db
+    // step #4 update voucher at db => it will delete all voucher-transaction
     try {
       await rVoucher._updateMeWithoutTransactionsInDB();
 
-      print(
-        'EXP_MDL 354| print all-trans after updateing voucherModel',
-      );
-      await TransactionModel.allTransactions();
+      // print(
+      //   'EXP_MDL 354| print all-trans after updateing voucherModel',
+      // );
+      // await TransactionModel.allTransactions();
     } catch (e) {
       throw LazySaeidException(
         'VM UP39| rVoucher not updated successfuly; And Saeid did not handle this situation',
@@ -163,6 +163,7 @@ class VoucherModel {
     }
 
     // step 5# remove old transactions from db: we rebuild all transaction in update
+    // it is redundent: because update-voucher will remove all voucher-transaction
     List<TransactionModel> successfullDeleted = [];
 
     for (var tran in fVoucher.transactions) {
@@ -193,10 +194,10 @@ class VoucherModel {
     // step #6 recreate new transactions
     List<TransactionModel> successTransactions = [];
 
-    print(
-      'EXP_MDL 351| all trans BEFORE adding new tran ',
-    );
-    await TransactionModel.allTransactions();
+    // print(
+    //   'EXP_MDL 351| all trans BEFORE adding new tran ',
+    // );
+    // await TransactionModel.allTransactions();
 
     for (var transaction in rVoucher.transactions) {
       try {
@@ -293,10 +294,10 @@ class VoucherModel {
     // step #5 recreate new transactions
     List<TransactionModel> successTransactions = [];
 
-    print(
-      'EXP_MDL 351| all trans BEFORE adding new tran ',
-    );
-    await TransactionModel.allTransactions();
+    // print(
+    //   'EXP_MDL 351| all trans BEFORE adding new tran ',
+    // );
+    // await TransactionModel.allTransactions();
 
     for (var transaction in rVoucher.transactions) {
       try {
@@ -336,10 +337,10 @@ class VoucherModel {
       }
     }
 
-    print(
-      'EXP_MDL 353| all trans AFTER adding new trans ',
-    );
-    await TransactionModel.allTransactions();
+    // print(
+    //   'EXP_MDL 353| all trans AFTER adding new trans ',
+    // );
+    // await TransactionModel.allTransactions();
 
     // step #6 update voucher at db
     try {
@@ -351,10 +352,10 @@ class VoucherModel {
       //   'EXP_MDL| updateVoucher step #6 |rVoucher after update: $rVoucher',
       // );
 
-      print(
-        'EXP_MDL 354| all trans after update rVoucher',
-      );
-      await TransactionModel.allTransactions();
+      // print(
+      //   'EXP_MDL 354| all trans after update rVoucher',
+      // );
+      // await TransactionModel.allTransactions();
     } catch (e) {
       throw LazySaeidException(
         'VM UP39| rVoucher not updated successfuly; And Saeid did not handle this situation',

@@ -78,10 +78,10 @@ class TransactionModel {
     }
     final query = '''
     DELETE FROM $transactionTableName
-    WHERE $column1Id = $id ;
+    WHERE $column1Id = ? ;
     ''';
-    var count = await AccountingDB.deleteRawQuery(query);
-    print('TM10| DELETE $id; count: $count');
+    var count = await AccountingDB.deleteRawQuery(query, [id]);
+    // print('TRN_MDL 10| DELETE $id; result: $count');
     return count;
   }
 

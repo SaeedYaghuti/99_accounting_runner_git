@@ -201,8 +201,9 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
     ];
   }
 
-  void notifyNewVoucher() {
-    reloadVouchers();
+  void notifyNewVoucher() async {
+    await reloadVouchers();
+    voucherSelectionHandler(null, null, FormDuty.CREATE);
   }
 
   void voucherSelectionHandler(
@@ -386,7 +387,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
         noTitle: 'No',
         yesTitle: 'Delete it!',
       );
-      print('ES 70| confirmResult: $confirmResult');
+      // print('ES 70| confirmResult: $confirmResult');
       if (confirmResult == true) {
         voucherSelectionHandler(
           voucher,
@@ -399,7 +400,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
     }
   }
 
-  void reloadVouchers() async {
+  Future<void> reloadVouchers() async {
     try {
       _vouchersLoadingStart();
       var fetchedVouchers = await ExpenditureModel.expenditureVouchers();

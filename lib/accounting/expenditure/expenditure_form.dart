@@ -75,12 +75,12 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   void initStateDelete() {
-    print('EF | init_state | form rebuild for DELETE');
+    // print('EF | init_state | form rebuild for DELETE');
     if (widget.voucher == null) return;
     loadingStart();
     widget.voucher!.deleteMeFromDB().then((deleteResult) {
       loadingEnd();
-      print('EF 66| deleteResult: $deleteResult');
+      // print('EF 66| deleteResult: $deleteResult');
       widget.notifyNewVoucher();
     }).catchError((e) {
       loadingEnd();
@@ -165,18 +165,9 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
               SizedBox(height: 20, width: 20),
               _buildSubmitButtons(context),
               SizedBox(height: 20, width: 20),
-              TextButton(
-                onPressed: () {
-                  AccountingDB.deleteDB();
-                  AuthDB.deleteDB();
-                },
-                child: Text('DELETE DB'),
-              ),
+              _buildDeleteDB(context),
               SizedBox(height: 20, width: 20),
-              TextButton(
-                onPressed: runCode,
-                child: Text('RUN QUERY'),
-              ),
+              _buildRunCode(context),
             ],
           ),
         ),
@@ -287,11 +278,11 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
               context,
               'Save Changes',
               Colors.green,
-              () async {
+              () {
                 _saveForm(
-                  () {
+                  () async {
                     try {
-                      ExpenditureModel.updateVoucher(
+                      await ExpenditureModel.updateVoucher(
                         widget.voucher!,
                         _fields,
                       );
@@ -329,6 +320,23 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       default:
         throw NotHandledException('EF 40| _buildSubmitButtons');
     }
+  }
+
+  Widget _buildDeleteDB(BuildContext context) {
+    return TextButton(
+      onPressed: () {
+        AccountingDB.deleteDB();
+        AuthDB.deleteDB();
+      },
+      child: Text('DELETE DB'),
+    );
+  }
+
+  Widget _buildRunCode(BuildContext context) {
+    return TextButton(
+      onPressed: runCode,
+      child: Text('RUN QUERY'),
+    );
   }
 
   Future<void> _saveForm(Function dbOperationHandler) async {
@@ -419,9 +427,9 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
                   ACCOUNTS_ID.LEDGER_ACCOUNT_ID,
                 ],
                 tapHandler: (AccountModel tappedAccount) {
-                  print(
-                    'ExpForm paidBy tapHandler| tapped of ${tappedAccount.titleEnglish}',
-                  );
+                  // print(
+                  //   'ExpForm paidBy tapHandler| tapped of ${tappedAccount.titleEnglish}',
+                  // );
                   Navigator.of(context).pop();
                   setState(() {
                     _fields.paidBy = tappedAccount;
@@ -584,7 +592,8 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       ],
       tapHandler: (AccountModel tappedAccount) {
         print(
-            'ExpForm paidBy tapHandler| tapped of ${tappedAccount.titleEnglish}');
+          'ExpForm paidBy tapHandler| tapped of ${tappedAccount.titleEnglish}',
+        );
       },
     );
     // return Column(
