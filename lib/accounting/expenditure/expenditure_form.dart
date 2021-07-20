@@ -135,6 +135,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   @override
   void didChangeDependencies() {
     authProviderSQL = Provider.of<AuthProviderSQL>(context, listen: true);
+    _fields.authId = authProviderSQL.authId;
     super.didChangeDependencies();
   }
 
@@ -285,6 +286,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
                       await ExpenditureModel.updateVoucher(
                         widget.voucher!,
                         _fields,
+                        authProviderSQL.authId!,
                       );
                     } catch (e) {
                       showErrorDialog(

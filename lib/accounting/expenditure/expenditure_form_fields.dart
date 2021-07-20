@@ -15,12 +15,14 @@ class ExpenditurFormFields {
   TextEditingController noteController = TextEditingController();
 
   int? id;
+  int? authId;
   AccountModel? paidBy;
   late ExpenditureTag expenditureTag;
   DateTime? date;
 
   ExpenditurFormFields({
     int? id,
+    int? authId,
     double? amount,
     AccountModel? paidBy,
     String? note,
@@ -28,6 +30,7 @@ class ExpenditurFormFields {
     DateTime? date,
   }) {
     this.id = id;
+    this.authId = authId;
     this.amount = amount;
     this.note = note;
     this.paidBy = paidBy;

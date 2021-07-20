@@ -48,7 +48,7 @@ class AuthProviderSQL with ChangeNotifier {
     notifyListeners();
   }
 
-  int? get userId {
+  int? get authId {
     return _auth?.id;
   }
 

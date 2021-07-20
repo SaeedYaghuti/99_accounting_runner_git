@@ -23,7 +23,7 @@ class _CategoriesOverviewScreenState extends State<CategoriesOverviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print('CATG_OVW_SCR | build() 01| run ...');
+    // print('CATG_OVW_SCR | build() 01| run ...');
     var environmenProvider = Provider.of<EnvironmentProvider>(
       context,
       listen: true,

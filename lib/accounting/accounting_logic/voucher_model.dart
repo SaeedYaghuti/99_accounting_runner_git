@@ -3,6 +3,7 @@ import 'package:shop/accounting/accounting_logic/transaction_feed.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_feed.dart';
 import 'package:shop/accounting/accounting_logic/voucher_number_model.dart';
+import 'package:shop/auth/auth_model_sql.dart';
 import 'package:shop/exceptions/DBException.dart';
 import 'package:shop/exceptions/curropted_input.dart';
 import 'package:shop/exceptions/db_operation.dart';
@@ -14,14 +15,15 @@ import 'package:shop/shared/seconds_of_time.dart';
 
 class VoucherModel {
   int? id;
+  final int creatorId;
   final int voucherNumber;
   final DateTime date;
   final String note;
   List<TransactionModel?> transactions = [];
-  // final int userId;
 
   VoucherModel({
     this.id,
+    required this.creatorId,
     required this.voucherNumber,
     required this.date,
     this.note = '',
@@ -30,7 +32,7 @@ class VoucherModel {
   static Future<void> createVoucher(
     VoucherFeed voucherFeed,
     List<TransactionFeed> transactionFeeds,
-    // String creatorId,
+    int creatorId,
   ) async {
     // step 0# if creator hasAccess to create voucher
     // we should check transactionFeeds accountId
@@ -59,6 +61,7 @@ class VoucherModel {
 
     // step 3# create voucher
     VoucherModel voucher = VoucherModel(
+      creatorId: creatorId,
       voucherNumber: voucherNumber,
       date: voucherFeed.date,
       note: _makeVoucherNote(transactionFeeds),
@@ -288,7 +291,10 @@ class VoucherModel {
 
   static Future<List<VoucherModel>> accountVouchers(
     String accountId,
+    // int clientId,
   ) async {
+    // check client permissions
+    // from accountId => take requiredPerm and check if client has perm or not
     final query = '''
     SELECT 
       $column1Id,
@@ -523,6 +529,8 @@ class VoucherModel {
   static const String column2VoucherNumber = 'voucherNumber';
   static const String column3Date = 'vch_date';
   static const String column4Note = 'vch_note';
+  static const String column5CreatorId = 'vch_creator_id';
+
   // static const String column5Transactions = 'transactions';
 
   static const String QUERY_CREATE_VOUCHER_TABLE =
@@ -530,7 +538,9 @@ class VoucherModel {
       $column1Id INTEGER PRIMARY KEY, 
       $column2VoucherNumber INTEGER NOT NULL, 
       $column3Date INTEGER  NOT NULL, 
-      $column4Note TEXT
+      $column4Note TEXT,
+      $column5CreatorId INTEGER NOT NULL, 
+      CONSTRAINT fk_${AuthModel.authTableName} FOREIGN KEY ($column5CreatorId) REFERENCES ${AuthModel.authTableName} (${AuthModel.column1Id}) ON DELETE NO ACTION
     )''';
 
   Map<String, Object> _toMapForDB() {
@@ -542,6 +552,7 @@ class VoucherModel {
         // column3Date: date.millisecondsSinceEpoch,
         column3Date: seconsdOfDateTime(date),
         column4Note: note,
+        column5CreatorId: creatorId,
       };
     } else {
       return {
@@ -549,6 +560,7 @@ class VoucherModel {
         column2VoucherNumber: voucherNumber,
         column3Date: seconsdOfDateTime(date),
         column4Note: note,
+        column5CreatorId: creatorId,
       };
     }
   }
@@ -561,6 +573,7 @@ class VoucherModel {
 
     var voucher = VoucherModel(
       id: voucherMap[VoucherModel.column1Id] as int,
+      creatorId: voucherMap[VoucherModel.column5CreatorId] as int,
       voucherNumber: voucherMap[VoucherModel.column2VoucherNumber] as int,
       date: secondsToDateTime(
         voucherMap[VoucherModel.column3Date] as int,
@@ -575,7 +588,7 @@ class VoucherModel {
 
   String toString() {
     return '''
-    voucherId: $id, voucherNumber: $voucherNumber,
+    voucherId: $id, creatorId: $creatorId , voucherNumber: $voucherNumber,
     voucherNote: $note, voucherDate: ${date.day}/${date.month}/${date.year},
     # transactions:
     $transactions,

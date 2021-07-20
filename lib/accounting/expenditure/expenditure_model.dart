@@ -30,6 +30,7 @@ class ExpenditureModel {
         transactionFeedDebit,
         transactionFeedCredit,
       ],
+      fields.authId!,
     );
   }
 
@@ -40,6 +41,7 @@ class ExpenditureModel {
   static Future<void> updateVoucher(
     VoucherModel oldVoucher,
     ExpenditurFormFields fields,
+    int authId,
   ) async {
     // print('EXP_MDL updateVoucher()| 01 | oldVoucher: $oldVoucher');
     // print('EXP_MDL updateVoucher()| 02 | fields: $fields');
@@ -54,6 +56,7 @@ class ExpenditureModel {
 
     VoucherModel newVoucher = VoucherModel(
       id: oldVoucher.id,
+      creatorId: authId,
       voucherNumber: oldVoucher.voucherNumber,
       date: fields.date!,
       note: '${fields.paidBy!.titleEnglish} paid for Expenditure',
