@@ -216,7 +216,10 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   Widget _buildPaidBy(BuildContext context) {
     return OutlinedButton.icon(
       focusNode: _fields.paidByFocusNode,
-      onPressed: _pickAccount,
+      onPressed: () {
+        _pickAccount();
+        FocusScope.of(context).requestFocus(_fields.dateFocusNode);
+      },
       icon: Icon(
         Icons.account_balance_outlined,
         color: Theme.of(context).primaryColor,
