@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
+import 'package:shop/accounting/accounting_logic/run_code.dart'
+    as AccountRunCode;
+import 'package:shop/auth/run_code.dart' as AuthRunCode;
 import 'package:shop/accounting/common/multi_language_text_widget.dart';
 import 'package:shop/auth/auth_db_helper.dart';
 import 'package:shop/auth/firebase/auth_provider.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
-import 'package:shop/auth/run_code.dart';
 import 'package:shop/constants.dart';
 import 'package:shop/shared/storage_type.dart';
 
@@ -46,29 +48,56 @@ class CategoriesDrawer extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.code_rounded),
             title: MultiLanguageTextWidget(
-              english: 'Run Code',
+              english: 'Run Accounting Code',
               persian: 'اجراى كد',
               arabic: "اجراي كد",
             ),
             onTap: () {
               Navigator.of(context).pop();
               Navigator.of(context).pushReplacementNamed('/');
-              runCode();
+              AccountRunCode.runCode();
+            },
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.code_rounded),
+            title: MultiLanguageTextWidget(
+              english: 'Run Auth Code',
+              persian: 'اجراى كد',
+              arabic: "اجراي كد",
+            ),
+            onTap: () {
+              Navigator.of(context).pop();
+              Navigator.of(context).pushReplacementNamed('/');
+              AuthRunCode.runCode(context);
             },
           ),
           Divider(),
           ListTile(
             leading: Icon(Icons.storage_rounded),
             title: MultiLanguageTextWidget(
-              english: 'Delete Database',
+              english: 'Delete Auth Database',
               persian: 'حذف ديتابيس',
               arabic: "حذف ديتابيس",
             ),
-            onTap: () {
+            onTap: () async {
               Navigator.of(context).pop();
               Navigator.of(context).pushReplacementNamed('/');
-              AccountingDB.deleteDB();
-              AuthDB.deleteDB();
+              await AuthDB.deleteDB();
+            },
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.storage_outlined),
+            title: MultiLanguageTextWidget(
+              english: 'Delete Account Database',
+              persian: 'حذف ديتابيس',
+              arabic: "حذف ديتابيس",
+            ),
+            onTap: () async {
+              Navigator.of(context).pop();
+              Navigator.of(context).pushReplacementNamed('/');
+              await AccountingDB.deleteDB();
             },
           ),
           Divider(),

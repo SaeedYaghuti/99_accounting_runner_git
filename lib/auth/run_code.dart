@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
@@ -6,7 +8,10 @@ import 'package:shop/auth/auth_permission_model.dart';
 import 'package:shop/auth/permission_model.dart';
 import 'package:shop/constants.dart';
 
-void runCode() async {
+import 'auth_provider_sql.dart';
+
+void runCode(BuildContext context) async {
+  var authProvider = Provider.of<AuthProviderSQL>(context, listen: false);
   // await VoucherModel.fetchAllVouchers();
   // await TransactionModel.allTransactions();
   // await TransactionModel.allTranJoinVch();
@@ -30,10 +35,12 @@ void runCode() async {
   //     PermissionModel.EXPENDITURE_CREATE_TRANSACTION,
   //   ],
   // );
-  // AuthPermissionModel.givePermissionToAuth(
-  //   2,
-  //   PermissionModel.EXPENDITURE_CATEGORY,
-  // );
+  await AuthPermissionModel.givePermissionToAuth(
+    2,
+    // PermissionModel.EXPENDITURE_CATEGORY,
+    PermissionModel.ACCOUNT_CATEGORY,
+  );
+  authProvider.notifyAuthChanged();
 
   AuthPermissionModel.printAllAuthPermissions(2);
 

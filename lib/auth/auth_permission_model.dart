@@ -66,6 +66,8 @@ class AuthPermissionModel {
     String permissionId,
   ) async {
     try {
+      // INSERT OR REPLACE INTO $tableName ($column2AuthId, $column3PermissionId)
+      // INSERT INTO $tableName ($column2AuthId, $column3PermissionId)
       var query = ''' 
         INSERT OR REPLACE INTO $tableName ($column2AuthId, $column3PermissionId)
         VALUES ($authId, '$permissionId');

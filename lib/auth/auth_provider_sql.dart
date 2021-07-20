@@ -18,6 +18,10 @@ class AuthProviderSQL with ChangeNotifier {
     notifyListeners();
   }
 
+  void notifyAuthChanged() {
+    notifyListeners();
+  }
+
   bool isPermitted(String permissionId) {
     // print('ATHPr isPermitted 01| recived $permissionId');
     if (_auth == null) return false;
