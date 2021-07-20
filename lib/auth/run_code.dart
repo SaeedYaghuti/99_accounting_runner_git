@@ -21,15 +21,21 @@ void runCode() async {
   // var result = await auth.validateUser(SAEIDEMAIL, SAEIDPASSWORD);
   // var isPermitted = auth.hasPermission(PermissionModel.EXPENDITURE_CATEGORY);
   // print('auth runCode 01| isPermitted: $isPermitted');
-  AuthModel.printAllAuth();
-  // AuthPermissionModel.printAllAuthPermissions();
-  AuthPermissionModel.givePermissionsToAuth(
-    2,
-    [
-      PermissionModel.EXPENDITURE_CATEGORY,
-      PermissionModel.EXPENDITURE_CREATE_TRANSACTION,
-    ],
-  );
+  // AuthModel.printAllAuth();
+  AuthPermissionModel.printAllAuthPermissions(2);
+  // AuthPermissionModel.givePermissionsToAuth(
+  //   2,
+  //   [
+  //     PermissionModel.EXPENDITURE_CATEGORY,
+  //     PermissionModel.EXPENDITURE_CREATE_TRANSACTION,
+  //   ],
+  // );
+  // AuthPermissionModel.givePermissionToAuth(
+  //   2,
+  //   PermissionModel.EXPENDITURE_CATEGORY,
+  // );
+
+  AuthPermissionModel.printAllAuthPermissions(2);
 
   // var muscatTrandCreate = PermissionModel(
   //   id: 'MUSCAT_CREATE_TRANSACTION',

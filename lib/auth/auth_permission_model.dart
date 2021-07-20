@@ -61,6 +61,22 @@ class AuthPermissionModel {
     }
   }
 
+  static Future<void> givePermissionToAuth(
+    int authId,
+    String permissionId,
+  ) async {
+    try {
+      var query = ''' 
+        INSERT OR REPLACE INTO $tableName ($column2AuthId, $column3PermissionId)
+        VALUES ($authId, '$permissionId');
+        ''';
+      await AuthDB.runRawQuery(query);
+    } catch (e) {
+      print('AuthPerm perm_first_auth 01| e: $e');
+      throw e;
+    }
+  }
+
   static Future<void> givePermissionsToAuth(
     int authId,
     List<String> permissionIds,
@@ -79,15 +95,43 @@ class AuthPermissionModel {
     }
   }
 
-  static Future<void> printAllAuthPermissions() async {
-    final query = '''
-    SELECT *
-    FROM $tableName
-    ''';
+  static Future<void> resetAuthPermissions(
+    int authId,
+    List<String> permissionIds,
+  ) async {
+    try {
+      for (var permId in permissionIds) {
+        var authPerm = AuthPermissionModel(
+          authId: authId,
+          permissionId: permId,
+        );
+        await AuthDB.insert(tableName, authPerm.toMap());
+      }
+    } catch (e) {
+      print('AuthPerm give_perms_to_auth 01| e: $e');
+      throw e;
+    }
+  }
+
+  static Future<void> printAllAuthPermissions([int? authId]) async {
+    var query = '''
+      SELECT *
+      FROM $tableName
+      ''';
+
+    if (authId != null) {
+      query = '''
+        SELECT *
+        FROM $tableName
+        WHERE $column2AuthId = $authId
+        ''';
+    }
+
     var authPermsMap = await AuthDB.runRawQuery(query);
 
     print('ATH_PERM_MDL printAllAuthPERM 01| All DB AuthPerms: ###########');
     print(authPermsMap.length);
+    print(authPermsMap);
     print('##################');
   }
 
@@ -104,7 +148,8 @@ class AuthPermissionModel {
     $column2AuthId INTEGER NOT NULL, 
     $column3PermissionId TEXT NOT NULL,
     CONSTRAINT fk_${AuthModel.authTableName} FOREIGN KEY ($column2AuthId) REFERENCES ${AuthModel.authTableName} (${AuthModel.column1Id}) ON DELETE NO ACTION,
-    CONSTRAINT fk_${PermissionModel.tableName} FOREIGN KEY ($column3PermissionId) REFERENCES ${PermissionModel.tableName} (${PermissionModel.column1Id}) ON DELETE CASCADE
+    CONSTRAINT fk_${PermissionModel.tableName} FOREIGN KEY ($column3PermissionId) REFERENCES ${PermissionModel.tableName} (${PermissionModel.column1Id}) ON DELETE CASCADE,
+    CONSTRAINT uq_permission UNIQUE ($column2AuthId, $column3PermissionId)
   )''';
 
   static AuthPermissionModel fromMapOfAuthPermission(

@@ -4,7 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shop/auth/auth_mode.dart';
+import 'package:shop/auth/signin_type.dart';
 import 'package:shop/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -18,12 +18,12 @@ class AuthProvider with ChangeNotifier {
   Future<void> _authenticate(
     String email,
     String password,
-    AuthMode mode,
+    SigninType mode,
   ) async {
     Uri? url;
-    if (mode == AuthMode.Signup) {
+    if (mode == SigninType.Signup) {
       url = Uri.parse(firebaseSignupNewUser);
-    } else if (mode == AuthMode.Login) {
+    } else if (mode == SigninType.Login) {
       url = Uri.parse(firebaseSignin);
     }
 
@@ -66,11 +66,11 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> signup(String email, String password) async {
-    return _authenticate(email, password, AuthMode.Signup);
+    return _authenticate(email, password, SigninType.Signup);
   }
 
   Future<void> login(String email, String password) async {
-    return _authenticate(email, password, AuthMode.Login);
+    return _authenticate(email, password, SigninType.Login);
   }
 
   Future<void> logout() async {

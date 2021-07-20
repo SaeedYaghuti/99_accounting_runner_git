@@ -6,7 +6,7 @@ import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/constants.dart';
 import 'package:shop/exceptions/unique_constraint_exception.dart';
 
-import 'auth_mode.dart';
+import 'signin_type.dart';
 // import 'auth_provider.dart';
 
 class AuthFormSQL extends StatefulWidget {
@@ -20,7 +20,7 @@ class AuthFormSQL extends StatefulWidget {
 
 class _AuthFormSQLState extends State<AuthFormSQL> {
   final GlobalKey<FormState> _formKey = GlobalKey();
-  AuthMode _authMode = AuthMode.Login;
+  SigninType _authMode = SigninType.Login;
   Map<String, String> _authData = {
     'email': '',
     'password': '',
@@ -43,9 +43,9 @@ class _AuthFormSQLState extends State<AuthFormSQL> {
       ),
       elevation: 8.0,
       child: Container(
-        height: _authMode == AuthMode.Signup ? 320 : 260,
-        constraints:
-            BoxConstraints(minHeight: _authMode == AuthMode.Signup ? 320 : 260),
+        height: _authMode == SigninType.Signup ? 320 : 260,
+        constraints: BoxConstraints(
+            minHeight: _authMode == SigninType.Signup ? 320 : 260),
         width: deviceSize.width * 0.75,
         padding: EdgeInsets.all(16.0),
         child: Form(
@@ -55,7 +55,8 @@ class _AuthFormSQLState extends State<AuthFormSQL> {
               children: <Widget>[
                 _buildEmailFeild(),
                 _buildPasswordField(),
-                if (_authMode == AuthMode.Signup) _buildConformPasswordField(),
+                if (_authMode == SigninType.Signup)
+                  _buildConformPasswordField(),
                 SizedBox(height: 20),
                 if (_isLoading)
                   CircularProgressIndicator()
@@ -105,11 +106,11 @@ class _AuthFormSQLState extends State<AuthFormSQL> {
 
   TextFormField _buildConformPasswordField() {
     return TextFormField(
-      enabled: _authMode == AuthMode.Signup,
+      enabled: _authMode == SigninType.Signup,
       decoration: InputDecoration(labelText: 'Confirm Password'),
       initialValue: SAEIDPASSWORD,
       obscureText: true,
-      validator: _authMode == AuthMode.Signup
+      validator: _authMode == SigninType.Signup
           ? (value) {
               if (value != _passwordController.text) {
                 return 'Passwords do not match!';
@@ -121,7 +122,7 @@ class _AuthFormSQLState extends State<AuthFormSQL> {
 
   RaisedButton _buildSigninLoginButton(BuildContext context) {
     return RaisedButton(
-      child: Text(_authMode == AuthMode.Login ? 'LOGIN' : 'SIGN UP'),
+      child: Text(_authMode == SigninType.Login ? 'LOGIN' : 'SIGN UP'),
       onPressed: _submit,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30),
@@ -135,7 +136,7 @@ class _AuthFormSQLState extends State<AuthFormSQL> {
   FlatButton _buildSwitchButton(BuildContext context) {
     return FlatButton(
       child:
-          Text('${_authMode == AuthMode.Login ? 'SIGNUP' : 'LOGIN'} INSTEAD'),
+          Text('${_authMode == SigninType.Login ? 'SIGNUP' : 'LOGIN'} INSTEAD'),
       onPressed: _switchAuthMode,
       padding: EdgeInsets.symmetric(horizontal: 30.0, vertical: 4),
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
@@ -149,7 +150,7 @@ class _AuthFormSQLState extends State<AuthFormSQL> {
     _formKey.currentState!.save();
     _startLoading();
     try {
-      if (_authMode == AuthMode.Login) {
+      if (_authMode == SigninType.Login) {
         await Provider.of<AuthProviderSQL>(context, listen: false).login(
           _authData['email']!,
           _authData['password']!,
@@ -210,13 +211,13 @@ class _AuthFormSQLState extends State<AuthFormSQL> {
   }
 
   void _switchAuthMode() {
-    if (_authMode == AuthMode.Login) {
+    if (_authMode == SigninType.Login) {
       setState(() {
-        _authMode = AuthMode.Signup;
+        _authMode = SigninType.Signup;
       });
     } else {
       setState(() {
-        _authMode = AuthMode.Login;
+        _authMode = SigninType.Login;
       });
     }
   }
