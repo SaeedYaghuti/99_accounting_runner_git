@@ -42,7 +42,8 @@ Future<void> runCode(BuildContext context) async {
     // PermissionModel.ITEM_CATEGORY,
     // PermissionModel.REPORT_CATEGORY,
     // PermissionModel.PURCHAS_CATEGORY,
-    PermissionModel.SELL_POINT_CATEGORY,
+    // PermissionModel.SELL_POINT_CATEGORY,
+    PermissionModel.EXPENDITURE_CREATE_TRANSACTION,
   );
 
   authProvider.notifyAuthChanged();
