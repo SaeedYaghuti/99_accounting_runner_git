@@ -143,6 +143,125 @@ class VoucherModel {
       );
     }
 
+    print(
+      'EXP_MDL 353| print all-transaction before updating voucherModel ',
+    );
+    await TransactionModel.allTransactions();
+
+    // step #4 update voucher at db
+    try {
+      await rVoucher._updateMeWithoutTransactionsInDB();
+
+      print(
+        'EXP_MDL 354| print all-trans after updateing voucherModel',
+      );
+      await TransactionModel.allTransactions();
+    } catch (e) {
+      throw LazySaeidException(
+        'VM UP39| rVoucher not updated successfuly; And Saeid did not handle this situation',
+      );
+    }
+
+    // step 5# remove old transactions from db: we rebuild all transaction in update
+    List<TransactionModel> successfullDeleted = [];
+
+    for (var tran in fVoucher.transactions) {
+      if (tran == null) break;
+      try {
+        await tran.deleteMeFromDB();
+        successfullDeleted.add(tran);
+      } catch (e) {
+        // if couldn't delete any tran we should recreate deleted tran
+        try {
+          for (var transaction in successfullDeleted) {
+            if (transaction == null) break;
+            await tran.insertMeIntoDB();
+          }
+          throw DBOperationException(
+            'VM 35| unsuccessful update vouchr: ${fVoucher.id}! there is no dirty data in db',
+          );
+        } catch (e) {
+          // do log
+          // ...
+          throw DirtyDatabaseException(
+            'VM 34| There is Dirty transaction in vouchr: ${fVoucher.id}',
+          );
+        }
+      }
+    }
+
+    // step #6 recreate new transactions
+    List<TransactionModel> successTransactions = [];
+
+    print(
+      'EXP_MDL 351| all trans BEFORE adding new tran ',
+    );
+    await TransactionModel.allTransactions();
+
+    for (var transaction in rVoucher.transactions) {
+      try {
+        var insertID = await transaction!.insertMeIntoDB();
+
+        // var newTran = await TransactionModel.transactionById(insertID);
+        // print(
+        //   'EXP_MDL 350| updateVoucher step #6 |rebuild transaction | insertID: $insertID, transaction: $newTran',
+        // );
+        successTransactions.add(transaction);
+      } catch (e) {
+        print(
+          'EXP_MDL 351| updateVoucher step #6 |@ catch | while rebuild transaction e: $e',
+        );
+        // unable to build all new transactions:
+        try {
+          // step #a delete successTransactions
+          for (var transaction in successTransactions) {
+            await transaction.deleteMeFromDB();
+          }
+          // step #b recreate old transactions
+          for (var transaction in fVoucher.transactions) {
+            await transaction!.insertMeIntoDB();
+          }
+
+          // strp #c notify update problem; without dirty data
+          throw DBOperationException(
+            'VM 36| unsuccessful update vouchr: ${fVoucher.id}! there is no dirty data in db',
+          );
+        } catch (e) {
+          // we have dirty data in voucher or transactions
+          // do log at error_log ...
+          throw DirtyDatabaseException(
+            'V_MG 35| We have dirty data at voucher ${rVoucher.id}',
+          );
+        }
+      }
+    }
+  }
+
+  static Future<void> updateVoucher0(VoucherModel rVoucher) async {
+    // step 1# validate amount
+    if (!_validateTransactionModelsAmount(rVoucher.transactions)) {
+      throw ValidationException(
+        'V_MG 30| amount in transactionFeeds are not valid',
+      );
+    }
+    if (rVoucher.id == null || rVoucher.voucherNumber == null) {
+      throw CurroptedInputException('VM 31| rVoucher is not valid voucher!');
+    }
+
+    // step 2# fetch voucher by id
+    var fVoucher = await VoucherModel.fetchVoucherById(rVoucher.id!);
+
+    // step 3# chack validity
+    if (fVoucher == null) {
+      throw CurroptedInputException(
+          'VM 32| there is not voucher in db with id ${rVoucher.id}!');
+    }
+    if (fVoucher.voucherNumber != rVoucher.voucherNumber) {
+      throw CurroptedInputException(
+        'VM 33| there is not voucher in db with id:${rVoucher.id} and voucherNumber: ${rVoucher.voucherNumber}; voucherNumber could not be updated!',
+      );
+    }
+
     // step 4# remove old transactions from db: we rebuild all transaction in update
     List<TransactionModel> successfullDeleted = [];
 
