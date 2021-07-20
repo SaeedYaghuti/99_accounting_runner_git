@@ -295,6 +295,10 @@ class VoucherModel {
   ) async {
     // check client permissions
     // from accountId => take requiredPerm and check if client has perm or not
+    // ...
+    // ...
+    // ...
+
     final query = '''
     SELECT 
       $column1Id,
