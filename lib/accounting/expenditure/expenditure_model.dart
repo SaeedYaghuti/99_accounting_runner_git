@@ -34,8 +34,11 @@ class ExpenditureModel {
     );
   }
 
-  static Future<List<VoucherModel>> expenditureVouchers() {
-    return VoucherModel.accountVouchers(ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID);
+  static Future<List<VoucherModel?>> expenditureVouchers(int authId) {
+    return VoucherModel.accountVouchers(
+      ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
+      authId,
+    );
   }
 
   static Future<void> updateVoucher(

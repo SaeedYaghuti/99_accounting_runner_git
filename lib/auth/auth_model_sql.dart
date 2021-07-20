@@ -117,6 +117,28 @@ class AuthModel {
     );
   }
 
+  static Future<bool> existAuth(int authId) async {
+    final query = '''
+    SELECT *
+    FROM $authTableName
+    WHERE $column1Id = ?
+    ''';
+    var authesMap = await AuthDB.runRawQuery(query, [authId]);
+
+    if (authesMap.isEmpty) return false;
+
+    if (authesMap.length > 1) {
+      throw DirtyDatabaseException(
+        'AUTH fuserByid 01| there is more than one row with id: $authId',
+      );
+    }
+
+    if (authesMap.length == 1) {
+      return true;
+    }
+    return false;
+  }
+
   Future<ResultStatus> _fetchUserByIdAndSetAuth(int userId) async {
     final query = '''
     SELECT *

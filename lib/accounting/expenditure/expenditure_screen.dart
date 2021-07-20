@@ -38,28 +38,31 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
 
   @override
   void initState() {
-    _vouchersLoadingStart();
-    ExpenditureModel.expenditureVouchers().then(
-      (voucherResults) {
-        _vouchersLoadingEnd();
-        vouchers = voucherResults;
-      },
-    ).catchError((e) {
-      _vouchersLoadingEnd();
-      showErrorDialog(
-        context,
-        'ExpenditurDataTable',
-        '@initState() #allExpences()',
-        e,
-      );
-      print(e.toString());
-    });
     super.initState();
   }
 
   @override
   void didChangeDependencies() {
     authProvider = Provider.of<AuthProviderSQL>(context, listen: true);
+    _vouchersLoadingStart();
+    ExpenditureModel.expenditureVouchers(authProvider!.authId!).then(
+      (voucherResults) {
+        _vouchersLoadingEnd();
+        if (voucherResults == null || voucherResults.isEmpty) {
+          return;
+        }
+        vouchers = voucherResults.cast<VoucherModel>();
+      },
+    ).catchError((e) {
+      _vouchersLoadingEnd();
+      showErrorDialog(
+        context,
+        'ExpenditurScreen',
+        '@initState() #allExpences() EXP_SCR 01',
+        e,
+      );
+      print(e.toString());
+    });
     super.didChangeDependencies();
   }
 
@@ -405,17 +408,21 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
   Future<void> reloadVouchers() async {
     try {
       _vouchersLoadingStart();
-      var fetchedVouchers = await ExpenditureModel.expenditureVouchers();
-      setState(() {
-        vouchers = fetchedVouchers;
-      });
+      var fetchedVouchers =
+          await ExpenditureModel.expenditureVouchers(authProvider!.authId!);
+
+      if (fetchedVouchers != null || fetchedVouchers.isNotEmpty) {
+        setState(() {
+          vouchers = fetchedVouchers.cast<VoucherModel>();
+        });
+      }
       _vouchersLoadingEnd();
     } catch (e) {
       _vouchersLoadingEnd();
       showErrorDialog(
         context,
-        'ExpenditurDataTable',
-        '@initState() #allExpences()',
+        'ExpenditurScreen',
+        '@reloadVouchers()',
         e,
       );
       print(e.toString());

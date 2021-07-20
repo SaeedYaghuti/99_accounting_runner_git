@@ -32,7 +32,7 @@ class VoucherModel {
   static Future<void> createVoucher(
     VoucherFeed voucherFeed,
     List<TransactionFeed> transactionFeeds,
-    int creatorId,
+    int authId,
   ) async {
     // step 0# if creator hasAccess to create voucher
     // we should check transactionFeeds accountId
@@ -61,7 +61,7 @@ class VoucherModel {
 
     // step 3# create voucher
     VoucherModel voucher = VoucherModel(
-      creatorId: creatorId,
+      creatorId: authId,
       voucherNumber: voucherNumber,
       date: voucherFeed.date,
       note: _makeVoucherNote(transactionFeeds),
@@ -289,9 +289,9 @@ class VoucherModel {
     return debitIds.join(', ');
   }
 
-  static Future<List<VoucherModel>> accountVouchers(
+  static Future<List<VoucherModel?>> accountVouchers(
     String accountId,
-    // int clientId,
+    int authId,
   ) async {
     // check client permissions
     // from accountId => take requiredPerm and check if client has perm or not
@@ -300,7 +300,8 @@ class VoucherModel {
       $column1Id,
       $column2VoucherNumber,
       $column3Date,
-      $column4Note
+      $column4Note,
+      $column5CreatorId
     FROM 
       $voucherTableName 
     LEFT JOIN 
@@ -331,10 +332,19 @@ class VoucherModel {
   Future<int> _insertMeInDB() async {
     // do some logic on variables
     // ...
+    // step #1 do we have such creatorId in auth-db ?
+    var existAuth = await AuthModel.existAuth(creatorId);
+
+    if (!existAuth) {
+      print(
+        'VCH_MDL | _insertMeInDB() 01| creatorId: $creatorId dose not exist in AuthDB',
+      );
+      return 0;
+    }
     var map = this._toMapForDB();
-    // print('VM10| map: $map');
+    // print('VCH_MDL | _insertMeInDB() 02| map to insert in db: $map');
     id = await AccountingDB.insert(voucherTableName, map);
-    // print('VM10| insertMeInDB() id: $id');
+    // print('VCH_MDL | _insertMeInDB() 03| insert id: $id');
     return id!;
   }
 
@@ -539,17 +549,17 @@ class VoucherModel {
       $column2VoucherNumber INTEGER NOT NULL, 
       $column3Date INTEGER  NOT NULL, 
       $column4Note TEXT,
-      $column5CreatorId INTEGER NOT NULL, 
-      CONSTRAINT fk_${AuthModel.authTableName} FOREIGN KEY ($column5CreatorId) REFERENCES ${AuthModel.authTableName} (${AuthModel.column1Id}) ON DELETE NO ACTION
+      $column5CreatorId INTEGER NOT NULL
     )''';
+  // because auth and voucher there are in seperate db we can not use FOREIGN KEY
+  // CONSTRAINT fk_${AuthModel.authTableName} FOREIGN KEY ($column5CreatorId) REFERENCES
+  // ${AuthModel.authTableName} (${AuthModel.column1Id}) ON DELETE NO ACTION
 
   Map<String, Object> _toMapForDB() {
     // print('VM 44| date: ${readibleDate(date)}');
     if (id == null) {
       return {
         column2VoucherNumber: voucherNumber,
-        // column3Date: date.toUtc().millisecondsSinceEpoch,
-        // column3Date: date.millisecondsSinceEpoch,
         column3Date: seconsdOfDateTime(date),
         column4Note: note,
         column5CreatorId: creatorId,

@@ -32,13 +32,20 @@ class AccountingDB {
 
   static Future<int> insert(String table, Map<String, Object?> data) async {
     final db = await AccountingDB.database();
-    return db.insert(table, data,
-        conflictAlgorithm: ConflictAlgorithm.rollback);
+    return db.insert(
+      table,
+      data,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   static Future<int> update(String table, Map<String, Object?> data) async {
     final db = await AccountingDB.database();
-    return db.insert(table, data, conflictAlgorithm: ConflictAlgorithm.replace);
+    return db.insert(
+      table,
+      data,
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
   }
 
   static Future<void> deleteDB() async {
@@ -75,7 +82,7 @@ class AccountingDB {
         account.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-      print('ADB20| @insertPredefinedAccounts() insertResult: $insertResult');
+      // print('ADB20| @insertPredefinedAccounts() insertResult: $insertResult');
     }
   }
 
