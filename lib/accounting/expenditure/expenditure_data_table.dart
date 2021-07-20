@@ -66,7 +66,7 @@ class _ExpenditurDataTableState extends State<ExpenditurDataTable> {
     List<DataRow> dataRows = [];
     vouchers.asMap().forEach((index, voucher) {
       voucher
-          .accountTransactions(ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID)
+          .onlyTransactionsOf(ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID)
           .forEach((exp) {
         if (exp == null) {
           return;

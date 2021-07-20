@@ -206,11 +206,12 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
 
   List<DataRow> _buildTableRows() {
     List<DataRow> dataRows = [];
+
     vouchers.asMap().forEach((index, voucher) {
       voucher
-          .accountTransactions(ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID)
-          .forEach((exp) {
-        if (exp == null) {
+          .onlyTransactionsOf(ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID)
+          .forEach((expTran) {
+        if (expTran == null) {
           return;
         }
         dataRows.add(DataRow(
@@ -224,25 +225,25 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
                 PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
               ],
             ))
-              DataCell(_buildEditDeleteMenu(voucher, exp.id)),
-            DataCell(Text(exp.amount.toString())),
-            DataCell(Text(exp.note)),
+              DataCell(_buildEditDeleteMenu(voucher, expTran.id)),
+            DataCell(Text(expTran.amount.toString())),
+            DataCell(Text(expTran.note)),
             DataCell(Text(voucher.paidByText())),
             DataCell(Text(readibleDate(voucher.date))),
-            DataCell(Text(exp.id.toString())),
+            DataCell(Text(expTran.id.toString())),
             DataCell(Text(voucher.id.toString())),
           ],
-          selected: _expenseIdToShowInForm == exp.id,
+          selected: _expenseIdToShowInForm == expTran.id,
           onSelectChanged: (isSelected) {
             if (isSelected == null) {
               return;
             }
             setState(() {
               if (isSelected) {
-                _expenseIdToShowInForm = exp.id ?? 0;
-                voucherSelectionHandler(voucher, exp.id, FormDuty.CREATE);
+                _expenseIdToShowInForm = expTran.id ?? 0;
+                rebuildExpForm(voucher, expTran.id, FormDuty.CREATE);
               } else {
-                voucherSelectionHandler(null, null, null);
+                rebuildExpForm(null, null, null);
               }
             });
           },
@@ -266,12 +267,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
     return dataRows;
   }
 
-  void notifyNewVoucher() async {
-    await reloadVouchers();
-    voucherSelectionHandler(null, null, FormDuty.CREATE);
-  }
-
-  void voucherSelectionHandler(
+  void rebuildExpForm(
     VoucherModel? voucherToShowInForm,
     int? expenseIdToShowInForm,
     FormDuty? duty,
@@ -296,13 +292,11 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       child: GestureDetector(
         child: Icon(Icons.more_vert),
         onTapDown: (TapDownDetails details) {
-          voucherSelectionHandler(
+          rebuildExpForm(
             voucher,
             expId,
-            FormDuty.READ,
+            FormDuty.CREATE,
           );
-          double left = details.globalPosition.dx;
-          double top = details.globalPosition.dy;
           _showEditDeletePopupMenu(details.globalPosition, voucher, expId);
         },
       ),
@@ -369,13 +363,13 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
     );
     if (selectedItem == null) {
       // print('ES 80| you select nothing ...');
-      voucherSelectionHandler(null, null, null);
+      rebuildExpForm(null, null, null);
       return;
     }
 
     if (selectedItem == "edit") {
       // print('ES 80| you edit ...');
-      voucherSelectionHandler(
+      rebuildExpForm(
         voucher,
         expId,
         FormDuty.EDIT,
@@ -392,7 +386,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       );
       // print('ES 70| confirmResult: $confirmResult');
       if (confirmResult == true) {
-        voucherSelectionHandler(
+        rebuildExpForm(
           voucher,
           expId,
           FormDuty.DELETE,
@@ -401,6 +395,11 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
     } else {
       throw NotHandledException('ES 80| ');
     }
+  }
+
+  void notifyNewVoucher() async {
+    await reloadVouchers();
+    rebuildExpForm(null, null, FormDuty.CREATE);
   }
 
   Future<void> reloadVouchers() async {
