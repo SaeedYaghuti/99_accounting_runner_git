@@ -167,28 +167,28 @@ class _AccountDropdownMenuState extends State<AccountDropdownMenu> {
       // combine all permissions
       List<String> crudTransactionPermissionsAny = [];
 
-      if (account.createTransactionPermissionsAny != null &&
-          account.createTransactionPermissionsAny!.isNotEmpty) {
-        crudTransactionPermissionsAny.addAll(
-          account.createTransactionPermissionsAny!.cast<String>(),
+      if (account.createTransactionPermission != null &&
+          account.createTransactionPermission!.isNotEmpty) {
+        crudTransactionPermissionsAny.add(
+          account.createTransactionPermission!,
         );
       }
-      if (account.readTransactionPermissionsAny != null &&
-          account.readTransactionPermissionsAny!.isNotEmpty) {
-        crudTransactionPermissionsAny.addAll(
-          account.readTransactionPermissionsAny!.cast<String>(),
+      if (account.readAllTransactionPermission != null &&
+          account.readAllTransactionPermission!.isNotEmpty) {
+        crudTransactionPermissionsAny.add(
+          account.readAllTransactionPermission!,
         );
       }
-      if (account.editTransactionPermissionsAny != null &&
-          account.editTransactionPermissionsAny!.isNotEmpty) {
-        crudTransactionPermissionsAny.addAll(
-          account.editTransactionPermissionsAny!.cast<String>(),
+      if (account.editAllTransactionPermission != null &&
+          account.editAllTransactionPermission!.isNotEmpty) {
+        crudTransactionPermissionsAny.add(
+          account.editAllTransactionPermission!,
         );
       }
-      if (account.deleteTransactionPermissionsAny != null &&
-          account.deleteTransactionPermissionsAny!.isNotEmpty) {
-        crudTransactionPermissionsAny.addAll(
-          account.deleteTransactionPermissionsAny!.cast<String>(),
+      if (account.deleteAllTransactionPermission != null &&
+          account.deleteAllTransactionPermission!.isNotEmpty) {
+        crudTransactionPermissionsAny.add(
+          account.deleteAllTransactionPermission!,
         );
       }
 
@@ -202,25 +202,34 @@ class _AccountDropdownMenuState extends State<AccountDropdownMenu> {
         case FormDuty.CREATE:
           if (hasAccess(
             authProviderSQL: authProviderSQL,
-            anyPermissions: account.createTransactionPermissionsAny,
+            anyPermissions: [account.createTransactionPermission],
           )) return true;
           break;
         case FormDuty.READ:
           if (hasAccess(
             authProviderSQL: authProviderSQL,
-            anyPermissions: account.readTransactionPermissionsAny,
+            anyPermissions: [
+              account.readAllTransactionPermission,
+              account.readOwnTransactionPermission,
+            ],
           )) return true;
           break;
         case FormDuty.EDIT:
           if (hasAccess(
             authProviderSQL: authProviderSQL,
-            anyPermissions: account.editTransactionPermissionsAny,
+            anyPermissions: [
+              account.editAllTransactionPermission,
+              account.editOwnTransactionPermission,
+            ],
           )) return true;
           break;
         case FormDuty.DELETE:
           if (hasAccess(
             authProviderSQL: authProviderSQL,
-            anyPermissions: account.deleteTransactionPermissionsAny,
+            anyPermissions: [
+              account.deleteAllTransactionPermission,
+              account.deleteOwnTransactionPermission,
+            ],
           )) return true;
           break;
         default:

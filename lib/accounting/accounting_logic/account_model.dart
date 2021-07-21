@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-import 'package:flutter/material.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/auth/auth_permission_model.dart';
 import 'package:shop/auth/permission_model.dart';
@@ -12,10 +9,13 @@ class AccountModel {
   final String titlePersian;
   final String titleArabic;
   final String note;
-  final List<String?>? createTransactionPermissionsAny;
-  final List<String?>? readTransactionPermissionsAny;
-  final List<String?>? editTransactionPermissionsAny;
-  final List<String?>? deleteTransactionPermissionsAny;
+  final String? createTransactionPermission;
+  final String? readAllTransactionPermission;
+  final String? readOwnTransactionPermission;
+  final String? editAllTransactionPermission;
+  final String? editOwnTransactionPermission;
+  final String? deleteAllTransactionPermission;
+  final String? deleteOwnTransactionPermission;
 
   const AccountModel({
     required this.id,
@@ -24,13 +24,14 @@ class AccountModel {
     required this.titlePersian,
     required this.titleArabic,
     this.note = '',
-    this.createTransactionPermissionsAny,
-    this.readTransactionPermissionsAny,
-    this.editTransactionPermissionsAny,
-    this.deleteTransactionPermissionsAny,
+    this.createTransactionPermission,
+    this.readAllTransactionPermission,
+    this.readOwnTransactionPermission,
+    this.editAllTransactionPermission,
+    this.editOwnTransactionPermission,
+    this.deleteAllTransactionPermission,
+    this.deleteOwnTransactionPermission,
   });
-
-  // TODO: currently we read accounts from AccountTree => we should read from DB
 
   Future<int> insertMeIntoDB() async {
     // do some logic on variables
@@ -134,14 +135,20 @@ class AccountModel {
   static const String column4TitlePersian = 'titlePersian';
   static const String column5TitleArabic = 'titleArabic';
   static const String column6Note = 'note';
-  static const String column7CreateTransactionPermissionsAny =
-      'createTransactionPermissionsAny';
-  static const String column8ReadTransactionPermissionsAny =
-      'readTransactionPermissionsAny';
-  static const String column9EditTransactionPermissionsAny =
-      'editTransactionPermissionsAny';
-  static const String column10DeleteTransactionPermissionsAny =
-      'deleteTransactionPermissionsAny';
+  static const String column7CreateTransactionPermission =
+      'createTransactionPermission';
+  static const String column8ReadAllTransactionPermission =
+      'readAllTransactionPermission';
+  static const String column9ReadOwnTransactionPermission =
+      'readOwnTransactionPermission';
+  static const String column10EditAllTransactionPermission =
+      'editAllTransactionPermission';
+  static const String column11EditOwnTransactionPermission =
+      'editOwnTransactionPermission';
+  static const String column12DeleteAllTransactionPermission =
+      'deleteAllTransactionPermission';
+  static const String column13DeleteOwnTransactionPermission =
+      'deleteOwnTransactionPermission';
 
   static const String QUERY_CREATE_ACCOUNT_TABLE = '''CREATE TABLE $tableName (
     $column1Id TEXT PRIMARY KEY, 
@@ -150,14 +157,17 @@ class AccountModel {
     $column4TitlePersian TEXT NOT NULL, 
     $column5TitleArabic TEXT NOT NULL, 
     $column6Note TEXT,
-    $column7CreateTransactionPermissionsAny Text,
-    $column8ReadTransactionPermissionsAny Text,
-    $column9EditTransactionPermissionsAny Text,
-    $column10DeleteTransactionPermissionsAny Text,
+    $column7CreateTransactionPermission Text,
+    $column8ReadAllTransactionPermission Text,
+    $column9ReadOwnTransactionPermission Text,
+    $column10EditAllTransactionPermission Text,
+    $column11EditOwnTransactionPermission Text,
+    $column12DeleteAllTransactionPermission Text,
+    $column13DeleteOwnTransactionPermission Text,
     FOREIGN KEY ($column2ParentId) REFERENCES $tableName ($column1Id)
   )''';
 
-  Map<String, Object> toMap() {
+  Map<String, Object?> toMap() {
     return {
       column1Id: id,
       column2ParentId: parentId,
@@ -165,14 +175,13 @@ class AccountModel {
       column4TitlePersian: titlePersian,
       column5TitleArabic: titleArabic,
       column6Note: note,
-      column7CreateTransactionPermissionsAny:
-          json.encode(createTransactionPermissionsAny),
-      column8ReadTransactionPermissionsAny:
-          json.encode(readTransactionPermissionsAny),
-      column9EditTransactionPermissionsAny:
-          json.encode(editTransactionPermissionsAny),
-      column10DeleteTransactionPermissionsAny:
-          json.encode(deleteTransactionPermissionsAny),
+      column7CreateTransactionPermission: createTransactionPermission,
+      column8ReadAllTransactionPermission: readAllTransactionPermission,
+      column9ReadOwnTransactionPermission: readOwnTransactionPermission,
+      column10EditAllTransactionPermission: editAllTransactionPermission,
+      column11EditOwnTransactionPermission: editOwnTransactionPermission,
+      column12DeleteAllTransactionPermission: deleteAllTransactionPermission,
+      column13DeleteOwnTransactionPermission: deleteOwnTransactionPermission,
     };
   }
 
@@ -190,30 +199,26 @@ class AccountModel {
       titlePersian: accountMap[AccountModel.column4TitlePersian] as String,
       titleArabic: accountMap[AccountModel.column5TitleArabic] as String,
       note: accountMap[AccountModel.column6Note] as String,
-      createTransactionPermissionsAny: json
-          .decode(
-            accountMap[AccountModel.column7CreateTransactionPermissionsAny]
-                as String,
-          )
-          .cast<String>(),
-      readTransactionPermissionsAny: json
-          .decode(
-            accountMap[AccountModel.column8ReadTransactionPermissionsAny]
-                as String,
-          )
-          .cast<String>(),
-      editTransactionPermissionsAny: json
-          .decode(
-            accountMap[AccountModel.column9EditTransactionPermissionsAny]
-                as String,
-          )
-          .cast<String>(),
-      deleteTransactionPermissionsAny: json
-          .decode(
-            accountMap[AccountModel.column10DeleteTransactionPermissionsAny]
-                as String,
-          )
-          .cast<String>(),
+      createTransactionPermission:
+          accountMap[AccountModel.column7CreateTransactionPermission] as String,
+      readAllTransactionPermission:
+          accountMap[AccountModel.column8ReadAllTransactionPermission]
+              as String,
+      readOwnTransactionPermission:
+          accountMap[AccountModel.column9ReadOwnTransactionPermission]
+              as String,
+      editAllTransactionPermission:
+          accountMap[AccountModel.column10EditAllTransactionPermission]
+              as String,
+      editOwnTransactionPermission:
+          accountMap[AccountModel.column11EditOwnTransactionPermission]
+              as String,
+      deleteAllTransactionPermission:
+          accountMap[AccountModel.column12DeleteAllTransactionPermission]
+              as String,
+      deleteOwnTransactionPermission:
+          accountMap[AccountModel.column13DeleteOwnTransactionPermission]
+              as String,
     );
     // print('AccountModel fromMap 03| output: \n$account');
     return account;
@@ -227,10 +232,13 @@ class AccountModel {
     $column4TitlePersian: $titlePersian,
     $column5TitleArabic: $titleArabic,
     $column6Note: $note,
-    $column7CreateTransactionPermissionsAny: $createTransactionPermissionsAny,
-    $column8ReadTransactionPermissionsAny: $readTransactionPermissionsAny,
-    $column9EditTransactionPermissionsAny: $editTransactionPermissionsAny,
-    $column10DeleteTransactionPermissionsAny: $deleteTransactionPermissionsAny,
+    $column7CreateTransactionPermission: $createTransactionPermission,
+    $column8ReadAllTransactionPermission: $readAllTransactionPermission,
+    $column9ReadOwnTransactionPermission: $readOwnTransactionPermission,
+    $column10EditAllTransactionPermission: $editAllTransactionPermission,
+    $column11EditOwnTransactionPermission: $editOwnTransactionPermission,
+    $column12DeleteAllTransactionPermission: $deleteAllTransactionPermission,
+    $column13DeleteOwnTransactionPermission: $deleteOwnTransactionPermission,
     ''';
   }
 }

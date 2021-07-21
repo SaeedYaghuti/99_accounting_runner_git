@@ -29,12 +29,13 @@ class ExpenditureScreen extends StatefulWidget {
 }
 
 class _ExpenditureScreenState extends State<ExpenditureScreen> {
-  AuthProviderSQL? authProvider;
+  late AuthProviderSQL authProvider;
   Object redrawFormObject = Object();
   List<VoucherModel> vouchers = [];
   VoucherModel? _voucherToShowInForm;
   int? _expenseIdToShowInForm;
   FormDuty? _formDuty;
+  late AccountModel expenditurAccount;
 
   @override
   void initState() {
@@ -45,7 +46,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
   void didChangeDependencies() {
     authProvider = Provider.of<AuthProviderSQL>(context, listen: true);
     _vouchersLoadingStart();
-    ExpenditureModel.expenditureVouchers(authProvider!.authId!).then(
+    ExpenditureModel.expenditureVouchers(authProvider.authId!).then(
       (voucherResults) {
         _vouchersLoadingEnd();
         if (voucherResults == null || voucherResults.isEmpty) {
@@ -58,7 +59,22 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       showErrorDialog(
         context,
         'ExpenditurScreen',
-        '@initState() #allExpences() EXP_SCR 01',
+        '01 | @didChangeDependencies() | #while fetching expenditureVouchers() ',
+        e,
+      );
+      print(e.toString());
+    });
+    _vouchersLoadingStart();
+    AccountModel.fetchAccountById(ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID)
+        .then((account) {
+      _vouchersLoadingEnd();
+      expenditurAccount = account!;
+    }).catchError((e) {
+      _vouchersLoadingEnd();
+      showErrorDialog(
+        context,
+        'ExpenditurScreen',
+        '02 | @didChangeDependencies() | #while fetching expenditurAccount',
         e,
       );
       print(e.toString());
@@ -96,7 +112,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
 
   Widget _buildSecureForm(BuildContext context) {
     return SecureWidget(
-      authProviderSQL: authProvider!,
+      authProviderSQL: authProvider,
       anyPermissions: [
         PermissionModel.EXPENDITURE_CREATE_TRANSACTION,
         PermissionModel.EXPENDITURE_EDIT_ALL_TRANSACTION,
@@ -149,9 +165,9 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
 
   List<DataColumn> _buildTableColumns() {
     return [
-      // decide to show Edit/Delete column
+      // decide to show Gear column
       if (hasAccess(
-        authProviderSQL: authProvider!,
+        authProviderSQL: authProvider,
         anyPermissions: [
           PermissionModel.EXPENDITURE_DELETE_ALL_TRANSACTION,
           PermissionModel.EXPENDITURE_DELETE_OWN_TRANSACTION,
@@ -161,7 +177,9 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       ))
         DataColumn(
           label: Icon(Icons.settings),
-        ),
+        )
+      else
+        DataColumn(label: Icon(Icons.block_rounded)),
       DataColumn(
         label: MultiLanguageTextWidget(
           english: 'Amount',
@@ -211,12 +229,11 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
     List<DataRow> dataRows = [];
     vouchers
         .skipWhile((voucher) {
-          if (authProvider!
-              .isPermitted(PermissionModel.EXPENDITURE_READ_ALL_TRANSACTION))
-            return false;
-          if (authProvider!.isPermitted(
+          if (authProvider.isPermitted(
+              PermissionModel.EXPENDITURE_READ_ALL_TRANSACTION)) return false;
+          if (authProvider.isPermitted(
                   PermissionModel.EXPENDITURE_READ_OWN_TRANSACTION) &&
-              voucher.creatorId == authProvider!.authId) return false;
+              voucher.creatorId == authProvider.authId) return false;
           return true;
         })
         .toList()
@@ -231,19 +248,15 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
             }
             dataRows.add(DataRow(
               cells: [
-                if (hasAccess(authProviderSQL: authProvider!, anyPermissions: [
+                if (hasAccess(authProviderSQL: authProvider, anyPermissions: [
                       PermissionModel.EXPENDITURE_DELETE_ALL_TRANSACTION,
                       PermissionModel.EXPENDITURE_EDIT_ALL_TRANSACTION,
-                      // PermissionModel.EXPENDITURE_DELETE_OWN_TRANSACTION,
-                      // PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
                     ]) ||
-                    (hasAccess(authProviderSQL: authProvider!, anyPermissions: [
-                          // PermissionModel.EXPENDITURE_DELETE_ALL_TRANSACTION,
-                          // PermissionModel.EXPENDITURE_EDIT_ALL_TRANSACTION,
+                    (hasAccess(authProviderSQL: authProvider, anyPermissions: [
                           PermissionModel.EXPENDITURE_DELETE_OWN_TRANSACTION,
                           PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
                         ]) &&
-                        voucher.creatorId == authProvider!.authId))
+                        voucher.creatorId == authProvider.authId))
                   DataCell(_buildEditDeleteMenu(voucher, expTran.id))
                 else
                   DataCell(Icon(Icons.block_rounded)),
@@ -303,7 +316,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
 
   Widget _buildEditDeleteMenu(VoucherModel? voucher, int? expId) {
     return SecureWidget(
-      authProviderSQL: authProvider!,
+      authProviderSQL: authProvider,
       anyPermissions: [
         PermissionModel.EXPENDITURE_DELETE_ALL_TRANSACTION,
         PermissionModel.EXPENDITURE_DELETE_OWN_TRANSACTION,
@@ -336,10 +349,12 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       context: context,
       position: RelativeRect.fromLTRB(left, top, left, top),
       items: [
-        if (hasAccess(authProviderSQL: authProvider!, anyPermissions: [
-          PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
-          PermissionModel.EXPENDITURE_EDIT_ALL_TRANSACTION,
-        ]))
+        if (hasAccessToAccountCredTransaction(
+          authProviderSQL: authProvider,
+          voucherCreatorId: voucher!.creatorId,
+          formDuty: FormDuty.EDIT,
+          account: expenditurAccount,
+        ))
           PopupMenuItem(
             child: Row(
               children: [
@@ -358,10 +373,12 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
             ),
             value: 'edit',
           ),
-        if (hasAccess(authProviderSQL: authProvider!, anyPermissions: [
-          PermissionModel.EXPENDITURE_DELETE_OWN_TRANSACTION,
-          PermissionModel.EXPENDITURE_DELETE_ALL_TRANSACTION,
-        ]))
+        if (hasAccessToAccountCredTransaction(
+          formDuty: FormDuty.DELETE,
+          account: expenditurAccount,
+          authProviderSQL: authProvider,
+          voucherCreatorId: voucher.creatorId,
+        ))
           PopupMenuItem(
             child: Row(
               children: [
@@ -427,7 +444,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
     try {
       _vouchersLoadingStart();
       var fetchedVouchers =
-          await ExpenditureModel.expenditureVouchers(authProvider!.authId!);
+          await ExpenditureModel.expenditureVouchers(authProvider.authId!);
 
       if (fetchedVouchers != null || fetchedVouchers.isNotEmpty) {
         setState(() {
@@ -460,4 +477,82 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
   }
 
   var _vouchersAreLoading = false;
+
+  List<DataRow> _buildTableRows1() {
+    List<DataRow> dataRows = [];
+    var index = 0;
+    for (var voucher in vouchers) {
+      index++;
+      // how has access to row
+      // ReadAll or (ReadOwn && creatorId == authId)
+      if (!authProvider
+              .isPermitted(PermissionModel.EXPENDITURE_READ_ALL_TRANSACTION) &&
+          authProvider
+              .isPermitted(PermissionModel.EXPENDITURE_READ_OWN_TRANSACTION) &&
+          voucher.creatorId != authProvider.authId) {
+        // no access to row
+        continue;
+      }
+
+      voucher
+          .onlyTransactionsOf(ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID)
+          .forEach((expTran) {
+        if (expTran == null) {
+          return;
+        }
+        dataRows.add(DataRow(
+          cells: [
+            if (hasAccess(authProviderSQL: authProvider, anyPermissions: [
+                  PermissionModel.EXPENDITURE_DELETE_ALL_TRANSACTION,
+                  PermissionModel.EXPENDITURE_EDIT_ALL_TRANSACTION,
+                ]) ||
+                (hasAccess(authProviderSQL: authProvider, anyPermissions: [
+                      PermissionModel.EXPENDITURE_DELETE_OWN_TRANSACTION,
+                      PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
+                    ]) &&
+                    voucher.creatorId == authProvider.authId))
+              DataCell(_buildEditDeleteMenu(voucher, expTran.id))
+            else
+              DataCell(Icon(Icons.block_rounded)),
+            DataCell(Text(expTran.amount.toString())),
+            DataCell(Text(expTran.note)),
+            DataCell(Text(voucher.paidByText())),
+            DataCell(Text(readibleDate(voucher.date))),
+            DataCell(Text(expTran.id.toString())),
+            DataCell(Text(voucher.id.toString())),
+          ],
+          selected: _expenseIdToShowInForm == expTran.id,
+          onSelectChanged: (isSelected) {
+            if (isSelected == null) {
+              return;
+            }
+            setState(() {
+              if (isSelected) {
+                _expenseIdToShowInForm = expTran.id ?? 0;
+                rebuildExpForm(voucher, expTran.id, FormDuty.CREATE);
+              } else {
+                rebuildExpForm(null, null, null);
+              }
+            });
+          },
+          color: MaterialStateProperty.resolveWith<Color?>(
+              (Set<MaterialState> states) {
+            // All rows will have the same selected color.
+            if (states.contains(MaterialState.selected)) {
+              // return Theme.of(context).colorScheme.primary.withOpacity(0.08);
+              return Theme.of(context).accentColor.withOpacity(0.5);
+            }
+            // Even rows will have a grey color.
+            if (index.isEven) {
+              // return Colors.grey.withOpacity(0.3);
+              return Theme.of(context).primaryColor.withOpacity(0.1);
+            }
+            return null; // Use default value for other states and odd rows.
+          }),
+        ));
+      });
+    }
+
+    return dataRows;
+  }
 }

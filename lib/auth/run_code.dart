@@ -35,15 +35,18 @@ Future<void> runCode(BuildContext context) async {
   //   ],
   // );
 
-  AuthPermissionModel.printAllAuthPermissions(2);
+  // AuthPermissionModel.printAllAuthPermissions(2);
+  print('ATH_RUN_CODE | before resetAuthPermissions()');
 
   await AuthPermissionModel.resetAuthPermissions(2, [
     PermissionModel.EXPENDITURE_CATEGORY,
     PermissionModel.EXPENDITURE_CREATE_TRANSACTION,
     PermissionModel.EXPENDITURE_READ_OWN_TRANSACTION,
+    PermissionModel.EXPENDITURE_READ_ALL_TRANSACTION,
     PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
     PermissionModel.EXPENDITURE_DELETE_OWN_TRANSACTION,
-    PermissionModel.EXPENDITURE_READ_ALL_TRANSACTION,
+    PermissionModel.EXPENDITURE_EDIT_ALL_TRANSACTION,
+    PermissionModel.EXPENDITURE_DELETE_ALL_TRANSACTION,
   ]);
 
   authProvider.notifyAuthChanged();

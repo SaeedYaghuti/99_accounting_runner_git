@@ -23,10 +23,10 @@ class AuthProviderSQL with ChangeNotifier {
     notifyListeners();
   }
 
-  bool isPermitted(String permissionId) {
+  bool isPermitted(String? permissionId) {
     // print('ATHPr isPermitted 01| recived $permissionId');
+    if (permissionId == null || permissionId.isEmpty) return false;
     if (_auth == null) return false;
-
     return _auth!.hasPermission(permissionId);
   }
 
