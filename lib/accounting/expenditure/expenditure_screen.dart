@@ -244,7 +244,9 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
                           PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
                         ]) &&
                         voucher.creatorId == authProvider!.authId))
-                  DataCell(_buildEditDeleteMenu(voucher, expTran.id)),
+                  DataCell(_buildEditDeleteMenu(voucher, expTran.id))
+                else
+                  DataCell(Icon(Icons.block_rounded)),
                 DataCell(Text(expTran.amount.toString())),
                 DataCell(Text(expTran.note)),
                 DataCell(Text(voucher.paidByText())),

@@ -43,6 +43,7 @@ Future<void> runCode(BuildContext context) async {
     PermissionModel.EXPENDITURE_READ_OWN_TRANSACTION,
     PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
     PermissionModel.EXPENDITURE_DELETE_OWN_TRANSACTION,
+    PermissionModel.EXPENDITURE_READ_ALL_TRANSACTION,
   ]);
 
   authProvider.notifyAuthChanged();
