@@ -209,10 +209,8 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
 
   List<DataRow> _buildTableRows() {
     List<DataRow> dataRows = [];
-
     vouchers
         .skipWhile((voucher) {
-          // print('EXP_SCN | skipWhile() 01| voucher: $voucher');
           if (authProvider!
               .isPermitted(PermissionModel.EXPENDITURE_READ_ALL_TRANSACTION))
             return false;
@@ -233,15 +231,19 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
             }
             dataRows.add(DataRow(
               cells: [
-                if (hasAccess(
-                  authProviderSQL: authProvider!,
-                  anyPermissions: [
-                    PermissionModel.EXPENDITURE_DELETE_ALL_TRANSACTION,
-                    PermissionModel.EXPENDITURE_DELETE_OWN_TRANSACTION,
-                    PermissionModel.EXPENDITURE_EDIT_ALL_TRANSACTION,
-                    PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
-                  ],
-                ))
+                if (hasAccess(authProviderSQL: authProvider!, anyPermissions: [
+                      PermissionModel.EXPENDITURE_DELETE_ALL_TRANSACTION,
+                      PermissionModel.EXPENDITURE_EDIT_ALL_TRANSACTION,
+                      // PermissionModel.EXPENDITURE_DELETE_OWN_TRANSACTION,
+                      // PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
+                    ]) ||
+                    (hasAccess(authProviderSQL: authProvider!, anyPermissions: [
+                          // PermissionModel.EXPENDITURE_DELETE_ALL_TRANSACTION,
+                          // PermissionModel.EXPENDITURE_EDIT_ALL_TRANSACTION,
+                          PermissionModel.EXPENDITURE_DELETE_OWN_TRANSACTION,
+                          PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
+                        ]) &&
+                        voucher.creatorId == authProvider!.authId))
                   DataCell(_buildEditDeleteMenu(voucher, expTran.id)),
                 DataCell(Text(expTran.amount.toString())),
                 DataCell(Text(expTran.note)),

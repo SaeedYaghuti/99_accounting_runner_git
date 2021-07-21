@@ -27,7 +27,6 @@ Future<void> runCode(BuildContext context) async {
   // var isPermitted = auth.hasPermission(PermissionModel.EXPENDITURE_CATEGORY);
   // print('auth runCode 01| isPermitted: $isPermitted');
   // AuthModel.printAllAuth();
-  AuthPermissionModel.printAllAuthPermissions(2);
   // AuthPermissionModel.givePermissionsToAuth(
   //   2,
   //   [
@@ -35,17 +34,16 @@ Future<void> runCode(BuildContext context) async {
   //     PermissionModel.EXPENDITURE_CREATE_TRANSACTION,
   //   ],
   // );
-  // await AuthPermissionModel.resetAuthPermissions(2, [
-  //   PermissionModel.EXPENDITURE_CATEGORY,
-  //   PermissionModel.EXPENDITURE_CREATE_TRANSACTION,
-  //   PermissionModel.EXPENDITURE_READ_OWN_TRANSACTION,
-  //   // PermissionModel.EXPENDITURE_READ_ALL_TRANSACTION,
-  //   // PermissionModel.ACCOUNT_CATEGORY,
-  //   // PermissionModel.ITEM_CATEGORY,
-  //   // PermissionModel.REPORT_CATEGORY,
-  //   // PermissionModel.PURCHAS_CATEGORY,
-  //   // PermissionModel.SELL_POINT_CATEGORY,
-  // ]);
+
+  AuthPermissionModel.printAllAuthPermissions(2);
+
+  await AuthPermissionModel.resetAuthPermissions(2, [
+    PermissionModel.EXPENDITURE_CATEGORY,
+    PermissionModel.EXPENDITURE_CREATE_TRANSACTION,
+    PermissionModel.EXPENDITURE_READ_OWN_TRANSACTION,
+    PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
+    PermissionModel.EXPENDITURE_DELETE_OWN_TRANSACTION,
+  ]);
 
   authProvider.notifyAuthChanged();
 
