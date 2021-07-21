@@ -35,8 +35,7 @@ Future<void> runCode(BuildContext context) async {
   //     PermissionModel.EXPENDITURE_CREATE_TRANSACTION,
   //   ],
   // );
-  await AuthPermissionModel.givePermissionToAuth(
-    2,
+  await AuthPermissionModel.resetAuthPermissions(2, [
     // PermissionModel.EXPENDITURE_CATEGORY,
     // PermissionModel.ACCOUNT_CATEGORY,
     // PermissionModel.ITEM_CATEGORY,
@@ -44,7 +43,7 @@ Future<void> runCode(BuildContext context) async {
     // PermissionModel.PURCHAS_CATEGORY,
     // PermissionModel.SELL_POINT_CATEGORY,
     PermissionModel.EXPENDITURE_CREATE_TRANSACTION,
-  );
+  ]);
 
   authProvider.notifyAuthChanged();
 

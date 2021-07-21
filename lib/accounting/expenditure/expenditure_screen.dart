@@ -210,63 +210,76 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
   List<DataRow> _buildTableRows() {
     List<DataRow> dataRows = [];
 
-    vouchers.asMap().forEach((index, voucher) {
-      voucher
-          .onlyTransactionsOf(ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID)
-          .forEach((expTran) {
-        if (expTran == null) {
-          return;
-        }
-        dataRows.add(DataRow(
-          cells: [
-            if (hasAccess(
-              authProviderSQL: authProvider!,
-              anyPermissions: [
-                PermissionModel.EXPENDITURE_DELETE_ALL_TRANSACTION,
-                PermissionModel.EXPENDITURE_DELETE_OWN_TRANSACTION,
-                PermissionModel.EXPENDITURE_EDIT_ALL_TRANSACTION,
-                PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
-              ],
-            ))
-              DataCell(_buildEditDeleteMenu(voucher, expTran.id)),
-            DataCell(Text(expTran.amount.toString())),
-            DataCell(Text(expTran.note)),
-            DataCell(Text(voucher.paidByText())),
-            DataCell(Text(readibleDate(voucher.date))),
-            DataCell(Text(expTran.id.toString())),
-            DataCell(Text(voucher.id.toString())),
-          ],
-          selected: _expenseIdToShowInForm == expTran.id,
-          onSelectChanged: (isSelected) {
-            if (isSelected == null) {
+    vouchers
+        .skipWhile((voucher) {
+          if (authProvider!
+              .isPermitted(PermissionModel.EXPENDITURE_READ_ALL_TRANSACTION))
+            return false;
+          if (authProvider!.isPermitted(
+                  PermissionModel.EXPENDITURE_READ_OWN_TRANSACTION) ||
+              voucher.creatorId == authProvider!.authId) return false;
+          return true;
+        })
+        .toList()
+        .asMap()
+        .forEach((index, voucher) {
+          voucher
+              // do we have permission for this voucher
+              .onlyTransactionsOf(ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID)
+              .forEach((expTran) {
+            if (expTran == null) {
               return;
             }
-            setState(() {
-              if (isSelected) {
-                _expenseIdToShowInForm = expTran.id ?? 0;
-                rebuildExpForm(voucher, expTran.id, FormDuty.CREATE);
-              } else {
-                rebuildExpForm(null, null, null);
-              }
-            });
-          },
-          color: MaterialStateProperty.resolveWith<Color?>(
-              (Set<MaterialState> states) {
-            // All rows will have the same selected color.
-            if (states.contains(MaterialState.selected)) {
-              // return Theme.of(context).colorScheme.primary.withOpacity(0.08);
-              return Theme.of(context).accentColor.withOpacity(0.5);
-            }
-            // Even rows will have a grey color.
-            if (index.isEven) {
-              // return Colors.grey.withOpacity(0.3);
-              return Theme.of(context).primaryColor.withOpacity(0.1);
-            }
-            return null; // Use default value for other states and odd rows.
-          }),
-        ));
-      });
-    });
+            dataRows.add(DataRow(
+              cells: [
+                if (hasAccess(
+                  authProviderSQL: authProvider!,
+                  anyPermissions: [
+                    PermissionModel.EXPENDITURE_DELETE_ALL_TRANSACTION,
+                    PermissionModel.EXPENDITURE_DELETE_OWN_TRANSACTION,
+                    PermissionModel.EXPENDITURE_EDIT_ALL_TRANSACTION,
+                    PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
+                  ],
+                ))
+                  DataCell(_buildEditDeleteMenu(voucher, expTran.id)),
+                DataCell(Text(expTran.amount.toString())),
+                DataCell(Text(expTran.note)),
+                DataCell(Text(voucher.paidByText())),
+                DataCell(Text(readibleDate(voucher.date))),
+                DataCell(Text(expTran.id.toString())),
+                DataCell(Text(voucher.id.toString())),
+              ],
+              selected: _expenseIdToShowInForm == expTran.id,
+              onSelectChanged: (isSelected) {
+                if (isSelected == null) {
+                  return;
+                }
+                setState(() {
+                  if (isSelected) {
+                    _expenseIdToShowInForm = expTran.id ?? 0;
+                    rebuildExpForm(voucher, expTran.id, FormDuty.CREATE);
+                  } else {
+                    rebuildExpForm(null, null, null);
+                  }
+                });
+              },
+              color: MaterialStateProperty.resolveWith<Color?>(
+                  (Set<MaterialState> states) {
+                // All rows will have the same selected color.
+                if (states.contains(MaterialState.selected)) {
+                  // return Theme.of(context).colorScheme.primary.withOpacity(0.08);
+                  return Theme.of(context).accentColor.withOpacity(0.5);
+                }
+                // Even rows will have a grey color.
+                if (index.isEven) {
+                  // return Colors.grey.withOpacity(0.3);
+                  return Theme.of(context).primaryColor.withOpacity(0.1);
+                }
+                return null; // Use default value for other states and odd rows.
+              }),
+            ));
+          });
+        });
     return dataRows;
   }
 

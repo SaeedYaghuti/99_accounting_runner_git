@@ -79,17 +79,39 @@ class AuthPermissionModel {
     }
   }
 
+  static Future<int> deleteAllPermissionsOfAuth(
+    int authId,
+  ) async {
+    if (authId == null) {
+      return 0;
+    }
+    final query = '''
+    DELETE FROM $tableName
+    WHERE $column2AuthId = ? ;
+    ''';
+    try {
+      var count = await AuthDB.deleteRawQuery(query, [authId]);
+      print(
+          'ATH_PEM_MDL | deleteAllPermissionsOfAuth 01| $count row deleted for authId: $authId;');
+      return count;
+    } catch (e) {
+      print('ATH_PEM_MDL | deleteAllPermissionsOfAuth 02| e: $e');
+      throw e;
+    }
+  }
+
   static Future<void> givePermissionsToAuth(
     int authId,
     List<String> permissionIds,
   ) async {
     try {
       for (var permId in permissionIds) {
-        var authPerm = AuthPermissionModel(
-          authId: authId,
-          permissionId: permId,
-        );
-        await AuthDB.insert(tableName, authPerm.toMap());
+        await AuthPermissionModel.givePermissionToAuth(authId, permId);
+        // var authPerm = AuthPermissionModel(
+        //   authId: authId,
+        //   permissionId: permId,
+        // );
+        // await AuthDB.insert(tableName, authPerm.toMap());
       }
     } catch (e) {
       print('AuthPerm give_perms_to_auth 01| e: $e');
@@ -102,15 +124,10 @@ class AuthPermissionModel {
     List<String> permissionIds,
   ) async {
     try {
-      for (var permId in permissionIds) {
-        var authPerm = AuthPermissionModel(
-          authId: authId,
-          permissionId: permId,
-        );
-        await AuthDB.insert(tableName, authPerm.toMap());
-      }
+      await AuthPermissionModel.deleteAllPermissionsOfAuth(authId);
+      await givePermissionsToAuth(authId, permissionIds);
     } catch (e) {
-      print('AuthPerm give_perms_to_auth 01| e: $e');
+      print('ATH_PEM_MDL | resetAuthPermissions() 01| e: $e');
       throw e;
     }
   }

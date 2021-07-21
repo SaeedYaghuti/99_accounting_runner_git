@@ -1,9 +1,11 @@
+import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/accounting/accounting_logic/transaction_feed.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_feed.dart';
 import 'package:shop/accounting/accounting_logic/voucher_number_model.dart';
 import 'package:shop/auth/auth_model_sql.dart';
+import 'package:shop/auth/auth_permission_model.dart';
 import 'package:shop/exceptions/DBException.dart';
 import 'package:shop/exceptions/curropted_input.dart';
 import 'package:shop/exceptions/db_operation.dart';
@@ -293,8 +295,15 @@ class VoucherModel {
     String accountId,
     int authId,
   ) async {
-    // check client permissions
-    // from accountId => take requiredPerm and check if client has perm or not
+    // account permissions
+    AccountModel? account = await AccountModel.fetchAccountById(accountId);
+    if (account == null) return [];
+
+    // auth permissions
+    List<AuthPermissionModel?>? authPermissions =
+        await AuthPermissionModel.allPermissionsForAuth(authId);
+    if (authPermissions == null || authPermissions.isEmpty) return [];
+
     // ...
     // ...
     // ...
