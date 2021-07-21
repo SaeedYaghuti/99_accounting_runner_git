@@ -212,11 +212,12 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
 
     vouchers
         .skipWhile((voucher) {
+          // print('EXP_SCN | skipWhile() 01| voucher: $voucher');
           if (authProvider!
               .isPermitted(PermissionModel.EXPENDITURE_READ_ALL_TRANSACTION))
             return false;
           if (authProvider!.isPermitted(
-                  PermissionModel.EXPENDITURE_READ_OWN_TRANSACTION) ||
+                  PermissionModel.EXPENDITURE_READ_OWN_TRANSACTION) &&
               voucher.creatorId == authProvider!.authId) return false;
           return true;
         })

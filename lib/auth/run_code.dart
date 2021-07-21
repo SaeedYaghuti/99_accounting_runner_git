@@ -35,15 +35,17 @@ Future<void> runCode(BuildContext context) async {
   //     PermissionModel.EXPENDITURE_CREATE_TRANSACTION,
   //   ],
   // );
-  await AuthPermissionModel.resetAuthPermissions(2, [
-    // PermissionModel.EXPENDITURE_CATEGORY,
-    // PermissionModel.ACCOUNT_CATEGORY,
-    // PermissionModel.ITEM_CATEGORY,
-    // PermissionModel.REPORT_CATEGORY,
-    // PermissionModel.PURCHAS_CATEGORY,
-    // PermissionModel.SELL_POINT_CATEGORY,
-    PermissionModel.EXPENDITURE_CREATE_TRANSACTION,
-  ]);
+  // await AuthPermissionModel.resetAuthPermissions(2, [
+  //   PermissionModel.EXPENDITURE_CATEGORY,
+  //   PermissionModel.EXPENDITURE_CREATE_TRANSACTION,
+  //   PermissionModel.EXPENDITURE_READ_OWN_TRANSACTION,
+  //   // PermissionModel.EXPENDITURE_READ_ALL_TRANSACTION,
+  //   // PermissionModel.ACCOUNT_CATEGORY,
+  //   // PermissionModel.ITEM_CATEGORY,
+  //   // PermissionModel.REPORT_CATEGORY,
+  //   // PermissionModel.PURCHAS_CATEGORY,
+  //   // PermissionModel.SELL_POINT_CATEGORY,
+  // ]);
 
   authProvider.notifyAuthChanged();
 
