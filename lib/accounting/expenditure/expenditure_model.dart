@@ -8,7 +8,8 @@ import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/exceptions/curropted_input.dart';
 
 class ExpenditureModel {
-  static Future<void> createExpenditureInDB(ExpenditurFormFields fields) async {
+  static Future<void> createExpenditureInDB(
+      AuthProviderSQL authProvider, ExpenditurFormFields fields) async {
     var voucherFeed = VoucherFeed(date: fields.date!);
     var transactionFeedDebit = TransactionFeed(
       accountId: fields.paidBy!.id,
@@ -26,12 +27,12 @@ class ExpenditureModel {
       note: fields.note!,
     );
     return VoucherModel.createVoucher(
+      authProvider,
       voucherFeed,
       [
         transactionFeedDebit,
         transactionFeedCredit,
       ],
-      fields.authId!,
     );
   }
 

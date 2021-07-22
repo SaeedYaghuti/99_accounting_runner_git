@@ -265,6 +265,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
           () async {
             await _saveForm(
               () => ExpenditureModel.createExpenditureInDB(
+                authProviderSQL,
                 _fields,
               ),
             );

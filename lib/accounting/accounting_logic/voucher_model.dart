@@ -10,6 +10,7 @@ import 'package:shop/auth/auth_permission_model.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/auth/has_access.dart';
 import 'package:shop/exceptions/DBException.dart';
+import 'package:shop/exceptions/access_denied_exception.dart';
 import 'package:shop/exceptions/curropted_input.dart';
 import 'package:shop/exceptions/db_operation.dart';
 import 'package:shop/exceptions/dirty_database.dart';
@@ -35,6 +36,114 @@ class VoucherModel {
   });
 
   static Future<void> createVoucher(
+    AuthProviderSQL authProvider,
+    VoucherFeed voucherFeed,
+    List<TransactionFeed> transactionFeeds,
+    // int authId,
+  ) async {
+    // step 0# if creator hasAccess to create voucher
+    // we should check transactionFeeds accountId
+    // CATEGORY => EXP_CREATE,MoneyMov_CAT, Purch_CAT
+    // ACCOUNTS =>
+
+    // step 1# validate data
+    if (!_validateTransactionFeedsAmount(transactionFeeds)) {
+      throw ValidationException(
+        'V_MG 00| amount in transactionFeeds are not valid',
+      );
+    }
+
+    // step1# validate authority for each account
+    for (var tranFeed in transactionFeeds) {
+      AccountModel? account =
+          await AccountModel.fetchAccountById(tranFeed.accountId);
+      if (account == null) {
+        throw CurroptedInputException(
+          'VCH_MDL | createVoucher() 01| account with id: ${tranFeed.accountId} in not availble',
+        );
+      }
+      if (authProvider.isNotPermitted(account.createTransactionPermission)) {
+        throw AccessDeniedException(
+          'VCH_MDL | createVoucher() 02 | client do not have permission for ${account.createTransactionPermission}',
+        );
+      }
+    }
+
+    // step 2# borrow voucherNumber
+    var voucherNumber;
+    try {
+      voucherNumber = await VoucherNumberModel.borrowNumber();
+      // print('V_MG 03| voucherNumber: $voucherNumber');
+
+    } catch (e) {
+      print('V_MG 04| voucherNumber: $e');
+      print('V_MG 04| we did VoucherNumberModel.reset() try again!');
+      await VoucherNumberModel.reset();
+      throw e;
+    }
+
+    // step 3# create voucher
+    VoucherModel voucher = VoucherModel(
+      creatorId: authProvider.authId!,
+      voucherNumber: voucherNumber,
+      date: voucherFeed.date,
+      note: _makeVoucherNote(transactionFeeds),
+    );
+    // print('V_MG 07| voucher before save in db >');
+    // print(voucher);
+
+    try {
+      await voucher._insertMeInDB();
+    } catch (e) {
+      await VoucherNumberModel.numberNotConsumed(voucherNumber);
+      throw DBException(
+        'V_MG 10| Unable to create voucher: e: ${e.toString()}',
+      );
+    }
+
+    // step 4# create transactions
+    List<TransactionModel> successTransactions = [];
+
+    for (var feed in transactionFeeds) {
+      var transaction = TransactionModel(
+        accountId: feed.accountId,
+        voucherId: voucher.id!,
+        amount: feed.amount,
+        isDebit: feed.isDebit,
+        date: feed.date,
+        note: feed.note,
+      );
+      try {
+        await transaction.insertMeIntoDB();
+        successTransactions.add(transaction);
+      } catch (e) {
+        // delete all transactions and voucher
+        try {
+          await voucher.deleteMeFromDB();
+          for (var transaction in successTransactions) {
+            await transaction.deleteMeFromDB();
+          }
+        } catch (e) {
+          // we have dirty data in voucher or transactions
+          // do log at error_log ...
+          throw VoucherException(
+            'V_MG 13| We have dirty data at voucher or transactions table',
+          );
+        }
+        throw VoucherException(
+          'V_MG 16| Voucher did not saved at db!  we do not have dirty data at db e: ${e.toString()}',
+        );
+      }
+    }
+    // step #5 voucher has mad Successfully
+    await VoucherNumberModel.numberConsumed(voucherNumber);
+    // print('V_MG 19| voucher and all its transactions saved Successfully!');
+
+    // TODO: remove me
+    await voucher._fetchMyTransactions();
+  }
+
+  static Future<void> createVoucherNotSecure(
     VoucherFeed voucherFeed,
     List<TransactionFeed> transactionFeeds,
     int authId,
@@ -300,42 +409,29 @@ class VoucherModel {
     return debitIds.join(', ');
   }
 
+  // secure
   static Future<List<VoucherModel?>> accountVouchers(
     String accountId,
-    // int authId0,
     AuthProviderSQL authProvider,
   ) async {
-    // step#1 => filter fetched vouchers from db according auth_id read-perm; half of way
-    // account permissions
+    // step#1 if client has read_own perm for accountId we fetch from db only own-vouchers
+    // account
     AccountModel? account = await AccountModel.fetchAccountById(accountId);
     if (account == null) return [];
-    var andClause = '';
+    var onlyOwnVouchers = '';
 
-    // auth permissions
-    List<AuthPermissionModel?>? authPermissions =
-        await AuthPermissionModel.allPermissionsForAuth(authProvider.authId!);
-    print(
-      'VCH_MDL | accountVouchers() 00| authPermissions?.length: ${authPermissions?.length}',
-    );
-
-    if (authPermissions == null || authPermissions.isEmpty) return [];
-
-    if (authPermissions.any(
-      (perm) => perm!.permissionId == account.readAllTransactionPermission,
-    )) {
+    if (authProvider.isPermitted(account.readAllTransactionPermission)) {
       // has complete access to read
+      onlyOwnVouchers = '';
       print(
         'VCH_MDL | accountVouchers() 01| auther has READ_ALL',
       );
-      // at all we don't need extra andCluse
-    } else if (authPermissions.any(
-      (perm) => perm!.permissionId == account.readOwnTransactionPermission,
-    )) {
+    } else if (authProvider.isPermitted(account.readOwnTransactionPermission)) {
       // has access to own
       print(
         'VCH_MDL | accountVouchers() 02| auther has READ_OWN',
       );
-      andClause =
+      onlyOwnVouchers =
           'AND ${VoucherModel.column5CreatorId} = ${authProvider.authId!}';
     } else {
       // has no read perm
@@ -358,7 +454,7 @@ class VoucherModel {
       ${TransactionModel.transactionTableName}
     ON ${TransactionModel.column3VoucherId} = $column1Id
     AND ${TransactionModel.column2AccountId} = ?
-    $andClause
+    $onlyOwnVouchers
     ''';
     var vouchersMap = await AccountingDB.runRawQuery(query, [accountId]);
 
@@ -369,7 +465,7 @@ class VoucherModel {
     for (var voucherMap in vouchersMap) {
       var voucher = fromMapOfVoucher(voucherMap);
       await voucher._fetchMyTransactions();
-      // step#2 => filter fetched vouchers from db according auth_id read-perm for second account; second half of way
+      // step#2 => every voucher at least has 2 account; we must check client perm for other accounts
       var hasAccess = await hasCredAccessToVoucher(
         formDuty: FormDuty.READ,
         voucher: voucher,
