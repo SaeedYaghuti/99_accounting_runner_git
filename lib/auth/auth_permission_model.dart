@@ -45,6 +45,32 @@ class AuthPermissionModel {
     }
   }
 
+  static Future<AuthPermissionModel?> fetchPermissionById(
+    String permId,
+  ) async {
+    final query = '''
+    SELECT *
+    FROM $tableName
+    WHERE $column1Id = ?
+    ''';
+    try {
+      var result = await AuthDB.runRawQuery(query, [permId]);
+      if (result.length == 0) {
+        print(
+          'ATH_PERM fetchPermissionById 01| not found any auth_perm for $permId',
+        );
+        return null;
+      } else {
+        var perm = fromMapOfAuthPermission(result[0]);
+        print('ATH_PRM_MDL | fetchPermissionById() 01| auth-perm: $perm');
+      }
+    } catch (e) {
+      print(
+        'ATH_PERM fetchPermissionById 10| @ catch e: $e',
+      );
+    }
+  }
+
   static Future<void> giveAllPermissionsToFirstAuth(Database db) async {
     try {
       for (var permission in PERMISSIONS_LIST) {
@@ -158,8 +184,6 @@ class AuthPermissionModel {
   static const String column1Id = 'authperm_id';
   static const String column2AuthId = 'authperm_auth_id';
   static const String column3PermissionId = 'authperm_permission_id';
-
-  // TODO: combination of authId & permId should be unique
 
   static const String QUERY_CREATE_JOIN_TABLE_AUTH_PERMISSION =
       '''CREATE TABLE $tableName (

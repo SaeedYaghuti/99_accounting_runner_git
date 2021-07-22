@@ -2,6 +2,7 @@ import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/expenditure/expenditure_form.dart';
+import 'package:shop/exceptions/curropted_input.dart';
 import 'package:shop/exceptions/not_handled_exception.dart';
 
 import 'auth_provider_sql.dart';
@@ -11,6 +12,7 @@ bool hasAccess({
   List<String?>? anyPermissions,
   List<String?>? vitalPermissions,
 }) {
+  // TODO: remove me
   return true;
 
   // if both any and vital are empty: No Access
@@ -43,12 +45,14 @@ bool hasAccess({
   return false;
 }
 
-bool hasAccessToAccountCredTransaction({
-  required AuthProviderSQL authProviderSQL,
-  required int voucherCreatorId,
+// old-one: flaw: don't check authority for accounts in voucher
+bool hasAccessToCredVoucher({
   required FormDuty formDuty,
+  required int voucherCreatorId,
   required AccountModel account,
+  required AuthProviderSQL authProviderSQL,
 }) {
+  // TODO: remove me
   return true;
   // if there is no accountCredTransactionPermission: access is denied
   switch (formDuty) {
@@ -87,6 +91,104 @@ bool hasAccessToAccountCredTransaction({
     default:
       throw NotHandledException(
         'has_access.dart| hasAccessToAccountCredTransaction() 01| unexpected FormDuty Type: $formDuty',
+      );
+  }
+}
+
+// new-one
+Future<bool> hasCredAccessToVoucher({
+  required FormDuty formDuty,
+  required VoucherModel voucher,
+  required AuthProviderSQL authProviderSQL,
+  required List<AccountModel?> helperAccounts,
+}) async {
+  // step#1 fetch all voucher's account
+  List<AccountModel?> voucherAccounts = [];
+
+  for (var accountId in voucher.myTransactionAccountIds()) {
+    if (accountId == null) continue;
+    if (helperAccounts.any(
+      (account) => (account != null && account.id == accountId),
+    )) {
+      voucherAccounts.add(
+        helperAccounts.firstWhere(
+          (account) => (account != null && account.id == accountId),
+        ),
+      );
+    } else {
+      AccountModel? vAccount = await AccountModel.fetchAccountById(accountId);
+      if (vAccount == null) {
+        throw CurroptedInputException(
+          'hasCredAccessToVoucher 01| we have a trans in voucher with no valid account: $accountId',
+        );
+      }
+      voucherAccounts.add(vAccount);
+    }
+  }
+  if (voucherAccounts.isEmpty || voucherAccounts.length < 2) {
+    throw CurroptedInputException(
+      'hasCredAccessToVoucher 02| we have not enough voucher account in voucher: ${voucher.id}',
+    );
+  }
+  // step#2 check authority according form-duty
+  switch (formDuty) {
+    case FormDuty.CREATE:
+      if (voucherAccounts.any(
+        (account) => authProviderSQL
+            .isNotPermitted(account!.createTransactionPermission),
+      )) return false;
+      return true;
+    case FormDuty.READ:
+      if (voucherAccounts.every(
+        (account) {
+          if (authProviderSQL
+              .isPermitted(account!.readAllTransactionPermission)) {
+            return true;
+          }
+          if (authProviderSQL
+                  .isPermitted(account.readOwnTransactionPermission) &&
+              voucher.creatorId == authProviderSQL.authId) {
+            return true;
+          }
+          return false;
+        },
+      )) return true;
+      return false;
+    case FormDuty.EDIT:
+      if (voucherAccounts.every(
+        (account) {
+          if (authProviderSQL
+              .isPermitted(account!.editAllTransactionPermission)) {
+            return true;
+          }
+          if (authProviderSQL
+                  .isPermitted(account.editOwnTransactionPermission) &&
+              voucher.creatorId == authProviderSQL.authId) {
+            return true;
+          }
+          return false;
+        },
+      )) return true;
+      return false;
+    case FormDuty.DELETE:
+      if (voucherAccounts.every(
+        (account) {
+          if (authProviderSQL
+              .isPermitted(account!.deleteAllTransactionPermission)) {
+            return true;
+          }
+          if (authProviderSQL
+                  .isPermitted(account.deleteOwnTransactionPermission) &&
+              voucher.creatorId == authProviderSQL.authId) {
+            return true;
+          }
+          return false;
+        },
+      )) return true;
+      return false;
+    default:
+      throw NotHandledException(
+        'has_access.dart| hasCredAccessToVoucher() 01| unexpected FormDuty Type: $formDuty',
       );
   }
 }

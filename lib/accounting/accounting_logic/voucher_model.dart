@@ -4,8 +4,11 @@ import 'package:shop/accounting/accounting_logic/transaction_feed.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_feed.dart';
 import 'package:shop/accounting/accounting_logic/voucher_number_model.dart';
+import 'package:shop/accounting/expenditure/expenditure_form.dart';
 import 'package:shop/auth/auth_model_sql.dart';
 import 'package:shop/auth/auth_permission_model.dart';
+import 'package:shop/auth/auth_provider_sql.dart';
+import 'package:shop/auth/has_access.dart';
 import 'package:shop/exceptions/DBException.dart';
 import 'package:shop/exceptions/curropted_input.dart';
 import 'package:shop/exceptions/db_operation.dart';
@@ -256,6 +259,12 @@ class VoucherModel {
     return count;
   }
 
+  List<String?> myTransactionAccountIds() {
+    return transactions.map((tran) {
+      return tran?.accountId;
+    }).toList();
+  }
+
   List<TransactionModel?> debitTransactions() {
     return transactions.where((tran) {
       if (tran == null) {
@@ -293,8 +302,10 @@ class VoucherModel {
 
   static Future<List<VoucherModel?>> accountVouchers(
     String accountId,
-    int authId,
+    // int authId0,
+    AuthProviderSQL authProvider,
   ) async {
+    // step#1 => filter fetched vouchers from db according auth_id read-perm; half of way
     // account permissions
     AccountModel? account = await AccountModel.fetchAccountById(accountId);
     if (account == null) return [];
@@ -302,7 +313,7 @@ class VoucherModel {
 
     // auth permissions
     List<AuthPermissionModel?>? authPermissions =
-        await AuthPermissionModel.allPermissionsForAuth(authId);
+        await AuthPermissionModel.allPermissionsForAuth(authProvider.authId!);
     print(
       'VCH_MDL | accountVouchers() 00| authPermissions?.length: ${authPermissions?.length}',
     );
@@ -324,7 +335,8 @@ class VoucherModel {
       print(
         'VCH_MDL | accountVouchers() 02| auther has READ_OWN',
       );
-      andClause = 'AND ${VoucherModel.column5CreatorId} = $authId';
+      andClause =
+          'AND ${VoucherModel.column5CreatorId} = ${authProvider.authId!}';
     } else {
       // has no read perm
       print(
@@ -332,10 +344,6 @@ class VoucherModel {
       );
       return [];
     }
-
-    // ...
-    // ...
-    // ...
 
     final query = '''
     SELECT 
@@ -356,19 +364,20 @@ class VoucherModel {
 
     // convert map to voucherModel
     List<VoucherModel> voucherModels = [];
-    vouchersMap.forEach(
-      (vchMap) => voucherModels.add(fromMapOfVoucher(vchMap)),
-    );
 
     // fetch transaction for each voucher
-    for (var voucher in voucherModels) {
+    for (var voucherMap in vouchersMap) {
+      var voucher = fromMapOfVoucher(voucherMap);
       await voucher._fetchMyTransactions();
+      // step#2 => filter fetched vouchers from db according auth_id read-perm for second account; second half of way
+      var hasAccess = await hasCredAccessToVoucher(
+        formDuty: FormDuty.READ,
+        voucher: voucher,
+        authProviderSQL: authProvider,
+        helperAccounts: [account],
+      );
+      if (hasAccess) voucherModels.add(voucher);
     }
-
-    // print(
-    //     'VM aV 01| accountVouchers for account: $accountId: ##################');
-    // print(voucherModels);
-    // print('##################');
     return voucherModels;
   }
 

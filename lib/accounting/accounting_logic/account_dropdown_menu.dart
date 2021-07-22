@@ -42,7 +42,7 @@ class _AccountDropdownMenuState extends State<AccountDropdownMenu> {
     _loadingStart();
     AccountModel.allAccounts().then(
       (fetchAccounts) {
-        print('ACC DRP init() 02| fetchAccounts: $fetchAccounts');
+        // print('ACC DRP init() 02| fetchAccounts: $fetchAccounts');
         _loadingEnd();
         // check null and Empty
         if (fetchAccounts == null || fetchAccounts.isEmpty) {

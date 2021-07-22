@@ -30,6 +30,10 @@ class AuthProviderSQL with ChangeNotifier {
     return _auth!.hasPermission(permissionId);
   }
 
+  bool isNotPermitted(String? permissionId) {
+    return !isPermitted(permissionId);
+  }
+
   Future<void> login(String username, String password) async {
     _auth = AuthModel();
     ValidationResult validationResult = await _auth!.validateUser(

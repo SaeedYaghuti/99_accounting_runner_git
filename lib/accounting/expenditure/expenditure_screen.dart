@@ -47,7 +47,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
     authProvider = Provider.of<AuthProviderSQL>(context, listen: true);
     _vouchersLoadingStart();
 
-    ExpenditureModel.expenditureVouchers(authProvider.authId!).then(
+    ExpenditureModel.expenditureVouchers(authProvider).then(
       (voucherResults) {
         _vouchersLoadingEnd();
         if (voucherResults == null || voucherResults.isEmpty) {
@@ -354,7 +354,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       context: context,
       position: RelativeRect.fromLTRB(left, top, left, top),
       items: [
-        if (hasAccessToAccountCredTransaction(
+        if (hasAccessToCredVoucher(
           authProviderSQL: authProvider,
           voucherCreatorId: voucher!.creatorId,
           formDuty: FormDuty.EDIT,
@@ -378,7 +378,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
             ),
             value: 'edit',
           ),
-        if (hasAccessToAccountCredTransaction(
+        if (hasAccessToCredVoucher(
           formDuty: FormDuty.DELETE,
           account: expenditurAccount,
           authProviderSQL: authProvider,
@@ -449,7 +449,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
     try {
       _vouchersLoadingStart();
       var fetchedVouchers =
-          await ExpenditureModel.expenditureVouchers(authProvider.authId!);
+          await ExpenditureModel.expenditureVouchers(authProvider);
 
       if (fetchedVouchers != null || fetchedVouchers.isNotEmpty) {
         setState(() {

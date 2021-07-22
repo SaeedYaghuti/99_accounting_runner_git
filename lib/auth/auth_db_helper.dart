@@ -41,7 +41,7 @@ class AuthDB {
         conflictAlgorithm: ConflictAlgorithm.rollback,
       );
       print(
-        'AuthDB predPerm 01| @insertPredefinedPermissions() insertResult: $insertResult',
+        'AuthDB | @insertPredefinedPermissions() | insertResult: $insertResult',
       );
     }
   }
