@@ -298,11 +298,40 @@ class VoucherModel {
     // account permissions
     AccountModel? account = await AccountModel.fetchAccountById(accountId);
     if (account == null) return [];
+    var andClause = '';
 
     // auth permissions
     List<AuthPermissionModel?>? authPermissions =
         await AuthPermissionModel.allPermissionsForAuth(authId);
+    print(
+      'VCH_MDL | accountVouchers() 00| authPermissions?.length: ${authPermissions?.length}',
+    );
+
     if (authPermissions == null || authPermissions.isEmpty) return [];
+
+    if (authPermissions.any(
+      (perm) => perm!.permissionId == account.readAllTransactionPermission,
+    )) {
+      // has complete access to read
+      print(
+        'VCH_MDL | accountVouchers() 01| auther has READ_ALL',
+      );
+      // at all we don't need extra andCluse
+    } else if (authPermissions.any(
+      (perm) => perm!.permissionId == account.readOwnTransactionPermission,
+    )) {
+      // has access to own
+      print(
+        'VCH_MDL | accountVouchers() 02| auther has READ_OWN',
+      );
+      andClause = 'AND ${VoucherModel.column5CreatorId} = $authId';
+    } else {
+      // has no read perm
+      print(
+        'VCH_MDL | accountVouchers() 03| auther has no permission of read',
+      );
+      return [];
+    }
 
     // ...
     // ...
@@ -321,6 +350,7 @@ class VoucherModel {
       ${TransactionModel.transactionTableName}
     ON ${TransactionModel.column3VoucherId} = $column1Id
     AND ${TransactionModel.column2AccountId} = ?
+    $andClause
     ''';
     var vouchersMap = await AccountingDB.runRawQuery(query, [accountId]);
 

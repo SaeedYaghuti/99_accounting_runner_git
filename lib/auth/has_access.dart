@@ -11,6 +11,8 @@ bool hasAccess({
   List<String?>? anyPermissions,
   List<String?>? vitalPermissions,
 }) {
+  return true;
+
   // if both any and vital are empty: No Access
   // because they put accountPerm and it is null and it means access is denied
   if ((vitalPermissions == null || vitalPermissions.isEmpty) &&
@@ -47,6 +49,7 @@ bool hasAccessToAccountCredTransaction({
   required FormDuty formDuty,
   required AccountModel account,
 }) {
+  return true;
   // if there is no accountCredTransactionPermission: access is denied
   switch (formDuty) {
     case FormDuty.CREATE:

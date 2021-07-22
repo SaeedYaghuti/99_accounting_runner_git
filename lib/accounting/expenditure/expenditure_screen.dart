@@ -46,6 +46,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
   void didChangeDependencies() {
     authProvider = Provider.of<AuthProviderSQL>(context, listen: true);
     _vouchersLoadingStart();
+
     ExpenditureModel.expenditureVouchers(authProvider.authId!).then(
       (voucherResults) {
         _vouchersLoadingEnd();
@@ -64,17 +65,21 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       );
       print(e.toString());
     });
+
     _vouchersLoadingStart();
     AccountModel.fetchAccountById(ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID)
         .then((account) {
       _vouchersLoadingEnd();
+      // print(
+      //   'EXP_SCN | didChangeDependencies() 02| fetching expenditurAccount | account: $account',
+      // );
       expenditurAccount = account!;
     }).catchError((e) {
       _vouchersLoadingEnd();
       showErrorDialog(
         context,
         'ExpenditurScreen',
-        '02 | @didChangeDependencies() | #while fetching expenditurAccount',
+        '03 | @didChangeDependencies() | #while fetching expenditurAccount',
         e,
       );
       print(e.toString());

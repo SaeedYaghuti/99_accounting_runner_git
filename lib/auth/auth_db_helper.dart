@@ -40,9 +40,9 @@ class AuthDB {
         permission.toMap(),
         conflictAlgorithm: ConflictAlgorithm.rollback,
       );
-      // print(
-      //   'AuthDB predPerm 01| @insertPredefinedPermissions() insertResult: $insertResult',
-      // );
+      print(
+        'AuthDB predPerm 01| @insertPredefinedPermissions() insertResult: $insertResult',
+      );
     }
   }
 

@@ -82,6 +82,7 @@ class AccountModel {
   }
 
   static Future<AccountModel?> fetchAccountById(String accountId) async {
+    // print('ACC_MDL fetchAccountById() 01| accountId: <$accountId>');
     final query = '''
     SELECT *
     FROM $tableName
