@@ -48,19 +48,19 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     _fields.date = DateTime.now();
     _fields.paidBy = ExpenditurFormFields.expenditureExample.paidBy;
 
-    switch (widget.formDuty) {
-      case FormDuty.READ:
-      case FormDuty.CREATE:
-        initStateCreate();
-        break;
-      case FormDuty.DELETE:
-        initStateDelete();
-        break;
-      case FormDuty.EDIT:
-        initStateEdit();
-        break;
-      default:
-    }
+    // switch (widget.formDuty) {
+    //   case FormDuty.READ:
+    //   case FormDuty.CREATE:
+    //     initStateCreate();
+    //     break;
+    //   case FormDuty.DELETE:
+    //     initStateDelete();
+    //     break;
+    //   case FormDuty.EDIT:
+    //     initStateEdit();
+    //     break;
+    //   default:
+    // }
     super.initState();
   }
 
@@ -75,7 +75,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     // print('EF | init_state | form rebuild for DELETE');
     if (widget.voucher == null) return;
     loadingStart();
-    widget.voucher!.deleteMeFromDB().then((deleteResult) {
+    widget.voucher!.deleteMeFromDB(authProviderSQL).then((deleteResult) {
       loadingEnd();
       // print('EF 66| deleteResult: $deleteResult');
       widget.notifyNewVoucher();
@@ -136,6 +136,19 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   void didChangeDependencies() {
     authProviderSQL = Provider.of<AuthProviderSQL>(context, listen: true);
     _fields.authId = authProviderSQL.authId;
+    switch (widget.formDuty) {
+      case FormDuty.READ:
+      case FormDuty.CREATE:
+        initStateCreate();
+        break;
+      case FormDuty.DELETE:
+        initStateDelete();
+        break;
+      case FormDuty.EDIT:
+        initStateEdit();
+        break;
+      default:
+    }
     super.didChangeDependencies();
   }
 
