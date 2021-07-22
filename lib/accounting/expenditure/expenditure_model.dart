@@ -47,7 +47,7 @@ class ExpenditureModel {
   static Future<void> updateVoucher(
     VoucherModel oldVoucher,
     ExpenditurFormFields fields,
-    int authId,
+    AuthProviderSQL authProvider,
   ) async {
     // print('EXP_MDL updateVoucher()| 01 | oldVoucher: $oldVoucher');
     // print('EXP_MDL updateVoucher()| 02 | fields: $fields');
@@ -62,7 +62,7 @@ class ExpenditureModel {
 
     VoucherModel newVoucher = VoucherModel(
       id: oldVoucher.id,
-      creatorId: authId,
+      creatorId: authProvider.authId!,
       voucherNumber: oldVoucher.voucherNumber,
       date: fields.date!,
       note: '${fields.paidBy!.titleEnglish} paid for Expenditure',
@@ -91,9 +91,10 @@ class ExpenditureModel {
     // print('EM 43| new Voucher to be updated at db');
     // print(newVoucher);
     try {
-      await VoucherModel.updateVoucher(newVoucher);
+      await VoucherModel.updateVoucher(newVoucher, authProvider);
     } catch (e) {
       print('EM 43| updateVoucher() |@ catch e: $e');
+      throw e;
     }
   }
 }

@@ -17,6 +17,7 @@ import 'package:shop/exceptions/dirty_database.dart';
 import 'package:shop/exceptions/lazy_saeid.dart';
 import 'package:shop/exceptions/voucher_exception.dart';
 import 'package:shop/exceptions/ValidationException.dart';
+import 'package:shop/shared/result_status.dart';
 import 'package:shop/shared/seconds_of_time.dart';
 
 class VoucherModel {
@@ -35,6 +36,7 @@ class VoucherModel {
     this.note = '',
   });
 
+  // secure
   static Future<void> createVoucher(
     AuthProviderSQL authProvider,
     VoucherFeed voucherFeed,
@@ -143,98 +145,10 @@ class VoucherModel {
     await voucher._fetchMyTransactions();
   }
 
-  static Future<void> createVoucherNotSecure(
-    VoucherFeed voucherFeed,
-    List<TransactionFeed> transactionFeeds,
-    int authId,
+  static Future<void> updateVoucher(
+    VoucherModel rVoucher,
+    AuthProviderSQL authProvider,
   ) async {
-    // step 0# if creator hasAccess to create voucher
-    // we should check transactionFeeds accountId
-    // CATEGORY => EXP_CREATE,MoneyMov_CAT, Purch_CAT
-    // ACCOUNTS =>
-
-    // step 1# validate data
-    if (!_validateTransactionFeedsAmount(transactionFeeds)) {
-      throw ValidationException(
-        'V_MG 00| amount in transactionFeeds are not valid',
-      );
-    }
-
-    // step 2# borrow voucherNumber
-    var voucherNumber;
-    try {
-      voucherNumber = await VoucherNumberModel.borrowNumber();
-      // print('V_MG 03| voucherNumber: $voucherNumber');
-
-    } catch (e) {
-      print('V_MG 04| voucherNumber: $e');
-      print('V_MG 04| we did VoucherNumberModel.reset() try again!');
-      await VoucherNumberModel.reset();
-      throw e;
-    }
-
-    // step 3# create voucher
-    VoucherModel voucher = VoucherModel(
-      creatorId: authId,
-      voucherNumber: voucherNumber,
-      date: voucherFeed.date,
-      note: _makeVoucherNote(transactionFeeds),
-    );
-    // print('V_MG 07| voucher before save in db >');
-    // print(voucher);
-
-    try {
-      await voucher._insertMeInDB();
-    } catch (e) {
-      await VoucherNumberModel.numberNotConsumed(voucherNumber);
-      throw DBException(
-        'V_MG 10| Unable to create voucher: e: ${e.toString()}',
-      );
-    }
-
-    // step 4# create transactions
-    List<TransactionModel> successTransactions = [];
-
-    for (var feed in transactionFeeds) {
-      var transaction = TransactionModel(
-        accountId: feed.accountId,
-        voucherId: voucher.id!,
-        amount: feed.amount,
-        isDebit: feed.isDebit,
-        date: feed.date,
-        note: feed.note,
-      );
-      try {
-        await transaction.insertMeIntoDB();
-        successTransactions.add(transaction);
-      } catch (e) {
-        // delete all transactions and voucher
-        try {
-          await voucher.deleteMeFromDB();
-          for (var transaction in successTransactions) {
-            await transaction.deleteMeFromDB();
-          }
-        } catch (e) {
-          // we have dirty data in voucher or transactions
-          // do log at error_log ...
-          throw VoucherException(
-            'V_MG 13| We have dirty data at voucher or transactions table',
-          );
-        }
-        throw VoucherException(
-          'V_MG 16| Voucher did not saved at db!  we do not have dirty data at db e: ${e.toString()}',
-        );
-      }
-    }
-    // step #5 voucher has mad Successfully
-    await VoucherNumberModel.numberConsumed(voucherNumber);
-    // print('V_MG 19| voucher and all its transactions saved Successfully!');
-
-    // TODO: remove me
-    await voucher._fetchMyTransactions();
-  }
-
-  static Future<void> updateVoucher(VoucherModel rVoucher) async {
     // step 1# validate amount
     if (!_validateTransactionModelsAmount(rVoucher.transactions)) {
       throw ValidationException(
@@ -244,6 +158,157 @@ class VoucherModel {
     if (rVoucher.id == null || rVoucher.voucherNumber == null) {
       throw CurroptedInputException('VM 31| rVoucher is not valid voucher!');
     }
+
+    // step 1# check edit authority for rVoucher
+    Result hasAccessToRVoucher = await hasVoucherCredPermission(
+      formDuty: FormDuty.EDIT,
+      voucher: rVoucher,
+      authProviderSQL: authProvider,
+      helperAccounts: [],
+    );
+
+    if (hasAccessToRVoucher.outcome != null && !hasAccessToRVoucher.outcome) {
+      throw AccessDeniedException(
+        '${hasAccessToRVoucher.errorMessage} VCH_MDL | updateVoucher() 01| client do not have required perm for update $rVoucher',
+      );
+    }
+
+    // step 2# fetch voucher by id
+    var fVoucher = await VoucherModel.fetchVoucherById(rVoucher.id!);
+
+    // step 3# chack fVoucher validity
+    if (fVoucher == null) {
+      throw CurroptedInputException(
+          'VM 32| there is not voucher in db with id ${rVoucher.id}!');
+    }
+    if (fVoucher.voucherNumber != rVoucher.voucherNumber) {
+      throw CurroptedInputException(
+        'VM 33| there is not voucher in db with id:${rVoucher.id} and voucherNumber: ${rVoucher.voucherNumber}; voucherNumber could not be updated!',
+      );
+    }
+
+    // step 2# check edit authority for fVoucher
+    Result hasPermResult = await hasVoucherCredPermission(
+      formDuty: FormDuty.EDIT,
+      voucher: fVoucher,
+      authProviderSQL: authProvider,
+      helperAccounts: [],
+    );
+    if (hasPermResult.outcome != null && !hasPermResult.outcome) {
+      throw AccessDeniedException(
+        '${hasPermResult.errorMessage} VCH_MDL | updateVoucher() 02| client do not have required perm for update $fVoucher',
+      );
+    }
+
+    // print(
+    //   'EXP_MDL 353| print all-transaction before updating voucherModel ',
+    // );
+    // await TransactionModel.allTransactions();
+
+    // step #4 update voucher at db => it will delete all voucher-transaction
+    try {
+      await rVoucher._updateMeWithoutTransactionsInDB();
+
+      // print(
+      //   'EXP_MDL 354| print all-trans after updateing voucherModel',
+      // );
+      // await TransactionModel.allTransactions();
+    } catch (e) {
+      throw LazySaeidException(
+        'VM UP39| rVoucher not updated successfuly; And Saeid did not handle this situation',
+      );
+    }
+
+    // step 5# remove old transactions from db: we rebuild all transaction in update
+    // it is redundent: because update-voucher will remove all voucher-transaction
+    List<TransactionModel> successfullDeleted = [];
+
+    for (var tran in fVoucher.transactions) {
+      if (tran == null) break;
+      try {
+        await tran.deleteMeFromDB();
+        successfullDeleted.add(tran);
+      } catch (e) {
+        // if couldn't delete any tran we should recreate deleted tran
+        try {
+          for (var transaction in successfullDeleted) {
+            if (transaction == null) break;
+            await tran.insertMeIntoDB();
+          }
+          throw DBOperationException(
+            'VM 35| unsuccessful update vouchr: ${fVoucher.id}! there is no dirty data in db',
+          );
+        } catch (e) {
+          // do log
+          // ...
+          throw DirtyDatabaseException(
+            'VM 34| There is Dirty transaction in vouchr: ${fVoucher.id}',
+          );
+        }
+      }
+    }
+
+    // step #6 recreate new transactions
+    List<TransactionModel> successTransactions = [];
+
+    // print(
+    //   'EXP_MDL 351| all trans BEFORE adding new tran ',
+    // );
+    // await TransactionModel.allTransactions();
+
+    for (var transaction in rVoucher.transactions) {
+      try {
+        var insertID = await transaction!.insertMeIntoDB();
+
+        // var newTran = await TransactionModel.transactionById(insertID);
+        // print(
+        //   'EXP_MDL 350| updateVoucher step #6 |rebuild transaction | insertID: $insertID, transaction: $newTran',
+        // );
+        successTransactions.add(transaction);
+      } catch (e) {
+        print(
+          'EXP_MDL 351| updateVoucher step #6 |@ catch | while rebuild transaction e: $e',
+        );
+        // unable to build all new transactions:
+        try {
+          // step #a delete successTransactions
+          for (var transaction in successTransactions) {
+            await transaction.deleteMeFromDB();
+          }
+          // step #b recreate old transactions
+          for (var transaction in fVoucher.transactions) {
+            await transaction!.insertMeIntoDB();
+          }
+
+          // strp #c notify update problem; without dirty data
+          throw DBOperationException(
+            'VM 36| unsuccessful update vouchr: ${fVoucher.id}! there is no dirty data in db',
+          );
+        } catch (e) {
+          // we have dirty data in voucher or transactions
+          // do log at error_log ...
+          throw DirtyDatabaseException(
+            'V_MG 35| We have dirty data at voucher ${rVoucher.id}',
+          );
+        }
+      }
+    }
+  }
+
+  static Future<void> updateVoucherNotSecure(
+    VoucherModel rVoucher,
+  ) async {
+    // step 1# validate amount
+    if (!_validateTransactionModelsAmount(rVoucher.transactions)) {
+      throw ValidationException(
+        'V_MG 30| amount in transactionFeeds are not valid',
+      );
+    }
+    if (rVoucher.id == null || rVoucher.voucherNumber == null) {
+      throw CurroptedInputException('VM 31| rVoucher is not valid voucher!');
+    }
+
+    // step 1# check edit authority
 
     // step 2# fetch voucher by id
     var fVoucher = await VoucherModel.fetchVoucherById(rVoucher.id!);

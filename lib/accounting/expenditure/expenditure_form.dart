@@ -287,7 +287,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
                       await ExpenditureModel.updateVoucher(
                         widget.voucher!,
                         _fields,
-                        authProviderSQL.authId!,
+                        authProviderSQL,
                       );
                     } catch (e) {
                       showErrorDialog(
