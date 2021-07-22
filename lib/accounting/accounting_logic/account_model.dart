@@ -56,6 +56,8 @@ class AccountModel {
   }
 
   static Future<List<AccountModel?>?> allAccounts() async {
+    // TODO: access control
+
     final query = '''
     SELECT *
     FROM $tableName
@@ -201,25 +203,26 @@ class AccountModel {
       titleArabic: accountMap[AccountModel.column5TitleArabic] as String,
       note: accountMap[AccountModel.column6Note] as String,
       createTransactionPermission:
-          accountMap[AccountModel.column7CreateTransactionPermission] as String,
+          accountMap[AccountModel.column7CreateTransactionPermission]
+              as String?,
       readAllTransactionPermission:
           accountMap[AccountModel.column8ReadAllTransactionPermission]
-              as String,
+              as String?,
       readOwnTransactionPermission:
           accountMap[AccountModel.column9ReadOwnTransactionPermission]
-              as String,
+              as String?,
       editAllTransactionPermission:
           accountMap[AccountModel.column10EditAllTransactionPermission]
-              as String,
+              as String?,
       editOwnTransactionPermission:
           accountMap[AccountModel.column11EditOwnTransactionPermission]
-              as String,
+              as String?,
       deleteAllTransactionPermission:
           accountMap[AccountModel.column12DeleteAllTransactionPermission]
-              as String,
+              as String?,
       deleteOwnTransactionPermission:
           accountMap[AccountModel.column13DeleteOwnTransactionPermission]
-              as String,
+              as String?,
     );
     // print('AccountModel fromMap 03| output: \n$account');
     return account;

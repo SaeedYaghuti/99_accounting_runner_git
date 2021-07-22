@@ -40,25 +40,27 @@ class _AccountDropdownMenuState extends State<AccountDropdownMenu> {
   @override
   void initState() {
     _loadingStart();
-    AccountModel.allAccounts().then((fetchAccounts) {
-      // print('ACC DRP init() 02| fetchAccounts: $fetchAccounts');
-      _loadingEnd();
-      // check null and Empty
-      if (fetchAccounts == null || fetchAccounts.isEmpty) {
-        vriablesAreInitialized = false;
-        return;
-      }
-      accounts = fetchAccounts.cast<AccountModel>();
+    AccountModel.allAccounts().then(
+      (fetchAccounts) {
+        print('ACC DRP init() 02| fetchAccounts: $fetchAccounts');
+        _loadingEnd();
+        // check null and Empty
+        if (fetchAccounts == null || fetchAccounts.isEmpty) {
+          vriablesAreInitialized = false;
+          return;
+        }
+        accounts = fetchAccounts.cast<AccountModel>();
 
-      if (accounts.any((acc) => acc.id == ACCOUNTS_ID.LEDGER_ACCOUNT_ID)) {
-        ledgerAccount = accounts.firstWhere(
-          (acc) => acc.id == ACCOUNTS_ID.LEDGER_ACCOUNT_ID,
-        );
-        vriablesAreInitialized = true;
-      } else {
-        vriablesAreInitialized = false;
-      }
-    }).catchError((e) {
+        if (accounts.any((acc) => acc.id == ACCOUNTS_ID.LEDGER_ACCOUNT_ID)) {
+          ledgerAccount = accounts.firstWhere(
+            (acc) => acc.id == ACCOUNTS_ID.LEDGER_ACCOUNT_ID,
+          );
+          vriablesAreInitialized = true;
+        } else {
+          vriablesAreInitialized = false;
+        }
+      },
+    ).catchError((e) {
       _loadingEnd();
       print(
         'ACC_DROP_MENU initState() 01| unable to fetchAccount from db or assign it to variables; e: $e ',
