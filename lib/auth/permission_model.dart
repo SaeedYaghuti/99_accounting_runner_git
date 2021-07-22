@@ -229,16 +229,13 @@ class PermissionModel {
     ''';
   }
 
+  // ACCOUNTING GROUPS
   // nobody have this perm
-  static const String LEDGER_CREATE_TRANSACTION_X =
-      'LEDGER_CREATE_TRANSACTION_X';
   static const String LEDGER_READ_ALL_TRANSACTION =
       'LEDGER_READ_ALL_TRANSACTION';
 
   // nobody have this perm
-  static const String SALES_CREATE_TRANSACTION_X = 'SALES_CREATE_TRANSACTION_X';
-  static const String SALES_READ_ALL_TRANSACTION =
-      'LEDGER_READ_ALL_TRANSACTION';
+  static const String SALES_READ_ALL_TRANSACTION = 'SALES_READ_ALL_TRANSACTION';
 
   static const String EXPENDITURE_CATEGORY = 'EXPENDITURE_CATEGORY';
   static const String EXPENDITURE_CREATE_TRANSACTION =
@@ -256,14 +253,9 @@ class PermissionModel {
   static const String EXPENDITURE_DELETE_OWN_TRANSACTION =
       'EXPENDITURE_DELETE_OWN_TRANSACTION';
 
-  // nobody have this perm
-  static const String ASSETS_CREATE_TRANSACTION_X =
-      'ASSETS_CREATE_TRANSACTION_X';
   static const String ASSETS_READ_ALL_TRANSACTION =
       'ASSETS_READ_ALL_TRANSACTION';
 
-  // nobody have this perm
-  static const String BANKS_CREATE_TRANSACTION_X = 'BANKS_CREATE_TRANSACTION_X';
   static const String BANKS_READ_ALL_TRANSACTION = 'BANKS_READ_ALL_TRANSACTION';
 
   static const String NBO_CREATE_TRANSACTION = 'NBO_CREATE_TRANSACTION';
@@ -304,9 +296,6 @@ class PermissionModel {
   static const String CASH_DRAWER_DELETE_OWN_TRANSACTION =
       'CASH_DRAWER_DELETE_OWN_TRANSACTION';
 
-  // nobody have this perm
-  static const String DEBTORS_CREATE_TRANSACTION_X =
-      'DEBTORS_CREATE_TRANSACTION_X';
   static const String DEBTORS_READ_ALL_TRANSACTION =
       'DEBTORS_READ_ALL_TRANSACTION';
 

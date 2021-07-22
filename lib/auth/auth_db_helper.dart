@@ -38,7 +38,7 @@ class AuthDB {
       int insertResult = await db.insert(
         PermissionModel.tableName,
         permission.toMap(),
-        conflictAlgorithm: ConflictAlgorithm.rollback,
+        conflictAlgorithm: ConflictAlgorithm.ignore,
       );
       print(
         'AuthDB | @insertPredefinedPermissions() | insertResult: $insertResult',
