@@ -232,7 +232,7 @@ class VoucherModel {
     }
 
     // step 1# check edit authority for rVoucher; take accountId from tran; fetch account and check validity
-    Result hasAccessToRVoucher = await hasCredAccessToVoucherAsync(
+    Result hasAccessToRVoucher = await hasCredAccessToVoucherFuture(
       formDuty: FormDuty.EDIT,
       voucher: rVoucher,
       authProviderSQL: authProvider,

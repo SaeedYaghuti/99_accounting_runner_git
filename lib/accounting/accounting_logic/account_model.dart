@@ -75,9 +75,9 @@ class AccountModel {
       result.forEach(
         (accMap) => accounts.add(fromMap(accMap)),
       );
-      // print('AccountModel allAccounts 03| fetched Accounts:');
-      // print('accounts count: ${accounts.length}');
-      // print(accounts);
+      print('AccountModel allAccounts 03| fetched Accounts:');
+      print('accounts count: ${accounts.length}');
+      print(accounts);
       return accounts;
     } on Exception catch (e) {
       print('AccountModel allAccounts 02| @ catch wile fromMap e: $e');
@@ -243,18 +243,18 @@ class AccountModel {
 
   String toString() {
     return '''
-    $column1Id: $id, 
-    $column2ParentId: $parentId,
-    $column3TitleEnglish: $titleEnglish,
-    $column4TitlePersian: $titlePersian,
-    $column5TitleArabic: $titleArabic, $column6Note: $note,
-    $column7CreateTransactionPermission: $createTransactionPermission,
-    $column8ReadAllTransactionPermission: $readAllTransactionPermission,
-    $column9ReadOwnTransactionPermission: $readOwnTransactionPermission,
-    $column10EditAllTransactionPermission: $editAllTransactionPermission,
-    $column11EditOwnTransactionPermission: $editOwnTransactionPermission,
-    $column12DeleteAllTransactionPermission: $deleteAllTransactionPermission,
-    $column13DeleteOwnTransactionPermission: $deleteOwnTransactionPermission,
+    id: $id, 
+    parentId: $parentId,
+    titleEnglish: $titleEnglish,
+    titlePersian: $titlePersian,
+    titleArabic: $titleArabic, note: $note,
+    createTransactionPermission: $createTransactionPermission,
+    readAllTransactionPermission: $readAllTransactionPermission,
+    readOwnTransactionPermission: $readOwnTransactionPermission,
+    editAllTransactionPermission: $editAllTransactionPermission,
+    editOwnTransactionPermission: $editOwnTransactionPermission,
+    deleteAllTransactionPermission: $deleteAllTransactionPermission,
+    deleteOwnTransactionPermission: $deleteOwnTransactionPermission,
     ''';
   }
 }

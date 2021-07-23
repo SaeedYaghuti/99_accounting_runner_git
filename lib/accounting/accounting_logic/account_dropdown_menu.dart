@@ -9,19 +9,20 @@ import 'package:shop/exceptions/not_handled_exception.dart';
 
 import 'account_ids.dart';
 
-// TODO: filter by auth perms
+//  filter by auth perms
 //  # hasAccess only for childs not parent
 //  # if formDuty is empty it means if auth has one of crud_perm it has access
 
 class AccountDropdownMenu extends StatefulWidget {
   final AuthProviderSQL authProvider;
-  final FormDuty? formDuty;
+  final FormDuty formDuty;
   final List<String?> unwantedAccountIds;
   final List<String?>? expandedAccountIds;
   final Function(AccountModel) tapHandler;
+
   AccountDropdownMenu({
     required this.authProvider,
-    this.formDuty,
+    required this.formDuty,
     this.unwantedAccountIds = const [],
     this.expandedAccountIds,
     required this.tapHandler,
@@ -72,6 +73,9 @@ class _AccountDropdownMenuState extends State<AccountDropdownMenu> {
 
   @override
   Widget build(BuildContext context) {
+    print(
+        'ACC_DRP_MENU | _build() | authProviderId: ${widget.authProvider.authId}');
+    print('ACC_DRP_MENU | _build() | formDuty: ${widget.formDuty}');
     return Column(
       children: <Widget>[
         SizedBox(height: 20.0),
@@ -122,7 +126,6 @@ class _AccountDropdownMenuState extends State<AccountDropdownMenu> {
           fontWeight: FontWeight.bold,
         ),
       ),
-      // backgroundColor: randomColor(),
       children: childs(parent.id)
           .map((child) {
             // parent should continue running recursively
@@ -131,7 +134,7 @@ class _AccountDropdownMenuState extends State<AccountDropdownMenu> {
               return _buildTileTree(child);
 
             // check permition for child
-            return authHasAccessToAccount(
+            return hasAccessToAccount(
                       child,
                       widget.authProvider,
                       widget.formDuty,
@@ -157,90 +160,6 @@ class _AccountDropdownMenuState extends State<AccountDropdownMenu> {
           .whereType<Widget>()
           .toList(),
     );
-  }
-
-  bool authHasAccessToAccount(
-    AccountModel account,
-    AuthProviderSQL authProviderSQL,
-    FormDuty? formDuty,
-  ) {
-    // formDuty null means if any of Crud perm is qualified auth have permission
-    if (formDuty == null) {
-      // combine all permissions
-      List<String> crudTransactionPermissionsAny = [];
-
-      if (account.createTransactionPermission != null &&
-          account.createTransactionPermission!.isNotEmpty) {
-        crudTransactionPermissionsAny.add(
-          account.createTransactionPermission!,
-        );
-      }
-      if (account.readAllTransactionPermission != null &&
-          account.readAllTransactionPermission!.isNotEmpty) {
-        crudTransactionPermissionsAny.add(
-          account.readAllTransactionPermission!,
-        );
-      }
-      if (account.editAllTransactionPermission != null &&
-          account.editAllTransactionPermission!.isNotEmpty) {
-        crudTransactionPermissionsAny.add(
-          account.editAllTransactionPermission!,
-        );
-      }
-      if (account.deleteAllTransactionPermission != null &&
-          account.deleteAllTransactionPermission!.isNotEmpty) {
-        crudTransactionPermissionsAny.add(
-          account.deleteAllTransactionPermission!,
-        );
-      }
-
-      if (hasAccess(
-        authProviderSQL: authProviderSQL,
-        anyPermissions: crudTransactionPermissionsAny,
-      )) return true;
-    } else {
-      // form duty is not null
-      switch (formDuty) {
-        case FormDuty.CREATE:
-          if (hasAccess(
-            authProviderSQL: authProviderSQL,
-            anyPermissions: [account.createTransactionPermission],
-          )) return true;
-          break;
-        case FormDuty.READ:
-          if (hasAccess(
-            authProviderSQL: authProviderSQL,
-            anyPermissions: [
-              account.readAllTransactionPermission,
-              account.readOwnTransactionPermission,
-            ],
-          )) return true;
-          break;
-        case FormDuty.EDIT:
-          if (hasAccess(
-            authProviderSQL: authProviderSQL,
-            anyPermissions: [
-              account.editAllTransactionPermission,
-              account.editOwnTransactionPermission,
-            ],
-          )) return true;
-          break;
-        case FormDuty.DELETE:
-          if (hasAccess(
-            authProviderSQL: authProviderSQL,
-            anyPermissions: [
-              account.deleteAllTransactionPermission,
-              account.deleteOwnTransactionPermission,
-            ],
-          )) return true;
-          break;
-        default:
-          throw NotHandledException(
-            'ACC_DRP_DWN 01| this type of FormDuty: $formDuty is not handled!',
-          );
-      }
-    }
-    return false;
   }
 
   bool isParent(String accountId) {
