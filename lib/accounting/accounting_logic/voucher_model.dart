@@ -37,6 +37,78 @@ class VoucherModel {
   });
 
   // secure
+  static Future<List<VoucherModel?>> accountVouchers(
+    String accountId,
+    AuthProviderSQL authProvider,
+  ) async {
+    print(
+      'VCH_MDL | accountVouchers() 00| accountId: $accountId',
+    );
+    // step#1 if client has read_own perm for accountId we fetch from db only own-vouchers
+    // account
+    AccountModel? account = await AccountModel.fetchAccountById(accountId);
+    if (account == null) return [];
+    var onlyOwnVouchers = '';
+
+    if (authProvider.isPermitted(account.readAllTransactionPermission)) {
+      // has complete access to read
+      onlyOwnVouchers = '';
+      print(
+        'VCH_MDL | accountVouchers() 01| auther has READ_ALL',
+      );
+    } else if (authProvider.isPermitted(account.readOwnTransactionPermission)) {
+      // has access to own
+      print(
+        'VCH_MDL | accountVouchers() 02| auther has READ_OWN',
+      );
+      onlyOwnVouchers =
+          'AND ${VoucherModel.column5CreatorId} = ${authProvider.authId!}';
+    } else {
+      // has no read perm
+      print(
+        'VCH_MDL | accountVouchers() 03| auther has no permission of read',
+      );
+      return [];
+    }
+
+    final query = '''
+    SELECT 
+      $column1Id,
+      $column2VoucherNumber,
+      $column3Date,
+      $column4Note,
+      $column5CreatorId
+    FROM 
+      $voucherTableName 
+    LEFT JOIN 
+      ${TransactionModel.transactionTableName}
+    ON ${TransactionModel.column3VoucherId} = $column1Id
+    AND ${TransactionModel.column2AccountId} = ?
+    $onlyOwnVouchers
+    ''';
+    var vouchersMap = await AccountingDB.runRawQuery(query, [accountId]);
+
+    // convert map to voucherModel
+    List<VoucherModel> accountVouchers = [];
+
+    // fetch transaction for each voucher
+    for (var voucherMap in vouchersMap) {
+      var voucher = fromMapOfVoucher(voucherMap);
+      // await voucher._fetchMyTransactions();
+      await voucher._fetchMyTransactionsWithAccount();
+      // step#2 => every voucher at least has 2 account; we must check client perm for other accounts
+      Result hasAccess = hasCredAccessToVoucher(
+        formDuty: FormDuty.READ,
+        voucher: voucher,
+        authProviderSQL: authProvider,
+        // helperAccounts: [account],
+      );
+      if (hasAccess.outcome) accountVouchers.add(voucher);
+    }
+    return accountVouchers;
+  }
+
+  // secure
   static Future<void> createVoucher(
     AuthProviderSQL authProvider,
     VoucherFeed voucherFeed,
@@ -161,11 +233,11 @@ class VoucherModel {
     }
 
     // step 1# check edit authority for rVoucher
-    Result hasAccessToRVoucher = await hasCredAccessToVoucher(
+    Result hasAccessToRVoucher = hasCredAccessToVoucher(
       formDuty: FormDuty.EDIT,
       voucher: rVoucher,
       authProviderSQL: authProvider,
-      helperAccounts: [],
+      // helperAccounts: [],
     );
 
     if (hasAccessToRVoucher.outcome != null && !hasAccessToRVoucher.outcome) {
@@ -189,11 +261,11 @@ class VoucherModel {
     }
 
     // step 2# check edit authority for fVoucher
-    Result hasPermResult = await hasCredAccessToVoucher(
+    Result hasPermResult = hasCredAccessToVoucher(
       formDuty: FormDuty.EDIT,
       voucher: fVoucher,
       authProviderSQL: authProvider,
-      helperAccounts: [],
+      // helperAccounts: [],
     );
     if (hasPermResult.outcome != null && !hasPermResult.outcome) {
       throw AccessDeniedException(
@@ -305,11 +377,11 @@ class VoucherModel {
     this._fetchMyTransactions();
 
     // step 1# check edit authority for rVoucher
-    Result hasAccessToDelete = await hasCredAccessToVoucher(
+    Result hasAccessToDelete = hasCredAccessToVoucher(
       formDuty: FormDuty.DELETE,
       voucher: this,
       authProviderSQL: authProvider,
-      helperAccounts: [],
+      // helperAccounts: [],
     );
 
     if (hasAccessToDelete.outcome != null && !hasAccessToDelete.outcome) {
@@ -368,74 +440,6 @@ class VoucherModel {
     return debitIds.join(', ');
   }
 
-  // secure
-  static Future<List<VoucherModel?>> accountVouchers(
-    String accountId,
-    AuthProviderSQL authProvider,
-  ) async {
-    // step#1 if client has read_own perm for accountId we fetch from db only own-vouchers
-    // account
-    AccountModel? account = await AccountModel.fetchAccountById(accountId);
-    if (account == null) return [];
-    var onlyOwnVouchers = '';
-
-    if (authProvider.isPermitted(account.readAllTransactionPermission)) {
-      // has complete access to read
-      onlyOwnVouchers = '';
-      print(
-        'VCH_MDL | accountVouchers() 01| auther has READ_ALL',
-      );
-    } else if (authProvider.isPermitted(account.readOwnTransactionPermission)) {
-      // has access to own
-      print(
-        'VCH_MDL | accountVouchers() 02| auther has READ_OWN',
-      );
-      onlyOwnVouchers =
-          'AND ${VoucherModel.column5CreatorId} = ${authProvider.authId!}';
-    } else {
-      // has no read perm
-      print(
-        'VCH_MDL | accountVouchers() 03| auther has no permission of read',
-      );
-      return [];
-    }
-
-    final query = '''
-    SELECT 
-      $column1Id,
-      $column2VoucherNumber,
-      $column3Date,
-      $column4Note,
-      $column5CreatorId
-    FROM 
-      $voucherTableName 
-    LEFT JOIN 
-      ${TransactionModel.transactionTableName}
-    ON ${TransactionModel.column3VoucherId} = $column1Id
-    AND ${TransactionModel.column2AccountId} = ?
-    $onlyOwnVouchers
-    ''';
-    var vouchersMap = await AccountingDB.runRawQuery(query, [accountId]);
-
-    // convert map to voucherModel
-    List<VoucherModel> voucherModels = [];
-
-    // fetch transaction for each voucher
-    for (var voucherMap in vouchersMap) {
-      var voucher = fromMapOfVoucher(voucherMap);
-      await voucher._fetchMyTransactions();
-      // step#2 => every voucher at least has 2 account; we must check client perm for other accounts
-      Result hasAccess = await hasCredAccessToVoucher(
-        formDuty: FormDuty.READ,
-        voucher: voucher,
-        authProviderSQL: authProvider,
-        helperAccounts: [account],
-      );
-      if (hasAccess.outcome) voucherModels.add(voucher);
-    }
-    return voucherModels;
-  }
-
   Future<int> _insertMeInDB() async {
     // do some logic on variables
     // ...
@@ -480,6 +484,35 @@ class VoucherModel {
     transactions = result
         .map(
           (tranMap) => TransactionModel.fromMapOfTransaction(tranMap),
+        )
+        .toList();
+  }
+
+  Future<void> _fetchMyTransactionsWithAccount() async {
+    if (id == null) {
+      print(
+        'VM | _fetchMyTransactionsWithAccount() 01| Warn: id is null: fetchMyTransactions()',
+      );
+      return;
+    }
+    final query = '''
+    SELECT 
+      *
+    FROM 
+      ${TransactionModel.transactionTableName} 
+    INNER JOIN 
+      ${AccountModel.tableName}
+    ON ${TransactionModel.column2AccountId} = ${AccountModel.column1Id}
+    AND ${TransactionModel.column3VoucherId} = ?
+    ''';
+    var tranJAccMaps = await AccountingDB.runRawQuery(query, [id]);
+    print(
+      'VCH_MDL | 02 _fetchMyTransactionsWithAccount()| for voucher_id: $id tranJAccMaps: $tranJAccMaps',
+    );
+    transactions = tranJAccMaps
+        .map(
+          (tranJAcc) =>
+              TransactionModel.fromMapOfTransactionJoinAccount(tranJAcc),
         )
         .toList();
   }

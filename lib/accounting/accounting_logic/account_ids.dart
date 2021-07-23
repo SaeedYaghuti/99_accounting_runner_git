@@ -1,15 +1,15 @@
 class ACCOUNTS_ID {
-  static const MAIN_ACCOUNT_ID = 'main';
-  static const LEDGER_ACCOUNT_ID = 'ledger';
-  static const EXPENDITURE_ACCOUNT_ID = 'expenditure';
-  static const SALES_ACCOUNT_ID = 'sales';
-  static const ASSETS_ACCOUNT_ID = 'assets';
-  static const BANKS_ACCOUNT_ID = 'banks';
-  static const NBO_ACCOUNT_ID = 'nbo';
-  static const PETTY_CASH_ACCOUNT_ID = 'petty-cash';
-  static const CASH_DRAWER_ACCOUNT_ID = 'cash-drawer';
-  static const DEBTORS_ACCOUNT_ID = 'debtors';
-  static const LIABILITIES_ACCOUNT_ID = 'liabilities';
+  static const MAIN_ACCOUNT_ID = 'MAIN';
+  static const LEDGER_ACCOUNT_ID = 'LEDGER';
+  static const EXPENDITURE_ACCOUNT_ID = 'EXPENDITURE';
+  static const SALES_ACCOUNT_ID = 'SALES';
+  static const ASSETS_ACCOUNT_ID = 'ASSETS';
+  static const BANKS_ACCOUNT_ID = 'BANKS';
+  static const NBO_ACCOUNT_ID = 'NBO';
+  static const PETTY_CASH_ACCOUNT_ID = 'PETTY_CASH';
+  static const CASH_DRAWER_ACCOUNT_ID = 'CASH_DRAWER';
+  static const DEBTORS_ACCOUNT_ID = 'DEBTORS';
+  static const LIABILITIES_ACCOUNT_ID = 'LIABILITIES';
 }
 
 var payerAccounts = [

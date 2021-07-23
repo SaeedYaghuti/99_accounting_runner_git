@@ -195,8 +195,8 @@ Future<bool> hasCredAccessToVoucher0({
   }
 }
 
-// ver-3: it says why error
-Future<Result<bool>> hasCredAccessToVoucher({
+// ver-3: flaw: it is async because it takes account from db
+Future<Result<bool>> hasCredAccessToVoucher1({
   required FormDuty formDuty,
   required VoucherModel voucher,
   required AuthProviderSQL authProviderSQL,
@@ -285,6 +285,93 @@ Future<Result<bool>> hasCredAccessToVoucher({
           return Result(
             false,
             '${vAcc.deleteAllTransactionPermission} or (${vAcc.deleteOwnTransactionPermission} && my-own-voucher ) permission is not qualified!',
+          );
+        }
+      }
+      return Result(true);
+    default:
+      throw NotHandledException(
+        'has_access.dart| hasCredAccessToVoucher() 01| unexpected FormDuty Type: $formDuty',
+      );
+  }
+}
+
+// ver-4: all tran should have account
+Result<bool> hasCredAccessToVoucher({
+  required FormDuty formDuty,
+  required VoucherModel voucher,
+  required AuthProviderSQL authProviderSQL,
+}) {
+  // step#1 check all voucher's account
+  voucher.transactions.forEach(
+    (tran) {
+      if (tran == null || tran.account == null) {
+        throw CurroptedInputException(
+          'hasCredAccessToVoucher 02| we have not enough voucher account in voucher: ${voucher.id}',
+        );
+      }
+    },
+  );
+
+  // step#2 check authority according form-duty
+  switch (formDuty) {
+    case FormDuty.CREATE:
+      for (var tran in voucher.transactions) {
+        if (authProviderSQL
+            .isNotPermitted(tran!.account!.createTransactionPermission))
+          return Result(
+            false,
+            '${tran.account!.createTransactionPermission} permission is not ocupied!',
+          );
+      }
+      return Result(true);
+    case FormDuty.READ:
+      for (var tran in voucher.transactions) {
+        if (authProviderSQL
+            .isPermitted(tran!.account!.readAllTransactionPermission)) {
+          continue;
+        } else if (authProviderSQL
+                .isPermitted(tran.account!.readOwnTransactionPermission) &&
+            voucher.creatorId == authProviderSQL.authId) {
+          continue;
+        } else {
+          return Result(
+            false,
+            '${tran.account!.readAllTransactionPermission} or (${tran.account!.readOwnTransactionPermission} && my-own-voucher ) permission is not qualified!',
+          );
+        }
+      }
+      return Result(true);
+    case FormDuty.EDIT:
+      for (var tran in voucher.transactions) {
+        if (authProviderSQL
+            .isPermitted(tran!.account!.editAllTransactionPermission)) {
+          continue;
+        } else if (authProviderSQL
+                .isPermitted(tran.account!.editOwnTransactionPermission) &&
+            voucher.creatorId == authProviderSQL.authId) {
+          continue;
+        } else {
+          return Result(
+            false,
+            '${tran.account!.editAllTransactionPermission} or (${tran.account!.editOwnTransactionPermission} && my-own-voucher ) permission is not qualified!',
+          );
+        }
+      }
+      return Result(true);
+    case FormDuty.DELETE:
+      for (var tran in voucher.transactions) {
+        if (authProviderSQL
+            .isPermitted(tran!.account!.deleteAllTransactionPermission)) {
+          continue;
+        } else if (authProviderSQL
+                .isPermitted(tran.account!.deleteOwnTransactionPermission) &&
+            voucher.creatorId == authProviderSQL.authId) {
+          continue;
+        } else {
+          return Result(
+            false,
+            '${tran.account!.deleteAllTransactionPermission} or (${tran.account!.deleteOwnTransactionPermission} && my-own-voucher ) permission is not qualified!',
           );
         }
       }

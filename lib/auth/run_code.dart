@@ -36,32 +36,35 @@ Future<void> runCode(BuildContext context) async {
   // );
 
   // AuthPermissionModel.printAllAuthPermissions(2);
-  print('ATH_RUN_CODE | before resetAuthPermissions()');
-  AuthPermissionModel.fetchPermissionById(
-    PermissionModel.CASH_DRAWER_READ_OWN_TRANSACTION,
-  );
+  // print('ATH_RUN_CODE | before resetAuthPermissions()');
+  // AuthPermissionModel.fetchPermissionById(
+  //   PermissionModel.CASH_DRAWER_READ_OWN_TRANSACTION,
+  // );
 
   await AuthPermissionModel.resetAuthPermissions(2, [
     PermissionModel.EXPENDITURE_CATEGORY,
     PermissionModel.EXPENDITURE_CREATE_TRANSACTION,
     PermissionModel.EXPENDITURE_READ_OWN_TRANSACTION,
     PermissionModel.EXPENDITURE_READ_ALL_TRANSACTION,
+    PermissionModel.EXPENDITURE_EDIT_ALL_TRANSACTION,
+    PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
     PermissionModel.EXPENDITURE_DELETE_OWN_TRANSACTION,
-    // PermissionModel.EXPENDITURE_EDIT_ALL_TRANSACTION,
+    PermissionModel.EXPENDITURE_DELETE_ALL_TRANSACTION,
 
     PermissionModel.CASH_DRAWER_CREATE_TRANSACTION,
     PermissionModel.CASH_DRAWER_READ_OWN_TRANSACTION,
     PermissionModel.CASH_DRAWER_READ_ALL_TRANSACTION,
+    PermissionModel.CASH_DRAWER_EDIT_OWN_TRANSACTION,
+    PermissionModel.CASH_DRAWER_EDIT_ALL_TRANSACTION,
     PermissionModel.CASH_DRAWER_DELETE_OWN_TRANSACTION,
-    // PermissionModel.CASH_DRAWER_EDIT_OWN_TRANSACTION,
-    // PermissionModel.CASH_DRAWER_EDIT_ALL_TRANSACTION,
+    PermissionModel.CASH_DRAWER_DELETE_ALL_TRANSACTION,
 
-    PermissionModel.PETTY_CASH_READ_ALL_TRANSACTION,
+    // PermissionModel.PETTY_CASH_READ_ALL_TRANSACTION,
     // PermissionModel.EXPENDITURE_EDIT_ALL_TRANSACTION,
     // PermissionModel.EXPENDITURE_DELETE_ALL_TRANSACTION,
   ]);
 
-  authProvider.notifyAuthChanged();
+  // authProvider.notifyAuthChanged();
 
   AuthPermissionModel.printAllAuthPermissions(2);
 

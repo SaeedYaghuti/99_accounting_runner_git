@@ -232,7 +232,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
     ];
   }
 
-  List<DataRow> _buildTableRows() {
+  List<DataRow> _buildTableRows0() {
     List<DataRow> dataRows = [];
     vouchers
         // accountVoucher give us only voucher that we have read perm in both trans side
@@ -265,7 +265,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
                       PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
                     ]) &&
                     voucher.creatorId == authProvider.authId))
-              DataCell(_buildEditDeleteMenu(voucher, expTran.id))
+              DataCell(_buildEditDeleteMenu0(voucher, expTran.id))
             else
               DataCell(Icon(Icons.block_rounded)),
             DataCell(Text(expTran.amount.toString())),
@@ -309,81 +309,61 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
     return dataRows;
   }
 
-  List<DataRow> _buildTableRows01() {
+  List<DataRow> _buildTableRows() {
     List<DataRow> dataRows = [];
-
-    // await Future.forEach([1, 2, 3], (num) async { });
-
-    for (var i = 0; i < vouchers.length; i++) {
-      for (var expTran in vouchers[i]
-          .onlyTransactionsOf(ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID)) {
-        if (expTran == null) {
-          continue;
-        }
-        // DataCell actionCell = await _buildEditDeletePopupMenueCell(vouchers[i]);
-      }
-    }
-
-    vouchers.asMap().forEach((index, voucher) {
-      for (var expTran
-          in voucher.onlyTransactionsOf(ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID)) {
-        if (expTran == null) {
-          return;
-        }
-
-        dataRows.add(DataRow(
-          cells: [
-            // if (hasAccess(authProviderSQL: authProvider, anyPermissions: [
-            //       PermissionModel.EXPENDITURE_DELETE_ALL_TRANSACTION,
-            //       PermissionModel.EXPENDITURE_EDIT_ALL_TRANSACTION,
-            //     ]) ||
-            //     (hasAccess(authProviderSQL: authProvider, anyPermissions: [
-            //           PermissionModel.EXPENDITURE_DELETE_OWN_TRANSACTION,
-            //           PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
-            //         ]) &&
-            //         voucher.creatorId == authProvider.authId))
-            //   DataCell(_buildEditDeleteMenu(voucher, expTran.id))
-            // else
-            //   DataCell(Icon(Icons.block_rounded)),
-
-            DataCell(Text(expTran.amount.toString())),
-            DataCell(Text(expTran.note)),
-            DataCell(Text(voucher.paidByText())),
-            DataCell(Text(readibleDate(voucher.date))),
-            DataCell(Text(expTran.id.toString())),
-            DataCell(Text(voucher.id.toString())),
-          ],
-          selected: _expenseIdToShowInForm == expTran.id,
-          onSelectChanged: (isSelected) {
-            if (isSelected == null) {
+    vouchers.asMap().forEach(
+      (index, voucher) {
+        voucher
+            // do we have permission for this voucher
+            .onlyTransactionsOf(ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID)
+            .forEach(
+          (expTran) {
+            if (expTran == null) {
               return;
             }
-            setState(() {
-              if (isSelected) {
-                _expenseIdToShowInForm = expTran.id ?? 0;
-                rebuildExpForm(voucher, expTran.id, FormDuty.CREATE);
-              } else {
-                rebuildExpForm(null, null, null);
-              }
-            });
+            dataRows.add(DataRow(
+              cells: [
+                _buildEditDeletePopupMenueCell(voucher, expTran.id!),
+                DataCell(Text(expTran.amount.toString())),
+                DataCell(Text(expTran.note)),
+                DataCell(Text(voucher.paidByText())),
+                DataCell(Text(readibleDate(voucher.date))),
+                DataCell(Text(expTran.id.toString())),
+                DataCell(Text(voucher.id.toString())),
+              ],
+              selected: _expenseIdToShowInForm == expTran.id,
+              onSelectChanged: (isSelected) {
+                if (isSelected == null) {
+                  return;
+                }
+                setState(() {
+                  if (isSelected) {
+                    _expenseIdToShowInForm = expTran.id ?? 0;
+                    rebuildExpForm(voucher, expTran.id, FormDuty.CREATE);
+                  } else {
+                    rebuildExpForm(null, null, null);
+                  }
+                });
+              },
+              color: MaterialStateProperty.resolveWith<Color?>(
+                  (Set<MaterialState> states) {
+                // All rows will have the same selected color.
+                if (states.contains(MaterialState.selected)) {
+                  // return Theme.of(context).colorScheme.primary.withOpacity(0.08);
+                  return Theme.of(context).accentColor.withOpacity(0.5);
+                }
+                // Even rows will have a grey color.
+                if (index.isEven) {
+                  // return Colors.grey.withOpacity(0.3);
+                  return Theme.of(context).primaryColor.withOpacity(0.1);
+                }
+                return null; // Use default value for other states and odd rows.
+              }),
+            ));
           },
-          color: MaterialStateProperty.resolveWith<Color?>(
-              (Set<MaterialState> states) {
-            // All rows will have the same selected color.
-            if (states.contains(MaterialState.selected)) {
-              // return Theme.of(context).colorScheme.primary.withOpacity(0.08);
-              return Theme.of(context).accentColor.withOpacity(0.5);
-            }
-            // Even rows will have a grey color.
-            if (index.isEven) {
-              // return Colors.grey.withOpacity(0.3);
-              return Theme.of(context).primaryColor.withOpacity(0.1);
-            }
-            return null; // Use default value for other states and odd rows.
-          }),
-        ));
-      }
-    });
+        );
+      },
+    );
     return dataRows;
   }
 
@@ -400,42 +380,141 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
     });
   }
 
-  Future<DataCell> _buildEditDeletePopupMenueCell(VoucherModel? voucher) async {
+  DataCell _buildEditDeletePopupMenueCell(
+    VoucherModel voucher,
+    int expTranId,
+  ) {
     // check we have access to delete or edit this row of voucher
-    Result hasAccessToEdit = await hasCredAccessToVoucher(
+    Result hasAccessToEdit = hasCredAccessToVoucher(
       authProviderSQL: authProvider,
-      voucher: voucher!,
+      voucher: voucher,
       formDuty: FormDuty.EDIT,
-      helperAccounts: [expenditurAccount],
     );
-    Result hasAccessToDelete = await hasCredAccessToVoucher(
+    Result hasAccessToDelete = hasCredAccessToVoucher(
       authProviderSQL: authProvider,
       voucher: voucher,
       formDuty: FormDuty.DELETE,
-      helperAccounts: [expenditurAccount],
     );
 
+    // we don't have any perm: return block icon
     if (!hasAccessToEdit.outcome && !hasAccessToDelete.outcome) {
+      print(
+        'EXP_SCR | 33 _buildEditDeletePopupMenueCell() | not have access to \nedit: ${hasAccessToEdit.errorMessage} \n:delete: ${hasAccessToDelete.errorMessage}',
+      );
       return DataCell(Icon(Icons.block_rounded));
     }
-    return DataCell(Icon(Icons.work));
 
-    // if (hasAccess(authProviderSQL: authProvider, anyPermissions: [
-    //       PermissionModel.EXPENDITURE_DELETE_ALL_TRANSACTION,
-    //       PermissionModel.EXPENDITURE_EDIT_ALL_TRANSACTION,
-    //     ]) ||
-    //     (hasAccess(authProviderSQL: authProvider, anyPermissions: [
-    //           PermissionModel.EXPENDITURE_DELETE_OWN_TRANSACTION,
-    //           PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
-    //         ]) &&
-    //         voucher.creatorId == authProvider.authId)) {
-    //   return DataCell(_buildEditDeleteMenu(voucher, /*expTran.id*/ 1));
-    // } else {
-    //   return DataCell(Icon(Icons.block_rounded));
-    // }
+    // we have at list one perm:
+    return DataCell(GestureDetector(
+      child: Icon(Icons.more_vert),
+      onTapDown: (TapDownDetails details) async {
+        rebuildExpForm(
+          voucher,
+          expTranId,
+          FormDuty.CREATE,
+        );
+        await _showEditDeletePopupMenu(
+          offset: details.globalPosition,
+          voucher: voucher,
+          expTranId: expTranId,
+          showEdit: hasAccessToEdit.outcome,
+          showDelete: hasAccessToDelete.outcome,
+        );
+      },
+    ));
   }
 
-  Widget _buildEditDeleteMenu(VoucherModel? voucher, int? expId) {
+  _showEditDeletePopupMenu({
+    required Offset offset,
+    required VoucherModel voucher,
+    required int expTranId,
+    required bool showEdit,
+    required bool showDelete,
+  }) async {
+    double left = offset.dx;
+    double top = offset.dy;
+    String? selectedItem = await showMenu<String>(
+      elevation: 8.0,
+      context: context,
+      position: RelativeRect.fromLTRB(left, top, left, top),
+      items: [
+        if (showEdit)
+          PopupMenuItem(
+            child: Row(
+              children: [
+                Icon(
+                  Icons.edit,
+                  color: Colors.blue,
+                ),
+                SizedBox(width: 10),
+                Text(
+                  'Edit',
+                  style: TextStyle(
+                    color: Colors.blue,
+                  ),
+                ),
+              ],
+            ),
+            value: 'edit',
+          ),
+        if (showDelete)
+          PopupMenuItem(
+            child: Row(
+              children: [
+                Icon(
+                  Icons.delete,
+                  color: Colors.pinkAccent,
+                ),
+                SizedBox(width: 10),
+                Text(
+                  'Delete',
+                  style: TextStyle(
+                    color: Colors.pinkAccent,
+                  ),
+                ),
+              ],
+            ),
+            value: 'delete',
+          ),
+      ],
+    );
+    if (selectedItem == null) {
+      // print('ES 80| you select nothing ...');
+      rebuildExpForm(null, null, null);
+      return;
+    }
+
+    if (selectedItem == "edit") {
+      // print('ES 80| you edit ...');
+      rebuildExpForm(
+        voucher,
+        expTranId,
+        FormDuty.EDIT,
+      );
+    } else if (selectedItem == "delete") {
+      // print('ES 80| you delete ...');
+      var confirmResult = await confirmDialog(
+        context: context,
+        title: 'Are sure to delete this expense?',
+        content:
+            'This would delete voucher and all it is transactions from database',
+        noTitle: 'No',
+        yesTitle: 'Delete it!',
+      );
+      // print('ES 70| confirmResult: $confirmResult');
+      if (confirmResult == true) {
+        rebuildExpForm(
+          voucher,
+          expTranId,
+          FormDuty.DELETE,
+        );
+      }
+    } else {
+      throw NotHandledException('ES 80| ');
+    }
+  }
+
+  Widget _buildEditDeleteMenu0(VoucherModel? voucher, int? expId) {
     return SecureWidget(
       authProviderSQL: authProvider,
       anyPermissions: [
@@ -452,31 +531,32 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
             expId,
             FormDuty.CREATE,
           );
-          await _showEditDeletePopupMenu(
-              details.globalPosition, voucher, expId);
+          await _showEditDeletePopupMenu0(
+            details.globalPosition,
+            voucher,
+            expId,
+          );
         },
       ),
     );
   }
 
-  _showEditDeletePopupMenu(
+  _showEditDeletePopupMenu0(
     Offset offset,
     VoucherModel? voucher,
     int? expId,
   ) async {
     double left = offset.dx;
     double top = offset.dy;
-    Result hasAccessToEdit = await hasCredAccessToVoucher(
+    Result hasAccessToEdit = hasCredAccessToVoucher(
       authProviderSQL: authProvider,
       voucher: voucher!,
       formDuty: FormDuty.EDIT,
-      helperAccounts: [expenditurAccount],
     );
-    Result hasAccessToDelete = await hasCredAccessToVoucher(
+    Result hasAccessToDelete = hasCredAccessToVoucher(
       authProviderSQL: authProvider,
       voucher: voucher,
       formDuty: FormDuty.DELETE,
-      helperAccounts: [expenditurAccount],
     );
     String? selectedItem = await showMenu<String>(
       elevation: 8.0,
@@ -635,7 +715,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
                       PermissionModel.EXPENDITURE_EDIT_OWN_TRANSACTION,
                     ]) &&
                     voucher.creatorId == authProvider.authId))
-              DataCell(_buildEditDeleteMenu(voucher, expTran.id))
+              DataCell(_buildEditDeleteMenu0(voucher, expTran.id))
             else
               DataCell(Icon(Icons.block_rounded)),
             DataCell(Text(expTran.amount.toString())),

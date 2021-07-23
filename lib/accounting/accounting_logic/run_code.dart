@@ -8,7 +8,7 @@ import 'package:shop/auth/permission_model.dart';
 import 'account_ids.dart';
 
 void runCode() async {
-  await VoucherModel.fetchAllVouchers();
+  // await VoucherModel.fetchAllVouchers();
   // await TransactionModel.allTransactions();
   // await TransactionModel.transactionById(1);
   // await VoucherModel.fetchVoucherById(2);
@@ -44,5 +44,6 @@ void runCode() async {
 
   // await AccountModel.allAccounts();
 
-  // await AccountModel.fetchAccountById('MUSCAT_BANK');
+  var pety = await AccountModel.fetchAccountById('PETTY_CASH');
+  print('Account RunCode 01 pety: $pety');
 }

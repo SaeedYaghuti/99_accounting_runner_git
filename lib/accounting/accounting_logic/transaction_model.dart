@@ -2,7 +2,9 @@ import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/exceptions/DBException.dart';
+import 'package:shop/exceptions/curropted_input.dart';
 import 'package:shop/exceptions/dirty_database.dart';
+import 'package:shop/shared/cast.dart';
 import 'package:shop/shared/seconds_of_time.dart';
 
 import 'account_model.dart';
@@ -10,6 +12,7 @@ import 'account_model.dart';
 class TransactionModel {
   int? id;
   final String accountId;
+  AccountModel? account;
   final int voucherId;
   final double amount;
   final bool isDebit;
@@ -19,6 +22,7 @@ class TransactionModel {
   TransactionModel({
     this.id,
     required this.accountId,
+    this.account,
     required this.voucherId,
     required this.amount,
     required this.isDebit,
@@ -40,6 +44,16 @@ class TransactionModel {
     print('TM10| All DB $transactionTableName: ########');
     print(result);
     print('##################');
+  }
+
+  Future<void> fetchMyAccount() async {
+    AccountModel? fAccount = await AccountModel.fetchAccountById(accountId);
+    if (fAccount == null) {
+      throw CurroptedInputException(
+        'TRN_MDL | fetchMyAccount() | Not found account for accountId: <$accountId>',
+      );
+    }
+    account = fAccount;
   }
 
   static Future<TransactionModel?> transactionById(int tranId) async {
@@ -171,6 +185,56 @@ class TransactionModel {
     );
     // print('TM 52 | @ fromMapOfTransaction() > after conversion');
     // print(transaction);
+    return transaction;
+  }
+
+  static TransactionModel fromMapOfTransactionJoinAccount(
+    Map<String, Object?> tranJAcc,
+  ) {
+    print('TRN_MDL | 01 fromMapOfTransactionJoinAccount | input: $tranJAcc');
+    print(tranJAcc);
+
+    var transaction;
+    try {
+      // transaction = TransactionModel(
+      //   id: tranJAcc[TransactionModel.column1Id] as int,
+      //   accountId: tranJAcc[TransactionModel.column2AccountId] as String,
+      //   voucherId: tranJAcc[TransactionModel.column3VoucherId] as int,
+      //   amount: tranJAcc[TransactionModel.column4Amount] as double,
+      //   isDebit: convertIntToBoolean(
+      //     tranJAcc[TransactionModel.column5IsDebit] as int,
+      //   ),
+      //   date: secondsToDateTime(
+      //     tranJAcc[TransactionModel.column6Date] as int,
+      //   ),
+      //   note: tranJAcc[TransactionModel.column7Note] as String,
+      //   account: AccountModel.fromMap(tranJAcc),
+      // );
+      transaction = TransactionModel(
+        id: castOrFallback<int>(tranJAcc[TransactionModel.column1Id], 1000),
+        accountId: castOrFallback<String>(
+            tranJAcc[TransactionModel.column2AccountId], 'devilAccountId'),
+        voucherId: castOrFallback<int>(
+            tranJAcc[TransactionModel.column3VoucherId], 1000),
+        amount: castOrFallback<double>(
+            tranJAcc[TransactionModel.column4Amount], 0.01),
+        isDebit: convertIntToBoolean(
+            castOrFallback<int>(tranJAcc[TransactionModel.column5IsDebit], 0)),
+        date: secondsToDateTime(
+            castOrFallback<int>(tranJAcc[TransactionModel.column6Date], 1000)),
+        note: castOrFallback<String>(
+            tranJAcc[TransactionModel.column7Note], 'devilNote'),
+        account: AccountModel.fromMap(tranJAcc),
+      );
+    } catch (e) {
+      print(
+        'TRN_MDL | fromMapOfTransactionJoinAccount() 01| @ catch e: $e',
+      );
+      throw e;
+    }
+    print('TRN_MDL | 02 fromMapOfTransactionJoinAccount | output:');
+    print(transaction);
+
     return transaction;
   }
 

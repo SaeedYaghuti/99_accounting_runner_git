@@ -37,7 +37,9 @@ class ExpenditureModel {
   }
 
   static Future<List<VoucherModel?>> expenditureVouchers(
-      AuthProviderSQL authProvider) {
+    AuthProviderSQL authProvider,
+  ) {
+    print('EXP_MDL | expenditureVouchers()');
     return VoucherModel.accountVouchers(
       ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
       authProvider,
