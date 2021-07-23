@@ -48,7 +48,7 @@ bool hasAccess({
 }
 
 // ver-1: flaw: don't check authority for accounts in voucher
-bool hasAccessToCredVoucher({
+bool hasAccessToCredVoucher0({
   required FormDuty formDuty,
   required int voucherCreatorId,
   required AccountModel account,
@@ -98,7 +98,7 @@ bool hasAccessToCredVoucher({
 }
 
 // ver-2: flaw: don't return why not access
-Future<bool> hasCredAccessToVoucher({
+Future<bool> hasCredAccessToVoucher0({
   required FormDuty formDuty,
   required VoucherModel voucher,
   required AuthProviderSQL authProviderSQL,
@@ -196,7 +196,7 @@ Future<bool> hasCredAccessToVoucher({
 }
 
 // ver-3: it says why error
-Future<Result<bool>> hasVoucherCredPermission({
+Future<Result<bool>> hasCredAccessToVoucher({
   required FormDuty formDuty,
   required VoucherModel voucher,
   required AuthProviderSQL authProviderSQL,

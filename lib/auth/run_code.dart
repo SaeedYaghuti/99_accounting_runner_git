@@ -56,7 +56,7 @@ Future<void> runCode(BuildContext context) async {
     // PermissionModel.CASH_DRAWER_EDIT_OWN_TRANSACTION,
     // PermissionModel.CASH_DRAWER_EDIT_ALL_TRANSACTION,
 
-    // PermissionModel.EXPENDITURE_DELETE_OWN_TRANSACTION,
+    PermissionModel.PETTY_CASH_READ_ALL_TRANSACTION,
     // PermissionModel.EXPENDITURE_EDIT_ALL_TRANSACTION,
     // PermissionModel.EXPENDITURE_DELETE_ALL_TRANSACTION,
   ]);

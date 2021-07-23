@@ -161,7 +161,7 @@ class VoucherModel {
     }
 
     // step 1# check edit authority for rVoucher
-    Result hasAccessToRVoucher = await hasVoucherCredPermission(
+    Result hasAccessToRVoucher = await hasCredAccessToVoucher(
       formDuty: FormDuty.EDIT,
       voucher: rVoucher,
       authProviderSQL: authProvider,
@@ -189,7 +189,7 @@ class VoucherModel {
     }
 
     // step 2# check edit authority for fVoucher
-    Result hasPermResult = await hasVoucherCredPermission(
+    Result hasPermResult = await hasCredAccessToVoucher(
       formDuty: FormDuty.EDIT,
       voucher: fVoucher,
       authProviderSQL: authProvider,
@@ -305,7 +305,7 @@ class VoucherModel {
     this._fetchMyTransactions();
 
     // step 1# check edit authority for rVoucher
-    Result hasAccessToDelete = await hasVoucherCredPermission(
+    Result hasAccessToDelete = await hasCredAccessToVoucher(
       formDuty: FormDuty.DELETE,
       voucher: this,
       authProviderSQL: authProvider,
@@ -425,13 +425,13 @@ class VoucherModel {
       var voucher = fromMapOfVoucher(voucherMap);
       await voucher._fetchMyTransactions();
       // step#2 => every voucher at least has 2 account; we must check client perm for other accounts
-      var hasAccess = await hasCredAccessToVoucher(
+      Result hasAccess = await hasCredAccessToVoucher(
         formDuty: FormDuty.READ,
         voucher: voucher,
         authProviderSQL: authProvider,
         helperAccounts: [account],
       );
-      if (hasAccess) voucherModels.add(voucher);
+      if (hasAccess.outcome) voucherModels.add(voucher);
     }
     return voucherModels;
   }
