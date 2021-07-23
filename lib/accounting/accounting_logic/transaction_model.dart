@@ -191,39 +191,23 @@ class TransactionModel {
   static TransactionModel fromMapOfTransactionJoinAccount(
     Map<String, Object?> tranJAcc,
   ) {
-    print('TRN_MDL | 01 fromMapOfTransactionJoinAccount | input: $tranJAcc');
-    print(tranJAcc);
+    // print('TRN_MDL | 01 fromMapOfTransactionJoinAccount | input: $tranJAcc');
+    // print(tranJAcc);
 
     var transaction;
     try {
-      // transaction = TransactionModel(
-      //   id: tranJAcc[TransactionModel.column1Id] as int,
-      //   accountId: tranJAcc[TransactionModel.column2AccountId] as String,
-      //   voucherId: tranJAcc[TransactionModel.column3VoucherId] as int,
-      //   amount: tranJAcc[TransactionModel.column4Amount] as double,
-      //   isDebit: convertIntToBoolean(
-      //     tranJAcc[TransactionModel.column5IsDebit] as int,
-      //   ),
-      //   date: secondsToDateTime(
-      //     tranJAcc[TransactionModel.column6Date] as int,
-      //   ),
-      //   note: tranJAcc[TransactionModel.column7Note] as String,
-      //   account: AccountModel.fromMap(tranJAcc),
-      // );
       transaction = TransactionModel(
-        id: castOrFallback<int>(tranJAcc[TransactionModel.column1Id], 1000),
-        accountId: castOrFallback<String>(
-            tranJAcc[TransactionModel.column2AccountId], 'devilAccountId'),
-        voucherId: castOrFallback<int>(
-            tranJAcc[TransactionModel.column3VoucherId], 1000),
-        amount: castOrFallback<double>(
-            tranJAcc[TransactionModel.column4Amount], 0.01),
+        id: tranJAcc[TransactionModel.column1Id] as int,
+        accountId: tranJAcc[TransactionModel.column2AccountId] as String,
+        voucherId: tranJAcc[TransactionModel.column3VoucherId] as int,
+        amount: tranJAcc[TransactionModel.column4Amount] as double,
         isDebit: convertIntToBoolean(
-            castOrFallback<int>(tranJAcc[TransactionModel.column5IsDebit], 0)),
+          tranJAcc[TransactionModel.column5IsDebit] as int,
+        ),
         date: secondsToDateTime(
-            castOrFallback<int>(tranJAcc[TransactionModel.column6Date], 1000)),
-        note: castOrFallback<String>(
-            tranJAcc[TransactionModel.column7Note], 'devilNote'),
+          tranJAcc[TransactionModel.column6Date] as int,
+        ),
+        note: tranJAcc[TransactionModel.column7Note] as String,
         account: AccountModel.fromMap(tranJAcc),
       );
     } catch (e) {
@@ -232,8 +216,8 @@ class TransactionModel {
       );
       throw e;
     }
-    print('TRN_MDL | 02 fromMapOfTransactionJoinAccount | output:');
-    print(transaction);
+    // print('TRN_MDL | 02 fromMapOfTransactionJoinAccount | output:');
+    // print(transaction);
 
     return transaction;
   }

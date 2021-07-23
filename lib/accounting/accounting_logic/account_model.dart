@@ -192,7 +192,7 @@ class AccountModel {
   static AccountModel? fromMap(
     Map<String, Object?>? accountMap,
   ) {
-    print('ACC_MDL | fromMap 02| input: \n$accountMap');
+    // print('ACC_MDL | fromMap 02| input: \n$accountMap');
 
     if (accountMap == null) {
       print('ACC_MDL | fromMap 01| input is null');
@@ -201,43 +201,13 @@ class AccountModel {
     var account;
 
     try {
-      // account = AccountModel(
-      //   id: accountMap[AccountModel.column1Id] as String,
-      //   parentId: accountMap[AccountModel.column2ParentId] as String,
-      //   titleEnglish: accountMap[AccountModel.column3TitleEnglish] as String,
-      //   titlePersian: accountMap[AccountModel.column4TitlePersian] as String,
-      //   titleArabic: accountMap[AccountModel.column5TitleArabic] as String,
-      //   note: /*accountMap[AccountModel.column6Note] as String? ?? */ 'x',
-      //   createTransactionPermission:
-      //       accountMap[AccountModel.column7CreateTransactionPermission]
-      //           as String?,
-      //   readAllTransactionPermission:
-      //       accountMap[AccountModel.column8ReadAllTransactionPermission]
-      //           as String?,
-      //   readOwnTransactionPermission:
-      //       accountMap[AccountModel.column9ReadOwnTransactionPermission]
-      //           as String?,
-      //   editAllTransactionPermission:
-      //       accountMap[AccountModel.column10EditAllTransactionPermission]
-      //           as String?,
-      //   editOwnTransactionPermission:
-      //       accountMap[AccountModel.column11EditOwnTransactionPermission]
-      //           as String?,
-      //   deleteAllTransactionPermission:
-      //       accountMap[AccountModel.column12DeleteAllTransactionPermission]
-      //           as String?,
-      //   deleteOwnTransactionPermission:
-      //       accountMap[AccountModel.column13DeleteOwnTransactionPermission]
-      //           as String?,
-      // );
       account = AccountModel(
         id: accountMap[AccountModel.column1Id] as String,
         parentId: accountMap[AccountModel.column2ParentId] as String,
         titleEnglish: accountMap[AccountModel.column3TitleEnglish] as String,
         titlePersian: accountMap[AccountModel.column4TitlePersian] as String,
         titleArabic: accountMap[AccountModel.column5TitleArabic] as String,
-        note: castOrFallback<String>(
-            accountMap[AccountModel.column6Note], 'devilNote'),
+        note: accountMap[AccountModel.column6Note] as String,
         createTransactionPermission:
             accountMap[AccountModel.column7CreateTransactionPermission]
                 as String?,
@@ -260,7 +230,8 @@ class AccountModel {
             accountMap[AccountModel.column13DeleteOwnTransactionPermission]
                 as String?,
       );
-      print('ACC_MDL | fromMap 03| output: \n$account');
+
+      // print('ACC_MDL | fromMap 03| output: \n$account');
       return account;
     } catch (e) {
       print(

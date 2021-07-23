@@ -91,8 +91,8 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   void initStateEdit() {
-    print('EF | init_state | EDIT ');
-    print(widget.voucher);
+    // print('EF | init_state | EDIT ');
+    // print(widget.voucher);
     if (widget.voucher!.transactions.length > 2) {
       print(
         'EF 02| we can not show voucher with more than two transactions in this form ...',
@@ -101,8 +101,8 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       // maybe show money_movement form
       // ...
     }
-    print('EXP_FRM init_state| EDIT | voucher to edite');
-    print(widget.voucher!);
+    // print('EXP_FRM init_state| EDIT | voucher to edite');
+    // print(widget.voucher!);
 
     var debitTransaction = widget.voucher!.transactions.firstWhere(
       (tran) => tran!.isDebit,

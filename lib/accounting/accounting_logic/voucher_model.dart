@@ -6,7 +6,6 @@ import 'package:shop/accounting/accounting_logic/voucher_feed.dart';
 import 'package:shop/accounting/accounting_logic/voucher_number_model.dart';
 import 'package:shop/accounting/expenditure/expenditure_form.dart';
 import 'package:shop/auth/auth_model_sql.dart';
-import 'package:shop/auth/auth_permission_model.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/auth/has_access.dart';
 import 'package:shop/exceptions/DBException.dart';
@@ -41,9 +40,9 @@ class VoucherModel {
     String accountId,
     AuthProviderSQL authProvider,
   ) async {
-    print(
-      'VCH_MDL | accountVouchers() 00| accountId: $accountId',
-    );
+    // print(
+    //   'VCH_MDL | accountVouchers() 00| accountId: $accountId',
+    // );
     // step#1 if client has read_own perm for accountId we fetch from db only own-vouchers
     // account
     AccountModel? account = await AccountModel.fetchAccountById(accountId);
@@ -53,14 +52,14 @@ class VoucherModel {
     if (authProvider.isPermitted(account.readAllTransactionPermission)) {
       // has complete access to read
       onlyOwnVouchers = '';
-      print(
-        'VCH_MDL | accountVouchers() 01| auther has READ_ALL',
-      );
+      // print(
+      //   'VCH_MDL | accountVouchers() 01| auther has READ_ALL',
+      // );
     } else if (authProvider.isPermitted(account.readOwnTransactionPermission)) {
       // has access to own
-      print(
-        'VCH_MDL | accountVouchers() 02| auther has READ_OWN',
-      );
+      // print(
+      //   'VCH_MDL | accountVouchers() 02| auther has READ_OWN',
+      // );
       onlyOwnVouchers =
           'AND ${VoucherModel.column5CreatorId} = ${authProvider.authId!}';
     } else {
@@ -232,12 +231,12 @@ class VoucherModel {
       throw CurroptedInputException('VM 31| rVoucher is not valid voucher!');
     }
 
-    // step 1# check edit authority for rVoucher
-    Result hasAccessToRVoucher = hasCredAccessToVoucher(
+    // step 1# check edit authority for rVoucher; take accountId from tran; fetch account and check validity
+    Result hasAccessToRVoucher = await hasCredAccessToVoucherAsync(
       formDuty: FormDuty.EDIT,
       voucher: rVoucher,
       authProviderSQL: authProvider,
-      // helperAccounts: [],
+      helperAccounts: [],
     );
 
     if (hasAccessToRVoucher.outcome != null && !hasAccessToRVoucher.outcome) {
@@ -246,7 +245,7 @@ class VoucherModel {
       );
     }
 
-    // step 2# fetch voucher by id
+    // step 2# fetch voucher by id (include trans and account)
     var fVoucher = await VoucherModel.fetchVoucherById(rVoucher.id!);
 
     // step 3# chack fVoucher validity
@@ -265,8 +264,8 @@ class VoucherModel {
       formDuty: FormDuty.EDIT,
       voucher: fVoucher,
       authProviderSQL: authProvider,
-      // helperAccounts: [],
     );
+
     if (hasPermResult.outcome != null && !hasPermResult.outcome) {
       throw AccessDeniedException(
         '${hasPermResult.errorMessage} VCH_MDL | updateVoucher() 02| client do not have required perm for update $fVoucher',
@@ -506,9 +505,9 @@ class VoucherModel {
     AND ${TransactionModel.column3VoucherId} = ?
     ''';
     var tranJAccMaps = await AccountingDB.runRawQuery(query, [id]);
-    print(
-      'VCH_MDL | 02 _fetchMyTransactionsWithAccount()| for voucher_id: $id tranJAccMaps: $tranJAccMaps',
-    );
+    // print(
+    //   'VCH_MDL | 02 _fetchMyTransactionsWithAccount()| for voucher_id: $id tranJAccMaps: $tranJAccMaps',
+    // );
     transactions = tranJAccMaps
         .map(
           (tranJAcc) =>
@@ -539,6 +538,7 @@ class VoucherModel {
     print('##################');
   }
 
+  // include trans and tran's account
   static Future<VoucherModel?> fetchVoucherById(int voucherId) async {
     final query = '''
     SELECT *
@@ -564,7 +564,8 @@ class VoucherModel {
 
     // fetch transaction for each voucher
     for (var voucher in voucherModels) {
-      await voucher._fetchMyTransactions();
+      // await voucher._fetchMyTransactions();
+      await voucher._fetchMyTransactionsWithAccount();
     }
 
     // print('VM 30| fetchVoucher for id: <$voucherId>: ###########');

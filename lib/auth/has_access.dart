@@ -195,8 +195,8 @@ Future<bool> hasCredAccessToVoucher0({
   }
 }
 
-// ver-3: flaw: it is async because it takes account from db
-Future<Result<bool>> hasCredAccessToVoucher1({
+// ver-3: async: take accountId from trans, fetch account and check perms
+Future<Result<bool>> hasCredAccessToVoucherAsync({
   required FormDuty formDuty,
   required VoucherModel voucher,
   required AuthProviderSQL authProviderSQL,
@@ -296,7 +296,7 @@ Future<Result<bool>> hasCredAccessToVoucher1({
   }
 }
 
-// ver-4: all tran should have account
+// ver-4: sync: all tran should have account
 Result<bool> hasCredAccessToVoucher({
   required FormDuty formDuty,
   required VoucherModel voucher,
