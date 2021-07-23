@@ -373,14 +373,14 @@ class VoucherModel {
     if (id == null) {
       return 0;
     }
-    this._fetchMyTransactions();
+    await this._fetchMyTransactionsWithAccount();
 
     // step 1# check edit authority for rVoucher
+    // hasCredAccessToVoucher: voucher should contain trans and account
     Result hasAccessToDelete = hasCredAccessToVoucher(
       formDuty: FormDuty.DELETE,
       voucher: this,
       authProviderSQL: authProvider,
-      // helperAccounts: [],
     );
 
     if (hasAccessToDelete.outcome != null && !hasAccessToDelete.outcome) {
