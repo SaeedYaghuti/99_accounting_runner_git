@@ -64,9 +64,9 @@ class VoucherModel {
           'AND ${VoucherModel.column5CreatorId} = ${authProvider.authId!}';
     } else {
       // has no read perm
-      print(
-        'VCH_MDL | accountVouchers() 03| auther has no permission of read',
-      );
+      // print(
+      //   'VCH_MDL | accountVouchers() 03| auther has no permission of read',
+      // );
       return [];
     }
 

@@ -73,9 +73,10 @@ class _AccountDropdownMenuState extends State<AccountDropdownMenu> {
 
   @override
   Widget build(BuildContext context) {
-    print(
-        'ACC_DRP_MENU | _build() | authProviderId: ${widget.authProvider.authId}');
-    print('ACC_DRP_MENU | _build() | formDuty: ${widget.formDuty}');
+    // print(
+    //   'ACC_DRP_MENU | _build() | authProviderId: ${widget.authProvider.authId}',
+    // );
+    // print('ACC_DRP_MENU | _build() | formDuty: ${widget.formDuty}');
     return Column(
       children: <Widget>[
         SizedBox(height: 20.0),

@@ -75,9 +75,9 @@ class AccountModel {
       result.forEach(
         (accMap) => accounts.add(fromMap(accMap)),
       );
-      print('AccountModel allAccounts 03| fetched Accounts:');
-      print('accounts count: ${accounts.length}');
-      print(accounts);
+      // print('AccountModel allAccounts 03| fetched Accounts:');
+      // print('accounts count: ${accounts.length}');
+      // print(accounts);
       return accounts;
     } on Exception catch (e) {
       print('AccountModel allAccounts 02| @ catch wile fromMap e: $e');

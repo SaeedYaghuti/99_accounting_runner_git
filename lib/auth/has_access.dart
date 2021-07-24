@@ -14,34 +14,36 @@ bool hasAccess({
 }) {
   // if both any and vital are empty: No Access
   // because they put accountPerm and it is null and it means access is denied
-  // Not Working as expected!
-  //  ????
-  if ((vitalPermissions == null || vitalPermissions.isEmpty) &&
-      (anyPermissions == null || anyPermissions.isEmpty)) {
-    return false;
-  }
 
-  // if there is no vitalPerm we should check anyPermissions
-  if (vitalPermissions != null && vitalPermissions.isNotEmpty) {
+  // if vitalPerm is Not empty
+  if (vitalPermissions != null &&
+      vitalPermissions.whereType<String>().toList().isNotEmpty) {
     // if any of vitalPerm not satisfied we return false
-    for (var vPerm in vitalPermissions) {
-      if (!authProviderSQL.isPermitted(vPerm!)) return false;
+    if (vitalPermissions.any((perm) => authProviderSQL.isNotPermitted(perm))) {
+      return false;
+    }
+
+    // all vital passed!
+
+    // if anyPermission isEmpty: we passe vital so hasAccess
+    if (anyPermissions == null ||
+        anyPermissions.whereType<String>().toList().isEmpty) {
+      return true;
+    } else {
+      // if any of any-perm passed it is enough
+      return anyPermissions.any((perm) => authProviderSQL.isPermitted(perm));
+    }
+  } else {
+    // vital is empty
+    // if both vital and any are null => access is denied
+    if (anyPermissions == null || anyPermissions.isEmpty) {
+      return false;
+    } else {
+      // we only have anyPerm
+      // if any of any-perm passed it is enough
+      return anyPermissions.any((perm) => authProviderSQL.isPermitted(perm));
     }
   }
-  // vaital are passed!
-
-  // if there is not anyPermissions it means access is blocked
-  if (anyPermissions == null || anyPermissions.isEmpty) {
-    return false;
-  }
-
-  // if anyPerms passed we return widget
-  for (var anyPerm in anyPermissions) {
-    if (authProviderSQL.isPermitted(anyPerm!)) return true;
-  }
-
-  // nether of anyParm not passed
-  return false;
 }
 
 // X ver-1: flaw: don't check authority for accounts in voucher => depricated
@@ -384,12 +386,13 @@ bool hasAccessToAccount(
   AuthProviderSQL authProviderSQL,
   FormDuty formDuty,
 ) {
-  print('hasAccessToAccount() | ${hasAccess(
-    authProviderSQL: authProviderSQL,
-    anyPermissions: [account.createTransactionPermission],
-  )}');
-  print(
-      'hasAccessToAccount() | account: ${account.createTransactionPermission}');
+  // print('hasAccessToAccount() | ${hasAccess(
+  //   authProviderSQL: authProviderSQL,
+  //   anyPermissions: [account.createTransactionPermission],
+  // )}');
+  // print(
+  //   'hasAccessToAccount() | account: ${account.createTransactionPermission}',
+  // );
   // formDuty null means if any of Crud perm is qualified auth have permission
   if (formDuty == null) {
     // combine all permissions

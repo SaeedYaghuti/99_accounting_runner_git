@@ -117,8 +117,9 @@ class AuthPermissionModel {
     ''';
     try {
       var count = await AuthDB.deleteRawQuery(query, [authId]);
-      print(
-          'ATH_PEM_MDL | deleteAllPermissionsOfAuth 01| $count row deleted for authId: $authId;');
+      // print(
+      //   'ATH_PEM_MDL | deleteAllPermissionsOfAuth 01| $count row deleted for authId: $authId;',
+      // );
       return count;
     } catch (e) {
       print('ATH_PEM_MDL | deleteAllPermissionsOfAuth 02| e: $e');
@@ -175,9 +176,9 @@ class AuthPermissionModel {
     var authPermsMap = await AuthDB.runRawQuery(query);
 
     print('ATH_PERM_MDL printAllAuthPERM 01| All DB AuthPerms: ###########');
-    print(authPermsMap.length);
-    print(authPermsMap);
-    print('##################');
+    // print(authPermsMap.length);
+    print(authPermsMap.map((perm) => perm['authperm_permission_id']).toList());
+    // print('##################');
   }
 
   static const String tableName = 'auth_permissions';

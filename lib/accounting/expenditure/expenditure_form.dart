@@ -15,6 +15,7 @@ import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/accounting/environment/environment_provider.dart';
 import 'package:shop/accounting/expenditure/expenditure_model.dart';
+import 'package:shop/auth/has_access.dart';
 import 'package:shop/exceptions/not_handled_exception.dart';
 import 'package:shop/shared/show_error_dialog.dart';
 import 'expenditure_form_fields.dart';
@@ -41,27 +42,44 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   late AuthProviderSQL authProviderSQL;
   var _fields = ExpenditurFormFields();
   var _formDuty = FormDuty.CREATE;
+  var _didChangeRun = false;
 
   @override
   void initState() {
     _formDuty = widget.formDuty;
     _fields.date = DateTime.now();
-    _fields.paidBy = ExpenditurFormFields.expenditureExample.paidBy;
-
-    // switch (widget.formDuty) {
-    //   case FormDuty.READ:
-    //   case FormDuty.CREATE:
-    //     initStateCreate();
-    //     break;
-    //   case FormDuty.DELETE:
-    //     initStateDelete();
-    //     break;
-    //   case FormDuty.EDIT:
-    //     initStateEdit();
-    //     break;
-    //   default:
-    // }
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_didChangeRun) return;
+
+    authProviderSQL = Provider.of<AuthProviderSQL>(context, listen: true);
+    _fields.authId = authProviderSQL.authId;
+    _fields.paidBy = hasAccess(
+            authProviderSQL: authProviderSQL,
+            vitalPermissions: [
+          ExpenditurFormFields
+              .expenditureExample.paidBy?.createTransactionPermission
+        ])
+        ? ExpenditurFormFields.expenditureExample.paidBy
+        : null;
+    switch (widget.formDuty) {
+      case FormDuty.READ:
+      case FormDuty.CREATE:
+        initStateCreate();
+        break;
+      case FormDuty.DELETE:
+        initStateDelete();
+        break;
+      case FormDuty.EDIT:
+        initStateEdit();
+        break;
+      default:
+    }
+    _didChangeRun = true;
   }
 
   void initStateCreate() {
@@ -131,26 +149,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       _formDuty = FormDuty.CREATE;
       setState(() {});
     });
-  }
-
-  @override
-  void didChangeDependencies() {
-    authProviderSQL = Provider.of<AuthProviderSQL>(context, listen: true);
-    _fields.authId = authProviderSQL.authId;
-    switch (widget.formDuty) {
-      case FormDuty.READ:
-      case FormDuty.CREATE:
-        initStateCreate();
-        break;
-      case FormDuty.DELETE:
-        initStateDelete();
-        break;
-      case FormDuty.EDIT:
-        initStateEdit();
-        break;
-      default:
-    }
-    super.didChangeDependencies();
   }
 
   @override

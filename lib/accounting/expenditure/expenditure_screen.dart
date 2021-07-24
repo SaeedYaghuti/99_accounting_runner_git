@@ -398,9 +398,9 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
 
     // we don't have any perm: return block icon
     if (!hasAccessToEdit.outcome && !hasAccessToDelete.outcome) {
-      print(
-        'EXP_SCR | 33 _buildEditDeletePopupMenueCell() | not have access to \nedit: ${hasAccessToEdit.errorMessage} \n:delete: ${hasAccessToDelete.errorMessage}',
-      );
+      // print(
+      //   'EXP_SCR | 33 _buildEditDeletePopupMenueCell() | not have access to \nedit: ${hasAccessToEdit.errorMessage} \n:delete: ${hasAccessToDelete.errorMessage}',
+      // );
       return DataCell(Icon(Icons.block_rounded));
     }
 
