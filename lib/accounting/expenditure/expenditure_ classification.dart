@@ -55,14 +55,15 @@ class ExpenditureClassification {
     }
   }
 
-  static Future<List<ExpenditureClassification?>?> allAccounts() async {
+  static Future<List<ExpenditureClassification?>>
+      allExpenditureClasses() async {
     // TODO: access control
 
     final query = '''
     SELECT *
     FROM $tableName
     ''';
-    List<ExpenditureClassification?> accounts = [];
+    List<ExpenditureClassification?> expClasses = [];
 
     try {
       var result = await AccountingDB.runRawQuery(query);
@@ -70,22 +71,26 @@ class ExpenditureClassification {
       // print(result);
       // print('##################');
 
-      if (result == null || result.isEmpty) return null;
+      if (result.isEmpty) return [];
+
       result.forEach(
-        (accMap) => accounts.add(fromMap(accMap)),
+        (accMap) => expClasses.add(fromMap(accMap)),
       );
       // print('ExpenditureClassification allAccounts 03| fetched Accounts:');
       // print('accounts count: ${accounts.length}');
       // print(accounts);
-      return accounts;
+      return expClasses;
     } on Exception catch (e) {
       print(
-          'ExpenditureClassification allAccounts 02| @ catch wile fromMap e: $e');
+        'ExpenditureClassification allAccounts 02| @ catch wile fromMap e: $e',
+      );
+      throw e;
     }
   }
 
-  static Future<ExpenditureClassification?> fetchAccountById(
-      String accountId) async {
+  static Future<ExpenditureClassification?> fetchExpClassificationById(
+    String accountId,
+  ) async {
     // print('EXP_CLASS fetchAccountById() 01| accountId: <$accountId>');
     final query = '''
     SELECT *
@@ -103,11 +108,11 @@ class ExpenditureClassification {
       // print(fetchResult);
 
       // before list.first always you should check isEmpty
-      if (fetchResult == null || fetchResult.isEmpty) return null;
+      if (fetchResult.isEmpty) return null;
 
-      ExpenditureClassification? account = fromMap(fetchResult.first);
+      ExpenditureClassification? expClass = fromMap(fetchResult.first);
       // print(account);
-      return account;
+      return expClass;
       // return fetchResult;
     } catch (e) {
       print('EXP_CLASS fetchAccountById() 01| e: $e');

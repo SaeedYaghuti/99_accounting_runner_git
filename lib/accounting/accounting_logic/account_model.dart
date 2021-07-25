@@ -56,7 +56,7 @@ class AccountModel {
     }
   }
 
-  static Future<List<AccountModel?>?> allAccounts() async {
+  static Future<List<AccountModel?>> allAccounts() async {
     // TODO: access control
 
     final query = '''
@@ -71,7 +71,7 @@ class AccountModel {
       // print(result);
       // print('##################');
 
-      if (result == null || result.isEmpty) return null;
+      if (result == null || result.isEmpty) return [];
       result.forEach(
         (accMap) => accounts.add(fromMap(accMap)),
       );
@@ -81,6 +81,7 @@ class AccountModel {
       return accounts;
     } on Exception catch (e) {
       print('AccountModel allAccounts 02| @ catch wile fromMap e: $e');
+      throw e;
     }
   }
 
