@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
+import 'package:shop/accounting/expenditure/expenditure_%20classification.dart';
+import 'package:shop/accounting/expenditure/expenditure_classification_tree.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/constants.dart';
 
@@ -11,6 +13,7 @@ class ExpenditurFormFields {
   final amountFocusNode = FocusNode();
   final noteFocusNode = FocusNode();
   final paidByFocusNode = FocusNode();
+  final expClassFocusNode = FocusNode();
   final dateFocusNode = FocusNode();
   TextEditingController amountController = TextEditingController();
   TextEditingController noteController = TextEditingController();
@@ -18,7 +21,7 @@ class ExpenditurFormFields {
   int? id;
   int? authId;
   AccountModel? paidBy;
-  late ExpenditureTag expenditureTag;
+  ExpenditureClassification? expClass;
   DateTime? date;
 
   ExpenditurFormFields({
@@ -28,7 +31,7 @@ class ExpenditurFormFields {
     double? amount,
     AccountModel? paidBy,
     String? note,
-    ExpenditureTag? expenditureTag,
+    ExpenditureClassification? expClass,
     DateTime? date,
   }) {
     this.id = id;
@@ -36,8 +39,7 @@ class ExpenditurFormFields {
     this.amount = amount;
     this.note = note;
     this.paidBy = paidBy;
-    this.expenditureTag =
-        (expenditureTag == null) ? ExpenditureTag.DEFAULT : expenditureTag;
+    this.expClass = expClass;
     this.date = date;
   }
 
@@ -46,8 +48,7 @@ class ExpenditurFormFields {
   }
 
   set amount(double? num) {
-    this.amountController.text =
-        (num == null || num == 0.0) ? '' : num.toString();
+    this.amountController.text = (num == null || num == 0.0) ? '' : num.toString();
   }
 
   String? get note {
@@ -68,7 +69,7 @@ class ExpenditurFormFields {
       paidBy: cashDrawer,
       note: 'nescafee and cup',
       date: DateTime.now(),
-      expenditureTag: ExpenditureTag.HOSPITALITY,
+      expClass: EXP_CLASS_TREE.firstWhere((expClass) => expClass.id == ExpClassIds.GENERAL_EXP_CLASS_ID),
     );
   }
 
@@ -99,9 +100,8 @@ class ExpenditurFormFields {
       id: $id,
       amoutn: $amount, 
       paidBy: ${paidBy?.titleEnglish}, 
-      note: $note,
-      expenditureTag: $expenditureTag, 
-      date: $date, 
+      note: $note, date: $date, 
+      expClass: $expClass, 
     ''';
   }
 }

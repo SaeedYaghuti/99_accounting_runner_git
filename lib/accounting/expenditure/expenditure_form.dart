@@ -6,6 +6,8 @@ import 'package:shop/accounting/accounting_logic/run_code.dart';
 
 import 'package:provider/provider.dart';
 import 'package:shop/accounting/accounting_logic/account_dropdown_menu.dart';
+import 'package:shop/accounting/expenditure/expenditure_%20classification.dart';
+import 'package:shop/accounting/expenditure/expenditure_classification_tree.dart';
 import 'package:shop/auth/auth_db_helper.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
 
@@ -18,6 +20,7 @@ import 'package:shop/accounting/expenditure/expenditure_model.dart';
 import 'package:shop/auth/has_access.dart';
 import 'package:shop/exceptions/not_handled_exception.dart';
 import 'package:shop/shared/show_error_dialog.dart';
+import 'expenditure_dropdown_menu.dart';
 import 'expenditure_form_fields.dart';
 
 class ExpenditureForm extends StatefulWidget {
@@ -60,10 +63,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     _fields.authId = authProviderSQL.authId;
     _fields.paidBy = hasAccess(
             authProviderSQL: authProviderSQL,
-            vitalPermissions: [
-          ExpenditurFormFields
-              .expenditureExample.paidBy?.createTransactionPermission
-        ])
+            vitalPermissions: [ExpenditurFormFields.expenditureExample.paidBy?.createTransactionPermission])
         ? ExpenditurFormFields.expenditureExample.paidBy
         : null;
     switch (widget.formDuty) {
@@ -129,8 +129,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     var creditTransaction = widget.voucher!.transactions.firstWhere(
       (tran) => !tran!.isDebit,
     );
-    AccountModel.fetchAccountById(debitTransaction!.accountId)
-        .then((paidByAccount) {
+    AccountModel.fetchAccountById(debitTransaction!.accountId).then((paidByAccount) {
       _fields.id = creditTransaction!.id;
       _fields.amount = creditTransaction.amount;
       _fields.paidBy = paidByAccount;
@@ -167,6 +166,8 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
               _buildNote(context),
               SizedBox(height: 20, width: 20),
               _buildPaidBy(context),
+              SizedBox(height: 20, width: 20),
+              _buildExpClass(context),
               SizedBox(height: 20, width: 20),
               _buildDatePickerButton(context),
               SizedBox(height: 20, width: 20),
@@ -233,6 +234,25 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       ),
       label: Text(
         _fields.paidBy?.titleEnglish ?? 'SELECT ACCOUNT',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+          color: Theme.of(context).primaryColor,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildExpClass(BuildContext context) {
+    return OutlinedButton.icon(
+      focusNode: _fields.expClassFocusNode,
+      onPressed: () {
+        _pickExpClass();
+        FocusScope.of(context).requestFocus(_fields.dateFocusNode);
+      },
+      icon: Icon(Icons.shopping_cart, color: Theme.of(context).primaryColor),
+      label: Text(
+        _fields.expClass?.titleEnglish ?? 'SELECT EXPENCE CLASS',
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 20,
@@ -411,8 +431,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         ),
       ),
       style: ButtonStyle(
-        padding: MaterialStateProperty.all<EdgeInsets>(
-            EdgeInsets.symmetric(vertical: 10, horizontal: 20)),
+        padding: MaterialStateProperty.all<EdgeInsets>(EdgeInsets.symmetric(vertical: 10, horizontal: 20)),
         backgroundColor: MaterialStateProperty.all(color),
         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
           RoundedRectangleBorder(
@@ -448,6 +467,32 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
                   Navigator.of(context).pop();
                   setState(() {
                     _fields.paidBy = tappedAccount;
+                  });
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  void _pickExpClass() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            title: Text('SELECT EXPENDITURE CLASS:'),
+            children: [
+              ExpClassDropdownMenu(
+                expandedExpClassIds: [
+                  ExpClassIds.MAIN_EXP_CLASS_ID,
+                  ExpClassIds.SHOP_EXP_CLASS_ID,
+                  ExpClassIds.STAFF_EXP_CLASS_ID,
+                ],
+                unwantedExpClassIds: [],
+                tapHandler: (ExpenditureClassification tappedExpClass) {
+                  Navigator.of(context).pop();
+                  setState(() {
+                    _fields.expClass = tappedExpClass;
                   });
                 },
               ),
@@ -500,10 +545,8 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
     // we want to edit voucher in form; we don't have read mode for voucher in form
     _formDuty = FormDuty.EDIT;
-    var debitTransaction =
-        voucherToShowInForm.transactions.firstWhere((tran) => tran!.isDebit);
-    var creditTransaction =
-        voucherToShowInForm.transactions.firstWhere((tran) => !tran!.isDebit);
+    var debitTransaction = voucherToShowInForm.transactions.firstWhere((tran) => tran!.isDebit);
+    var creditTransaction = voucherToShowInForm.transactions.firstWhere((tran) => !tran!.isDebit);
     AccountModel.fetchAccountById(debitTransaction!.accountId).then(
       (acc) {
         _fields = ExpenditurFormFields(
@@ -555,9 +598,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   bool isToday(DateTime date) {
     var now = DateTime.now();
-    if (date.day == now.day &&
-        date.month == now.month &&
-        date.year == now.year) {
+    if (date.day == now.day && date.month == now.month && date.year == now.year) {
       return true;
     }
     return false;

@@ -16,7 +16,7 @@ const EXP_CLASS_TREE = const [
   ExpenditureClassification(
     id: ExpClassIds.GENERAL_EXP_CLASS_ID,
     parentId: ExpClassIds.MAIN_EXP_CLASS_ID,
-    titleEnglish: 'general',
+    titleEnglish: 'General',
     titlePersian: 'عمومى',
     titleArabic: 'عامة',
     note: '_',
@@ -25,7 +25,7 @@ const EXP_CLASS_TREE = const [
   ExpenditureClassification(
     id: ExpClassIds.SHOP_EXP_CLASS_ID,
     parentId: ExpClassIds.MAIN_EXP_CLASS_ID,
-    titleEnglish: 'shop',
+    titleEnglish: 'Shop',
     titleArabic: 'محل',
     titlePersian: 'فروشگاه',
     note: '_',
@@ -34,7 +34,7 @@ const EXP_CLASS_TREE = const [
   ExpenditureClassification(
     id: ExpClassIds.SHOP_HOSPITALITY_EXP_CLASS_ID,
     parentId: ExpClassIds.SHOP_EXP_CLASS_ID,
-    titleEnglish: 'hospitality',
+    titleEnglish: 'Hospitality',
     titleArabic: 'ضيافة',
     titlePersian: 'ميزبانى',
     note: '_',
@@ -43,7 +43,7 @@ const EXP_CLASS_TREE = const [
   ExpenditureClassification(
     id: ExpClassIds.SHOP_BILLS_EXP_CLASS_ID,
     parentId: ExpClassIds.SHOP_EXP_CLASS_ID,
-    titleEnglish: 'bills',
+    titleEnglish: 'Bills',
     titleArabic: 'قبوض',
     titlePersian: 'قبض',
     note: '_',
@@ -52,7 +52,7 @@ const EXP_CLASS_TREE = const [
   ExpenditureClassification(
     id: ExpClassIds.SHOP_RENT_EXP_CLASS_ID,
     parentId: ExpClassIds.SHOP_EXP_CLASS_ID,
-    titleEnglish: 'rent',
+    titleEnglish: 'Rent',
     titleArabic: 'ايجار',
     titlePersian: 'اجاره',
     note: '_',
@@ -61,7 +61,7 @@ const EXP_CLASS_TREE = const [
   ExpenditureClassification(
     id: ExpClassIds.STAFF_EXP_CLASS_ID,
     parentId: ExpClassIds.MAIN_EXP_CLASS_ID,
-    titleEnglish: 'staff',
+    titleEnglish: 'Staff',
     titleArabic: 'موظفين',
     titlePersian: 'كاركنان',
     note: '_',
@@ -70,7 +70,7 @@ const EXP_CLASS_TREE = const [
   ExpenditureClassification(
     id: ExpClassIds.STAFF_SALLARY_EXP_CLASS_ID,
     parentId: ExpClassIds.STAFF_EXP_CLASS_ID,
-    titleEnglish: 'staff salary',
+    titleEnglish: 'Staff Salary',
     titleArabic: 'رواتب',
     titlePersian: 'حقوقق',
     note: '_',
@@ -79,7 +79,7 @@ const EXP_CLASS_TREE = const [
   ExpenditureClassification(
     id: ExpClassIds.STAFF_REWARD_EXP_CLASS_ID,
     parentId: ExpClassIds.STAFF_EXP_CLASS_ID,
-    titleEnglish: 'staff rewards',
+    titleEnglish: 'Staff Rewards',
     titleArabic: 'جائزة',
     titlePersian: 'پاداش',
     note: '_',
@@ -88,7 +88,7 @@ const EXP_CLASS_TREE = const [
   ExpenditureClassification(
     id: ExpClassIds.ADMINISTRATIVE_COST_EXP_CLASS_ID,
     parentId: ExpClassIds.MAIN_EXP_CLASS_ID,
-    titleEnglish: 'administrative cost',
+    titleEnglish: 'Administrative Cost',
     titleArabic: 'مكتب سند',
     titlePersian: 'ادارى',
     note: '_',
@@ -109,9 +109,7 @@ bool isParent(String expClassId) {
 }
 
 List<ExpenditureClassification> childs(String expClassId) {
-  return EXP_CLASS_TREE
-      .where((expClass) => expClass.parentId == expClassId)
-      .toList();
+  return EXP_CLASS_TREE.where((expClass) => expClass.parentId == expClassId).toList();
 }
 
 class ExpClassIds {
