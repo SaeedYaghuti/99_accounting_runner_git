@@ -100,8 +100,7 @@ class VoucherNumberModel {
       await _freeVoucherNumberWithoutIncrease();
     } else {
       print(
-        'VNM 35| ERROR: voucher_number_db is not as expected! check created voucher numbers',
-      );
+          'VNM 35| ERROR: voucher_number_db is not as expected! check created voucher numbers');
       VoucherNumberException(
         'VNM 35| ERROR: voucher_number_db is not as expected! check created voucher numbers',
       );

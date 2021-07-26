@@ -4,6 +4,8 @@ import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_number_model.dart';
+import 'package:shop/accounting/expenditure/expenditure_%20classification.dart';
+import 'package:shop/accounting/expenditure/expenditure_classification_tree.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AccountingDB {
@@ -24,6 +26,8 @@ class AccountingDB {
         await db.execute(TransactionModel.QUERY_CREATE_TRANSACTION_TABLE);
         await db.execute(VoucherNumberModel.QUERY_CREATE_VOUCHER_NUMBER_TABLE);
         await insertPredefinedVoucherNumbers(db);
+        await db.execute(ExpenditureClassification.QUERY_CREATE_EXPENDITURE_CLASSIFICATION_TABLE);
+        await insertPredefinedExpenditureClasses(db);
       },
     );
     await db.execute('PRAGMA foreign_keys = ON;');
@@ -58,14 +62,12 @@ class AccountingDB {
     print('AccountingDB deleteDB| database deleted ...');
   }
 
-  static Future<List<Map<String, Object?>>> runRawQuery(String query,
-      [List<Object?>? arguments]) async {
+  static Future<List<Map<String, Object?>>> runRawQuery(String query, [List<Object?>? arguments]) async {
     final db = await AccountingDB.database();
     return db.rawQuery(query, arguments);
   }
 
-  static Future<int> deleteRawQuery(String query,
-      [List<Object?>? arguments]) async {
+  static Future<int> deleteRawQuery(String query, [List<Object?>? arguments]) async {
     final db = await AccountingDB.database();
     return db.rawDelete(query, arguments);
   }
@@ -83,6 +85,17 @@ class AccountingDB {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
       // print('ADB20| @insertPredefinedAccounts() insertResult: $insertResult');
+    }
+  }
+
+  static Future<void> insertPredefinedExpenditureClasses(Database db) async {
+    for (ExpenditureClassification expClass in EXP_CLASS_TREE) {
+      int insertResult = await db.insert(
+        ExpenditureClassification.tableName,
+        expClass.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      // print('ACC_DB| @insertPredefinedExpenditureClasses() insertResult: $insertResult');
     }
   }
 

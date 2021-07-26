@@ -98,7 +98,7 @@ class PermissionModel {
       throw e;
     }
   }
-  
+
   static Future<List<PermissionModel?>?> allPermissions() async {
     final query = '''
     SELECT *

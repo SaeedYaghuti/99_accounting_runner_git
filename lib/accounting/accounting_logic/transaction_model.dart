@@ -49,9 +49,7 @@ class TransactionModel {
   Future<void> fetchMyAccount() async {
     AccountModel? fAccount = await AccountModel.fetchAccountById(accountId);
     if (fAccount == null) {
-      throw CurroptedInputException(
-        'TRN_MDL | fetchMyAccount() | Not found account for accountId: <$accountId>',
-      );
+      throw CurroptedInputException('TRN_MDL | fetchMyAccount() | Not found account for accountId: <$accountId>');
     }
     account = fAccount;
   }
@@ -201,19 +199,13 @@ class TransactionModel {
         accountId: tranJAcc[TransactionModel.column2AccountId] as String,
         voucherId: tranJAcc[TransactionModel.column3VoucherId] as int,
         amount: tranJAcc[TransactionModel.column4Amount] as double,
-        isDebit: convertIntToBoolean(
-          tranJAcc[TransactionModel.column5IsDebit] as int,
-        ),
-        date: secondsToDateTime(
-          tranJAcc[TransactionModel.column6Date] as int,
-        ),
+        isDebit: convertIntToBoolean(tranJAcc[TransactionModel.column5IsDebit] as int),
+        date: secondsToDateTime(tranJAcc[TransactionModel.column6Date] as int),
         note: tranJAcc[TransactionModel.column7Note] as String,
         account: AccountModel.fromMap(tranJAcc),
       );
     } catch (e) {
-      print(
-        'TRN_MDL | fromMapOfTransactionJoinAccount() 01| @ catch e: $e',
-      );
+      print('TRN_MDL | fromMapOfTransactionJoinAccount() 01| @ catch e: $e');
       throw e;
     }
     // print('TRN_MDL | 02 fromMapOfTransactionJoinAccount | output:');
@@ -228,10 +220,8 @@ class TransactionModel {
     return dbResult
         .map(
           (voucherJointran) => {
-            VoucherModel.voucherTableName:
-                VoucherModel.fromMapOfVoucher(voucherJointran),
-            TransactionModel.transactionTableName:
-                fromMapOfTransaction(voucherJointran),
+            VoucherModel.voucherTableName: VoucherModel.fromMapOfVoucher(voucherJointran),
+            TransactionModel.transactionTableName: fromMapOfTransaction(voucherJointran),
           },
         )
         .toList();
@@ -288,8 +278,7 @@ class TransactionModel {
   static const String column6Date = 'tran_date';
   static const String column7Note = 'tran_note';
 
-  static const String QUERY_CREATE_TRANSACTION_TABLE =
-      '''CREATE TABLE $transactionTableName (
+  static const String QUERY_CREATE_TRANSACTION_TABLE = '''CREATE TABLE $transactionTableName (
     $column1Id INTEGER PRIMARY KEY, 
     $column2AccountId TEXT NOT NULL, 
     $column3VoucherId INTEGER NOT NULL, 
