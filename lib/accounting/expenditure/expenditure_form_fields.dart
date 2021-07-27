@@ -7,8 +7,6 @@ import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/constants.dart';
 import 'package:shop/shared/result_status.dart';
 
-import 'expenditure_tag.dart';
-
 class ExpenditurFormFields {
   final formKey = GlobalKey<FormState>();
   final amountFocusNode = FocusNode();
@@ -18,12 +16,16 @@ class ExpenditurFormFields {
   final dateFocusNode = FocusNode();
   TextEditingController amountController = TextEditingController();
   TextEditingController noteController = TextEditingController();
+  bool hasErrorExpClass = false;
+  bool hasErrorPaidBy = false;
+  bool hasErrorDate = false;
 
   int? id;
   int? authId;
   AccountModel? paidBy;
   ExpenditureClassification? expClass;
   DateTime? date;
+  Function? resetState;
 
   ExpenditurFormFields({
     int? id,
@@ -34,6 +36,7 @@ class ExpenditurFormFields {
     String? note,
     ExpenditureClassification? expClass,
     DateTime? date,
+    Function? resetState,
   }) {
     this.id = id;
     this.authId = authId;
@@ -42,6 +45,7 @@ class ExpenditurFormFields {
     this.paidBy = paidBy;
     this.expClass = expClass;
     this.date = date;
+    this.resetState = resetState;
   }
 
   double? get amount {
@@ -65,23 +69,36 @@ class ExpenditurFormFields {
       print('EF20| Warn: _formKey.currentState == null');
       return Result(false, '_formKey.currentState is null');
     }
-    // step#1 validate FormField that have predifined validate() method
-    final isValid = formKey.currentState!.validate();
-    if (!isValid) {
-      print('EF21| Warn: some of form feilds are not valid;');
-      return Result(false, 'some of form FormFeilds are not valid');
-    }
+    var errorMessages = '';
     // step#1 validate custom fields that have no predifined validate() method
     if (paidBy == null) {
-      return Result(false, 'paidBy is empty');
+      hasErrorExpClass = true;
+      errorMessages += '\nPaidBy is empty';
     }
     if (date == null) {
-      return Result(false, 'date is empty');
+      hasErrorDate = true;
+      errorMessages += '\nDate is empty';
     }
     if (expClass == null) {
-      return Result(false, 'expClass is empty');
+      hasErrorExpClass = true;
+      errorMessages += '\nExpClass is empty';
     }
-    return Result(true);
+
+    // step#2 validate FormField that have predifined validate() method
+    final isValid = formKey.currentState!.validate();
+
+    if (!isValid) {
+      errorMessages += '\nSome of regular form FormFeilds are not valid';
+    }
+    print('EXP_FRM_FIELD | validate() | errorMessages: $errorMessages');
+
+    if (resetState != null) resetState!();
+
+    if (errorMessages == '') {
+      return Result(true);
+    } else {
+      return Result(false, errorMessages);
+    }
   }
 
   static ExpenditurFormFields get expenditureExample {

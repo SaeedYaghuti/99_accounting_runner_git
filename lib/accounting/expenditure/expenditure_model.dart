@@ -8,16 +8,14 @@ import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/exceptions/curropted_input.dart';
 
 class ExpenditureModel {
-  static Future<void> createExpenditureInDB(
-      AuthProviderSQL authProvider, ExpenditurFormFields fields) async {
+  static Future<void> createExpenditureInDB(AuthProviderSQL authProvider, ExpenditurFormFields fields) async {
     var voucherFeed = VoucherFeed(date: fields.date!);
     var transactionFeedDebit = TransactionFeed(
       accountId: fields.paidBy!.id,
       amount: fields.amount!,
       isDebit: true,
       date: fields.date!,
-      note:
-          '${fields.paidBy!.titleEnglish} paid for ${ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID}',
+      note: '${fields.paidBy!.titleEnglish} paid for ${ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID}',
     );
     var transactionFeedCredit = TransactionFeed(
       accountId: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,

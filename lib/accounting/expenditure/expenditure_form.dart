@@ -51,7 +51,14 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   void initState() {
     _formDuty = widget.formDuty;
     _fields.date = DateTime.now();
+    _fields.resetState = resetState;
     super.initState();
+  }
+
+  void resetState() {
+    setState(() {
+      print('called resetState()');
+    });
   }
 
   @override
@@ -198,7 +205,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       },
       validator: _fields.validateAmount,
       onSaved: (amount) {
-        _fields.amount = double.parse(amount!);
+        _fields.amount = double.tryParse(amount ?? '');
       },
     );
   }
@@ -225,20 +232,24 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   Widget _buildPaidBy(BuildContext context) {
     return OutlinedButton.icon(
       focusNode: _fields.paidByFocusNode,
+      style: OutlinedButton.styleFrom(
+        primary: _fields.hasErrorPaidBy ? Colors.white : Theme.of(context).primaryColor,
+        backgroundColor: _fields.hasErrorPaidBy ? Colors.pinkAccent : Colors.white,
+      ),
       onPressed: () {
         _pickAccount();
         FocusScope.of(context).requestFocus(_fields.dateFocusNode);
       },
       icon: Icon(
         Icons.account_balance_outlined,
-        color: Theme.of(context).primaryColor,
+        // color: Theme.of(context).primaryColor,
       ),
       label: Text(
         _fields.paidBy?.titleEnglish ?? 'SELECT ACCOUNT',
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 20,
-          color: Theme.of(context).primaryColor,
+          // color: Theme.of(context).primaryColor,
         ),
       ),
     );
@@ -247,17 +258,24 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   Widget _buildExpClass(BuildContext context) {
     return OutlinedButton.icon(
       focusNode: _fields.expClassFocusNode,
+      style: OutlinedButton.styleFrom(
+        primary: _fields.hasErrorExpClass ? Colors.white : Theme.of(context).primaryColor,
+        backgroundColor: _fields.hasErrorExpClass ? Colors.pinkAccent : Colors.white,
+      ),
       onPressed: () {
         _pickExpClass();
         FocusScope.of(context).requestFocus(_fields.dateFocusNode);
       },
-      icon: Icon(Icons.shopping_cart, color: Theme.of(context).primaryColor),
+      icon: Icon(
+        Icons.shopping_cart,
+        // color: Theme.of(context).primaryColor,
+      ),
       label: Text(
         _fields.expClass?.titleEnglish ?? 'SELECT EXPENCE CLASS',
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 20,
-          color: Theme.of(context).primaryColor,
+          // color: Theme.of(context).primaryColor,
         ),
       ),
     );
@@ -266,20 +284,24 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   Widget _buildDatePickerButton(BuildContext context) {
     return OutlinedButton.icon(
       focusNode: _fields.dateFocusNode,
+      style: OutlinedButton.styleFrom(
+        primary: _fields.hasErrorDate ? Colors.white : Theme.of(context).primaryColor,
+        backgroundColor: _fields.hasErrorDate ? Colors.pinkAccent : Colors.white,
+      ),
       onPressed: () {
         pickDate();
         FocusScope.of(context).requestFocus(_fields.dateFocusNode);
       },
       icon: Icon(
         Icons.date_range_rounded,
-        color: Theme.of(context).primaryColor,
+        // color: Theme.of(context).primaryColor,
       ),
       label: Text(
         _buildTextForDatePicker(),
         style: TextStyle(
           fontWeight: FontWeight.bold,
           fontSize: 20,
-          color: Theme.of(context).primaryColor,
+          // color: Theme.of(context).primaryColor,
         ),
       ),
     );
@@ -376,11 +398,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   Future<void> _saveForm(Function dbOperationHandler) async {
-    // if (_fields.formKey.currentState == null) {
-    //   print('EF20| Warn: _form.currentState == null');
-    //   return;
-    // }
-    // final isValid = _fields.formKey.currentState!.validate();
     final isValid = _fields.validate();
     if (!isValid.outcome) {
       print('EF21| Warn: ${isValid.errorMessage}');
@@ -498,7 +515,11 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       lastDate: DateTime.now(),
     ).then((date) {
       setState(() {
-        _fields.date = date;
+        if (date == null) {
+          _fields.date = DateTime.now();
+        } else {
+          _fields.date = date;
+        }
       });
     });
   }
