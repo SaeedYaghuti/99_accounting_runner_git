@@ -5,7 +5,7 @@ class ResultStatus {
 }
 
 class Result<T> {
-  final T? outcome;
+  final T outcome;
   final String? errorMessage;
   Result(this.outcome, [this.errorMessage]);
 }

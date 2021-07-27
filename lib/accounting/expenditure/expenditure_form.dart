@@ -66,6 +66,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
             vitalPermissions: [ExpenditurFormFields.expenditureExample.paidBy?.createTransactionPermission])
         ? ExpenditurFormFields.expenditureExample.paidBy
         : null;
+    _fields.expClass = ExpenditurFormFields.expenditureExample.expClass;
     switch (widget.formDuty) {
       case FormDuty.READ:
       case FormDuty.CREATE:
@@ -135,7 +136,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       _fields.paidBy = paidByAccount;
       _fields.note = creditTransaction.note;
       _fields.date = creditTransaction.date;
-      // tag: creditTransaction.tag,
+      // _fields.expClass = creditTransaction.?expClass;
 
       // print('EXP_FRM init_state| EDIT 03| prepared _expenditureFormFields');
       // print(_fields);
@@ -375,43 +376,31 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   Future<void> _saveForm(Function dbOperationHandler) async {
-    if (_fields.formKey.currentState == null) {
-      print('EF20| Warn: _form.currentState == null');
-      return;
-    }
-    final isValid = _fields.formKey.currentState!.validate();
-    if (!isValid) {
-      print('EF21| Warn: some of form feilds are not valid;');
+    // if (_fields.formKey.currentState == null) {
+    //   print('EF20| Warn: _form.currentState == null');
+    //   return;
+    // }
+    // final isValid = _fields.formKey.currentState!.validate();
+    final isValid = _fields.validate();
+    if (!isValid.outcome) {
+      print('EF21| Warn: ${isValid.errorMessage}');
       return;
     }
     _fields.formKey.currentState!.save(); // run all onSaved method
-
-    // add/edit expences in db
-    // mod: new product creation
-    if (true) {
-      loadingStart();
-      try {
-        // save expences in database
-        // print(
-        //   'EF23| @ _saveForm() | _expenditureFormFields: $_fields',
-        // );
-        // await ExpenditureModel.createExpenditureInDB(_expenditureFormFields);
-        await dbOperationHandler();
-        // notify expenditur-screen to rebuild data-table
-        widget.notifyNewVoucher();
-        loadingEnd();
-      } catch (e) {
-        loadingEnd();
-        showErrorDialog(
-          context,
-          'Error while _saveForm',
-          'source: createExpenditureInDB <EF22>',
-          e,
-        );
-      }
+    loadingStart();
+    try {
+      await dbOperationHandler();
+      widget.notifyNewVoucher();
+      loadingEnd();
+    } catch (e) {
+      loadingEnd();
+      showErrorDialog(
+        context,
+        'Error while _saveForm',
+        'source: createExpenditureInDB <EF22>',
+        e,
+      );
     }
-    // mod: updating product
-    // ...
   }
 
   Widget _buildButton(
@@ -514,10 +503,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     });
   }
 
-  void initializeForm(
-    VoucherModel? voucherToShowInForm,
-    int? expenseIdToShowInForm,
-  ) {
+  void initializeForm(VoucherModel? voucherToShowInForm, int? expenseIdToShowInForm) {
     // Exp_Form called without passing voucher: means we are in create mode
     if (voucherToShowInForm == null || expenseIdToShowInForm == null) {
       print('EF 01| we need form for create new voucher ...');
