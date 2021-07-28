@@ -1,19 +1,20 @@
 import 'package:shop/accounting/accounting_logic/account_ids.dart';
 
-import '../accounting_logic/transaction_ classification.dart';
+import '../accounting_logic/transaction_classification.dart';
 
 const EXP_CLASS_TREE = const [
-  // MAIN
-  TransactionClassification(
-    id: ExpClassIds.MAIN_EXP_CLASS_ID,
-    parentId: ExpClassIds.TOP_EXP_CLASS_ID,
-    accountType: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
-    titleEnglish: 'Expenses Classifications',
-    titlePersian: 'طبقه بندى هزينه ها',
-    titleArabic: 'تصنيف مصاريف',
-    note: '_',
-  ),
+  // MAIN => DEFINE AT TRNS_CLASS_TREE
+  // TransactionClassification(
+  //   id: ExpClassIds.MAIN_EXP_CLASS_ID,
+  //   parentId: ExpClassIds.TOP_EXP_CLASS_ID,
+  //   accountType: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
+  //   titleEnglish: 'Expenses Classifications',
+  //   titlePersian: 'طبقه بندى هزينه ها',
+  //   titleArabic: 'تصنيف مصاريف',
+  //   note: '_',
+  // ),
   // GENERAL
+
   TransactionClassification(
     id: ExpClassIds.GENERAL_EXP_CLASS_ID,
     parentId: ExpClassIds.MAIN_EXP_CLASS_ID,

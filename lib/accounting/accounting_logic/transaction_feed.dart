@@ -4,6 +4,7 @@ class TransactionFeed {
   final bool isDebit;
   final DateTime date;
   final String note;
+  final String tranClassId;
 
   TransactionFeed({
     required this.accountId,
@@ -11,5 +12,6 @@ class TransactionFeed {
     required this.isDebit,
     required this.date,
     required this.note,
+    required this.tranClassId,
   });
 }

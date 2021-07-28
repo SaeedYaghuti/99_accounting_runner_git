@@ -1,4 +1,5 @@
 import 'package:shop/accounting/accounting_logic/account_ids.dart';
+import 'package:shop/accounting/accounting_logic/trans_class_tree.dart';
 import 'package:shop/accounting/accounting_logic/transaction_feed.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_feed.dart';
@@ -16,6 +17,7 @@ class ExpenditureModel {
       isDebit: true,
       date: fields.date!,
       note: '${fields.paidBy!.titleEnglish} paid for ${ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID}',
+      tranClassId: TranClassIds.GENERAL_TRAN_CLASS_ID,
     );
     var transactionFeedCredit = TransactionFeed(
       accountId: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
@@ -23,6 +25,7 @@ class ExpenditureModel {
       isDebit: false,
       date: fields.date!,
       note: fields.note!,
+      tranClassId: fields.expClass!.id,
     );
     return VoucherModel.createVoucher(
       authProvider,
@@ -76,6 +79,7 @@ class ExpenditureModel {
         isDebit: true,
         date: fields.date!,
         note: fields.note!,
+        tranClassId: fields.expClass!.id,
       ),
       // updated credit transaction
       TransactionModel(
@@ -85,6 +89,7 @@ class ExpenditureModel {
         isDebit: false,
         date: fields.date!,
         note: fields.note!,
+        tranClassId: fields.expClass!.id,
       ),
     ];
 

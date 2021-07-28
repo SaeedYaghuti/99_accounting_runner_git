@@ -6,7 +6,7 @@ import 'package:shop/accounting/accounting_logic/run_code.dart';
 
 import 'package:provider/provider.dart';
 import 'package:shop/accounting/accounting_logic/account_dropdown_menu.dart';
-import 'package:shop/accounting/accounting_logic/transaction_%20classification.dart';
+import 'package:shop/accounting/accounting_logic/transaction_classification.dart';
 import 'package:shop/accounting/expenditure/expenditure_classification_tree.dart';
 import 'package:shop/auth/auth_db_helper.dart';
 import 'package:shop/auth/auth_provider_sql.dart';

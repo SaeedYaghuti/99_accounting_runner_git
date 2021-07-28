@@ -60,8 +60,7 @@ class VoucherModel {
       // print(
       //   'VCH_MDL | accountVouchers() 02| auther has READ_OWN',
       // );
-      onlyOwnVouchers =
-          'AND ${VoucherModel.column5CreatorId} = ${authProvider.authId!}';
+      onlyOwnVouchers = 'AND ${VoucherModel.column5CreatorId} = ${authProvider.authId!}';
     } else {
       // has no read perm
       // print(
@@ -128,8 +127,7 @@ class VoucherModel {
 
     // step1# validate authority for each account
     for (var tranFeed in transactionFeeds) {
-      AccountModel? account =
-          await AccountModel.fetchAccountById(tranFeed.accountId);
+      AccountModel? account = await AccountModel.fetchAccountById(tranFeed.accountId);
       if (account == null) {
         throw CurroptedInputException(
           'VCH_MDL | createVoucher() 01| account with id: ${tranFeed.accountId} in not availble',
@@ -185,6 +183,7 @@ class VoucherModel {
         isDebit: feed.isDebit,
         date: feed.date,
         note: feed.note,
+        tranClassId: feed.tranClassId,
       );
       try {
         await transaction.insertMeIntoDB();
@@ -250,8 +249,7 @@ class VoucherModel {
 
     // step 3# chack fVoucher validity
     if (fVoucher == null) {
-      throw CurroptedInputException(
-          'VM 32| there is not voucher in db with id ${rVoucher.id}!');
+      throw CurroptedInputException('VM 32| there is not voucher in db with id ${rVoucher.id}!');
     }
     if (fVoucher.voucherNumber != rVoucher.voucherNumber) {
       throw CurroptedInputException(
@@ -510,8 +508,7 @@ class VoucherModel {
     // );
     transactions = tranJAccMaps
         .map(
-          (tranJAcc) =>
-              TransactionModel.fromMapOfTransactionJoinAccount(tranJAcc),
+          (tranJAcc) => TransactionModel.fromMapOfTransactionJoinAccount(tranJAcc),
         )
         .toList();
   }
@@ -584,8 +581,7 @@ class VoucherModel {
     // print('VM 21| SELECT MAX FROM $voucherTableName >');
     // print(result);
 
-    var maxResult =
-        (result[0]['max'] == null) ? '0' : (result[0]['max'] as String);
+    var maxResult = (result[0]['max'] == null) ? '0' : (result[0]['max'] as String);
     var parse = int.tryParse(maxResult);
     var max = (parse == null) ? 0 : parse;
     // print(max);
@@ -623,8 +619,7 @@ class VoucherModel {
     }
   }
 
-  static bool _validateTransactionModelsAmount(
-      List<TransactionModel?> transactions) {
+  static bool _validateTransactionModelsAmount(List<TransactionModel?> transactions) {
     // TODO: an account could not be at the same time at debitTrans and creditTran
 
     var totalDebit = 0.0;
@@ -684,8 +679,7 @@ class VoucherModel {
 
   // static const String column5Transactions = 'transactions';
 
-  static const String QUERY_CREATE_VOUCHER_TABLE =
-      '''CREATE TABLE $voucherTableName (
+  static const String QUERY_CREATE_VOUCHER_TABLE = '''CREATE TABLE $voucherTableName (
       $column1Id INTEGER PRIMARY KEY, 
       $column2VoucherNumber INTEGER NOT NULL, 
       $column3Date INTEGER  NOT NULL, 

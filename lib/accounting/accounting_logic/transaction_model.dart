@@ -1,23 +1,25 @@
-import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
+import 'package:shop/accounting/accounting_logic/transaction_classification.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/exceptions/DBException.dart';
 import 'package:shop/exceptions/curropted_input.dart';
 import 'package:shop/exceptions/dirty_database.dart';
-import 'package:shop/shared/cast.dart';
 import 'package:shop/shared/seconds_of_time.dart';
 
 import 'account_model.dart';
 
 class TransactionModel {
   int? id;
-  final String accountId;
   AccountModel? account;
+  final String accountId;
   final int voucherId;
   final double amount;
   final bool isDebit;
   final DateTime date;
   final String note;
+  final String tranClassId;
+
+  TransactionClassification? tranClass;
 
   TransactionModel({
     this.id,
@@ -28,6 +30,8 @@ class TransactionModel {
     required this.isDebit,
     required this.date,
     required this.note,
+    this.tranClass,
+    required this.tranClassId,
   });
 
   Future<int> insertMeIntoDB() async {
@@ -57,7 +61,11 @@ class TransactionModel {
   static Future<TransactionModel?> transactionById(int tranId) async {
     final query = '''
     SELECT *
-    FROM $transactionTableName
+    FROM $transactionTableName 
+    LEFT JOIN 
+      ${TransactionClassification.tableName}
+    ON ${TransactionModel.column8TranClassId} = ${TransactionClassification.column1Id}
+    AND ${TransactionModel.column2AccountId} = ?
     WHERE $column1Id = ? ;
     ''';
     var transactionsMap = await AccountingDB.runRawQuery(query, [tranId]);
@@ -150,16 +158,11 @@ class TransactionModel {
             accountId: tran[TransactionModel.column2AccountId] as String,
             voucherId: tran[TransactionModel.column3VoucherId] as int,
             amount: tran[TransactionModel.column4Amount] as double,
-            isDebit: convertIntToBoolean(
-              tran[TransactionModel.column5IsDebit] as int,
-            ),
-            // date: DateTime.fromMicrosecondsSinceEpoch(
-            //   tran[TransactionModel.column6Date] as int,
-            // ),
-            date: secondsToDateTime(
-              tran[TransactionModel.column6Date] as int,
-            ),
+            isDebit: convertIntToBoolean(tran[TransactionModel.column5IsDebit] as int),
+            date: secondsToDateTime(tran[TransactionModel.column6Date] as int),
             note: tran[TransactionModel.column7Note] as String,
+            tranClassId: tran[TransactionModel.column8TranClassId] as String,
+            tranClass: TransactionClassification.fromMap(tran, true)!,
           ),
         )
         .toList();
@@ -173,13 +176,11 @@ class TransactionModel {
       accountId: tran[TransactionModel.column2AccountId] as String,
       voucherId: tran[TransactionModel.column3VoucherId] as int,
       amount: tran[TransactionModel.column4Amount] as double,
-      isDebit: convertIntToBoolean(
-        tran[TransactionModel.column5IsDebit] as int,
-      ),
-      date: secondsToDateTime(
-        tran[TransactionModel.column6Date] as int,
-      ),
+      isDebit: convertIntToBoolean(tran[TransactionModel.column5IsDebit] as int),
+      date: secondsToDateTime(tran[TransactionModel.column6Date] as int),
       note: tran[TransactionModel.column7Note] as String,
+      tranClassId: tran[TransactionModel.column8TranClassId] as String,
+      tranClass: TransactionClassification.fromMap(tran, true)!,
     );
     // print('TM 52 | @ fromMapOfTransaction() > after conversion');
     // print(transaction);
@@ -203,6 +204,8 @@ class TransactionModel {
         date: secondsToDateTime(tranJAcc[TransactionModel.column6Date] as int),
         note: tranJAcc[TransactionModel.column7Note] as String,
         account: AccountModel.fromMap(tranJAcc),
+        tranClassId: tranJAcc[TransactionModel.column8TranClassId] as String,
+        tranClass: TransactionClassification.fromMap(tranJAcc, true)!,
       );
     } catch (e) {
       print('TRN_MDL | fromMapOfTransactionJoinAccount() 01| @ catch e: $e');
@@ -236,6 +239,7 @@ class TransactionModel {
         column5IsDebit: isDebit ? 1 : 0,
         column6Date: seconsdOfDateTime(date),
         column7Note: note,
+        column8TranClassId: tranClass,
       };
     } else {
       return {
@@ -246,6 +250,7 @@ class TransactionModel {
         column5IsDebit: isDebit ? 1 : 0,
         column6Date: seconsdOfDateTime(date),
         column7Note: note,
+        column8TranClassId: tranClass,
       };
     }
   }
@@ -255,6 +260,7 @@ class TransactionModel {
     tranId: $id, voucherId: $voucherId,  
     accountId: $accountId, amount: $amount, isDebit: $isDebit,
     note: $note, date: ${date.day}/${date.month}/${date.year},
+    tranClass: $tranClass,
     ****
     ''';
   }
@@ -277,6 +283,7 @@ class TransactionModel {
   static const String column5IsDebit = 'isDebit';
   static const String column6Date = 'tran_date';
   static const String column7Note = 'tran_note';
+  static const String column8TranClassId = 'tran_class_id';
 
   static const String QUERY_CREATE_TRANSACTION_TABLE = '''CREATE TABLE $transactionTableName (
     $column1Id INTEGER PRIMARY KEY, 
@@ -286,7 +293,9 @@ class TransactionModel {
     $column5IsDebit BOOLEAN NOT NULL CHECK( $column5IsDebit IN (0, 1) ),
     $column6Date INTEGER NOT NULL, 
     $column7Note TEXT, 
+    $column8TranClassId TEXT NOT NULL, 
     CONSTRAINT fk_${AccountModel.tableName} FOREIGN KEY ($column2AccountId) REFERENCES ${AccountModel.tableName} (${AccountModel.column1Id}) ON DELETE CASCADE,
-    CONSTRAINT fk_${VoucherModel.voucherTableName} FOREIGN KEY ($column3VoucherId) REFERENCES ${VoucherModel.voucherTableName} (${VoucherModel.column1Id}) ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT fk_${VoucherModel.voucherTableName} FOREIGN KEY ($column3VoucherId) REFERENCES ${VoucherModel.voucherTableName} (${VoucherModel.column1Id}) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT fk_${TransactionClassification.tableName} FOREIGN KEY ($column8TranClassId) REFERENCES ${TransactionClassification.tableName} (${TransactionClassification.column1Id}) 
   )''';
 }
