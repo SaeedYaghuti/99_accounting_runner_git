@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:shop/accounting/accounting_logic/account_ids.dart';
 import 'package:shop/accounting/accounting_logic/transaction_classification.dart';
 
-import 'expenditure_classification_tree.dart';
-
-//  filter by auth perms
-//  # hasAccess only for childs not parent
-//  # if formDuty is empty it means if auth has one of crud_perm it has access
+import 'expenditure_class_tree.dart';
 
 class ExpClassDropdownMenu extends StatefulWidget {
   final List<String?> unwantedExpClassIds;
@@ -31,7 +28,7 @@ class _ExpClassDropdownMenuState extends State<ExpClassDropdownMenu> {
   @override
   void initState() {
     _loadingStart();
-    TransactionClassification.allTransactionClasses().then(
+    TransactionClassification.allTransactionClasses(ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID).then(
       (fetchExpClasss) {
         // print('ACC DRP init() 02| fetchExpClasss: $fetchExpClasss');
         _loadingEnd();
@@ -53,9 +50,7 @@ class _ExpClassDropdownMenuState extends State<ExpClassDropdownMenu> {
       },
     ).catchError((e) {
       _loadingEnd();
-      print(
-        'ACC_DROP_MENU initState() 01| unable to fetchExpClass from db or assign it to variables; e: $e ',
-      );
+      print('ACC_DROP_MENU initState() 01| unable to fetchExpClass from db or assign it to variables; e: $e ');
     });
 
     super.initState();

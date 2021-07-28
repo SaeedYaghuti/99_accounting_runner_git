@@ -1,11 +1,12 @@
 import 'package:path/path.dart' as path;
 import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
+import 'package:shop/accounting/accounting_logic/trans_class_tree.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_number_model.dart';
 import 'package:shop/accounting/accounting_logic/transaction_classification.dart';
-import 'package:shop/accounting/expenditure/expenditure_classification_tree.dart';
+import 'package:shop/accounting/expenditure/expenditure_class_tree.dart';
 import 'package:sqflite/sqflite.dart';
 
 class AccountingDB {
@@ -27,7 +28,7 @@ class AccountingDB {
         await db.execute(VoucherNumberModel.QUERY_CREATE_VOUCHER_NUMBER_TABLE);
         await insertPredefinedVoucherNumbers(db);
         await db.execute(TransactionClassification.QUERY_CREATE_EXPENDITURE_CLASSIFICATION_TABLE);
-        await insertPredefinedExpenditureClasses(db);
+        await insertPredefinedTransactionClasses(db);
       },
     );
     await db.execute('PRAGMA foreign_keys = ON;');
@@ -88,14 +89,24 @@ class AccountingDB {
     }
   }
 
-  static Future<void> insertPredefinedExpenditureClasses(Database db) async {
+  static Future<void> insertPredefinedTransactionClasses(Database db) async {
+    // tranClassTree
+    for (TransactionClassification tranClass in TRANS_CLASS_TREE) {
+      int insertResult = await db.insert(
+        TransactionClassification.tableName,
+        tranClass.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      print('ACC_DB| @insertPredefinedTransactionClasses() 01 | insertResult: $insertResult');
+    }
+    // expClassTree
     for (TransactionClassification expClass in EXP_CLASS_TREE) {
       int insertResult = await db.insert(
         TransactionClassification.tableName,
         expClass.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
-      // print('ACC_DB| @insertPredefinedExpenditureClasses() insertResult: $insertResult');
+      print('ACC_DB| @insertPredefinedTransactionClasses() 02 | insertResult: $insertResult');
     }
   }
 

@@ -1,5 +1,5 @@
 import 'package:shop/accounting/accounting_logic/account_ids.dart';
-import 'package:shop/accounting/expenditure/expenditure_classification_tree.dart';
+import 'package:shop/accounting/expenditure/expenditure_class_tree.dart';
 
 import '../accounting_logic/transaction_classification.dart';
 

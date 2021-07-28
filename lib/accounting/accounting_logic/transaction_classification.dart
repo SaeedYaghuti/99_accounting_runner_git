@@ -32,15 +32,22 @@ class TransactionClassification {
     }
   }
 
-  static Future<List<TransactionClassification?>> allTransactionClasses() async {
-    final query = '''
+  static Future<List<TransactionClassification?>> allTransactionClasses(String? accountType) async {
+    var query = '''
     SELECT *
     FROM $tableName
     ''';
+    if (accountType != null && accountType.trim() != '') {
+      query = '''
+    SELECT *
+    FROM $tableName
+    WHERE $column3AccountType = ?
+    ''';
+    }
     List<TransactionClassification?> expClasses = [];
 
     try {
-      var result = await AccountingDB.runRawQuery(query);
+      var result = await AccountingDB.runRawQuery(query, [accountType]);
       // print('TransactionClassification allTransactionClasses 01| all accounts: ########');
       // print(result);
       // print('##################');
