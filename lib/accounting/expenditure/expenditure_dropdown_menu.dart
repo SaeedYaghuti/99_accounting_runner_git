@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shop/accounting/expenditure/expenditure_%20classification.dart';
+import 'package:shop/accounting/accounting_logic/transaction_%20classification.dart';
 
 import 'expenditure_classification_tree.dart';
 
@@ -10,7 +10,7 @@ import 'expenditure_classification_tree.dart';
 class ExpClassDropdownMenu extends StatefulWidget {
   final List<String?> unwantedExpClassIds;
   final List<String?> expandedExpClassIds;
-  final Function(ExpenditureClassification) tapHandler;
+  final Function(TransactionClassification) tapHandler;
 
   ExpClassDropdownMenu({
     required this.unwantedExpClassIds,
@@ -23,15 +23,15 @@ class ExpClassDropdownMenu extends StatefulWidget {
 }
 
 class _ExpClassDropdownMenuState extends State<ExpClassDropdownMenu> {
-  late List<ExpenditureClassification> accounts;
+  late List<TransactionClassification> accounts;
 
-  late ExpenditureClassification ledgerExpClass;
+  late TransactionClassification ledgerExpClass;
   bool vriablesAreInitialized = false;
 
   @override
   void initState() {
     _loadingStart();
-    ExpenditureClassification.allExpenditureClasses().then(
+    TransactionClassification.allTransactionClasses().then(
       (fetchExpClasss) {
         // print('ACC DRP init() 02| fetchExpClasss: $fetchExpClasss');
         _loadingEnd();
@@ -40,7 +40,7 @@ class _ExpClassDropdownMenuState extends State<ExpClassDropdownMenu> {
           vriablesAreInitialized = false;
           return;
         }
-        accounts = fetchExpClasss.cast<ExpenditureClassification>();
+        accounts = fetchExpClasss.cast<TransactionClassification>();
 
         if (accounts.any((acc) => acc.id == ExpClassIds.MAIN_EXP_CLASS_ID)) {
           ledgerExpClass = accounts.firstWhere(
@@ -79,7 +79,7 @@ class _ExpClassDropdownMenuState extends State<ExpClassDropdownMenu> {
     );
   }
 
-  ExpansionTile _buildTileTree(ExpenditureClassification parent) {
+  ExpansionTile _buildTileTree(TransactionClassification parent) {
     return ExpansionTile(
       childrenPadding: EdgeInsets.symmetric(horizontal: 5),
       initiallyExpanded: widget.expandedExpClassIds.contains(parent.id),
@@ -117,7 +117,7 @@ class _ExpClassDropdownMenuState extends State<ExpClassDropdownMenu> {
     return accounts.any((account) => account.parentId == accountId);
   }
 
-  List<ExpenditureClassification?> childs(String accountId) {
+  List<TransactionClassification?> childs(String accountId) {
     return accounts.where((account) => account.parentId == accountId).toList();
   }
 

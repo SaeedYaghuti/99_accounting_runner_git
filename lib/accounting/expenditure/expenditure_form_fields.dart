@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
-import 'package:shop/accounting/expenditure/expenditure_%20classification.dart';
+import 'package:shop/accounting/accounting_logic/transaction_%20classification.dart';
 import 'package:shop/accounting/expenditure/expenditure_classification_tree.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/constants.dart';
@@ -23,7 +23,7 @@ class ExpenditurFormFields {
   int? id;
   int? authId;
   AccountModel? paidBy;
-  ExpenditureClassification? expClass;
+  TransactionClassification? expClass;
   DateTime? date;
   Function? resetState;
 
@@ -34,7 +34,7 @@ class ExpenditurFormFields {
     double? amount,
     AccountModel? paidBy,
     String? note,
-    ExpenditureClassification? expClass,
+    TransactionClassification? expClass,
     DateTime? date,
     Function? resetState,
   }) {

@@ -2,7 +2,7 @@ import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
-import 'package:shop/accounting/expenditure/expenditure_%20classification.dart';
+import 'package:shop/accounting/accounting_logic/transaction_%20classification.dart';
 import 'package:shop/auth/auth_model_sql.dart';
 import 'package:shop/auth/permission_model.dart';
 
@@ -49,6 +49,6 @@ void runCode() async {
   // print('Account RunCode 01 pety: $pety');
 
   // var classes = await ExpenditureClassification.allExpenditureClasses();
-  var classes = await ExpenditureClassification.fetchExpClassificationById('MAIN');
+  var classes = await TransactionClassification.fetchTranClassById('MAIN');
   print('Account RunCode 01 classes: $classes');
 }

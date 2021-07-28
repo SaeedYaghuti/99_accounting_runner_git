@@ -4,7 +4,7 @@ import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_number_model.dart';
-import 'package:shop/accounting/expenditure/expenditure_%20classification.dart';
+import 'package:shop/accounting/accounting_logic/transaction_%20classification.dart';
 import 'package:shop/accounting/expenditure/expenditure_classification_tree.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -26,7 +26,7 @@ class AccountingDB {
         await db.execute(TransactionModel.QUERY_CREATE_TRANSACTION_TABLE);
         await db.execute(VoucherNumberModel.QUERY_CREATE_VOUCHER_NUMBER_TABLE);
         await insertPredefinedVoucherNumbers(db);
-        await db.execute(ExpenditureClassification.QUERY_CREATE_EXPENDITURE_CLASSIFICATION_TABLE);
+        await db.execute(TransactionClassification.QUERY_CREATE_EXPENDITURE_CLASSIFICATION_TABLE);
         await insertPredefinedExpenditureClasses(db);
       },
     );
@@ -89,9 +89,9 @@ class AccountingDB {
   }
 
   static Future<void> insertPredefinedExpenditureClasses(Database db) async {
-    for (ExpenditureClassification expClass in EXP_CLASS_TREE) {
+    for (TransactionClassification expClass in EXP_CLASS_TREE) {
       int insertResult = await db.insert(
-        ExpenditureClassification.tableName,
+        TransactionClassification.tableName,
         expClass.toMap(),
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
