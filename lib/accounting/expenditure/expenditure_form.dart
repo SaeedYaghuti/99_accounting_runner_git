@@ -57,7 +57,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   void resetState() {
     setState(() {
-      print('called resetState()');
+      // print('called resetState()');
     });
   }
 

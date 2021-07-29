@@ -20,8 +20,7 @@ class VoucherNumberModel {
   static const String LOCK = 'LOCK';
   static const String FREE = 'FREE';
 
-  static const String QUERY_CREATE_VOUCHER_NUMBER_TABLE =
-      '''CREATE TABLE $tableName (
+  static const String QUERY_CREATE_VOUCHER_NUMBER_TABLE = '''CREATE TABLE $tableName (
     $column1Id INTEGER NOT NULL, 
     $column2Number INTEGER NOT NULL, 
     $column3Status TEXT NOT NULL
@@ -48,8 +47,7 @@ class VoucherNumberModel {
       // 2) return number
       return voucherNumberModel.voucherNumber;
     } else {
-      throw VoucherNumberException(
-          'VN-M 02| voucher-number status expected to be FREE but it is LOCK');
+      throw VoucherNumberException('VN-M 02| voucher-number status expected to be FREE but it is LOCK');
     }
   }
 
@@ -68,8 +66,7 @@ class VoucherNumberModel {
     var voucherNumberModel = fromDBResult(result);
 
     // check status
-    if (voucherNumberModel!.voucherNumber == number &&
-        voucherNumberModel.status == VoucherNumberStatus.LOCK) {
+    if (voucherNumberModel!.voucherNumber == number && voucherNumberModel.status == VoucherNumberStatus.LOCK) {
       // increase number and make it free
       await _freeVoucherNumberAndIncrease(number);
     } else {
@@ -94,13 +91,11 @@ class VoucherNumberModel {
     var voucherNumberModel = fromDBResult(result);
 
     // check status
-    if (voucherNumberModel!.voucherNumber == number &&
-        voucherNumberModel.status == VoucherNumberStatus.LOCK) {
+    if (voucherNumberModel!.voucherNumber == number && voucherNumberModel.status == VoucherNumberStatus.LOCK) {
       // increase number and make it free
       await _freeVoucherNumberWithoutIncrease();
     } else {
-      print(
-          'VNM 35| ERROR: voucher_number_db is not as expected! check created voucher numbers');
+      print('VNM 35| ERROR: voucher_number_db is not as expected! check created voucher numbers');
       VoucherNumberException(
         'VNM 35| ERROR: voucher_number_db is not as expected! check created voucher numbers',
       );
@@ -109,7 +104,7 @@ class VoucherNumberModel {
 
   static Future<void> reset() async {
     print('VNM 40| reset ...');
-    var max = await VoucherModel.maxVoucherNumber();
+    int max = await VoucherModel.maxVoucherNumber();
     await VoucherNumberModel._freeVoucherNumberAndIncrease(max);
   }
 
@@ -166,9 +161,7 @@ class VoucherNumberModel {
       if (map[column1Id] == 1) {
         return VoucherNumberModel(
           map[column2Number] as int,
-          (map[column3Status] as String) == LOCK
-              ? VoucherNumberStatus.LOCK
-              : VoucherNumberStatus.FREE,
+          (map[column3Status] as String) == LOCK ? VoucherNumberStatus.LOCK : VoucherNumberStatus.FREE,
         );
       }
     }

@@ -70,8 +70,8 @@ class ExpenditurFormFields {
       print('EF20| Warn: _formKey.currentState == null');
       return Result(false, '_formKey.currentState is null');
     }
-    var errorMessages = '';
     // step#1 validate custom fields that have no predifined validate() method
+    var errorMessages = '';
     if (paidBy == null) {
       hasErrorExpClass = true;
       errorMessages += '\nPaidBy is empty';
@@ -91,7 +91,7 @@ class ExpenditurFormFields {
     if (!isValid) {
       errorMessages += '\nSome of regular form FormFeilds are not valid';
     }
-    print('EXP_FRM_FIELD | validate() | errorMessages: $errorMessages');
+    // print('EXP_FRM_FIELD | validate() | errorMessages: $errorMessages');
 
     if (resetState != null) resetState!();
 

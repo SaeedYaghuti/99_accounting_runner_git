@@ -17,9 +17,10 @@ class TransactionModel {
   final bool isDebit;
   final DateTime date;
   final String note;
-  final String tranClassId;
 
-  TransactionClassification? tranClass;
+  // data recived from client it is null
+  // data fetched from db it is not null
+  TransactionClassification tranClass;
 
   TransactionModel({
     this.id,
@@ -30,8 +31,7 @@ class TransactionModel {
     required this.isDebit,
     required this.date,
     required this.note,
-    this.tranClass,
-    required this.tranClassId,
+    required this.tranClass,
   });
 
   Future<int> insertMeIntoDB() async {
@@ -137,7 +137,7 @@ class TransactionModel {
   ) async {
     final query = '''
     SELECT *
-    FROM $transactionTableName
+    FROM $transactionTableName 
     LEFT JOIN ${VoucherModel.voucherTableName}
     ON $transactionTableName.$column3VoucherId = ${VoucherModel.voucherTableName}.${VoucherModel.column1Id}
     WHERE $transactionTableName.$column2AccountId = ?
@@ -161,16 +161,13 @@ class TransactionModel {
             isDebit: convertIntToBoolean(tran[TransactionModel.column5IsDebit] as int),
             date: secondsToDateTime(tran[TransactionModel.column6Date] as int),
             note: tran[TransactionModel.column7Note] as String,
-            tranClassId: tran[TransactionModel.column8TranClassId] as String,
             tranClass: TransactionClassification.fromMap(tran, true)!,
           ),
         )
         .toList();
   }
 
-  static TransactionModel fromMapOfTransaction(
-    Map<String, Object?> tran,
-  ) {
+  static TransactionModel fromMapOfTransaction(Map<String, Object?> tran) {
     var transaction = TransactionModel(
       id: tran[TransactionModel.column1Id] as int,
       accountId: tran[TransactionModel.column2AccountId] as String,
@@ -179,7 +176,6 @@ class TransactionModel {
       isDebit: convertIntToBoolean(tran[TransactionModel.column5IsDebit] as int),
       date: secondsToDateTime(tran[TransactionModel.column6Date] as int),
       note: tran[TransactionModel.column7Note] as String,
-      tranClassId: tran[TransactionModel.column8TranClassId] as String,
       tranClass: TransactionClassification.fromMap(tran, true)!,
     );
     // print('TM 52 | @ fromMapOfTransaction() > after conversion');
@@ -190,8 +186,8 @@ class TransactionModel {
   static TransactionModel fromMapOfTransactionJoinAccount(
     Map<String, Object?> tranJAcc,
   ) {
-    // print('TRN_MDL | 01 fromMapOfTransactionJoinAccount | input: $tranJAcc');
-    // print(tranJAcc);
+    print('TRN_MDL | 01 fromMapOfTransactionJoinAccount | input: $tranJAcc');
+    print(tranJAcc);
 
     var transaction;
     try {
@@ -204,7 +200,6 @@ class TransactionModel {
         date: secondsToDateTime(tranJAcc[TransactionModel.column6Date] as int),
         note: tranJAcc[TransactionModel.column7Note] as String,
         account: AccountModel.fromMap(tranJAcc),
-        tranClassId: tranJAcc[TransactionModel.column8TranClassId] as String,
         tranClass: TransactionClassification.fromMap(tranJAcc, true)!,
       );
     } catch (e) {
@@ -239,7 +234,7 @@ class TransactionModel {
         column5IsDebit: isDebit ? 1 : 0,
         column6Date: seconsdOfDateTime(date),
         column7Note: note,
-        column8TranClassId: tranClass,
+        column8TranClassId: tranClass.id,
       };
     } else {
       return {
@@ -250,7 +245,7 @@ class TransactionModel {
         column5IsDebit: isDebit ? 1 : 0,
         column6Date: seconsdOfDateTime(date),
         column7Note: note,
-        column8TranClassId: tranClass,
+        column8TranClassId: tranClass.id,
       };
     }
   }
@@ -283,7 +278,7 @@ class TransactionModel {
   static const String column5IsDebit = 'isDebit';
   static const String column6Date = 'tran_date';
   static const String column7Note = 'tran_note';
-  static const String column8TranClassId = 'tran_class_id';
+  static const String column8TranClassId = 'tran_classId';
 
   static const String QUERY_CREATE_TRANSACTION_TABLE = '''CREATE TABLE $transactionTableName (
     $column1Id INTEGER PRIMARY KEY, 

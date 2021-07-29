@@ -67,9 +67,7 @@ class TransactionClassification {
     }
   }
 
-  static Future<TransactionClassification?> fetchTranClassById(
-    String expClassId,
-  ) async {
+  static Future<TransactionClassification?> fetchTranClassById(String expClassId) async {
     // print('TRN_CLASS fetchTranClassById() 01| accountId: <$accountId>');
     final query = '''
     SELECT *
@@ -115,13 +113,13 @@ class TransactionClassification {
   }
 
   static const String tableName = 'expenditure_classification';
-  static const String column1Id = 'tran_class_id';
-  static const String column2ParentId = 'tran_class_parentId';
-  static const String column3AccountType = 'tran_class_account_type';
-  static const String column4TitleEnglish = 'tran_class_titleEnglish';
-  static const String column5TitlePersian = 'tran_class_titlePersian';
-  static const String column6TitleArabic = 'tran_class_titleArabic';
-  static const String column7Note = 'tran_class_note';
+  static const String column1Id = 'tranClass_id';
+  static const String column2ParentId = 'tranClass_parentId';
+  static const String column3AccountType = 'tranClass_account_type';
+  static const String column4TitleEnglish = 'tranClass_titleEnglish';
+  static const String column5TitlePersian = 'tranClass_titlePersian';
+  static const String column6TitleArabic = 'tranClass_titleArabic';
+  static const String column7Note = 'tranClass_note';
 
   static const String QUERY_CREATE_EXPENDITURE_CLASSIFICATION_TABLE = '''CREATE TABLE $tableName (
     $column1Id TEXT PRIMARY KEY, 
@@ -150,7 +148,7 @@ class TransactionClassification {
   static TransactionClassification? fromMap(Map<String, Object?>? tranClassMap, [bool throwError = false]) {
     // print('TRN_CLASS | fromMap 02| input: \n$accountMap');
 
-    if (tranClassMap == null) {
+    if (tranClassMap == null || tranClassMap[TransactionClassification.column1Id] == null) {
       print('TRN_CLASS | fromMap 01| input is null');
       if (throwError) {
         throw JoinException('TRN_CLASS | fromMap 01| input is null');
@@ -174,9 +172,7 @@ class TransactionClassification {
       // print('TRN_CLASS | fromMap 03| output: \n$account');
       return account;
     } catch (e) {
-      print(
-        'TRN_CLASS | fromMap() 01 | @ catch e: $e',
-      );
+      print('TRN_CLASS | fromMap() 01 | @ catch e: $e');
       throw e;
     }
   }

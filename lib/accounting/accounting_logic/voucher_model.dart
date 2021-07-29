@@ -1,5 +1,6 @@
 import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
+import 'package:shop/accounting/accounting_logic/transaction_classification.dart';
 import 'package:shop/accounting/accounting_logic/transaction_feed.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_feed.dart';
@@ -183,15 +184,17 @@ class VoucherModel {
         isDebit: feed.isDebit,
         date: feed.date,
         note: feed.note,
-        tranClassId: feed.tranClassId,
+        tranClass: feed.tranClass,
       );
       try {
         await transaction.insertMeIntoDB();
         successTransactions.add(transaction);
       } catch (e) {
+        print('VCH_MDL | createVoucher() 100 | @ catch error while insert Tran in db e: $e');
         // delete all transactions and voucher
         try {
           await voucher.deleteMeFromDB(authProvider);
+          await VoucherNumberModel.numberNotConsumed(voucherNumber);
           for (var transaction in successTransactions) {
             await transaction.deleteMeFromDB();
           }
@@ -471,27 +474,29 @@ class VoucherModel {
       print('VM 29| Warn: id is null: fetchMyTransactions()');
       return;
     }
+    // TODO: fetch tranClass
+    // ...
 
     final query = '''
       SELECT *
       FROM ${TransactionModel.transactionTableName}
-      WHERE ${TransactionModel.column3VoucherId} = $id
+      LEFT JOIN 
+        ${TransactionClassification.tableName}
+      ON ${TransactionModel.column8TranClassId} = ${TransactionClassification.column1Id}
+      AND ${TransactionModel.column3VoucherId} = ?
     ''';
-    var result = await AccountingDB.runRawQuery(query);
-    transactions = result
-        .map(
-          (tranMap) => TransactionModel.fromMapOfTransaction(tranMap),
-        )
-        .toList();
+
+    var result = await AccountingDB.runRawQuery(query, [id]);
+    transactions = result.map((tranMap) => TransactionModel.fromMapOfTransaction(tranMap)).toList();
   }
 
   Future<void> _fetchMyTransactionsWithAccount() async {
     if (id == null) {
-      print(
-        'VM | _fetchMyTransactionsWithAccount() 01| Warn: id is null: fetchMyTransactions()',
-      );
+      print('VM | _fetchMyTransactionsWithAccount() 01| Warn: id is null: fetchMyTransactions()');
       return;
     }
+    // TODO: join TranClass
+    // ...
     final query = '''
     SELECT 
       *
@@ -581,9 +586,9 @@ class VoucherModel {
     // print('VM 21| SELECT MAX FROM $voucherTableName >');
     // print(result);
 
-    var maxResult = (result[0]['max'] == null) ? '0' : (result[0]['max'] as String);
-    var parse = int.tryParse(maxResult);
-    var max = (parse == null) ? 0 : parse;
+    var max = (result[0]['max'] == null) ? 0 : (result[0]['max'] as int);
+    // var parse = int.tryParse(maxResult);
+    // var max = (parse == null) ? 0 : parse;
     // print(max);
     return max;
   }
