@@ -68,8 +68,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
     });
 
     _vouchersLoadingStart();
-    AccountModel.fetchAccountById(ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID)
-        .then((account) {
+    AccountModel.fetchAccountById(ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID).then((account) {
       _vouchersLoadingEnd();
       // print(
       //   'EXP_SCN | didChangeDependencies() 02| fetching expenditurAccount | account: $account',
@@ -160,9 +159,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
               rows: _buildTableRows(),
             ),
             SizedBox(height: 10),
-            _vouchersAreLoading
-                ? Center(child: CircularProgressIndicator())
-                : Container(),
+            _vouchersAreLoading ? Center(child: CircularProgressIndicator()) : Container(),
           ],
         ),
       ),
@@ -289,8 +286,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
               }
             });
           },
-          color: MaterialStateProperty.resolveWith<Color?>(
-              (Set<MaterialState> states) {
+          color: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
             // All rows will have the same selected color.
             if (states.contains(MaterialState.selected)) {
               // return Theme.of(context).colorScheme.primary.withOpacity(0.08);
@@ -345,8 +341,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
                   }
                 });
               },
-              color: MaterialStateProperty.resolveWith<Color?>(
-                  (Set<MaterialState> states) {
+              color: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
                 // All rows will have the same selected color.
                 if (states.contains(MaterialState.selected)) {
                   // return Theme.of(context).colorScheme.primary.withOpacity(0.08);
@@ -496,8 +491,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       var confirmResult = await confirmDialog(
         context: context,
         title: 'Are sure to delete this expense?',
-        content:
-            'This would delete voucher and all it is transactions from database',
+        content: 'This would delete voucher and all it is transactions from database',
         noTitle: 'No',
         yesTitle: 'Delete it!',
       );
@@ -621,8 +615,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       var confirmResult = await confirmDialog(
         context: context,
         title: 'Are sure to delete this expense?',
-        content:
-            'This would delete voucher and all it is transactions from database',
+        content: 'This would delete voucher and all it is transactions from database',
         noTitle: 'No',
         yesTitle: 'Delete it!',
       );
@@ -647,10 +640,9 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
   Future<void> reloadVouchers() async {
     try {
       _vouchersLoadingStart();
-      var fetchedVouchers =
-          await ExpenditureModel.expenditureVouchers(authProvider);
+      var fetchedVouchers = await ExpenditureModel.expenditureVouchers(authProvider);
 
-      if (fetchedVouchers != null || fetchedVouchers.isNotEmpty) {
+      if (fetchedVouchers.isNotEmpty) {
         setState(() {
           vouchers = fetchedVouchers.cast<VoucherModel>();
         });
@@ -689,18 +681,14 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       index++;
       // how has access to row
       // ReadAll or (ReadOwn && creatorId == authId)
-      if (!authProvider
-              .isPermitted(PermissionModel.EXPENDITURE_READ_ALL_TRANSACTION) &&
-          authProvider
-              .isPermitted(PermissionModel.EXPENDITURE_READ_OWN_TRANSACTION) &&
+      if (!authProvider.isPermitted(PermissionModel.EXPENDITURE_READ_ALL_TRANSACTION) &&
+          authProvider.isPermitted(PermissionModel.EXPENDITURE_READ_OWN_TRANSACTION) &&
           voucher.creatorId != authProvider.authId) {
         // no access to row
         continue;
       }
 
-      voucher
-          .onlyTransactionsOf(ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID)
-          .forEach((expTran) {
+      voucher.onlyTransactionsOf(ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID).forEach((expTran) {
         if (expTran == null) {
           return;
         }
@@ -739,8 +727,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
               }
             });
           },
-          color: MaterialStateProperty.resolveWith<Color?>(
-              (Set<MaterialState> states) {
+          color: MaterialStateProperty.resolveWith<Color?>((Set<MaterialState> states) {
             // All rows will have the same selected color.
             if (states.contains(MaterialState.selected)) {
               // return Theme.of(context).colorScheme.primary.withOpacity(0.08);

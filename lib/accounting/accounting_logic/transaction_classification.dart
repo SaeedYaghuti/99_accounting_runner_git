@@ -48,9 +48,9 @@ class TransactionClassification {
 
     try {
       var result = await AccountingDB.runRawQuery(query, [accountType]);
-      // print('TransactionClassification allTransactionClasses 01| all accounts: ########');
-      // print(result);
-      // print('##################');
+      print('TransactionClassification allTransactionClasses 01| all tranClasses: ########');
+      print(result);
+      print('##################');
 
       if (result.isEmpty) return [];
 
@@ -76,10 +76,10 @@ class TransactionClassification {
     ''';
     try {
       var fetchResult = await AccountingDB.runRawQuery(query, [expClassId]);
-      // print(
-      //   'TransactionClassification fetchTranClassById 01| fetchResult for accountId: $accountId',
-      // );
-      // print(fetchResult);
+      print(
+        'TransactionClassification fetchTranClassById 01| fetchResult for expClassId: $expClassId',
+      );
+      print(fetchResult);
 
       // before list.first always you should check isEmpty
       if (fetchResult.isEmpty) return null;
@@ -146,12 +146,12 @@ class TransactionClassification {
   }
 
   static TransactionClassification? fromMap(Map<String, Object?>? tranClassMap, [bool throwError = false]) {
-    print('TRN_CLASS | fromMap 02| input: \n$tranClassMap');
+    print('TRN_CLASS | fromMap 01| input: \n$tranClassMap');
 
     if (tranClassMap == null || tranClassMap[TransactionClassification.column1Id] == null) {
-      print('TRN_CLASS | fromMap 01| tranClassMap or JoinClass is null');
+      print('TRN_CLASS | fromMap 02| tranClassMap or JoinClass is null');
       if (throwError) {
-        throw JoinException('TRN_CLASS | fromMap 01| input is null');
+        throw JoinException('TRN_CLASS | fromMap 03| input is null');
       } else {
         return null;
       }
@@ -169,10 +169,10 @@ class TransactionClassification {
         note: tranClassMap[TransactionClassification.column7Note] as String,
       );
 
-      print('TRN_CLASS | fromMap 03| output: \n$tranClass');
+      print('TRN_CLASS | fromMap 04| output: \n$tranClass');
       return tranClass;
     } catch (e) {
-      print('TRN_CLASS | fromMap() 01 | @ catch e: $e');
+      print('TRN_CLASS | fromMap() 05 | @ catch e: $e');
       throw e;
     }
   }
