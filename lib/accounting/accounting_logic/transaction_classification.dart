@@ -146,20 +146,20 @@ class TransactionClassification {
   }
 
   static TransactionClassification? fromMap(Map<String, Object?>? tranClassMap, [bool throwError = false]) {
-    // print('TRN_CLASS | fromMap 02| input: \n$accountMap');
+    print('TRN_CLASS | fromMap 02| input: \n$tranClassMap');
 
     if (tranClassMap == null || tranClassMap[TransactionClassification.column1Id] == null) {
-      print('TRN_CLASS | fromMap 01| input is null');
+      print('TRN_CLASS | fromMap 01| tranClassMap or JoinClass is null');
       if (throwError) {
         throw JoinException('TRN_CLASS | fromMap 01| input is null');
       } else {
         return null;
       }
     }
-    var account;
+    var tranClass;
 
     try {
-      account = TransactionClassification(
+      tranClass = TransactionClassification(
         id: tranClassMap[TransactionClassification.column1Id] as String,
         parentId: tranClassMap[TransactionClassification.column2ParentId] as String,
         accountType: tranClassMap[TransactionClassification.column3AccountType] as String,
@@ -169,8 +169,8 @@ class TransactionClassification {
         note: tranClassMap[TransactionClassification.column7Note] as String,
       );
 
-      // print('TRN_CLASS | fromMap 03| output: \n$account');
-      return account;
+      print('TRN_CLASS | fromMap 03| output: \n$tranClass');
+      return tranClass;
     } catch (e) {
       print('TRN_CLASS | fromMap() 01 | @ catch e: $e');
       throw e;

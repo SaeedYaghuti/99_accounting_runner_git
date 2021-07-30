@@ -59,7 +59,7 @@ class TransactionModel {
   }
 
   static Future<TransactionModel?> transactionById(int tranId) async {
-    final query = '''
+    final _query0 = '''
     SELECT *
     FROM $transactionTableName 
     LEFT JOIN 
@@ -68,12 +68,21 @@ class TransactionModel {
     AND ${TransactionModel.column2AccountId} = ?
     WHERE $column1Id = ? ;
     ''';
+
+    final query = '''
+    SELECT *
+    FROM $transactionTableName 
+    LEFT JOIN 
+      ${TransactionClassification.tableName}
+    ON ${TransactionModel.column8TranClassId} = ${TransactionClassification.column1Id}
+    AND ${TransactionModel.column1Id} = ? ;
+    ''';
     var transactionsMap = await AccountingDB.runRawQuery(query, [tranId]);
 
     // convert map to TransactionModel
     List<TransactionModel> transactionsModels = [];
     transactionsMap.forEach(
-      (tranMap) => transactionsModels.add(fromMapOfTransaction(tranMap)),
+      (tranMap) => transactionsModels.add(fromMapOfTransactionJClass(tranMap)),
     );
 
     if (transactionsModels.isEmpty) {
@@ -167,7 +176,7 @@ class TransactionModel {
         .toList();
   }
 
-  static TransactionModel fromMapOfTransaction(Map<String, Object?> tran) {
+  static TransactionModel fromMapOfTransactionJClass(Map<String, Object?> tran) {
     var transaction = TransactionModel(
       id: tran[TransactionModel.column1Id] as int,
       accountId: tran[TransactionModel.column2AccountId] as String,
@@ -210,19 +219,6 @@ class TransactionModel {
     // print(transaction);
 
     return transaction;
-  }
-
-  static List<Map<String, dynamic>> fromMapOfVoucherJoinTransactions(
-    List<Map<String, Object?>> dbResult,
-  ) {
-    return dbResult
-        .map(
-          (voucherJointran) => {
-            VoucherModel.voucherTableName: VoucherModel.fromMapOfVoucher(voucherJointran),
-            TransactionModel.transactionTableName: fromMapOfTransaction(voucherJointran),
-          },
-        )
-        .toList();
   }
 
   Map<String, Object?> toMapForDB() {

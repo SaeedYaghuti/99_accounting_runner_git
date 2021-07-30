@@ -216,7 +216,7 @@ class VoucherModel {
     // print('V_MG 19| voucher and all its transactions saved Successfully!');
 
     // TODO: remove me
-    await voucher._fetchMyTransactions();
+    await voucher._fetchMyTransactionsJClass();
   }
 
   // secure
@@ -470,7 +470,7 @@ class VoucherModel {
     return id!;
   }
 
-  Future<void> _fetchMyTransactions() async {
+  Future<void> _fetchMyTransactionsJClass() async {
     if (id == null) {
       print('VM 29| Warn: id is null: fetchMyTransactions()');
       return;
@@ -488,7 +488,7 @@ class VoucherModel {
     ''';
 
     var result = await AccountingDB.runRawQuery(query, [id]);
-    transactions = result.map((tranMap) => TransactionModel.fromMapOfTransaction(tranMap)).toList();
+    transactions = result.map((tranMap) => TransactionModel.fromMapOfTransactionJClass(tranMap)).toList();
   }
 
   Future<void> _fetchMyTransactionsWAccountWClass() async {
@@ -537,7 +537,7 @@ class VoucherModel {
 
     // fetch transaction for each voucher
     for (var voucher in voucherModels) {
-      await voucher._fetchMyTransactions();
+      await voucher._fetchMyTransactionsJClass();
     }
 
     print('VM FAV 01| All DB Vouchers: ###########');
