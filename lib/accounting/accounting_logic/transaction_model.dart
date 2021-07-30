@@ -183,24 +183,24 @@ class TransactionModel {
     return transaction;
   }
 
-  static TransactionModel fromMapOfTransactionJoinAccount(
-    Map<String, Object?> tranJAcc,
+  static TransactionModel fromMapOfTransactionJAccountJClass(
+    Map<String, Object?> tranJAccJClass,
   ) {
-    print('TRN_MDL | 01 fromMapOfTransactionJoinAccount | input: $tranJAcc');
-    print(tranJAcc);
+    print('TRN_MDL | 01 fromMapOfTransactionJoinAccount | input: $tranJAccJClass');
+    print(tranJAccJClass);
 
     var transaction;
     try {
       transaction = TransactionModel(
-        id: tranJAcc[TransactionModel.column1Id] as int,
-        accountId: tranJAcc[TransactionModel.column2AccountId] as String,
-        voucherId: tranJAcc[TransactionModel.column3VoucherId] as int,
-        amount: tranJAcc[TransactionModel.column4Amount] as double,
-        isDebit: convertIntToBoolean(tranJAcc[TransactionModel.column5IsDebit] as int),
-        date: secondsToDateTime(tranJAcc[TransactionModel.column6Date] as int),
-        note: tranJAcc[TransactionModel.column7Note] as String,
-        account: AccountModel.fromMap(tranJAcc),
-        tranClass: TransactionClassification.fromMap(tranJAcc, true)!,
+        id: tranJAccJClass[TransactionModel.column1Id] as int,
+        accountId: tranJAccJClass[TransactionModel.column2AccountId] as String,
+        voucherId: tranJAccJClass[TransactionModel.column3VoucherId] as int,
+        amount: tranJAccJClass[TransactionModel.column4Amount] as double,
+        isDebit: convertIntToBoolean(tranJAccJClass[TransactionModel.column5IsDebit] as int),
+        date: secondsToDateTime(tranJAccJClass[TransactionModel.column6Date] as int),
+        note: tranJAccJClass[TransactionModel.column7Note] as String,
+        account: AccountModel.fromMap(tranJAccJClass),
+        tranClass: TransactionClassification.fromMap(tranJAccJClass, true)!,
       );
     } catch (e) {
       print('TRN_MDL | fromMapOfTransactionJoinAccount() 01| @ catch e: $e');

@@ -84,6 +84,7 @@ class VoucherModel {
     ON ${TransactionModel.column3VoucherId} = $column1Id
     AND ${TransactionModel.column2AccountId} = ?
     $onlyOwnVouchers
+
     ''';
     var vouchersMap = await AccountingDB.runRawQuery(query, [accountId]);
 
@@ -94,7 +95,7 @@ class VoucherModel {
     for (var voucherMap in vouchersMap) {
       var voucher = fromMapOfVoucher(voucherMap);
       // await voucher._fetchMyTransactions();
-      await voucher._fetchMyTransactionsWithAccount();
+      await voucher._fetchMyTransactionsWAccountWClass();
       // step#2 => every voucher at least has 2 account; we must check client perm for other accounts
       Result hasAccess = hasCredAccessToVoucher(
         formDuty: FormDuty.READ,
@@ -374,7 +375,7 @@ class VoucherModel {
     if (id == null) {
       return 0;
     }
-    await this._fetchMyTransactionsWithAccount();
+    await this._fetchMyTransactionsWAccountWClass();
 
     // step 1# check edit authority for rVoucher
     // hasCredAccessToVoucher: voucher should contain trans and account
@@ -490,7 +491,7 @@ class VoucherModel {
     transactions = result.map((tranMap) => TransactionModel.fromMapOfTransaction(tranMap)).toList();
   }
 
-  Future<void> _fetchMyTransactionsWithAccount() async {
+  Future<void> _fetchMyTransactionsWAccountWClass() async {
     if (id == null) {
       print('VM | _fetchMyTransactionsWithAccount() 01| Warn: id is null: fetchMyTransactions()');
       return;
@@ -506,14 +507,18 @@ class VoucherModel {
       ${AccountModel.tableName}
     ON ${TransactionModel.column2AccountId} = ${AccountModel.column1Id}
     AND ${TransactionModel.column3VoucherId} = ?
+
+    INNER JOIN 
+      ${TransactionClassification.tableName}
+    ON ${TransactionModel.column8TranClassId} = ${TransactionClassification.column1Id}
     ''';
-    var tranJAccMaps = await AccountingDB.runRawQuery(query, [id]);
+    var tranJAccJClassMaps = await AccountingDB.runRawQuery(query, [id]);
     // print(
     //   'VCH_MDL | 02 _fetchMyTransactionsWithAccount()| for voucher_id: $id tranJAccMaps: $tranJAccMaps',
     // );
-    transactions = tranJAccMaps
+    transactions = tranJAccJClassMaps
         .map(
-          (tranJAcc) => TransactionModel.fromMapOfTransactionJoinAccount(tranJAcc),
+          (tranJAccJClass) => TransactionModel.fromMapOfTransactionJAccountJClass(tranJAccJClass),
         )
         .toList();
   }
@@ -567,7 +572,7 @@ class VoucherModel {
     // fetch transaction for each voucher
     for (var voucher in voucherModels) {
       // await voucher._fetchMyTransactions();
-      await voucher._fetchMyTransactionsWithAccount();
+      await voucher._fetchMyTransactionsWAccountWClass();
     }
 
     // print('VM 30| fetchVoucher for id: <$voucherId>: ###########');
