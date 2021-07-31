@@ -68,8 +68,8 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     _fields.authId = authProviderSQL.authId;
     _fields.paidBy = hasAccess(
             authProviderSQL: authProviderSQL,
-            vitalPermissions: [ExpenditurFormFields.expenditureExample.paidBy?.createTransactionPermission])
-        ? ExpenditurFormFields.expenditureExample.paidBy
+            vitalPermissions: [ExpenditurFormFields.expenditureExample.paidByAccount?.createTransactionPermission])
+        ? ExpenditurFormFields.expenditureExample.paidByAccount
         : null;
     _fields.expClass = ExpenditurFormFields.expenditureExample.expClass;
     switch (widget.formDuty) {
@@ -206,6 +206,50 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     );
   }
 
+  Widget _buildPaidBy(BuildContext context) {
+    return TextFormField(
+      decoration: _buildInputDecoration('Paid By'),
+      style: _buildTextStyle(),
+      focusNode: _fields.paidByFocusNode,
+      controller: _fields.paidByController,
+      textInputAction: TextInputAction.next,
+      onTap: () {
+        _pickAccount();
+        FocusScope.of(context).requestFocus(_fields.dateFocusNode);
+      },
+      validator: _fields.validateAmount,
+      onSaved: (amount) {
+        _fields.amount = double.tryParse(amount ?? '');
+      },
+    );
+  }
+
+  Widget _buildPaidBy0(BuildContext context) {
+    return OutlinedButton.icon(
+      focusNode: _fields.paidByFocusNode,
+      style: OutlinedButton.styleFrom(
+        primary: _fields.hasErrorPaidBy ? Colors.white : Theme.of(context).primaryColor,
+        backgroundColor: _fields.hasErrorPaidBy ? Colors.pinkAccent : Colors.white,
+      ),
+      onPressed: () {
+        _pickAccount();
+        FocusScope.of(context).requestFocus(_fields.dateFocusNode);
+      },
+      icon: Icon(
+        Icons.credit_card_rounded,
+        // color: Theme.of(context).primaryColor,
+      ),
+      label: Text(
+        _fields.paidByAccount?.titleEnglish ?? 'SELECT ACCOUNT',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+          // color: Theme.of(context).primaryColor,
+        ),
+      ),
+    );
+  }
+
   Widget _buildNote(BuildContext context) {
     return TextFormField(
       decoration: _buildInputDecoration('Note'),
@@ -222,32 +266,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         // print('titleField.onSaved: titleField: $titleField');
         _fields.note = note;
       },
-    );
-  }
-
-  Widget _buildPaidBy(BuildContext context) {
-    return OutlinedButton.icon(
-      focusNode: _fields.paidByFocusNode,
-      style: OutlinedButton.styleFrom(
-        primary: _fields.hasErrorPaidBy ? Colors.white : Theme.of(context).primaryColor,
-        backgroundColor: _fields.hasErrorPaidBy ? Colors.pinkAccent : Colors.white,
-      ),
-      onPressed: () {
-        _pickAccount();
-        FocusScope.of(context).requestFocus(_fields.dateFocusNode);
-      },
-      icon: Icon(
-        Icons.credit_card_rounded,
-        // color: Theme.of(context).primaryColor,
-      ),
-      label: Text(
-        _fields.paidBy?.titleEnglish ?? 'SELECT ACCOUNT',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 20,
-          // color: Theme.of(context).primaryColor,
-        ),
-      ),
     );
   }
 
@@ -364,7 +382,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
                     amount: 0,
                     note: '',
                     date: DateTime.now(),
-                    paidBy: ExpenditurFormFields.expenditureExample.paidBy,
+                    paidBy: ExpenditurFormFields.expenditureExample.paidByAccount,
                   );
                 });
               },
@@ -582,13 +600,13 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       hintStyle: TextStyle(
         color: Colors.black,
       ),
-      // hintText: 'number',
-      // helperText: 'paid amount',
+      hintText: 'number',
+      helperText: 'paid amount',
       // counterText: '0.0',
       // prefixIcon: Icon(Icons.money_outlined),
       // icon: Icon(Icons.monetization_on_rounded),
-      // suffixIcon: Icon(Icons.account_balance_outlined),
-      // prefix: Text('Prefix:'),
+      suffixIcon: Icon(Icons.account_balance_outlined),
+      prefix: Text('OMR '),
     );
   }
 

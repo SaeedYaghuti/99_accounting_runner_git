@@ -15,11 +15,11 @@ class ExpenditureModel {
 
     var voucherFeed = VoucherFeed(date: fields.date!);
     var transactionFeedDebit = TransactionFeed(
-      accountId: fields.paidBy!.id,
+      accountId: fields.paidByAccount!.id,
       amount: fields.amount!,
       isDebit: true,
       date: fields.date!,
-      note: '${fields.paidBy!.titleEnglish} paid for ${ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID}',
+      note: '${fields.paidByAccount!.titleEnglish} paid for ${ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID}',
       tranClass: generalTranClass!,
     );
     var transactionFeedCredit = TransactionFeed(
@@ -76,12 +76,12 @@ class ExpenditureModel {
       creatorId: authProvider.authId!,
       voucherNumber: oldVoucher.voucherNumber,
       date: fields.date!,
-      note: '${fields.paidBy!.titleEnglish} paid for Expenditure',
+      note: '${fields.paidByAccount!.titleEnglish} paid for Expenditure',
     );
     newVoucher.transactions = [
       // updated debit transaction
       TransactionModel(
-        accountId: fields.paidBy!.id,
+        accountId: fields.paidByAccount!.id,
         voucherId: oldVoucher.id!,
         amount: fields.amount!,
         isDebit: true,

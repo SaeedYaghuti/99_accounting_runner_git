@@ -17,13 +17,14 @@ class ExpenditurFormFields {
   final dateFocusNode = FocusNode();
   TextEditingController amountController = TextEditingController();
   TextEditingController noteController = TextEditingController();
+  TextEditingController paidByController = TextEditingController();
   bool hasErrorExpClass = false;
   bool hasErrorPaidBy = false;
   bool hasErrorDate = false;
 
   int? id;
   int? authId;
-  AccountModel? paidBy;
+  AccountModel? paidByAccount;
   TransactionClassification? expClass;
   DateTime? date;
   Function? resetState;
@@ -57,6 +58,15 @@ class ExpenditurFormFields {
     this.amountController.text = (num == null || num == 0.0) ? '' : num.toString();
   }
 
+  AccountModel? get paidBy {
+    return paidByAccount;
+  }
+
+  set paidBy(AccountModel? paidByAcc) {
+    this.paidByAccount = paidByAcc;
+    this.paidByController.text = (paidByAcc == null) ? '' : paidByAcc.titleEnglish;
+  }
+
   String? get note {
     return noteController.text;
   }
@@ -72,7 +82,7 @@ class ExpenditurFormFields {
     }
     // step#1 validate custom fields that have no predifined validate() method
     var errorMessages = '';
-    if (paidBy == null) {
+    if (paidByAccount == null) {
       hasErrorExpClass = true;
       errorMessages += '\nPaidBy is empty';
     }
@@ -140,7 +150,7 @@ class ExpenditurFormFields {
     return '''
       id: $id,
       amoutn: $amount, 
-      paidBy: ${paidBy?.titleEnglish}, 
+      paidBy: ${paidByAccount?.titleEnglish}, 
       note: $note, date: $date, 
       expClass: $expClass, 
     ''';
