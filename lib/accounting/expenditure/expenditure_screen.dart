@@ -192,7 +192,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       DataColumn(
           label: MultiLanguageTextWidget(
         english: 'Category',
-        persian: 'نوع',
+        persian: 'فهرست',
         arabic: 'صنف',
       )),
       DataColumn(
