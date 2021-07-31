@@ -48,11 +48,11 @@ class VoucherModel {
     // account
     AccountModel? account = await AccountModel.fetchAccountById(accountId);
     if (account == null) return [];
-    var onlyOwnVouchers = '';
+    var andVouchersOwn = '';
 
     if (authProvider.isPermitted(account.readAllTransactionPermission)) {
       // has complete access to read
-      onlyOwnVouchers = '';
+      andVouchersOwn = '';
       // print(
       //   'VCH_MDL | accountVouchers() 01| auther has READ_ALL',
       // );
@@ -61,7 +61,7 @@ class VoucherModel {
       // print(
       //   'VCH_MDL | accountVouchers() 02| auther has READ_OWN',
       // );
-      onlyOwnVouchers = 'AND ${VoucherModel.column5CreatorId} = ${authProvider.authId!}';
+      andVouchersOwn = 'AND ${VoucherModel.column5CreatorId} = ${authProvider.authId!}';
     } else {
       // has no read perm
       // print(
@@ -79,11 +79,11 @@ class VoucherModel {
       $column5CreatorId
     FROM 
       $voucherTableName 
-    LEFT JOIN 
+    INNER JOIN 
       ${TransactionModel.transactionTableName}
     ON ${TransactionModel.column3VoucherId} = $column1Id
     AND ${TransactionModel.column2AccountId} = ?
-    $onlyOwnVouchers
+    $andVouchersOwn
 
     ''';
     var vouchersMap = await AccountingDB.runRawQuery(query, [accountId]);
@@ -94,14 +94,12 @@ class VoucherModel {
     // fetch transaction for each voucher
     for (var voucherMap in vouchersMap) {
       var voucher = fromMapOfVoucher(voucherMap);
-      // await voucher._fetchMyTransactions();
       await voucher._fetchMyTransactionsWAccountWClass();
       // step#2 => every voucher at least has 2 account; we must check client perm for other accounts
       Result hasAccess = hasCredAccessToVoucher(
         formDuty: FormDuty.READ,
         voucher: voucher,
         authProviderSQL: authProvider,
-        // helperAccounts: [account],
       );
       if (hasAccess.outcome) accountVouchers.add(voucher);
     }
@@ -481,7 +479,7 @@ class VoucherModel {
     final query = '''
       SELECT *
       FROM ${TransactionModel.transactionTableName}
-      LEFT JOIN 
+      INNER JOIN 
         ${TransactionClassification.tableName}
       ON ${TransactionModel.column8TranClassId} = ${TransactionClassification.column1Id}
       AND ${TransactionModel.column3VoucherId} = ?
@@ -496,8 +494,6 @@ class VoucherModel {
       print('VM | _fetchMyTransactionsWithAccount() 01| Warn: id is null: fetchMyTransactions()');
       return;
     }
-    // TODO: join TranClass
-    // ...
     final query = '''
     SELECT 
       *
@@ -513,13 +509,9 @@ class VoucherModel {
     ON ${TransactionModel.column8TranClassId} = ${TransactionClassification.column1Id}
     ''';
     var tranJAccJClassMaps = await AccountingDB.runRawQuery(query, [id]);
-    print(
-      'VCH_MDL | 02 _fetchMyTransactionsWAccountWClass()| for voucher_id: $id tranJAccJClassMaps: $tranJAccJClassMaps',
-    );
+    print('VCH_MDL | 02 _fetchMyTranWAccountWClass()| voucher_id:$id tranJAccJClassMaps: $tranJAccJClassMaps');
     transactions = tranJAccJClassMaps
-        .map(
-          (tranJAccJClass) => TransactionModel.fromMapOfTransactionJAccountJClass(tranJAccJClass),
-        )
+        .map((tranJAccJClass) => TransactionModel.fromMapOfTransactionJAccountJClass(tranJAccJClass))
         .toList();
   }
 

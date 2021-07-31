@@ -56,9 +56,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   void resetState() {
-    setState(() {
-      // print('called resetState()');
-    });
+    setState(() {});
   }
 
   @override
@@ -117,17 +115,15 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   void initStateEdit() {
-    // print('EF | init_state | EDIT ');
+    // print('EXP_FRM | initStateEdit() 01|');
     // print(widget.voucher);
+
     if (widget.voucher!.transactions.length > 2) {
-      print(
-        'EF 02| we can not show voucher with more than two transactions in this form ...',
-      );
+      print('EXP_FRM | initStateEdit() | we can not show voucher with more than two transactions in this form ...');
       _formDuty = FormDuty.CREATE;
       // maybe show money_movement form
-      // ...
     }
-    // print('EXP_FRM init_state| EDIT | voucher to edite');
+    // print('EXP_FRM | initStateEdit() | voucher to edite');
     // print(widget.voucher!);
 
     var debitTransaction = widget.voucher!.transactions.firstWhere(
@@ -141,9 +137,9 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       _fields.id = creditTransaction!.id;
       _fields.amount = creditTransaction.amount;
       _fields.paidBy = paidByAccount;
-      _fields.note = creditTransaction.note;
+      _fields.expClass = creditTransaction.tranClass;
       _fields.date = creditTransaction.date;
-      // _fields.expClass = creditTransaction.?expClass;
+      _fields.note = creditTransaction.note;
 
       // print('EXP_FRM init_state| EDIT 03| prepared _expenditureFormFields');
       // print(_fields);
