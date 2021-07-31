@@ -195,8 +195,8 @@ class TransactionModel {
   static TransactionModel fromMapOfTransactionJAccountJClass(
     Map<String, Object?> tranJAccJClass,
   ) {
-    print('TRN_MDL | 01 fromMapOfTransactionJoinAccount | input: $tranJAccJClass');
-    print(tranJAccJClass);
+    // print('TRN_MDL | 01 fromMapOfTransactionJoinAccount | input:');
+    // print(tranJAccJClass);
 
     var transaction;
     try {

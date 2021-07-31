@@ -146,7 +146,7 @@ class TransactionClassification {
   }
 
   static TransactionClassification? fromMap(Map<String, Object?>? tranClassMap, [bool throwError = false]) {
-    print('TRN_CLASS | fromMap 01| input: \n$tranClassMap');
+    // print('TRN_CLASS | fromMap 01| input: \n$tranClassMap');
 
     if (tranClassMap == null || tranClassMap[TransactionClassification.column1Id] == null) {
       print('TRN_CLASS | fromMap 02| tranClassMap or JoinClass is null');
@@ -169,7 +169,7 @@ class TransactionClassification {
         note: tranClassMap[TransactionClassification.column7Note] as String,
       );
 
-      print('TRN_CLASS | fromMap 04| output: \n$tranClass');
+      // print('TRN_CLASS | fromMap 04| output: \n$tranClass');
       return tranClass;
     } catch (e) {
       print('TRN_CLASS | fromMap() 05 | @ catch e: $e');

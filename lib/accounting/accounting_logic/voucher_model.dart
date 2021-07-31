@@ -508,8 +508,9 @@ class VoucherModel {
       ${TransactionClassification.tableName}
     ON ${TransactionModel.column8TranClassId} = ${TransactionClassification.column1Id}
     ''';
+
     var tranJAccJClassMaps = await AccountingDB.runRawQuery(query, [id]);
-    print('VCH_MDL | 02 _fetchMyTranWAccountWClass()| voucher_id:$id tranJAccJClassMaps: $tranJAccJClassMaps');
+    // print('VCH_MDL | 02 _fetchMyTranWAccountWClass()| voucher_id:$id tranJAccJClassMaps: $tranJAccJClassMaps');
     transactions = tranJAccJClassMaps
         .map((tranJAccJClass) => TransactionModel.fromMapOfTransactionJAccountJClass(tranJAccJClass))
         .toList();
