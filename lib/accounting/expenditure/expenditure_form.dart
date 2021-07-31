@@ -166,11 +166,11 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
           child: ListView(
             children: [
               _buildAmount(context),
-              SizedBox(height: 20, width: 20),
-              _buildNote(context),
-              SizedBox(height: 20, width: 20),
+              SizedBox(height: 12, width: 20),
               _buildPaidBy(context),
               SizedBox(height: 20, width: 20),
+              _buildNote(context),
+              SizedBox(height: 12, width: 20),
               _buildExpClass(context),
               SizedBox(height: 20, width: 20),
               _buildDatePickerButton(context),
@@ -237,7 +237,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         FocusScope.of(context).requestFocus(_fields.dateFocusNode);
       },
       icon: Icon(
-        Icons.account_balance_outlined,
+        Icons.credit_card_rounded,
         // color: Theme.of(context).primaryColor,
       ),
       label: Text(
@@ -263,7 +263,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         FocusScope.of(context).requestFocus(_fields.dateFocusNode);
       },
       icon: Icon(
-        Icons.shopping_cart,
+        Icons.category_outlined,
         // color: Theme.of(context).primaryColor,
       ),
       label: Text(
