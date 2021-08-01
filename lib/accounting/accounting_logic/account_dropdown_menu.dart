@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:shop/accounting/accounting_logic/account_model.dart';
-import 'package:shop/accounting/expenditure/expenditure_form.dart';
+import 'package:shop/accounting/expenditure/expenditure_screen_form.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/auth/has_access.dart';
 import 'package:shop/exceptions/not_handled_exception.dart';
@@ -118,8 +118,7 @@ class _AccountDropdownMenuState extends State<AccountDropdownMenu> {
   ExpansionTile _buildTileTree(AccountModel parent) {
     return ExpansionTile(
       childrenPadding: EdgeInsets.symmetric(horizontal: 5),
-      initiallyExpanded:
-          widget.expandedAccountIds?.contains(parent.id) ?? false,
+      initiallyExpanded: widget.expandedAccountIds?.contains(parent.id) ?? false,
       title: Text(
         parent.titleEnglish,
         style: TextStyle(
@@ -130,9 +129,7 @@ class _AccountDropdownMenuState extends State<AccountDropdownMenu> {
       children: childs(parent.id)
           .map((child) {
             // parent should continue running recursively
-            if (isParent(child!.id) &&
-                !widget.unwantedAccountIds.contains(child.id))
-              return _buildTileTree(child);
+            if (isParent(child!.id) && !widget.unwantedAccountIds.contains(child.id)) return _buildTileTree(child);
 
             // check permition for child
             return hasAccessToAccount(

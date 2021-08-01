@@ -1,6 +1,6 @@
 import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
-import 'package:shop/accounting/expenditure/expenditure_form.dart';
+import 'package:shop/accounting/expenditure/expenditure_screen_form.dart';
 import 'package:shop/exceptions/curropted_input.dart';
 import 'package:shop/exceptions/not_handled_exception.dart';
 import 'package:shop/shared/result_status.dart';
@@ -16,8 +16,7 @@ bool hasAccess({
   // because they put accountPerm and it is null and it means access is denied
 
   // if vitalPerm is Not empty
-  if (vitalPermissions != null &&
-      vitalPermissions.whereType<String>().toList().isNotEmpty) {
+  if (vitalPermissions != null && vitalPermissions.whereType<String>().toList().isNotEmpty) {
     // if any of vitalPerm not satisfied we return false
     if (vitalPermissions.any((perm) => authProviderSQL.isNotPermitted(perm))) {
       return false;
@@ -26,8 +25,7 @@ bool hasAccess({
     // all vital passed!
 
     // if anyPermission isEmpty: we passe vital so hasAccess
-    if (anyPermissions == null ||
-        anyPermissions.whereType<String>().toList().isEmpty) {
+    if (anyPermissions == null || anyPermissions.whereType<String>().toList().isEmpty) {
       return true;
     } else {
       // if any of any-perm passed it is enough
@@ -243,8 +241,7 @@ Future<Result<bool>> hasCredAccessToVoucherFuture({
       for (var vAcc in voucherAccounts) {
         if (authProviderSQL.isPermitted(vAcc!.readAllTransactionPermission)) {
           continue;
-        } else if (authProviderSQL
-                .isPermitted(vAcc.readOwnTransactionPermission) &&
+        } else if (authProviderSQL.isPermitted(vAcc.readOwnTransactionPermission) &&
             voucher.creatorId == authProviderSQL.authId) {
           continue;
         } else {
@@ -259,8 +256,7 @@ Future<Result<bool>> hasCredAccessToVoucherFuture({
       for (var vAcc in voucherAccounts) {
         if (authProviderSQL.isPermitted(vAcc!.editAllTransactionPermission)) {
           continue;
-        } else if (authProviderSQL
-                .isPermitted(vAcc.editOwnTransactionPermission) &&
+        } else if (authProviderSQL.isPermitted(vAcc.editOwnTransactionPermission) &&
             voucher.creatorId == authProviderSQL.authId) {
           continue;
         } else {
@@ -275,8 +271,7 @@ Future<Result<bool>> hasCredAccessToVoucherFuture({
       for (var vAcc in voucherAccounts) {
         if (authProviderSQL.isPermitted(vAcc!.deleteAllTransactionPermission)) {
           continue;
-        } else if (authProviderSQL
-                .isPermitted(vAcc.deleteOwnTransactionPermission) &&
+        } else if (authProviderSQL.isPermitted(vAcc.deleteOwnTransactionPermission) &&
             voucher.creatorId == authProviderSQL.authId) {
           continue;
         } else {
@@ -315,8 +310,7 @@ Result<bool> hasCredAccessToVoucher({
   switch (formDuty) {
     case FormDuty.CREATE:
       for (var tran in voucher.transactions) {
-        if (authProviderSQL
-            .isNotPermitted(tran!.account!.createTransactionPermission))
+        if (authProviderSQL.isNotPermitted(tran!.account!.createTransactionPermission))
           return Result(
             false,
             '${tran.account!.createTransactionPermission} permission is not ocupied!',
@@ -325,11 +319,9 @@ Result<bool> hasCredAccessToVoucher({
       return Result(true);
     case FormDuty.READ:
       for (var tran in voucher.transactions) {
-        if (authProviderSQL
-            .isPermitted(tran!.account!.readAllTransactionPermission)) {
+        if (authProviderSQL.isPermitted(tran!.account!.readAllTransactionPermission)) {
           continue;
-        } else if (authProviderSQL
-                .isPermitted(tran.account!.readOwnTransactionPermission) &&
+        } else if (authProviderSQL.isPermitted(tran.account!.readOwnTransactionPermission) &&
             voucher.creatorId == authProviderSQL.authId) {
           continue;
         } else {
@@ -342,11 +334,9 @@ Result<bool> hasCredAccessToVoucher({
       return Result(true);
     case FormDuty.EDIT:
       for (var tran in voucher.transactions) {
-        if (authProviderSQL
-            .isPermitted(tran!.account!.editAllTransactionPermission)) {
+        if (authProviderSQL.isPermitted(tran!.account!.editAllTransactionPermission)) {
           continue;
-        } else if (authProviderSQL
-                .isPermitted(tran.account!.editOwnTransactionPermission) &&
+        } else if (authProviderSQL.isPermitted(tran.account!.editOwnTransactionPermission) &&
             voucher.creatorId == authProviderSQL.authId) {
           continue;
         } else {
@@ -359,11 +349,9 @@ Result<bool> hasCredAccessToVoucher({
       return Result(true);
     case FormDuty.DELETE:
       for (var tran in voucher.transactions) {
-        if (authProviderSQL
-            .isPermitted(tran!.account!.deleteAllTransactionPermission)) {
+        if (authProviderSQL.isPermitted(tran!.account!.deleteAllTransactionPermission)) {
           continue;
-        } else if (authProviderSQL
-                .isPermitted(tran.account!.deleteOwnTransactionPermission) &&
+        } else if (authProviderSQL.isPermitted(tran.account!.deleteOwnTransactionPermission) &&
             voucher.creatorId == authProviderSQL.authId) {
           continue;
         } else {
@@ -398,26 +386,22 @@ bool hasAccessToAccount(
     // combine all permissions
     List<String> crudTransactionPermissionsAny = [];
 
-    if (account.createTransactionPermission != null &&
-        account.createTransactionPermission!.isNotEmpty) {
+    if (account.createTransactionPermission != null && account.createTransactionPermission!.isNotEmpty) {
       crudTransactionPermissionsAny.add(
         account.createTransactionPermission!,
       );
     }
-    if (account.readAllTransactionPermission != null &&
-        account.readAllTransactionPermission!.isNotEmpty) {
+    if (account.readAllTransactionPermission != null && account.readAllTransactionPermission!.isNotEmpty) {
       crudTransactionPermissionsAny.add(
         account.readAllTransactionPermission!,
       );
     }
-    if (account.editAllTransactionPermission != null &&
-        account.editAllTransactionPermission!.isNotEmpty) {
+    if (account.editAllTransactionPermission != null && account.editAllTransactionPermission!.isNotEmpty) {
       crudTransactionPermissionsAny.add(
         account.editAllTransactionPermission!,
       );
     }
-    if (account.deleteAllTransactionPermission != null &&
-        account.deleteAllTransactionPermission!.isNotEmpty) {
+    if (account.deleteAllTransactionPermission != null && account.deleteAllTransactionPermission!.isNotEmpty) {
       crudTransactionPermissionsAny.add(
         account.deleteAllTransactionPermission!,
       );

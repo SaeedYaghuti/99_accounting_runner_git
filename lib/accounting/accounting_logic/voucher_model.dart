@@ -5,7 +5,7 @@ import 'package:shop/accounting/accounting_logic/transaction_feed.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_feed.dart';
 import 'package:shop/accounting/accounting_logic/voucher_number_model.dart';
-import 'package:shop/accounting/expenditure/expenditure_form.dart';
+import 'package:shop/accounting/expenditure/expenditure_screen_form.dart';
 import 'package:shop/auth/auth_model_sql.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/auth/has_access.dart';

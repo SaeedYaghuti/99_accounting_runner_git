@@ -166,14 +166,14 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
           child: ListView(
             children: [
               _buildAmount(context),
-              SizedBox(height: 12, width: 20),
-              _buildPaidBy(context),
               SizedBox(height: 20, width: 20),
               _buildNote(context),
-              SizedBox(height: 12, width: 20),
-              _buildExpClass(context),
               SizedBox(height: 20, width: 20),
               _buildDatePickerButton(context),
+              SizedBox(height: 20, width: 20),
+              _buildPaidBy(context),
+              SizedBox(height: 20, width: 20),
+              _buildExpClass(context),
               SizedBox(height: 20, width: 20),
               _buildSubmitButtons(context),
               SizedBox(height: 20, width: 20),
@@ -271,7 +271,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   Widget _buildExpClass(BuildContext context) {
     return TextFormField(
-      decoration: _buildInputDecoration('Tag', Icons.bookmark_sharp),
+      decoration: _buildInputDecoration('Tag', Icons.bookmark_outline_rounded),
       style: _buildTextStyle(),
       focusNode: _fields.expClassFocusNode,
       controller: _fields.expClassController,
