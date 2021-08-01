@@ -19,6 +19,7 @@ class ExpenditurFormFields {
   TextEditingController noteController = TextEditingController();
   TextEditingController paidByController = TextEditingController();
   TextEditingController expClassController = TextEditingController();
+  TextEditingController dateController = TextEditingController();
   bool hasErrorExpClass = false;
   bool hasErrorPaidBy = false;
   bool hasErrorDate = false;
@@ -27,7 +28,7 @@ class ExpenditurFormFields {
   int? authId;
   AccountModel? paidByAccount;
   TransactionClassification? expClassification;
-  DateTime? date;
+  DateTime? dateTime;
   Function? resetState;
 
   ExpenditurFormFields({
@@ -47,10 +48,11 @@ class ExpenditurFormFields {
     this.note = note;
     this.paidBy = paidBy;
     this.expClass = expClass;
-    this.date = date;
+    this.dateTime = date;
     this.resetState = resetState;
   }
 
+  // # amount
   double? get amount {
     return double.tryParse(amountController.text);
   }
@@ -59,6 +61,7 @@ class ExpenditurFormFields {
     this.amountController.text = (num == null || num == 0.0) ? '' : num.toString();
   }
 
+  // # paid by
   AccountModel? get paidBy {
     return paidByAccount;
   }
@@ -68,6 +71,35 @@ class ExpenditurFormFields {
     this.paidByController.text = (paidByAcc == null) ? '' : paidByAcc.titleEnglish;
   }
 
+  // # date
+  DateTime? get date {
+    return dateTime;
+  }
+
+  set date(DateTime? selectedDate) {
+    this.dateTime = selectedDate;
+    this.dateController.text = _readbleDate(selectedDate);
+  }
+
+  String _readbleDate(DateTime? date) {
+    if (date == null) {
+      return 'SELECT A DAY';
+    }
+    if (isToday(date)) {
+      return 'Today';
+    }
+    return '${date.day}/${date.month}/${date.year}';
+  }
+
+  bool isToday(DateTime date) {
+    var now = DateTime.now();
+    if (date.day == now.day && date.month == now.month && date.year == now.year) {
+      return true;
+    }
+    return false;
+  }
+
+  // # expClass
   TransactionClassification? get expClass {
     return expClassification;
   }
@@ -77,6 +109,7 @@ class ExpenditurFormFields {
     this.expClassController.text = (expClassification == null) ? '' : expClassification.titleEnglish;
   }
 
+  // # note
   String? get note {
     return noteController.text;
   }
@@ -96,7 +129,7 @@ class ExpenditurFormFields {
       hasErrorExpClass = true;
       errorMessages += '\nPaidBy is empty';
     }
-    if (date == null) {
+    if (dateTime == null) {
       hasErrorDate = true;
       errorMessages += '\nDate is empty';
     }
@@ -182,6 +215,21 @@ class ExpenditurFormFields {
     return null;
   }
 
+  String? validateDate(String? dateText) {
+    // print('EXP_FRM_FLD | validateDate() 01 | input: $dateText');
+    if (dateText == null || dateText.isEmpty) {
+      return 'dateText should not be empty';
+    }
+
+    if (dateTime == null) {
+      return 'dateTime should not be null inside expenditureFormFields';
+    }
+    if (_readbleDate(dateTime) != dateText) {
+      return '_readbleDate of dateTime mismatch date text';
+    }
+    return null;
+  }
+
   String? validateNote(String? note) {
     if (note == null || note.isEmpty) {
       return 'Note should not be empty';
@@ -195,7 +243,7 @@ class ExpenditurFormFields {
       id: $id,
       amoutn: $amount, 
       paidBy: ${paidByAccount?.titleEnglish}, 
-      note: $note, date: $date, 
+      note: $note, date: $dateTime, 
       expClass: $expClass, 
     ''';
   }

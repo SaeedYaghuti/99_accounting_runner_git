@@ -50,7 +50,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   @override
   void initState() {
     _formDuty = widget.formDuty;
-    _fields.date = DateTime.now();
+    _fields.dateTime = DateTime.now();
     _fields.resetState = resetState;
     super.initState();
   }
@@ -138,7 +138,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       _fields.amount = creditTransaction.amount;
       _fields.paidBy = paidByAccount;
       _fields.expClass = creditTransaction.tranClass;
-      _fields.date = creditTransaction.date;
+      _fields.dateTime = creditTransaction.date;
       _fields.note = creditTransaction.note;
 
       // print('EXP_FRM init_state| EDIT 03| prepared _expenditureFormFields');
@@ -314,30 +314,48 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   Widget _buildDatePickerButton(BuildContext context) {
-    return OutlinedButton.icon(
+    return TextFormField(
+      decoration: _buildInputDecoration('Date', Icons.date_range_rounded),
+      style: _buildTextStyle(),
       focusNode: _fields.dateFocusNode,
-      style: OutlinedButton.styleFrom(
-        primary: _fields.hasErrorDate ? Colors.white : Theme.of(context).primaryColor,
-        backgroundColor: _fields.hasErrorDate ? Colors.pinkAccent : Colors.white,
-      ),
-      onPressed: () {
+      controller: _fields.dateController,
+      textInputAction: TextInputAction.next,
+      onTap: () {
         pickDate();
         FocusScope.of(context).requestFocus(_fields.dateFocusNode);
       },
-      icon: Icon(
-        Icons.date_range_rounded,
-        // color: Theme.of(context).primaryColor,
-      ),
-      label: Text(
-        _buildTextForDatePicker(),
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 20,
-          // color: Theme.of(context).primaryColor,
-        ),
-      ),
+      validator: _fields.validateDate,
+      // onSaved: (amount) {
+      //   we do add saving at expFormFields when setting data
+      // },
     );
   }
+
+  // Widget _buildDatePickerButton0(BuildContext context) {
+  //   return OutlinedButton.icon(
+  //     focusNode: _fields.dateFocusNode,
+  //     style: OutlinedButton.styleFrom(
+  //       primary: _fields.hasErrorDate ? Colors.white : Theme.of(context).primaryColor,
+  //       backgroundColor: _fields.hasErrorDate ? Colors.pinkAccent : Colors.white,
+  //     ),
+  //     onPressed: () {
+  //       pickDate();
+  //       FocusScope.of(context).requestFocus(_fields.dateFocusNode);
+  //     },
+  //     icon: Icon(
+  //       Icons.date_range_rounded,
+  //       // color: Theme.of(context).primaryColor,
+  //     ),
+  //     label: Text(
+  //       _buildTextForDatePicker(),
+  //       style: TextStyle(
+  //         fontWeight: FontWeight.bold,
+  //         fontSize: 20,
+  //         // color: Theme.of(context).primaryColor,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildSubmitButtons(BuildContext context) {
     switch (_formDuty) {
@@ -548,9 +566,9 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     ).then((date) {
       setState(() {
         if (date == null) {
-          _fields.date = DateTime.now();
+          _fields.dateTime = DateTime.now();
         } else {
-          _fields.date = date;
+          _fields.dateTime = date;
         }
       });
     });
@@ -564,7 +582,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       if (EnvironmentProvider.initializeExpenditureForm) {
         // _expenditureFormFields = ExpenditurFormFields.expenditureExample;
         // _selectedDate = ExpenditurFormFields.expenditureExample.date;
-        _fields.date = ExpenditurFormFields.expenditureExample.date;
+        _fields.dateTime = ExpenditurFormFields.expenditureExample.dateTime;
       }
       setState(() {});
       return;
@@ -640,31 +658,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       fontSize: 23,
       color: Colors.black,
     );
-  }
-
-  bool isToday(DateTime date) {
-    var now = DateTime.now();
-    if (date.day == now.day && date.month == now.month && date.year == now.year) {
-      return true;
-    }
-    return false;
-  }
-
-  String _buildTextForDatePicker() {
-    if (_fields.date == null) {
-      return 'SELECT A DAY';
-    }
-    if (isToday(_fields.date!)) {
-      return 'Today';
-    }
-    return '${_fields.date!.day}/${_fields.date!.month}/${_fields.date!.year}';
-    // if (_selectedDate == null) {
-    //   return 'SELECT A DAY';
-    // }
-    // if (isToday(_selectedDate!)) {
-    //   return 'Today';
-    // }
-    // return '${_selectedDate!.day}/${_selectedDate!.month}/${_selectedDate!.year}';
   }
 
   @override

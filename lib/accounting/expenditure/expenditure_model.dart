@@ -13,12 +13,12 @@ class ExpenditureModel {
   static Future<void> createExpenditureInDB(AuthProviderSQL authProvider, ExpenditurFormFields fields) async {
     var generalTranClass = await TransactionClassification.fetchTranClassById(TranClassIds.GENERAL_TRAN_CLASS_ID);
 
-    var voucherFeed = VoucherFeed(date: fields.date!);
+    var voucherFeed = VoucherFeed(date: fields.dateTime!);
     var transactionFeedDebit = TransactionFeed(
       accountId: fields.paidByAccount!.id,
       amount: fields.amount!,
       isDebit: true,
-      date: fields.date!,
+      date: fields.dateTime!,
       note: '${fields.paidByAccount!.titleEnglish} paid for ${ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID}',
       tranClass: generalTranClass!,
     );
@@ -26,7 +26,7 @@ class ExpenditureModel {
       accountId: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
       amount: fields.amount!,
       isDebit: false,
-      date: fields.date!,
+      date: fields.dateTime!,
       note: fields.note!,
       tranClass: fields.expClass!,
     );
@@ -75,7 +75,7 @@ class ExpenditureModel {
       id: oldVoucher.id,
       creatorId: authProvider.authId!,
       voucherNumber: oldVoucher.voucherNumber,
-      date: fields.date!,
+      date: fields.dateTime!,
       note: '${fields.paidByAccount!.titleEnglish} paid for Expenditure',
     );
     newVoucher.transactions = [
@@ -85,7 +85,7 @@ class ExpenditureModel {
         voucherId: oldVoucher.id!,
         amount: fields.amount!,
         isDebit: true,
-        date: fields.date!,
+        date: fields.dateTime!,
         note: fields.note!,
         tranClass: fields.expClass!,
       ),
@@ -95,7 +95,7 @@ class ExpenditureModel {
         voucherId: oldVoucher.id!,
         amount: fields.amount!,
         isDebit: false,
-        date: fields.date!,
+        date: fields.dateTime!,
         note: fields.note!,
         tranClass: fields.expClass!,
       ),
