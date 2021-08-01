@@ -190,7 +190,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   Widget _buildAmount(BuildContext context) {
     // print('EXP_FRM | _buildAmount | run ...');
     return TextFormField(
-      decoration: _buildInputDecoration('Amount'),
+      decoration: _buildInputDecoration('Amount', Icons.monetization_on),
       style: _buildTextStyle(),
       focusNode: _fields.amountFocusNode,
       controller: _fields.amountController,
@@ -208,7 +208,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   Widget _buildPaidBy(BuildContext context) {
     return TextFormField(
-      decoration: _buildInputDecoration('Paid By'),
+      decoration: _buildInputDecoration('Paid By', Icons.credit_card),
       style: _buildTextStyle(),
       focusNode: _fields.paidByFocusNode,
       controller: _fields.paidByController,
@@ -217,10 +217,10 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         _pickAccount();
         FocusScope.of(context).requestFocus(_fields.dateFocusNode);
       },
-      validator: _fields.validateAmount,
-      onSaved: (amount) {
-        _fields.amount = double.tryParse(amount ?? '');
-      },
+      validator: _fields.validatePaidBy,
+      // onSaved: (amount) {
+      //   we do add saving at expFormFields when setting data
+      // },
     );
   }
 
@@ -252,7 +252,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   Widget _buildNote(BuildContext context) {
     return TextFormField(
-      decoration: _buildInputDecoration('Note'),
+      decoration: _buildInputDecoration('Note', Icons.note_outlined),
       style: _buildTextStyle(),
       maxLines: 2,
       keyboardType: TextInputType.multiline,
@@ -270,6 +270,24 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   Widget _buildExpClass(BuildContext context) {
+    return TextFormField(
+      decoration: _buildInputDecoration('Tag', Icons.bookmark_sharp),
+      style: _buildTextStyle(),
+      focusNode: _fields.expClassFocusNode,
+      controller: _fields.expClassController,
+      textInputAction: TextInputAction.next,
+      onTap: () {
+        _pickExpClass();
+        FocusScope.of(context).requestFocus(_fields.dateFocusNode);
+      },
+      validator: _fields.validateExpClass,
+      // onSaved: (amount) {
+      //   we do add saving at expFormFields when setting data
+      // },
+    );
+  }
+
+  Widget _buildExpClass0(BuildContext context) {
     return OutlinedButton.icon(
       focusNode: _fields.expClassFocusNode,
       style: OutlinedButton.styleFrom(
@@ -589,24 +607,31 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     });
   }
 
-  InputDecoration _buildInputDecoration(String labelText) {
+  InputDecoration _buildInputDecoration(String labelText, [IconData? icon]) {
     return InputDecoration(
       border: OutlineInputBorder(),
       labelText: labelText,
       labelStyle: TextStyle(
-        color: Colors.black,
+        // color: Colors.black87,
+        color: Colors.purple,
         fontSize: 26,
       ),
       hintStyle: TextStyle(
-        color: Colors.black,
+        // color: Colors.black87,
+        color: Colors.amber,
       ),
-      hintText: 'number',
-      helperText: 'paid amount',
+      // hintText: 'number',
+      // helperText: 'paid amount',
       // counterText: '0.0',
       // prefixIcon: Icon(Icons.money_outlined),
       // icon: Icon(Icons.monetization_on_rounded),
-      suffixIcon: Icon(Icons.account_balance_outlined),
-      prefix: Text('OMR '),
+      suffixIcon: icon != null
+          ? Icon(
+              icon,
+              color: Theme.of(context).primaryColor,
+            )
+          : null,
+      // prefix: Text('OMR '),
     );
   }
 

@@ -18,6 +18,7 @@ class ExpenditurFormFields {
   TextEditingController amountController = TextEditingController();
   TextEditingController noteController = TextEditingController();
   TextEditingController paidByController = TextEditingController();
+  TextEditingController expClassController = TextEditingController();
   bool hasErrorExpClass = false;
   bool hasErrorPaidBy = false;
   bool hasErrorDate = false;
@@ -25,7 +26,7 @@ class ExpenditurFormFields {
   int? id;
   int? authId;
   AccountModel? paidByAccount;
-  TransactionClassification? expClass;
+  TransactionClassification? expClassification;
   DateTime? date;
   Function? resetState;
 
@@ -65,6 +66,15 @@ class ExpenditurFormFields {
   set paidBy(AccountModel? paidByAcc) {
     this.paidByAccount = paidByAcc;
     this.paidByController.text = (paidByAcc == null) ? '' : paidByAcc.titleEnglish;
+  }
+
+  TransactionClassification? get expClass {
+    return expClassification;
+  }
+
+  set expClass(TransactionClassification? expClassification) {
+    this.expClassification = expClassification;
+    this.expClassController.text = (expClassification == null) ? '' : expClassification.titleEnglish;
   }
 
   String? get note {
@@ -134,6 +144,40 @@ class ExpenditurFormFields {
     }
     if (num <= 0) {
       return 'amount should be greater than Zero';
+    }
+    return null;
+  }
+
+  String? validatePaidBy(String? paidBy) {
+    // print('EXP_FRM_FLD | validatePaidBy() 01 | input: $paidBy');
+    if (paidBy == null || paidBy.isEmpty) {
+      return 'paidBy should not be empty';
+    }
+
+    if (paidByAccount == null) {
+      return 'paidByAccount should not be null inside expenditureFields';
+    }
+    if (paidByAccount!.titleEnglish != paidBy &&
+        paidByAccount!.titlePersian != paidBy &&
+        paidByAccount!.titleArabic != paidBy) {
+      return 'paidByAccount.titleE|P|A is mismatch with input text';
+    }
+    return null;
+  }
+
+  String? validateExpClass(String? expClassText) {
+    // print('EXP_FRM_FLD | validateExpClass() 01 | input: $expClassText');
+    if (expClassText == null || expClassText.isEmpty) {
+      return 'expClass should not be empty';
+    }
+
+    if (expClassification == null) {
+      return 'expClassification should not be null inside expenditureFields';
+    }
+    if (expClassification!.titleEnglish != expClassText &&
+        expClassification!.titlePersian != expClassText &&
+        expClassification!.titleArabic != expClassText) {
+      return 'expClassification.titleE|P|A is mismatch with input text';
     }
     return null;
   }

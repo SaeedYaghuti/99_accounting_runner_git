@@ -48,9 +48,9 @@ class TransactionClassification {
 
     try {
       var result = await AccountingDB.runRawQuery(query, [accountType]);
-      print('TransactionClassification allTransactionClasses 01| all tranClasses: ########');
-      print(result);
-      print('##################');
+      // print('TransactionClassification allTransactionClasses 01| all tranClasses: ########');
+      // print(result);
+      // print('##################');
 
       if (result.isEmpty) return [];
 
