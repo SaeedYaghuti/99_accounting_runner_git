@@ -76,10 +76,10 @@ class TransactionClassification {
     ''';
     try {
       var fetchResult = await AccountingDB.runRawQuery(query, [expClassId]);
-      print(
-        'TransactionClassification fetchTranClassById 01| fetchResult for expClassId: $expClassId',
-      );
-      print(fetchResult);
+      // print(
+      //   'TransactionClassification fetchTranClassById 01| fetchResult for expClassId: $expClassId',
+      // );
+      // print(fetchResult);
 
       // before list.first always you should check isEmpty
       if (fetchResult.isEmpty) return null;

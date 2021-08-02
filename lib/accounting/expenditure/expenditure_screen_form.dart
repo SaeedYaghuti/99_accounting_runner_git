@@ -322,7 +322,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       textInputAction: TextInputAction.next,
       onTap: () {
         pickDate();
-        FocusScope.of(context).requestFocus(_fields.dateFocusNode);
+        FocusScope.of(context).requestFocus(_fields.noteFocusNode);
       },
       validator: _fields.validateDate,
       // onSaved: (amount) {
