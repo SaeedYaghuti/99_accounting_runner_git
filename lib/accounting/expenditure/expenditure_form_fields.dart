@@ -3,7 +3,6 @@ import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
 import 'package:shop/accounting/accounting_logic/transaction_classification.dart';
 import 'package:shop/accounting/expenditure/expenditure_class_tree.dart';
-import 'package:shop/accounting/expenditure/x_expenditure_%20classification_perm.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/constants.dart';
 import 'package:shop/shared/result_status.dart';
@@ -28,7 +27,7 @@ class ExpenditurFormFields {
   int? authId;
   AccountModel? paidByAccount;
   TransactionClassification? expClassification;
-  DateTime? dateTime;
+  DateTime? _dateTime;
   Function? resetState;
 
   ExpenditurFormFields({
@@ -48,7 +47,7 @@ class ExpenditurFormFields {
     this.note = note;
     this.paidBy = paidBy;
     this.expClass = expClass;
-    this.dateTime = date;
+    this.date = date;
     this.resetState = resetState;
   }
 
@@ -73,11 +72,11 @@ class ExpenditurFormFields {
 
   // # date
   DateTime? get date {
-    return dateTime;
+    return _dateTime;
   }
 
   set date(DateTime? selectedDate) {
-    this.dateTime = selectedDate;
+    this._dateTime = selectedDate;
     this.dateController.text = _readbleDate(selectedDate);
   }
 
@@ -129,7 +128,7 @@ class ExpenditurFormFields {
       hasErrorExpClass = true;
       errorMessages += '\nPaidBy is empty';
     }
-    if (dateTime == null) {
+    if (_dateTime == null) {
       hasErrorDate = true;
       errorMessages += '\nDate is empty';
     }
@@ -221,10 +220,10 @@ class ExpenditurFormFields {
       return 'dateText should not be empty';
     }
 
-    if (dateTime == null) {
+    if (_dateTime == null) {
       return 'dateTime should not be null inside expenditureFormFields';
     }
-    if (_readbleDate(dateTime) != dateText) {
+    if (_readbleDate(_dateTime) != dateText) {
       return '_readbleDate of dateTime mismatch date text';
     }
     return null;
@@ -243,7 +242,7 @@ class ExpenditurFormFields {
       id: $id,
       amoutn: $amount, 
       paidBy: ${paidByAccount?.titleEnglish}, 
-      note: $note, date: $dateTime, 
+      note: $note, date: $date, 
       expClass: $expClass, 
     ''';
   }

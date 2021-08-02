@@ -50,7 +50,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   @override
   void initState() {
     _formDuty = widget.formDuty;
-    _fields.dateTime = DateTime.now();
+    _fields.date = DateTime.now();
     _fields.resetState = resetState;
     super.initState();
   }
@@ -138,7 +138,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       _fields.amount = creditTransaction.amount;
       _fields.paidBy = paidByAccount;
       _fields.expClass = creditTransaction.tranClass;
-      _fields.dateTime = creditTransaction.date;
+      _fields.date = creditTransaction.date;
       _fields.note = creditTransaction.note;
 
       // print('EXP_FRM init_state| EDIT 03| prepared _expenditureFormFields');
@@ -566,9 +566,9 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     ).then((date) {
       setState(() {
         if (date == null) {
-          _fields.dateTime = DateTime.now();
+          _fields.date = DateTime.now();
         } else {
-          _fields.dateTime = date;
+          _fields.date = date;
         }
       });
     });
@@ -582,7 +582,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       if (EnvironmentProvider.initializeExpenditureForm) {
         // _expenditureFormFields = ExpenditurFormFields.expenditureExample;
         // _selectedDate = ExpenditurFormFields.expenditureExample.date;
-        _fields.dateTime = ExpenditurFormFields.expenditureExample.dateTime;
+        _fields.date = ExpenditurFormFields.expenditureExample.date;
       }
       setState(() {});
       return;
