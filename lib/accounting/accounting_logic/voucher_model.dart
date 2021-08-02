@@ -486,7 +486,7 @@ class VoucherModel {
     ''';
 
     var result = await AccountingDB.runRawQuery(query, [id]);
-    transactions = result.map((tranMap) => TransactionModel.fromMapOfTransactionJClass(tranMap)).toList();
+    transactions = result.map((tranMap) => TransactionModel.fromMapOfTransactionJClassJFloat(tranMap)).toList();
   }
 
   Future<void> _fetchMyTransactionsWAccountWClass() async {
@@ -512,7 +512,7 @@ class VoucherModel {
     var tranJAccJClassMaps = await AccountingDB.runRawQuery(query, [id]);
     // print('VCH_MDL | 02 _fetchMyTranWAccountWClass()| voucher_id:$id tranJAccJClassMaps: $tranJAccJClassMaps');
     transactions = tranJAccJClassMaps
-        .map((tranJAccJClass) => TransactionModel.fromMapOfTransactionJAccountJClass(tranJAccJClass))
+        .map((tranJAccJClass) => TransactionModel.fromMapOfTransactionJAccountJClassJFloat(tranJAccJClass))
         .toList();
   }
 
