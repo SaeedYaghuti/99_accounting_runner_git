@@ -1,4 +1,5 @@
 import 'package:shop/accounting/accounting_logic/account_ids.dart';
+import 'package:shop/accounting/accounting_logic/floating_account.dart';
 import 'package:shop/accounting/accounting_logic/trans_class_tree.dart';
 import 'package:shop/accounting/accounting_logic/transaction_classification.dart';
 import 'package:shop/accounting/accounting_logic/transaction_feed.dart';
@@ -88,6 +89,14 @@ class ExpenditureModel {
         date: fields.date!,
         note: fields.note!,
         tranClass: fields.expClass!,
+        floatAccount: FloatingAccount(
+          id: 'temp',
+          parentId: 'temp',
+          titleEnglish: 'Temp',
+          titlePersian: 'farsi',
+          titleArabic: 'arabic',
+          note: '_',
+        ),
       ),
       // updated credit transaction
       TransactionModel(
@@ -98,6 +107,15 @@ class ExpenditureModel {
         date: fields.date!,
         note: fields.note!,
         tranClass: fields.expClass!,
+        // TODO: remove me!
+        floatAccount: FloatingAccount(
+          id: 'temp',
+          parentId: 'temp',
+          titleEnglish: 'Temp',
+          titlePersian: 'farsi',
+          titleArabic: 'arabic',
+          note: '_',
+        ),
       ),
     ];
 

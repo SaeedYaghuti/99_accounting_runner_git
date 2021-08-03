@@ -59,23 +59,19 @@ class TransactionModel {
   }
 
   static Future<TransactionModel?> transactionById(int tranId) async {
-    final _query0 = '''
-    SELECT *
-    FROM $transactionTableName 
-    LEFT JOIN 
-      ${TransactionClassification.tableName}
-    ON ${TransactionModel.column8TranClassId} = ${TransactionClassification.column1Id}
-    AND ${TransactionModel.column2AccountId} = ?
-    WHERE $column1Id = ? ;
-    ''';
-
     final query = '''
     SELECT *
+
     FROM $transactionTableName 
+
     LEFT JOIN 
       ${TransactionClassification.tableName}
     ON ${TransactionModel.column8TranClassId} = ${TransactionClassification.column1Id}
-    AND ${TransactionModel.column1Id} = ? ;
+    AND ${TransactionModel.column1Id} = ? 
+    
+    LEFT JOIN 
+      ${FloatingAccount.tableName}
+    ON ${TransactionModel.column9FloatId} = ${FloatingAccount.column1Id}
     ''';
     var transactionsMap = await AccountingDB.runRawQuery(query, [tranId]);
 
@@ -146,7 +142,9 @@ class TransactionModel {
   ) async {
     final query = '''
     SELECT *
+
     FROM $transactionTableName 
+    
     LEFT JOIN ${VoucherModel.voucherTableName}
     ON $transactionTableName.$column3VoucherId = ${VoucherModel.voucherTableName}.${VoucherModel.column1Id}
     WHERE $transactionTableName.$column2AccountId = ?
@@ -157,7 +155,7 @@ class TransactionModel {
     return result;
   }
 
-  static List<TransactionModel> fromMapOfTransactions(
+  static List<TransactionModel> _xFromMapOfTransactions(
     List<Map<String, Object?>> dbResult,
   ) {
     return dbResult

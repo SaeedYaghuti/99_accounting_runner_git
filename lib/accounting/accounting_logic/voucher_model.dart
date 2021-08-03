@@ -20,6 +20,8 @@ import 'package:shop/exceptions/ValidationException.dart';
 import 'package:shop/shared/result_status.dart';
 import 'package:shop/shared/seconds_of_time.dart';
 
+import 'floating_account.dart';
+
 class VoucherModel {
   int? id;
   final int creatorId;
@@ -94,7 +96,7 @@ class VoucherModel {
     // fetch transaction for each voucher
     for (var voucherMap in vouchersMap) {
       var voucher = fromMapOfVoucher(voucherMap);
-      await voucher._fetchMyTransactionsWAccountWClass();
+      await voucher._fetchMyTransactionsWAccountWClassWFloat();
       // step#2 => every voucher at least has 2 account; we must check client perm for other accounts
       Result hasAccess = hasCredAccessToVoucher(
         formDuty: FormDuty.READ,
@@ -184,6 +186,15 @@ class VoucherModel {
         date: feed.date,
         note: feed.note,
         tranClass: feed.tranClass,
+        // TODO: remove me!
+        floatAccount: FloatingAccount(
+          id: 'temp',
+          parentId: 'temp',
+          titleEnglish: 'Temp',
+          titlePersian: 'farsi',
+          titleArabic: 'arabic',
+          note: '_',
+        ),
       );
       try {
         await transaction.insertMeIntoDB();
@@ -214,7 +225,7 @@ class VoucherModel {
     // print('V_MG 19| voucher and all its transactions saved Successfully!');
 
     // TODO: remove me
-    await voucher._fetchMyTransactionsJClass();
+    await voucher._fetchMyTransactionsJClassJFloat();
   }
 
   // secure
@@ -373,7 +384,7 @@ class VoucherModel {
     if (id == null) {
       return 0;
     }
-    await this._fetchMyTransactionsWAccountWClass();
+    await this._fetchMyTransactionsWAccountWClassWFloat();
 
     // step 1# check edit authority for rVoucher
     // hasCredAccessToVoucher: voucher should contain trans and account
@@ -468,7 +479,7 @@ class VoucherModel {
     return id!;
   }
 
-  Future<void> _fetchMyTransactionsJClass() async {
+  Future<void> _fetchMyTransactionsJClassJFloat() async {
     if (id == null) {
       print('VM 29| Warn: id is null: fetchMyTransactions()');
       return;
@@ -478,35 +489,42 @@ class VoucherModel {
 
     final query = '''
       SELECT *
+
       FROM ${TransactionModel.transactionTableName}
-      INNER JOIN 
-        ${TransactionClassification.tableName}
+
+      INNER JOIN ${TransactionClassification.tableName}
       ON ${TransactionModel.column8TranClassId} = ${TransactionClassification.column1Id}
       AND ${TransactionModel.column3VoucherId} = ?
+
+      LEFT JOIN 
+      ${FloatingAccount.tableName}
+      ON ${TransactionModel.column9FloatId} = ${FloatingAccount.column1Id}
     ''';
 
     var result = await AccountingDB.runRawQuery(query, [id]);
     transactions = result.map((tranMap) => TransactionModel.fromMapOfTransactionJClassJFloat(tranMap)).toList();
   }
 
-  Future<void> _fetchMyTransactionsWAccountWClass() async {
+  Future<void> _fetchMyTransactionsWAccountWClassWFloat() async {
     if (id == null) {
       print('VM | _fetchMyTransactionsWithAccount() 01| Warn: id is null: fetchMyTransactions()');
       return;
     }
     final query = '''
-    SELECT 
-      *
-    FROM 
-      ${TransactionModel.transactionTableName} 
-    INNER JOIN 
-      ${AccountModel.tableName}
+    SELECT  *
+
+    FROM ${TransactionModel.transactionTableName} 
+
+    INNER JOIN ${AccountModel.tableName}
     ON ${TransactionModel.column2AccountId} = ${AccountModel.column1Id}
     AND ${TransactionModel.column3VoucherId} = ?
 
-    INNER JOIN 
-      ${TransactionClassification.tableName}
+    INNER JOIN ${TransactionClassification.tableName}
     ON ${TransactionModel.column8TranClassId} = ${TransactionClassification.column1Id}
+
+    LEFT JOIN 
+      ${FloatingAccount.tableName}
+    ON ${TransactionModel.column9FloatId} = ${FloatingAccount.column1Id}
     ''';
 
     var tranJAccJClassMaps = await AccountingDB.runRawQuery(query, [id]);
@@ -530,7 +548,7 @@ class VoucherModel {
 
     // fetch transaction for each voucher
     for (var voucher in voucherModels) {
-      await voucher._fetchMyTransactionsJClass();
+      await voucher._fetchMyTransactionsJClassJFloat();
     }
 
     print('VM FAV 01| All DB Vouchers: ###########');
@@ -565,7 +583,7 @@ class VoucherModel {
     // fetch transaction for each voucher
     for (var voucher in voucherModels) {
       // await voucher._fetchMyTransactions();
-      await voucher._fetchMyTransactionsWAccountWClass();
+      await voucher._fetchMyTransactionsWAccountWClassWFloat();
     }
 
     // print('VM 30| fetchVoucher for id: <$voucherId>: ###########');
