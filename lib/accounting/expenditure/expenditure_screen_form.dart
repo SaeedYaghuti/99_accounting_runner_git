@@ -1,6 +1,9 @@
 import 'dart:async';
 
 import 'package:shop/accounting/accounting_logic/account_model.dart';
+import 'package:shop/accounting/accounting_logic/float_dropdown_menu.dart';
+import 'package:shop/accounting/accounting_logic/floating_account.dart';
+import 'package:shop/accounting/accounting_logic/floating_account_tree.dart';
 import 'package:shop/accounting/accounting_logic/run_code.dart';
 // import 'package:shop/auth/run_code.dart';
 
@@ -267,11 +270,11 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     return TextFormField(
       decoration: _buildInputDecoration('Float Account', Icons.account_box),
       style: _buildTextStyle(),
-      focusNode: _fields.expClassFocusNode,
-      controller: _fields.expClassController,
+      focusNode: _fields.floatFocusNode,
+      controller: _fields.floatController,
       textInputAction: TextInputAction.next,
       onTap: () {
-        _pickExpClass();
+        _pickFloat();
         FocusScope.of(context).requestFocus(_fields.dateFocusNode);
       },
       validator: _fields.validateExpClass,
@@ -491,6 +494,33 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
                   Navigator.of(context).pop();
                   setState(() {
                     _fields.expClass = tappedExpClass;
+                  });
+                },
+              ),
+            ],
+          );
+        });
+  }
+
+  void _pickFloat() {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            title: Text('SELECT FLOAT ACCOUNT:'),
+            children: [
+              FloatDropdownMenu(
+                authProvider: authProviderSQL,
+                formDuty: _formDuty,
+                expandedAccountIds: [
+                  FloatAccountIds.ROOT_FLOAT_ACCOUNT_ID,
+                  FloatAccountIds.SALESMAN_FLOAT_ACCOUNT_ID,
+                ],
+                unwantedAccountIds: [],
+                tapHandler: (FloatingAccount tappedFloat) {
+                  Navigator.of(context).pop();
+                  setState(() {
+                    _fields.floatAccount = tappedFloat;
                   });
                 },
               ),

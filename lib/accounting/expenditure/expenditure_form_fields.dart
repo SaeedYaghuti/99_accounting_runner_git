@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
+import 'package:shop/accounting/accounting_logic/floating_account.dart';
 import 'package:shop/accounting/accounting_logic/transaction_classification.dart';
 import 'package:shop/accounting/expenditure/expenditure_class_tree.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
@@ -37,6 +38,7 @@ class ExpenditurFormFields {
   TextEditingController dateController = TextEditingController();
 
   // float
+  FloatingAccount? _floatingAccount;
   bool floatHasError = false;
   final floatFocusNode = FocusNode();
   TextEditingController floatController = TextEditingController();
@@ -53,6 +55,7 @@ class ExpenditurFormFields {
     AccountModel? paidBy,
     String? note,
     TransactionClassification? expClass,
+    FloatingAccount? floatAccount,
     DateTime? date,
     Function? resetState,
   }) {
@@ -62,6 +65,7 @@ class ExpenditurFormFields {
     this.note = note;
     this.paidBy = paidBy;
     this.expClass = expClass;
+    this.floatAccount = floatAccount;
     this.date = date;
     this.resetState = resetState;
   }
@@ -93,6 +97,16 @@ class ExpenditurFormFields {
   set date(DateTime? selectedDate) {
     this._dateTime = selectedDate;
     this.dateController.text = _readbleDate(selectedDate);
+  }
+
+  // # floatAccount
+  FloatingAccount? get floatAccount {
+    return _floatingAccount;
+  }
+
+  set floatAccount(FloatingAccount? selectedFloat) {
+    this._floatingAccount = selectedFloat;
+    this.floatController.text = selectedFloat?.titleEnglish ?? '';
   }
 
   String _readbleDate(DateTime? date) {

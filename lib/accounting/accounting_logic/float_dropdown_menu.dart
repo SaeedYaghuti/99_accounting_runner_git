@@ -4,14 +4,14 @@ import 'package:shop/accounting/accounting_logic/floating_account_tree.dart';
 import 'package:shop/accounting/expenditure/expenditure_screen_form.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
 
-class AccountDropdownMenu extends StatefulWidget {
+class FloatDropdownMenu extends StatefulWidget {
   final AuthProviderSQL authProvider;
   final FormDuty formDuty;
   final List<String?> unwantedAccountIds;
   final List<String?>? expandedAccountIds;
   final Function(FloatingAccount) tapHandler;
 
-  AccountDropdownMenu({
+  FloatDropdownMenu({
     required this.authProvider,
     required this.formDuty,
     this.unwantedAccountIds = const [],
@@ -20,10 +20,10 @@ class AccountDropdownMenu extends StatefulWidget {
   });
 
   @override
-  _AccountDropdownMenuState createState() => _AccountDropdownMenuState();
+  _FloatDropdownMenuState createState() => _FloatDropdownMenuState();
 }
 
-class _AccountDropdownMenuState extends State<AccountDropdownMenu> {
+class _FloatDropdownMenuState extends State<FloatDropdownMenu> {
   late List<FloatingAccount> floatAccounts;
 
   late FloatingAccount rootFloatAccount;
