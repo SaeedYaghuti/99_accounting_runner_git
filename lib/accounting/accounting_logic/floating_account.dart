@@ -113,7 +113,7 @@ class FloatingAccount {
   static const String column5TitleArabic = 'float_titleArabic';
   static const String column6Note = 'float_note';
 
-  static const String QUERY_CREATE_EXPENDITURE_CLASSIFICATION_TABLE = '''CREATE TABLE $tableName (
+  static const String QUERY_CREATE_FLOAT_ACCOUNT_TABLE = '''CREATE TABLE $tableName (
     $column1Id TEXT PRIMARY KEY, 
     $column2ParentId TEXT NOT NULL, 
     $column3TitleEnglish TEXT NOT NULL, 

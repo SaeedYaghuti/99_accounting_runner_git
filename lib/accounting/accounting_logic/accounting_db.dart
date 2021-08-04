@@ -1,6 +1,8 @@
 import 'package:path/path.dart' as path;
 import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
+import 'package:shop/accounting/accounting_logic/floating_account.dart';
+import 'package:shop/accounting/accounting_logic/floating_account_tree.dart';
 import 'package:shop/accounting/accounting_logic/trans_class_tree.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
@@ -29,6 +31,8 @@ class AccountingDB {
         await insertPredefinedVoucherNumbers(db);
         await db.execute(TransactionClassification.QUERY_CREATE_EXPENDITURE_CLASSIFICATION_TABLE);
         await insertPredefinedTransactionClasses(db);
+        await db.execute(FloatingAccount.QUERY_CREATE_FLOAT_ACCOUNT_TABLE);
+        await insertPredefinedFloatAccount(db);
       },
     );
     await db.execute('PRAGMA foreign_keys = ON;');
@@ -107,6 +111,17 @@ class AccountingDB {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
       print('ACC_DB| @insertPredefinedTransactionClasses() 02 | insertResult: $insertResult');
+    }
+  }
+
+  static Future<void> insertPredefinedFloatAccount(Database db) async {
+    for (FloatingAccount floatAcc in FLOAT_ACCOUNT_TREE) {
+      int insertResult = await db.insert(
+        FloatingAccount.tableName,
+        floatAcc.toMap(),
+        conflictAlgorithm: ConflictAlgorithm.replace,
+      );
+      print('ACC_DB| @insertPredefinedFloatAccount()| insertResult: $insertResult');
     }
   }
 
