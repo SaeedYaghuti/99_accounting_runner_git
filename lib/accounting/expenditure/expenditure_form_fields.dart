@@ -9,25 +9,40 @@ import 'package:shop/shared/result_status.dart';
 
 class ExpenditurFormFields {
   final formKey = GlobalKey<FormState>();
+
+  // amount
   final amountFocusNode = FocusNode();
-  final noteFocusNode = FocusNode();
-  final paidByFocusNode = FocusNode();
-  final expClassFocusNode = FocusNode();
-  final dateFocusNode = FocusNode();
   TextEditingController amountController = TextEditingController();
+
+  // note
+  final noteFocusNode = FocusNode();
   TextEditingController noteController = TextEditingController();
-  TextEditingController paidByController = TextEditingController();
-  TextEditingController expClassController = TextEditingController();
-  TextEditingController dateController = TextEditingController();
-  bool hasErrorExpClass = false;
+
+  // paidBy
+  AccountModel? paidByAccount;
   bool hasErrorPaidBy = false;
+  final paidByFocusNode = FocusNode();
+  TextEditingController paidByController = TextEditingController();
+
+  // expClass
+  TransactionClassification? expClassification;
+  bool hasErrorExpClass = false;
+  final expClassFocusNode = FocusNode();
+  TextEditingController expClassController = TextEditingController();
+
+  // date
+  DateTime? _dateTime;
+  final dateFocusNode = FocusNode();
   bool hasErrorDate = false;
+  TextEditingController dateController = TextEditingController();
+
+  // float
+  bool floatHasError = false;
+  final floatFocusNode = FocusNode();
+  TextEditingController floatController = TextEditingController();
 
   int? id;
   int? authId;
-  AccountModel? paidByAccount;
-  TransactionClassification? expClassification;
-  DateTime? _dateTime;
   Function? resetState;
 
   ExpenditurFormFields({

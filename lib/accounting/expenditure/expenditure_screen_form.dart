@@ -175,6 +175,8 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
               SizedBox(height: 20, width: 20),
               _buildExpClass(context),
               SizedBox(height: 20, width: 20),
+              _buildFloatAccount(context),
+              SizedBox(height: 20, width: 20),
               _buildSubmitButtons(context),
               SizedBox(height: 20, width: 20),
               _buildDeleteDB(context),
@@ -224,32 +226,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     );
   }
 
-  Widget _buildPaidBy0(BuildContext context) {
-    return OutlinedButton.icon(
-      focusNode: _fields.paidByFocusNode,
-      style: OutlinedButton.styleFrom(
-        primary: _fields.hasErrorPaidBy ? Colors.white : Theme.of(context).primaryColor,
-        backgroundColor: _fields.hasErrorPaidBy ? Colors.pinkAccent : Colors.white,
-      ),
-      onPressed: () {
-        _pickAccount();
-        FocusScope.of(context).requestFocus(_fields.dateFocusNode);
-      },
-      icon: Icon(
-        Icons.credit_card_rounded,
-        // color: Theme.of(context).primaryColor,
-      ),
-      label: Text(
-        _fields.paidByAccount?.titleEnglish ?? 'SELECT ACCOUNT',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 20,
-          // color: Theme.of(context).primaryColor,
-        ),
-      ),
-    );
-  }
-
   Widget _buildNote(BuildContext context) {
     return TextFormField(
       decoration: _buildInputDecoration('Note', Icons.note_outlined),
@@ -287,29 +263,21 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     );
   }
 
-  Widget _buildExpClass0(BuildContext context) {
-    return OutlinedButton.icon(
+  Widget _buildFloatAccount(BuildContext context) {
+    return TextFormField(
+      decoration: _buildInputDecoration('Float Account', Icons.account_box),
+      style: _buildTextStyle(),
       focusNode: _fields.expClassFocusNode,
-      style: OutlinedButton.styleFrom(
-        primary: _fields.hasErrorExpClass ? Colors.white : Theme.of(context).primaryColor,
-        backgroundColor: _fields.hasErrorExpClass ? Colors.pinkAccent : Colors.white,
-      ),
-      onPressed: () {
+      controller: _fields.expClassController,
+      textInputAction: TextInputAction.next,
+      onTap: () {
         _pickExpClass();
         FocusScope.of(context).requestFocus(_fields.dateFocusNode);
       },
-      icon: Icon(
-        Icons.category_outlined,
-        // color: Theme.of(context).primaryColor,
-      ),
-      label: Text(
-        _fields.expClass?.titleEnglish ?? 'SELECT EXPENCE CLASS',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 20,
-          // color: Theme.of(context).primaryColor,
-        ),
-      ),
+      validator: _fields.validateExpClass,
+      // onSaved: (amount) {
+      //   we do add saving at expFormFields when setting data
+      // },
     );
   }
 
@@ -330,32 +298,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       // },
     );
   }
-
-  // Widget _buildDatePickerButton0(BuildContext context) {
-  //   return OutlinedButton.icon(
-  //     focusNode: _fields.dateFocusNode,
-  //     style: OutlinedButton.styleFrom(
-  //       primary: _fields.hasErrorDate ? Colors.white : Theme.of(context).primaryColor,
-  //       backgroundColor: _fields.hasErrorDate ? Colors.pinkAccent : Colors.white,
-  //     ),
-  //     onPressed: () {
-  //       pickDate();
-  //       FocusScope.of(context).requestFocus(_fields.dateFocusNode);
-  //     },
-  //     icon: Icon(
-  //       Icons.date_range_rounded,
-  //       // color: Theme.of(context).primaryColor,
-  //     ),
-  //     label: Text(
-  //       _buildTextForDatePicker(),
-  //       style: TextStyle(
-  //         fontWeight: FontWeight.bold,
-  //         fontSize: 20,
-  //         // color: Theme.of(context).primaryColor,
-  //       ),
-  //     ),
-  //   );
-  // }
 
   Widget _buildSubmitButtons(BuildContext context) {
     switch (_formDuty) {
@@ -683,6 +625,86 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   var _isLoading = false;
+
+  // ### Depricated method
+  Widget _buildPaidBy0(BuildContext context) {
+    return OutlinedButton.icon(
+      focusNode: _fields.paidByFocusNode,
+      style: OutlinedButton.styleFrom(
+        primary: _fields.hasErrorPaidBy ? Colors.white : Theme.of(context).primaryColor,
+        backgroundColor: _fields.hasErrorPaidBy ? Colors.pinkAccent : Colors.white,
+      ),
+      onPressed: () {
+        _pickAccount();
+        FocusScope.of(context).requestFocus(_fields.dateFocusNode);
+      },
+      icon: Icon(
+        Icons.credit_card_rounded,
+        // color: Theme.of(context).primaryColor,
+      ),
+      label: Text(
+        _fields.paidByAccount?.titleEnglish ?? 'SELECT ACCOUNT',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+          // color: Theme.of(context).primaryColor,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildExpClass0(BuildContext context) {
+    return OutlinedButton.icon(
+      focusNode: _fields.expClassFocusNode,
+      style: OutlinedButton.styleFrom(
+        primary: _fields.hasErrorExpClass ? Colors.white : Theme.of(context).primaryColor,
+        backgroundColor: _fields.hasErrorExpClass ? Colors.pinkAccent : Colors.white,
+      ),
+      onPressed: () {
+        _pickExpClass();
+        FocusScope.of(context).requestFocus(_fields.dateFocusNode);
+      },
+      icon: Icon(
+        Icons.category_outlined,
+        // color: Theme.of(context).primaryColor,
+      ),
+      label: Text(
+        _fields.expClass?.titleEnglish ?? 'SELECT EXPENCE CLASS',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 20,
+          // color: Theme.of(context).primaryColor,
+        ),
+      ),
+    );
+  }
+
+  // Widget _buildDatePickerButton0(BuildContext context) {
+  //   return OutlinedButton.icon(
+  //     focusNode: _fields.dateFocusNode,
+  //     style: OutlinedButton.styleFrom(
+  //       primary: _fields.hasErrorDate ? Colors.white : Theme.of(context).primaryColor,
+  //       backgroundColor: _fields.hasErrorDate ? Colors.pinkAccent : Colors.white,
+  //     ),
+  //     onPressed: () {
+  //       pickDate();
+  //       FocusScope.of(context).requestFocus(_fields.dateFocusNode);
+  //     },
+  //     icon: Icon(
+  //       Icons.date_range_rounded,
+  //       // color: Theme.of(context).primaryColor,
+  //     ),
+  //     label: Text(
+  //       _buildTextForDatePicker(),
+  //       style: TextStyle(
+  //         fontWeight: FontWeight.bold,
+  //         fontSize: 20,
+  //         // color: Theme.of(context).primaryColor,
+  //       ),
+  //     ),
+  //   );
+  // }
+
 }
 
 enum FormDuty {

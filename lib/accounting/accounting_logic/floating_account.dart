@@ -61,7 +61,7 @@ class FloatingAccount {
   // }
 
   static Future<FloatingAccount?> fetchFloatAccountById(String floatId) async {
-    // print('TRN_CLASS fetchFloatAccountById() 01| floatId: <$floatId>');
+    // print('FLT_ACC fetchFloatAccountById() 01| floatId: <$floatId>');
     final query = '''
     SELECT *
     FROM $tableName
@@ -82,7 +82,37 @@ class FloatingAccount {
       return floatAccount;
       // return fetchResult;
     } catch (e) {
-      print('TRN_CLASS fetchFloatAccountById() 01| e: $e');
+      print('FLT_ACC fetchFloatAccountById() 01| e: $e');
+      throw e;
+    }
+  }
+
+  static Future<List<FloatingAccount?>> allFloatAccounts() async {
+    // print('FLT_ACC allFloatAccounts() 01| run ...');
+    final query = '''
+    SELECT *
+    FROM $tableName;
+    ''';
+    try {
+      var fetchResult = await AccountingDB.runRawQuery(query);
+      // print(
+      //   'FloatingAccount allFloatAccounts 02| fetchResult',
+      // );
+      // print(fetchResult);
+
+      // before list.first always you should check isEmpty
+      if (fetchResult.isEmpty) return [];
+
+      List<FloatingAccount?> floatAccounts = [];
+
+      for (var floatMap in fetchResult) {
+        floatAccounts.add(fromMap(floatMap));
+      }
+      print('FLT_ACC allFloatAccounts() 04| floatAccounts: $floatAccounts');
+      print(floatAccounts);
+      return floatAccounts;
+    } catch (e) {
+      print('FLT_ACC allFloatAccounts() 05| e: $e');
       throw e;
     }
   }
@@ -135,12 +165,12 @@ class FloatingAccount {
   }
 
   static FloatingAccount? fromMap(Map<String, Object?>? floatAccountMap, [bool throwError = false]) {
-    // print('TRN_CLASS | fromMap 01| input: \n$tranClassMap');
+    // print('FLT_ACC | fromMap 01| input: \n$tranClassMap');
 
     if (floatAccountMap == null || floatAccountMap[FloatingAccount.column1Id] == null) {
-      print('TRN_CLASS | fromMap 02| tranClassMap or JoinClass is null');
+      print('FLT_ACC | fromMap 02| tranClassMap or JoinClass is null');
       if (throwError) {
-        throw JoinException('TRN_CLASS | fromMap 03| input is null');
+        throw JoinException('FLT_ACC | fromMap 03| input is null');
       } else {
         return null;
       }
@@ -157,10 +187,10 @@ class FloatingAccount {
         note: floatAccountMap[FloatingAccount.column6Note] as String,
       );
 
-      // print('TRN_CLASS | fromMap 04| output: \n$tranClass');
+      // print('FLT_ACC | fromMap 04| output: \n$tranClass');
       return floatAcc;
     } catch (e) {
-      print('TRN_CLASS | fromMap() 05 | @ catch e: $e');
+      print('FLT_ACC | fromMap() 05 | @ catch e: $e');
       throw e;
     }
   }
