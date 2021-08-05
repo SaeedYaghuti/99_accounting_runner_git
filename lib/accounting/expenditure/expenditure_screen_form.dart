@@ -142,6 +142,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       _fields.amount = creditTransaction.amount;
       _fields.paidBy = paidByAccount;
       _fields.expClass = creditTransaction.tranClass;
+      _fields.floatAccount = creditTransaction.floatAccount;
       _fields.date = creditTransaction.date;
       _fields.note = creditTransaction.note;
 

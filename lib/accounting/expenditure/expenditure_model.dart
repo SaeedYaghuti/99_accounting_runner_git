@@ -108,8 +108,8 @@ class ExpenditureModel {
       ),
     ];
 
-    print('EXP_MDL |  43| new Voucher to be updated at db');
-    print(newVoucher);
+    // print('EXP_MDL |  43| new Voucher to be updated at db');
+    // print(newVoucher);
     try {
       await VoucherModel.updateVoucher(newVoucher, authProvider);
     } catch (e) {
