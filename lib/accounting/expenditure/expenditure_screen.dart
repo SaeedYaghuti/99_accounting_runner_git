@@ -197,6 +197,12 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       )),
       DataColumn(
           label: MultiLanguageTextWidget(
+        english: 'Float',
+        persian: 'شناور',
+        arabic: 'سيال',
+      )),
+      DataColumn(
+          label: MultiLanguageTextWidget(
         english: 'Date',
         persian: 'تاریخ',
         arabic: 'تاریخ',
@@ -239,6 +245,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
                 DataCell(Text(expTran.note)),
                 DataCell(Text(voucher.paidByText())),
                 DataCell(Text(expTran.tranClass.titleEnglish)),
+                DataCell(Text(expTran.floatAccount.titleEnglish)),
                 DataCell(Text(readibleDate(voucher.date))),
                 DataCell(Text(expTran.id.toString())),
                 DataCell(Text(voucher.id.toString())),
