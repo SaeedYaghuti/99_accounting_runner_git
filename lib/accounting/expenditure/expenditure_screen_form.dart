@@ -75,6 +75,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         ? ExpenditurFormFields.expenditureExample.paidByAccount
         : null;
     _fields.expClass = ExpenditurFormFields.expenditureExample.expClass;
+    _fields.floatAccount = ExpenditurFormFields.expenditureExample.floatAccount;
     switch (widget.formDuty) {
       case FormDuty.READ:
       case FormDuty.CREATE:
@@ -277,7 +278,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         _pickFloat();
         FocusScope.of(context).requestFocus(_fields.dateFocusNode);
       },
-      validator: _fields.validateExpClass,
+      validator: _fields.validateFloatAccount,
       // onSaved: (amount) {
       //   we do add saving at expFormFields when setting data
       // },

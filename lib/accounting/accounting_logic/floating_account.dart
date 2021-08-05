@@ -108,8 +108,8 @@ class FloatingAccount {
       for (var floatMap in fetchResult) {
         floatAccounts.add(fromMap(floatMap));
       }
-      print('FLT_ACC allFloatAccounts() 04| floatAccounts: $floatAccounts');
-      print(floatAccounts);
+      // print('FLT_ACC allFloatAccounts() 04| floatAccounts: $floatAccounts');
+      // print(floatAccounts);
       return floatAccounts;
     } catch (e) {
       print('FLT_ACC allFloatAccounts() 05| e: $e');

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
 import 'package:shop/accounting/accounting_logic/floating_account.dart';
+import 'package:shop/accounting/accounting_logic/floating_account_tree.dart';
 import 'package:shop/accounting/accounting_logic/transaction_classification.dart';
 import 'package:shop/accounting/expenditure/expenditure_class_tree.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
@@ -10,38 +11,6 @@ import 'package:shop/shared/result_status.dart';
 
 class ExpenditurFormFields {
   final formKey = GlobalKey<FormState>();
-
-  // amount
-  final amountFocusNode = FocusNode();
-  TextEditingController amountController = TextEditingController();
-
-  // note
-  final noteFocusNode = FocusNode();
-  TextEditingController noteController = TextEditingController();
-
-  // paidBy
-  AccountModel? paidByAccount;
-  bool hasErrorPaidBy = false;
-  final paidByFocusNode = FocusNode();
-  TextEditingController paidByController = TextEditingController();
-
-  // expClass
-  TransactionClassification? expClassification;
-  bool hasErrorExpClass = false;
-  final expClassFocusNode = FocusNode();
-  TextEditingController expClassController = TextEditingController();
-
-  // date
-  DateTime? _dateTime;
-  final dateFocusNode = FocusNode();
-  bool hasErrorDate = false;
-  TextEditingController dateController = TextEditingController();
-
-  // float
-  FloatingAccount? _floatingAccount;
-  bool floatHasError = false;
-  final floatFocusNode = FocusNode();
-  TextEditingController floatController = TextEditingController();
 
   int? id;
   int? authId;
@@ -71,6 +40,8 @@ class ExpenditurFormFields {
   }
 
   // # amount
+  final amountFocusNode = FocusNode();
+  TextEditingController amountController = TextEditingController();
   double? get amount {
     return double.tryParse(amountController.text);
   }
@@ -79,17 +50,22 @@ class ExpenditurFormFields {
     this.amountController.text = (num == null || num == 0.0) ? '' : num.toString();
   }
 
-  // # paid by
-  AccountModel? get paidBy {
-    return paidByAccount;
+  // # note
+  final noteFocusNode = FocusNode();
+  TextEditingController noteController = TextEditingController();
+  String? get note {
+    return noteController.text;
   }
 
-  set paidBy(AccountModel? paidByAcc) {
-    this.paidByAccount = paidByAcc;
-    this.paidByController.text = (paidByAcc == null) ? '' : paidByAcc.titleEnglish;
+  set note(String? text) {
+    this.noteController.text = text ?? '';
   }
 
   // # date
+  DateTime? _dateTime;
+  final dateFocusNode = FocusNode();
+  bool hasErrorDate = false;
+  TextEditingController dateController = TextEditingController();
   DateTime? get date {
     return _dateTime;
   }
@@ -99,35 +75,25 @@ class ExpenditurFormFields {
     this.dateController.text = _readbleDate(selectedDate);
   }
 
-  // # floatAccount
-  FloatingAccount? get floatAccount {
-    return _floatingAccount;
+  // # paid by
+  AccountModel? paidByAccount;
+  bool hasErrorPaidBy = false;
+  final paidByFocusNode = FocusNode();
+  TextEditingController paidByController = TextEditingController();
+  AccountModel? get paidBy {
+    return paidByAccount;
   }
 
-  set floatAccount(FloatingAccount? selectedFloat) {
-    this._floatingAccount = selectedFloat;
-    this.floatController.text = selectedFloat?.titleEnglish ?? '';
-  }
-
-  String _readbleDate(DateTime? date) {
-    if (date == null) {
-      return 'SELECT A DAY';
-    }
-    if (isToday(date)) {
-      return 'Today';
-    }
-    return '${date.day}/${date.month}/${date.year}';
-  }
-
-  bool isToday(DateTime date) {
-    var now = DateTime.now();
-    if (date.day == now.day && date.month == now.month && date.year == now.year) {
-      return true;
-    }
-    return false;
+  set paidBy(AccountModel? paidByAcc) {
+    this.paidByAccount = paidByAcc;
+    this.paidByController.text = (paidByAcc == null) ? '' : paidByAcc.titleEnglish;
   }
 
   // # expClass
+  TransactionClassification? expClassification;
+  bool hasErrorExpClass = false;
+  final expClassFocusNode = FocusNode();
+  TextEditingController expClassController = TextEditingController();
   TransactionClassification? get expClass {
     return expClassification;
   }
@@ -137,15 +103,22 @@ class ExpenditurFormFields {
     this.expClassController.text = (expClassification == null) ? '' : expClassification.titleEnglish;
   }
 
-  // # note
-  String? get note {
-    return noteController.text;
+  // # floatAccount
+  FloatingAccount? _floatingAccount;
+  bool floatHasError = false;
+  final floatFocusNode = FocusNode();
+  TextEditingController floatController = TextEditingController();
+
+  FloatingAccount? get floatAccount {
+    return _floatingAccount;
   }
 
-  set note(String? text) {
-    this.noteController.text = text ?? '';
+  set floatAccount(FloatingAccount? selectedFloat) {
+    this._floatingAccount = selectedFloat;
+    this.floatController.text = selectedFloat?.titleEnglish ?? '';
   }
 
+  // # validate
   Result<bool> validate() {
     if (formKey.currentState == null) {
       print('EF20| Warn: _formKey.currentState == null');
@@ -165,6 +138,10 @@ class ExpenditurFormFields {
       hasErrorExpClass = true;
       errorMessages += '\nExpClass is empty';
     }
+    if (_floatingAccount == null) {
+      floatHasError = true;
+      errorMessages += '\n_floatingAccount is empty';
+    }
 
     // step#2 validate FormField that have predifined validate() method
     final isValid = formKey.currentState!.validate();
@@ -181,18 +158,6 @@ class ExpenditurFormFields {
     } else {
       return Result(false, errorMessages);
     }
-  }
-
-  static ExpenditurFormFields get expenditureExample {
-    AccountModel cashDrawer = ACCOUNTS_TREE.firstWhere((acc) => acc.id == PAID_EXPENDITURE_BY);
-    return ExpenditurFormFields(
-      id: null,
-      amount: 3.750,
-      paidBy: cashDrawer,
-      note: 'nescafee and cup',
-      date: DateTime.now(),
-      expClass: EXP_CLASS_TREE.firstWhere((expClass) => expClass.id == ExpClassIds.GENERAL_EXP_CLASS_ID),
-    );
   }
 
   String? validateAmount(String? amount) {
@@ -243,6 +208,23 @@ class ExpenditurFormFields {
     return null;
   }
 
+  String? validateFloatAccount(String? floatText) {
+    // print('EXP_FRM_FLD | validateFloatAccount() 01 | input: $floatText');
+    if (floatText == null || floatText.isEmpty) {
+      return 'floatText should not be empty';
+    }
+
+    if (_floatingAccount == null) {
+      return '_floatingAccount should not be null inside expenditureFields';
+    }
+    if (_floatingAccount!.titleEnglish != floatText &&
+        _floatingAccount!.titlePersian != floatText &&
+        _floatingAccount!.titleArabic != floatText) {
+      return '_floatingAccount.titleE|P|A is mismatch with input text';
+    }
+    return null;
+  }
+
   String? validateDate(String? dateText) {
     // print('EXP_FRM_FLD | validateDate() 01 | input: $dateText');
     if (dateText == null || dateText.isEmpty) {
@@ -265,6 +247,39 @@ class ExpenditurFormFields {
     return null;
   }
 
+  // # Example
+  static ExpenditurFormFields get expenditureExample {
+    AccountModel cashDrawer = ACCOUNTS_TREE.firstWhere((acc) => acc.id == PAID_EXPENDITURE_BY);
+    return ExpenditurFormFields(
+      id: null,
+      amount: 3.750,
+      paidBy: cashDrawer,
+      note: 'nescafee and cup',
+      date: DateTime.now(),
+      expClass: EXP_CLASS_TREE.firstWhere((expClass) => expClass.id == ExpClassIds.GENERAL_EXP_CLASS_ID),
+      floatAccount: FLOAT_ACCOUNT_TREE.firstWhere((float) => float.id == FloatAccountIds.GENERAL_FLOAT_ACCOUNT_ID),
+    );
+  }
+
+  // # helper methods
+  String _readbleDate(DateTime? date) {
+    if (date == null) {
+      return 'SELECT A DAY';
+    }
+    if (isToday(date)) {
+      return 'Today';
+    }
+    return '${date.day}/${date.month}/${date.year}';
+  }
+
+  bool isToday(DateTime date) {
+    var now = DateTime.now();
+    if (date.day == now.day && date.month == now.month && date.year == now.year) {
+      return true;
+    }
+    return false;
+  }
+
   @override
   String toString() {
     return '''
@@ -272,7 +287,8 @@ class ExpenditurFormFields {
       amoutn: $amount, 
       paidBy: ${paidByAccount?.titleEnglish}, 
       note: $note, date: $date, 
-      expClass: $expClass, 
+      expClass: {$expClass}, 
+      floatAccount: {$floatAccount},
     ''';
   }
 }

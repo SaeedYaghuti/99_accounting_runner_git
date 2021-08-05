@@ -1,5 +1,6 @@
 import 'package:shop/accounting/accounting_logic/account_ids.dart';
 import 'package:shop/accounting/accounting_logic/floating_account.dart';
+import 'package:shop/accounting/accounting_logic/floating_account_tree.dart';
 import 'package:shop/accounting/accounting_logic/trans_class_tree.dart';
 import 'package:shop/accounting/accounting_logic/transaction_classification.dart';
 import 'package:shop/accounting/accounting_logic/transaction_feed.dart';
@@ -13,6 +14,7 @@ import 'package:shop/exceptions/curropted_input.dart';
 class ExpenditureModel {
   static Future<void> createExpenditureInDB(AuthProviderSQL authProvider, ExpenditurFormFields fields) async {
     var generalTranClass = await TransactionClassification.fetchTranClassById(TranClassIds.GENERAL_TRAN_CLASS_ID);
+    var generalFloatAccount = await FloatingAccount.fetchFloatAccountById(FloatAccountIds.GENERAL_FLOAT_ACCOUNT_ID);
 
     var voucherFeed = VoucherFeed(date: fields.date!);
     var transactionFeedDebit = TransactionFeed(
@@ -22,6 +24,7 @@ class ExpenditureModel {
       date: fields.date!,
       note: '${fields.paidByAccount!.titleEnglish} paid for ${ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID}',
       tranClass: generalTranClass!,
+      floatingAccount: generalFloatAccount!,
     );
     var transactionFeedCredit = TransactionFeed(
       accountId: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
@@ -30,6 +33,7 @@ class ExpenditureModel {
       date: fields.date!,
       note: fields.note!,
       tranClass: fields.expClass!,
+      floatingAccount: fields.floatAccount!,
     );
     try {
       await VoucherModel.createVoucher(
@@ -89,14 +93,7 @@ class ExpenditureModel {
         date: fields.date!,
         note: fields.note!,
         tranClass: fields.expClass!,
-        floatAccount: FloatingAccount(
-          id: 'temp',
-          parentId: 'temp',
-          titleEnglish: 'Temp',
-          titlePersian: 'farsi',
-          titleArabic: 'arabic',
-          note: '_',
-        ),
+        floatAccount: fields.floatAccount!,
       ),
       // updated credit transaction
       TransactionModel(
@@ -107,15 +104,7 @@ class ExpenditureModel {
         date: fields.date!,
         note: fields.note!,
         tranClass: fields.expClass!,
-        // TODO: remove me!
-        floatAccount: FloatingAccount(
-          id: 'temp',
-          parentId: 'temp',
-          titleEnglish: 'Temp',
-          titlePersian: 'farsi',
-          titleArabic: 'arabic',
-          note: '_',
-        ),
+        floatAccount: fields.floatAccount!,
       ),
     ];
 

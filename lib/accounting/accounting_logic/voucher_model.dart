@@ -186,15 +186,7 @@ class VoucherModel {
         date: feed.date,
         note: feed.note,
         tranClass: feed.tranClass,
-        // TODO: remove me!
-        floatAccount: FloatingAccount(
-          id: 'temp',
-          parentId: 'temp',
-          titleEnglish: 'Temp',
-          titlePersian: 'farsi',
-          titleArabic: 'arabic',
-          note: '_',
-        ),
+        floatAccount: feed.floatingAccount,
       );
       try {
         await transaction.insertMeIntoDB();
@@ -239,7 +231,7 @@ class VoucherModel {
         'V_MG 30| amount in transactionFeeds are not valid',
       );
     }
-    if (rVoucher.id == null || rVoucher.voucherNumber == null) {
+    if (rVoucher.id == null) {
       throw CurroptedInputException('VM 31| rVoucher is not valid voucher!');
     }
 
