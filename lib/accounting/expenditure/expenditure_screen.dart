@@ -295,6 +295,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       _expenseIdToShowInForm = expenseIdToShowInForm;
       _formDuty = duty;
       redrawFormObject = new Object();
+      // form will rebuild
     });
   }
 
@@ -568,6 +569,10 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       if (fetchedVouchers.isNotEmpty) {
         setState(() {
           vouchers = fetchedVouchers.cast<VoucherModel>();
+        });
+      } else {
+        setState(() {
+          vouchers = [];
         });
       }
       _vouchersLoadingEnd();

@@ -105,7 +105,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     loadingStart();
     widget.voucher!.deleteMeFromDB(authProviderSQL).then((deleteResult) {
       loadingEnd();
-      // print('EF 66| deleteResult: $deleteResult');
+      print('EXP_SCN_FRM| initStateDelete() 01 | deleteResult: $deleteResult');
       widget.notifyNewVoucher();
     }).catchError((e) {
       loadingEnd();
