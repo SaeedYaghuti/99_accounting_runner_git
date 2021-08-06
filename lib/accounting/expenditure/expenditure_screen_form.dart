@@ -270,7 +270,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   Widget _buildFloatAccount(BuildContext context) {
     return TextFormField(
-      decoration: _buildInputDecoration('Float Account', Icons.account_box),
+      decoration: _buildInputDecoration('Float Account', Icons.account_box_outlined),
       style: _buildTextStyle(),
       focusNode: _fields.floatFocusNode,
       controller: _fields.floatController,
