@@ -82,13 +82,36 @@ class _ExpClassDropdownMenuState extends State<ExpClassDropdownMenu> {
         parent.titleEnglish,
         style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
       ),
+      trailing: FittedBox(
+        child: Row(
+          children: [
+            IconButton(
+              icon: Icon(Icons.account_tree_rounded),
+              onPressed: () {
+                print('88 you want add child to ${parent.titleEnglish}');
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: () {
+                print('88 you want edit ${parent.titleEnglish}');
+              },
+            ),
+            IconButton(
+              icon: Icon(Icons.delete),
+              onPressed: () {
+                print('88 you want delete ${parent.titleEnglish}');
+              },
+            ),
+          ],
+        ),
+      ),
       children: childs(parent.id)
           .map((child) {
             // parent should continue running recursively
             if (isParent(child!.id) && !widget.unwantedExpClassIds.contains(child.id)) {
               return _buildTileTree(child);
             }
-
             // check permition for child
             return !widget.unwantedExpClassIds.contains(child.id)
                 ? ListTile(
@@ -98,6 +121,31 @@ class _ExpClassDropdownMenuState extends State<ExpClassDropdownMenu> {
                         SizedBox(width: 3),
                         Text(child.titleEnglish),
                       ],
+                    ),
+                    trailing: FittedBox(
+                      // width: 50,
+                      child: Row(
+                        children: [
+                          IconButton(
+                            icon: Icon(Icons.account_tree_rounded),
+                            onPressed: () {
+                              print('88 you want add child to ${child.titleEnglish}');
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.edit),
+                            onPressed: () {
+                              print('88 you want edit ${child.titleEnglish}');
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () {
+                              print('88 you want delete ${child.titleEnglish}');
+                            },
+                          ),
+                        ],
+                      ),
                     ),
                     onTap: () => widget.tapHandler(child),
                   )

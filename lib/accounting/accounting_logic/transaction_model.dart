@@ -155,26 +155,6 @@ class TransactionModel {
     return result;
   }
 
-  static List<TransactionModel> _xFromMapOfTransactions(
-    List<Map<String, Object?>> dbResult,
-  ) {
-    return dbResult
-        .map(
-          (tran) => TransactionModel(
-            id: tran[TransactionModel.column1Id] as int,
-            accountId: tran[TransactionModel.column2AccountId] as String,
-            voucherId: tran[TransactionModel.column3VoucherId] as int,
-            amount: tran[TransactionModel.column4Amount] as double,
-            isDebit: convertIntToBoolean(tran[TransactionModel.column5IsDebit] as int),
-            date: secondsToDateTime(tran[TransactionModel.column6Date] as int),
-            note: tran[TransactionModel.column7Note] as String,
-            tranClass: TransactionClassification.fromMap(tran, true)!,
-            floatAccount: FloatingAccount.fromMap(tran, true)!,
-          ),
-        )
-        .toList();
-  }
-
   static TransactionModel fromMapOfTransactionJClassJFloat(Map<String, Object?> tranJClassJFloat) {
     var transaction = TransactionModel(
       id: tranJClassJFloat[TransactionModel.column1Id] as int,

@@ -32,6 +32,16 @@ class TransactionClassification {
     }
   }
 
+  Future<int> updateMeIntoDB() async {
+    // do some logic on variables
+    try {
+      return AccountingDB.update(tableName, toMap());
+    } catch (e) {
+      print('TransactionClassification updateMeIntoDB() 01| error:$e');
+      throw e;
+    }
+  }
+
   static Future<List<TransactionClassification?>> allTransactionClasses(String? accountType) async {
     var query = '''
     SELECT *
