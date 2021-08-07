@@ -1,7 +1,7 @@
 import 'package:path/path.dart' as path;
 import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
-import 'package:shop/accounting/accounting_logic/classification/tranClass_tree.dart';
+import 'package:shop/accounting/accounting_logic/classification/classification_tree.dart';
 import 'package:shop/accounting/accounting_logic/floating_account.dart';
 import 'package:shop/accounting/accounting_logic/floating_account_tree.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';

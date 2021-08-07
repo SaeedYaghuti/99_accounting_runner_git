@@ -1,5 +1,5 @@
 import 'package:shop/accounting/accounting_logic/account_ids.dart';
-import 'package:shop/accounting/accounting_logic/classification/tranClass_tree.dart';
+import 'package:shop/accounting/accounting_logic/classification/classification_tree.dart';
 import 'package:shop/accounting/accounting_logic/classification/transaction_classification.dart';
 import 'package:shop/accounting/accounting_logic/floating_account.dart';
 import 'package:shop/accounting/accounting_logic/floating_account_tree.dart';

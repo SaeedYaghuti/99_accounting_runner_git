@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/accounting/accounting_logic/account_ids.dart';
 import 'package:shop/accounting/accounting_logic/account_model.dart';
+import 'package:shop/accounting/accounting_logic/classification/classification_form.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/common/flexible_popup_menu_button.dart';
 import 'package:shop/accounting/common/multi_language_text_widget.dart';
@@ -160,6 +161,10 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
             ),
             SizedBox(height: 10),
             _vouchersAreLoading ? Center(child: CircularProgressIndicator()) : Container(),
+            SizedBox(
+              height: 10,
+            ),
+            _buildClassificationForm(context),
           ],
         ),
       ),
@@ -283,6 +288,16 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       },
     );
     return dataRows;
+  }
+
+  Widget _buildClassificationForm(BuildContext context) {
+    return Container(
+      height: 700,
+      child: ClassificationForm(
+        formDuty: FormDuty.CREATE,
+        notifyNewVoucher: notifyNewVoucher,
+      ),
+    );
   }
 
   void rebuildExpForm(
