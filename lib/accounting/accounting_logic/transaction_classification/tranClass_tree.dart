@@ -1,7 +1,7 @@
 import 'package:shop/accounting/accounting_logic/account_ids.dart';
 import 'package:shop/accounting/expenditure/expenditure_class_tree.dart';
 
-import '../accounting_logic/transaction_classification.dart';
+import 'transaction_classification.dart';
 
 const TRANS_CLASS_TREE = const [
   // GENERAL

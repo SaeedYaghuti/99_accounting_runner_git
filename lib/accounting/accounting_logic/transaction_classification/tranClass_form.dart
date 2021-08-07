@@ -10,6 +10,7 @@ import 'package:shop/accounting/accounting_logic/run_code.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/accounting/accounting_logic/account_dropdown_menu.dart';
 import 'package:shop/accounting/accounting_logic/transaction_class/transaction_classification.dart';
+import 'package:shop/accounting/accounting_logic/transaction_classification/tranClass_form_fields.dart';
 import 'package:shop/accounting/expenditure/expenditure_class_tree.dart';
 import 'package:shop/auth/auth_db_helper.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
@@ -23,8 +24,6 @@ import 'package:shop/accounting/expenditure/expenditure_model.dart';
 import 'package:shop/auth/has_access.dart';
 import 'package:shop/exceptions/not_handled_exception.dart';
 import 'package:shop/shared/show_error_dialog.dart';
-import 'expenditure_dropdown_menu.dart';
-import 'expenditure_form_fields.dart';
 
 class ExpenditureForm extends StatefulWidget {
   final VoucherModel? voucher;
@@ -46,7 +45,7 @@ class ExpenditureForm extends StatefulWidget {
 
 class _ExpenditureFormState extends State<ExpenditureForm> {
   late AuthProviderSQL authProviderSQL;
-  var _fields = ExpenditurFormFields();
+  var _fields = TranClassFormFields();
   var _formDuty = FormDuty.CREATE;
   var _didChangeRun = false;
 
@@ -71,11 +70,11 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     _fields.authId = authProviderSQL.authId;
     _fields.paidBy = hasAccess(
             authProviderSQL: authProviderSQL,
-            vitalPermissions: [ExpenditurFormFields.expenditureExample.paidByAccount?.createTransactionPermission])
-        ? ExpenditurFormFields.expenditureExample.paidByAccount
+            vitalPermissions: [TranClassFormFields.expenditureExample.paidByAccount?.createTransactionPermission])
+        ? TranClassFormFields.expenditureExample.paidByAccount
         : null;
-    _fields.expClass = ExpenditurFormFields.expenditureExample.expClass;
-    _fields.floatAccount = ExpenditurFormFields.expenditureExample.floatAccount;
+    _fields.expClass = TranClassFormFields.expenditureExample.expClass;
+    _fields.floatAccount = TranClassFormFields.expenditureExample.floatAccount;
     switch (widget.formDuty) {
       case FormDuty.READ:
       case FormDuty.CREATE:
@@ -95,7 +94,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   void initStateCreate() {
     // print('EF | init_state | form rebuild for READ or CREATE ...');
     if (EnvironmentProvider.initializeExpenditureForm) {
-      _fields = ExpenditurFormFields.expenditureExample;
+      _fields = TranClassFormFields.expenditureExample;
     }
   }
 
@@ -361,11 +360,11 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
               () {
                 setState(() {
                   _formDuty = FormDuty.CREATE;
-                  _fields = ExpenditurFormFields(
+                  _fields = TranClassFormFields(
                     amount: 0,
                     note: '',
                     date: DateTime.now(),
-                    paidBy: ExpenditurFormFields.expenditureExample.paidByAccount,
+                    paidBy: TranClassFormFields.expenditureExample.paidByAccount,
                   );
                 });
               },
@@ -554,9 +553,9 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       print('EF 01| we need form for create new voucher ...');
       _formDuty = FormDuty.CREATE;
       if (EnvironmentProvider.initializeExpenditureForm) {
-        // _expenditureFormFields = ExpenditurFormFields.expenditureExample;
-        // _selectedDate = ExpenditurFormFields.expenditureExample.date;
-        _fields.date = ExpenditurFormFields.expenditureExample.date;
+        // _expenditureFormFields = TranClassFormFields.expenditureExample;
+        // _selectedDate = TranClassFormFields.expenditureExample.date;
+        _fields.date = TranClassFormFields.expenditureExample.date;
       }
       setState(() {});
       return;
@@ -580,7 +579,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     var creditTransaction = voucherToShowInForm.transactions.firstWhere((tran) => !tran!.isDebit);
     AccountModel.fetchAccountById(debitTransaction!.accountId).then(
       (acc) {
-        _fields = ExpenditurFormFields(
+        _fields = TranClassFormFields(
           id: creditTransaction!.id,
           amount: creditTransaction.amount,
           paidBy: acc,
@@ -739,7 +738,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
 }
 
-enum FormDuty {
+enum TranClassFormDuty {
   READ, // currntly we don't have action for read
   CREATE,
   EDIT,

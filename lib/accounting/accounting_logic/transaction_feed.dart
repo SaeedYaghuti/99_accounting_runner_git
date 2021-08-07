@@ -1,5 +1,5 @@
 import 'package:shop/accounting/accounting_logic/floating_account.dart';
-import 'package:shop/accounting/accounting_logic/transaction_classification.dart';
+import 'package:shop/accounting/accounting_logic/transaction_class/transaction_classification.dart';
 
 class TransactionFeed {
   final String accountId;

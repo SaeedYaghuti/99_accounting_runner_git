@@ -9,14 +9,14 @@ import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/constants.dart';
 import 'package:shop/shared/result_status.dart';
 
-class ExpenditurFormFields {
+class TranClassFormFields {
   final formKey = GlobalKey<FormState>();
 
   int? id;
   int? authId;
   Function? resetState;
 
-  ExpenditurFormFields({
+  TranClassFormFields({
     int? id,
     int? authId,
     AuthProviderSQL? authProvider,
@@ -248,9 +248,9 @@ class ExpenditurFormFields {
   }
 
   // # Example
-  static ExpenditurFormFields get expenditureExample {
+  static TranClassFormFields get expenditureExample {
     AccountModel cashDrawer = ACCOUNTS_TREE.firstWhere((acc) => acc.id == PAID_EXPENDITURE_BY);
-    return ExpenditurFormFields(
+    return TranClassFormFields(
       id: null,
       amount: 3.750,
       paidBy: cashDrawer,

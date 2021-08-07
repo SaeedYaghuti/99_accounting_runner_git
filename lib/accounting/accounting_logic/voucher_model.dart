@@ -1,6 +1,6 @@
 import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
-import 'package:shop/accounting/accounting_logic/transaction_classification.dart';
+import 'package:shop/accounting/accounting_logic/transaction_class/transaction_classification.dart';
 import 'package:shop/accounting/accounting_logic/transaction_feed.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_feed.dart';

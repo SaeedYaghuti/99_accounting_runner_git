@@ -3,11 +3,11 @@ import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
 import 'package:shop/accounting/accounting_logic/floating_account.dart';
 import 'package:shop/accounting/accounting_logic/floating_account_tree.dart';
-import 'package:shop/accounting/accounting_logic/trans_class_tree.dart';
+import 'package:shop/accounting/accounting_logic/transaction_classification/tranClass_tree.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_number_model.dart';
-import 'package:shop/accounting/accounting_logic/transaction_classification.dart';
+import 'package:shop/accounting/accounting_logic/transaction_class/transaction_classification.dart';
 import 'package:shop/accounting/expenditure/expenditure_class_tree.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -95,7 +95,7 @@ class AccountingDB {
 
   static Future<void> insertPredefinedTransactionClasses(Database db) async {
     // tranClassTree
-    for (TransactionClassification tranClass in TRANS_CLASS_TREE) {
+    for (var tranClass in TRANS_CLASS_TREE) {
       int insertResult = await db.insert(
         TransactionClassification.tableName,
         tranClass.toMap(),

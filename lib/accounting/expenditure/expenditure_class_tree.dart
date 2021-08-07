@@ -1,6 +1,6 @@
 import 'package:shop/accounting/accounting_logic/account_ids.dart';
 
-import '../accounting_logic/transaction_classification.dart';
+import '../accounting_logic/transaction_class/transaction_classification.dart';
 
 const EXP_CLASS_TREE = const [
   // MAIN => DEFINE AT TRNS_CLASS_TREE

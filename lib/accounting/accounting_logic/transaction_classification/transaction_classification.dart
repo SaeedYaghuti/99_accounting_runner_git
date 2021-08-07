@@ -1,7 +1,7 @@
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/exceptions/join_exception.dart';
 
-import 'account_model.dart';
+import '../account_model.dart';
 
 class TransactionClassification {
   final String id;
