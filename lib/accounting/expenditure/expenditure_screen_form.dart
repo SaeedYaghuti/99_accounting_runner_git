@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:shop/accounting/accounting_logic/account_model.dart';
+import 'package:shop/accounting/accounting_logic/classification/transaction_classification.dart';
 import 'package:shop/accounting/accounting_logic/float_dropdown_menu.dart';
 import 'package:shop/accounting/accounting_logic/floating_account.dart';
 import 'package:shop/accounting/accounting_logic/floating_account_tree.dart';
@@ -9,7 +10,6 @@ import 'package:shop/accounting/accounting_logic/run_code.dart';
 
 import 'package:provider/provider.dart';
 import 'package:shop/accounting/accounting_logic/account_dropdown_menu.dart';
-import 'package:shop/accounting/accounting_logic/transaction_class/transaction_classification.dart';
 import 'package:shop/accounting/expenditure/expenditure_class_tree.dart';
 import 'package:shop/auth/auth_db_helper.dart';
 import 'package:shop/auth/auth_provider_sql.dart';

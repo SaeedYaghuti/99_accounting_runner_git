@@ -1,5 +1,4 @@
 import 'package:shop/accounting/accounting_logic/floating_account.dart';
-import 'package:shop/accounting/accounting_logic/transaction_class/transaction_classification.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/exceptions/curropted_input.dart';
@@ -7,6 +6,7 @@ import 'package:shop/exceptions/dirty_database.dart';
 import 'package:shop/exceptions/DBException.dart';
 import 'package:shop/shared/seconds_of_time.dart';
 import 'account_model.dart';
+import 'classification/transaction_classification.dart';
 
 class TransactionModel {
   int? id;

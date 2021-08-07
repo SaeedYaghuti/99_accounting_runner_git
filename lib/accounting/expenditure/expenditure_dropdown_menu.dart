@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shop/accounting/accounting_logic/account_ids.dart';
-import 'package:shop/accounting/accounting_logic/transaction_class/transaction_classification.dart';
+import 'package:shop/accounting/accounting_logic/classification/transaction_classification.dart';
 
 import 'expenditure_class_tree.dart';
 
