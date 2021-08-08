@@ -52,7 +52,6 @@ class _ClassificationFormState extends State<ClassificationForm> {
   @override
   void initState() {
     _formDuty = widget.formDuty;
-    _fields.date = DateTime.now();
     _fields.resetState = resetState;
     super.initState();
   }
@@ -65,16 +64,10 @@ class _ClassificationFormState extends State<ClassificationForm> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_didChangeRun) return;
-    // here
     // think for permission ...
-    // ?
+    // when we reach hear it means we have perm; perms should be controll first at caller and then at code
     authProviderSQL = Provider.of<AuthProviderSQL>(context, listen: true);
     _fields.authId = authProviderSQL.authId;
-    _fields.paidBy = hasAccess(
-            authProviderSQL: authProviderSQL,
-            vitalPermissions: [ClassificationFormFields.expenditureExample.paidByAccount?.createTransactionPermission])
-        ? ClassificationFormFields.expenditureExample.paidByAccount
-        : null;
     _fields.expClass = ClassificationFormFields.expenditureExample.expClass;
     _fields.floatAccount = ClassificationFormFields.expenditureExample.floatAccount;
     switch (widget.formDuty) {
@@ -171,17 +164,15 @@ class _ClassificationFormState extends State<ClassificationForm> {
           width: 1200,
           child: ListView(
             children: [
-              _buildAmount(context),
+              _buildParentClass(context),
+              SizedBox(height: 20, width: 20),
+              _buildTitleEnglish(context),
+              SizedBox(height: 20, width: 20),
+              _buildTitlePersian(context),
+              SizedBox(height: 20, width: 20),
+              _buildTitleArabic(context),
               SizedBox(height: 20, width: 20),
               _buildNote(context),
-              SizedBox(height: 20, width: 20),
-              _buildDatePickerButton(context),
-              SizedBox(height: 20, width: 20),
-              _buildPaidBy(context),
-              SizedBox(height: 20, width: 20),
-              _buildExpClass(context),
-              SizedBox(height: 20, width: 20),
-              _buildFloatAccount(context),
               SizedBox(height: 20, width: 20),
               _buildSubmitButtons(context),
             ],
@@ -191,40 +182,74 @@ class _ClassificationFormState extends State<ClassificationForm> {
     );
   } // build
 
-  Widget _buildAmount(BuildContext context) {
-    // print('EXP_FRM | _buildAmount | run ...');
+  Widget _buildParentClass(BuildContext context) {
     return TextFormField(
-      decoration: _buildInputDecoration('Amount', Icons.monetization_on),
+      decoration: _buildInputDecoration('Parent Class', Icons.bookmark_outline_rounded),
       style: _buildTextStyle(),
-      focusNode: _fields.amountFocusNode,
-      controller: _fields.amountController,
+      focusNode: _fields.parentClassFocusNode,
+      controller: _fields.parentClassController,
       textInputAction: TextInputAction.next,
-      keyboardType: TextInputType.number,
-      onFieldSubmitted: (value) {
-        FocusScope.of(context).requestFocus(_fields.noteFocusNode);
+      onTap: () {
+        _pickExpClass((tappedExpClass) {
+          _fields.parentClass = tappedExpClass;
+        });
+        FocusScope.of(context).requestFocus(_fields.dateFocusNode);
       },
-      validator: _fields.validateAmount,
-      onSaved: (amount) {
-        _fields.amount = double.tryParse(amount ?? '');
+      validator: _fields.validateParentClass,
+      // onSaved: (amount) {
+      //   we do add saving at expFormFields when setting data
+      // },
+    );
+  }
+
+  Widget _buildTitleEnglish(BuildContext context) {
+    return TextFormField(
+      decoration: _buildInputDecoration('English Title', Icons.title_outlined),
+      style: _buildTextStyle(),
+      textInputAction: TextInputAction.next,
+      controller: _fields.titleEnglishController,
+      onFieldSubmitted: (value) {
+        FocusScope.of(context).requestFocus(_fields.paidByFocusNode);
+      },
+      validator: _fields.validateTitleEnglish,
+      onSaved: (titleEnglish) {
+        // print('titleField.onSaved: titleField: $titleField');
+        _fields.titleEnglish = titleEnglish;
       },
     );
   }
 
-  Widget _buildPaidBy(BuildContext context) {
+  Widget _buildTitlePersian(BuildContext context) {
     return TextFormField(
-      decoration: _buildInputDecoration('Paid By', Icons.credit_card),
+      decoration: _buildInputDecoration('Persian Title', Icons.language_outlined),
       style: _buildTextStyle(),
-      focusNode: _fields.paidByFocusNode,
-      controller: _fields.paidByController,
       textInputAction: TextInputAction.next,
-      onTap: () {
-        _pickAccount();
-        FocusScope.of(context).requestFocus(_fields.dateFocusNode);
+      controller: _fields.titlePersianController,
+      onFieldSubmitted: (value) {
+        FocusScope.of(context).requestFocus(_fields.paidByFocusNode);
       },
-      validator: _fields.validatePaidBy,
-      // onSaved: (amount) {
-      //   we do add saving at expFormFields when setting data
-      // },
+      validator: _fields.validateTitlePersian,
+      onSaved: (titlePersian) {
+        // print('titleField.onSaved: titleField: $titleField');
+        _fields.titlePersian = titlePersian;
+      },
+    );
+  }
+
+  Widget _buildTitleArabic(BuildContext context) {
+    return TextFormField(
+      decoration: _buildInputDecoration('Arabic Title', Icons.language_outlined),
+      style: _buildTextStyle(),
+      textInputAction: TextInputAction.next,
+      controller: _fields.titleArabicController,
+      onFieldSubmitted: (value) {
+        FocusScope.of(context).requestFocus(_fields.paidByFocusNode);
+      },
+      validator: _fields.validateTitleArabic,
+      onSaved: (titleArabic) {
+        // print('titleField.onSaved: titleField: $titleField');
+        _fields.titleArabic = titleArabic;
+      },
     );
   }
 
@@ -244,60 +269,6 @@ class _ClassificationFormState extends State<ClassificationForm> {
         // print('titleField.onSaved: titleField: $titleField');
         _fields.note = note;
       },
-    );
-  }
-
-  Widget _buildExpClass(BuildContext context) {
-    return TextFormField(
-      decoration: _buildInputDecoration('Tag', Icons.bookmark_outline_rounded),
-      style: _buildTextStyle(),
-      focusNode: _fields.expClassFocusNode,
-      controller: _fields.expClassController,
-      textInputAction: TextInputAction.next,
-      onTap: () {
-        _pickExpClass();
-        FocusScope.of(context).requestFocus(_fields.dateFocusNode);
-      },
-      validator: _fields.validateExpClass,
-      // onSaved: (amount) {
-      //   we do add saving at expFormFields when setting data
-      // },
-    );
-  }
-
-  Widget _buildFloatAccount(BuildContext context) {
-    return TextFormField(
-      decoration: _buildInputDecoration('Float Account', Icons.account_box_outlined),
-      style: _buildTextStyle(),
-      focusNode: _fields.floatFocusNode,
-      controller: _fields.floatController,
-      textInputAction: TextInputAction.next,
-      onTap: () {
-        _pickFloat();
-        FocusScope.of(context).requestFocus(_fields.dateFocusNode);
-      },
-      validator: _fields.validateFloatAccount,
-      // onSaved: (amount) {
-      //   we do add saving at expFormFields when setting data
-      // },
-    );
-  }
-
-  Widget _buildDatePickerButton(BuildContext context) {
-    return TextFormField(
-      decoration: _buildInputDecoration('Date', Icons.date_range_rounded),
-      style: _buildTextStyle(),
-      focusNode: _fields.dateFocusNode,
-      controller: _fields.dateController,
-      textInputAction: TextInputAction.next,
-      onTap: () {
-        pickDate();
-        FocusScope.of(context).requestFocus(_fields.noteFocusNode);
-      },
-      validator: _fields.validateDate,
-      // onSaved: (amount) {
-      //   we do add saving at expFormFields when setting data
-      // },
     );
   }
 
@@ -427,38 +398,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
     );
   }
 
-  void _pickAccount() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            title: Text('SELECT ACCOUNT THAT PAID:'),
-            children: [
-              AccountDropdownMenu(
-                authProvider: authProviderSQL,
-                formDuty: _formDuty,
-                unwantedAccountIds: [
-                  ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
-                ],
-                expandedAccountIds: [
-                  ACCOUNTS_ID.LEDGER_ACCOUNT_ID,
-                ],
-                tapHandler: (AccountModel tappedAccount) {
-                  // print(
-                  //   'ExpForm paidBy tapHandler| tapped of ${tappedAccount.titleEnglish}',
-                  // );
-                  Navigator.of(context).pop();
-                  setState(() {
-                    _fields.paidBy = tappedAccount;
-                  });
-                },
-              ),
-            ],
-          );
-        });
-  }
-
-  void _pickExpClass() {
+  void _pickExpClass(Function(TransactionClassification) selectedClassHandler) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -475,57 +415,14 @@ class _ClassificationFormState extends State<ClassificationForm> {
                 tapHandler: (TransactionClassification tappedExpClass) {
                   Navigator.of(context).pop();
                   setState(() {
-                    _fields.expClass = tappedExpClass;
+                    // _fields.expClass = tappedExpClass;
+                    selectedClassHandler(tappedExpClass);
                   });
                 },
               ),
             ],
           );
         });
-  }
-
-  void _pickFloat() {
-    showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return SimpleDialog(
-            title: Text('SELECT FLOAT ACCOUNT:'),
-            children: [
-              FloatDropdownMenu(
-                authProvider: authProviderSQL,
-                formDuty: _formDuty,
-                expandedAccountIds: [
-                  FloatAccountIds.ROOT_FLOAT_ACCOUNT_ID,
-                  FloatAccountIds.SALESMAN_FLOAT_ACCOUNT_ID,
-                ],
-                unwantedAccountIds: [],
-                tapHandler: (FloatingAccount tappedFloat) {
-                  Navigator.of(context).pop();
-                  setState(() {
-                    _fields.floatAccount = tappedFloat;
-                  });
-                },
-              ),
-            ],
-          );
-        });
-  }
-
-  void pickDate() {
-    showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2019),
-      lastDate: DateTime.now(),
-    ).then((date) {
-      setState(() {
-        if (date == null) {
-          _fields.date = DateTime.now();
-        } else {
-          _fields.date = date;
-        }
-      });
-    });
   }
 
   void initializeForm(VoucherModel? voucherToShowInForm, int? expenseIdToShowInForm) {
@@ -637,84 +534,4 @@ class _ClassificationFormState extends State<ClassificationForm> {
   }
 
   var _isLoading = false;
-
-  // ### Depricated method
-  Widget _buildPaidBy0(BuildContext context) {
-    return OutlinedButton.icon(
-      focusNode: _fields.paidByFocusNode,
-      style: OutlinedButton.styleFrom(
-        primary: _fields.hasErrorPaidBy ? Colors.white : Theme.of(context).primaryColor,
-        backgroundColor: _fields.hasErrorPaidBy ? Colors.pinkAccent : Colors.white,
-      ),
-      onPressed: () {
-        _pickAccount();
-        FocusScope.of(context).requestFocus(_fields.dateFocusNode);
-      },
-      icon: Icon(
-        Icons.credit_card_rounded,
-        // color: Theme.of(context).primaryColor,
-      ),
-      label: Text(
-        _fields.paidByAccount?.titleEnglish ?? 'SELECT ACCOUNT',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 20,
-          // color: Theme.of(context).primaryColor,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildExpClass0(BuildContext context) {
-    return OutlinedButton.icon(
-      focusNode: _fields.expClassFocusNode,
-      style: OutlinedButton.styleFrom(
-        primary: _fields.hasErrorExpClass ? Colors.white : Theme.of(context).primaryColor,
-        backgroundColor: _fields.hasErrorExpClass ? Colors.pinkAccent : Colors.white,
-      ),
-      onPressed: () {
-        _pickExpClass();
-        FocusScope.of(context).requestFocus(_fields.dateFocusNode);
-      },
-      icon: Icon(
-        Icons.category_outlined,
-        // color: Theme.of(context).primaryColor,
-      ),
-      label: Text(
-        _fields.expClass?.titleEnglish ?? 'SELECT EXPENCE CLASS',
-        style: TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 20,
-          // color: Theme.of(context).primaryColor,
-        ),
-      ),
-    );
-  }
-
-  // Widget _buildDatePickerButton0(BuildContext context) {
-  //   return OutlinedButton.icon(
-  //     focusNode: _fields.dateFocusNode,
-  //     style: OutlinedButton.styleFrom(
-  //       primary: _fields.hasErrorDate ? Colors.white : Theme.of(context).primaryColor,
-  //       backgroundColor: _fields.hasErrorDate ? Colors.pinkAccent : Colors.white,
-  //     ),
-  //     onPressed: () {
-  //       pickDate();
-  //       FocusScope.of(context).requestFocus(_fields.dateFocusNode);
-  //     },
-  //     icon: Icon(
-  //       Icons.date_range_rounded,
-  //       // color: Theme.of(context).primaryColor,
-  //     ),
-  //     label: Text(
-  //       _buildTextForDatePicker(),
-  //       style: TextStyle(
-  //         fontWeight: FontWeight.bold,
-  //         fontSize: 20,
-  //         // color: Theme.of(context).primaryColor,
-  //       ),
-  //     ),
-  //   );
-  // }
-
 }
