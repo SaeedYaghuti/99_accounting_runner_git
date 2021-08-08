@@ -295,7 +295,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       height: 700,
       child: ClassificationForm(
         formDuty: FormDuty.CREATE,
-        notifyNewVoucher: notifyNewVoucher,
+        notifyTranClassChanged: notifyNewVoucher,
       ),
     );
   }

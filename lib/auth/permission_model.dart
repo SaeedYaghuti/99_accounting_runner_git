@@ -36,50 +36,43 @@ class PermissionModel {
     var perms = [
       PermissionModel(
         id: '${accountID}_CREATE_TRANSACTION',
-        titleEnglish:
-            '${titleEnglish.toUpperCase()} CREATE TRANSACTION PERMISSION',
+        titleEnglish: '${titleEnglish.toUpperCase()} CREATE TRANSACTION PERMISSION',
         titlePersian: 'ايجاد تراكنش $titlePersian',
         titleArabic: 'تحديث فاتورة حق $titleArabic',
       ),
       PermissionModel(
         id: '${accountID}_READ_ALL_TRANSACTION',
-        titleEnglish:
-            '${titleEnglish.toUpperCase()} READ ALL TRANSACTION PERMISSION',
+        titleEnglish: '${titleEnglish.toUpperCase()} READ ALL TRANSACTION PERMISSION',
         titlePersian: 'مشاهده تمام تراكنش $titlePersian',
         titleArabic: 'قراة كل فواتير $titleArabic',
       ),
       PermissionModel(
         id: '${accountID}_READ_OWN_TRANSACTION',
-        titleEnglish:
-            '${titleEnglish.toUpperCase()} READ OWN TRANSACTION PERMISSION',
+        titleEnglish: '${titleEnglish.toUpperCase()} READ OWN TRANSACTION PERMISSION',
         titlePersian: 'مشاهده تراكنش های خودم براي $titlePersian',
         titleArabic: 'قراه فواتيري حق $titleArabic',
       ),
       PermissionModel(
         id: '${accountID}_EDIT_ALL_TRANSACTION',
-        titleEnglish:
-            '${titleEnglish.toUpperCase()} EDIT ALL TRANSACTION PERMISSION',
+        titleEnglish: '${titleEnglish.toUpperCase()} EDIT ALL TRANSACTION PERMISSION',
         titlePersian: 'اصلاح تمام تراكنش های $titlePersian',
         titleArabic: 'تصليح كل فواتير $titleArabic',
       ),
       PermissionModel(
         id: '${accountID}_EDIT_OWN_TRANSACTION',
-        titleEnglish:
-            '${titleEnglish.toUpperCase()} EDIT OWN TRANSACTION PERMISSION',
+        titleEnglish: '${titleEnglish.toUpperCase()} EDIT OWN TRANSACTION PERMISSION',
         titlePersian: 'اصلاح تراكنش های خودم براي $titlePersian',
         titleArabic: 'تصليح فواتيري حق $titleArabic',
       ),
       PermissionModel(
         id: '${accountID}_DELETE_ALL_TRANSACTION',
-        titleEnglish:
-            '${titleEnglish.toUpperCase()} DELETE ALL TRANSACTION PERMISSION',
+        titleEnglish: '${titleEnglish.toUpperCase()} DELETE ALL TRANSACTION PERMISSION',
         titlePersian: 'حذف تمام تراكنش های $titlePersian',
         titleArabic: 'حذف كل فواتير $titleArabic',
       ),
       PermissionModel(
         id: '${accountID}_DELETE_OWN_TRANSACTION',
-        titleEnglish:
-            '${titleEnglish.toUpperCase()} DELETE OWN TRANSACTION PERMISSION',
+        titleEnglish: '${titleEnglish.toUpperCase()} DELETE OWN TRANSACTION PERMISSION',
         titlePersian: 'حذف تراكنش های خودم براي $titlePersian',
         titleArabic: 'حذف فواتيري حق $titleArabic',
       ),
@@ -125,8 +118,7 @@ class PermissionModel {
     }
   }
 
-  static Future<PermissionModel?> fetchPermissionById(
-      String permissionId) async {
+  static Future<PermissionModel?> fetchPermissionById(String permissionId) async {
     final query = '''
     SELECT *
     FROM $tableName
@@ -180,8 +172,7 @@ class PermissionModel {
   static const String column4TitleArabic = 'permission_title_arabic';
   static const String column5Note = 'permission_note';
 
-  static const String QUERY_CREATE_PERMISSION_TABLE =
-      '''CREATE TABLE $tableName (
+  static const String QUERY_CREATE_PERMISSION_TABLE = '''CREATE TABLE $tableName (
     $column1Id TEXT PRIMARY KEY, 
     $column2TitleEnglish TEXT, 
     $column3TitlePersian TEXT, 
@@ -208,10 +199,8 @@ class PermissionModel {
     }
     var permission = PermissionModel(
       id: permissionMap[PermissionModel.column1Id] as String,
-      titleEnglish:
-          permissionMap[PermissionModel.column2TitleEnglish] as String,
-      titlePersian:
-          permissionMap[PermissionModel.column3TitlePersian] as String,
+      titleEnglish: permissionMap[PermissionModel.column2TitleEnglish] as String,
+      titlePersian: permissionMap[PermissionModel.column3TitlePersian] as String,
       titleArabic: permissionMap[PermissionModel.column4TitleArabic] as String,
       note: permissionMap[PermissionModel.column5Note] as String,
     );
@@ -231,30 +220,21 @@ class PermissionModel {
 
   // ACCOUNTING GROUPS
   // nobody have this perm
-  static const String LEDGER_READ_ALL_TRANSACTION =
-      'LEDGER_READ_ALL_TRANSACTION';
+  static const String LEDGER_READ_ALL_TRANSACTION = 'LEDGER_READ_ALL_TRANSACTION';
 
   // nobody have this perm
   static const String SALES_READ_ALL_TRANSACTION = 'SALES_READ_ALL_TRANSACTION';
 
   static const String EXPENDITURE_CATEGORY = 'EXPENDITURE_CATEGORY';
-  static const String EXPENDITURE_CREATE_TRANSACTION =
-      'EXPENDITURE_CREATE_TRANSACTION';
-  static const String EXPENDITURE_READ_ALL_TRANSACTION =
-      'EXPENDITURE_READ_ALL_TRANSACTION';
-  static const String EXPENDITURE_READ_OWN_TRANSACTION =
-      'EXPENDITURE_READ_OWN_TRANSACTION';
-  static const String EXPENDITURE_EDIT_ALL_TRANSACTION =
-      'EXPENDITURE_EDIT_ALL_TRANSACTION';
-  static const String EXPENDITURE_EDIT_OWN_TRANSACTION =
-      'EXPENDITURE_EDIT_OWN_TRANSACTION';
-  static const String EXPENDITURE_DELETE_ALL_TRANSACTION =
-      'EXPENDITURE_DELETE_ALL_TRANSACTION';
-  static const String EXPENDITURE_DELETE_OWN_TRANSACTION =
-      'EXPENDITURE_DELETE_OWN_TRANSACTION';
+  static const String EXPENDITURE_CREATE_TRANSACTION = 'EXPENDITURE_CREATE_TRANSACTION';
+  static const String EXPENDITURE_READ_ALL_TRANSACTION = 'EXPENDITURE_READ_ALL_TRANSACTION';
+  static const String EXPENDITURE_READ_OWN_TRANSACTION = 'EXPENDITURE_READ_OWN_TRANSACTION';
+  static const String EXPENDITURE_EDIT_ALL_TRANSACTION = 'EXPENDITURE_EDIT_ALL_TRANSACTION';
+  static const String EXPENDITURE_EDIT_OWN_TRANSACTION = 'EXPENDITURE_EDIT_OWN_TRANSACTION';
+  static const String EXPENDITURE_DELETE_ALL_TRANSACTION = 'EXPENDITURE_DELETE_ALL_TRANSACTION';
+  static const String EXPENDITURE_DELETE_OWN_TRANSACTION = 'EXPENDITURE_DELETE_OWN_TRANSACTION';
 
-  static const String ASSETS_READ_ALL_TRANSACTION =
-      'ASSETS_READ_ALL_TRANSACTION';
+  static const String ASSETS_READ_ALL_TRANSACTION = 'ASSETS_READ_ALL_TRANSACTION';
 
   static const String BANKS_READ_ALL_TRANSACTION = 'BANKS_READ_ALL_TRANSACTION';
 
@@ -266,92 +246,56 @@ class PermissionModel {
   static const String NBO_DELETE_ALL_TRANSACTION = 'NBO_DELETE_ALL_TRANSACTION';
   static const String NBO_DELETE_OWN_TRANSACTION = 'NBO_DELETE_OWN_TRANSACTION';
 
-  static const String PETTY_CASH_CREATE_TRANSACTION =
-      'PETTY_CASH_CREATE_TRANSACTION';
-  static const String PETTY_CASH_READ_ALL_TRANSACTION =
-      'PETTY_CASH_READ_ALL_TRANSACTION';
-  static const String PETTY_CASH_READ_OWN_TRANSACTION =
-      'PETTY_CASH_READ_OWN_TRANSACTION';
-  static const String PETTY_CASH_EDIT_ALL_TRANSACTION =
-      'PETTY_CASH_EDIT_ALL_TRANSACTION';
-  static const String PETTY_CASH_EDIT_OWN_TRANSACTION =
-      'PETTY_CASH_EDIT_OWN_TRANSACTION';
-  static const String PETTY_CASH_DELETE_ALL_TRANSACTION =
-      'PETTY_CASH_DELETE_ALL_TRANSACTION';
-  static const String PETTY_CASH_DELETE_OWN_TRANSACTION =
-      'PETTY_CASH_DELETE_OWN_TRANSACTION';
+  static const String PETTY_CASH_CREATE_TRANSACTION = 'PETTY_CASH_CREATE_TRANSACTION';
+  static const String PETTY_CASH_READ_ALL_TRANSACTION = 'PETTY_CASH_READ_ALL_TRANSACTION';
+  static const String PETTY_CASH_READ_OWN_TRANSACTION = 'PETTY_CASH_READ_OWN_TRANSACTION';
+  static const String PETTY_CASH_EDIT_ALL_TRANSACTION = 'PETTY_CASH_EDIT_ALL_TRANSACTION';
+  static const String PETTY_CASH_EDIT_OWN_TRANSACTION = 'PETTY_CASH_EDIT_OWN_TRANSACTION';
+  static const String PETTY_CASH_DELETE_ALL_TRANSACTION = 'PETTY_CASH_DELETE_ALL_TRANSACTION';
+  static const String PETTY_CASH_DELETE_OWN_TRANSACTION = 'PETTY_CASH_DELETE_OWN_TRANSACTION';
 
-  static const String CASH_DRAWER_CREATE_TRANSACTION =
-      'CASH_DRAWER_CREATE_TRANSACTION';
-  static const String CASH_DRAWER_READ_ALL_TRANSACTION =
-      'CASH_DRAWER_READ_ALL_TRANSACTION';
-  static const String CASH_DRAWER_READ_OWN_TRANSACTION =
-      'CASH_DRAWER_READ_OWN_TRANSACTION';
-  static const String CASH_DRAWER_EDIT_ALL_TRANSACTION =
-      'CASH_DRAWER_EDIT_ALL_TRANSACTION';
-  static const String CASH_DRAWER_EDIT_OWN_TRANSACTION =
-      'CASH_DRAWER_EDIT_OWN_TRANSACTION';
-  static const String CASH_DRAWER_DELETE_ALL_TRANSACTION =
-      'CASH_DRAWER_DELETE_ALL_TRANSACTION';
-  static const String CASH_DRAWER_DELETE_OWN_TRANSACTION =
-      'CASH_DRAWER_DELETE_OWN_TRANSACTION';
+  static const String CASH_DRAWER_CREATE_TRANSACTION = 'CASH_DRAWER_CREATE_TRANSACTION';
+  static const String CASH_DRAWER_READ_ALL_TRANSACTION = 'CASH_DRAWER_READ_ALL_TRANSACTION';
+  static const String CASH_DRAWER_READ_OWN_TRANSACTION = 'CASH_DRAWER_READ_OWN_TRANSACTION';
+  static const String CASH_DRAWER_EDIT_ALL_TRANSACTION = 'CASH_DRAWER_EDIT_ALL_TRANSACTION';
+  static const String CASH_DRAWER_EDIT_OWN_TRANSACTION = 'CASH_DRAWER_EDIT_OWN_TRANSACTION';
+  static const String CASH_DRAWER_DELETE_ALL_TRANSACTION = 'CASH_DRAWER_DELETE_ALL_TRANSACTION';
+  static const String CASH_DRAWER_DELETE_OWN_TRANSACTION = 'CASH_DRAWER_DELETE_OWN_TRANSACTION';
 
-  static const String DEBTORS_READ_ALL_TRANSACTION =
-      'DEBTORS_READ_ALL_TRANSACTION';
+  static const String DEBTORS_READ_ALL_TRANSACTION = 'DEBTORS_READ_ALL_TRANSACTION';
 
   // nobody have this perm
-  static const String LIABILITIES_CREATE_TRANSACTION_X =
-      'LIABILITIES_CREATE_TRANSACTION_X';
-  static const String LIABILITIES_READ_ALL_TRANSACTION =
-      'LIABILITIES_READ_ALL_TRANSACTION';
+  static const String LIABILITIES_CREATE_TRANSACTION_X = 'LIABILITIES_CREATE_TRANSACTION_X';
+  static const String LIABILITIES_READ_ALL_TRANSACTION = 'LIABILITIES_READ_ALL_TRANSACTION';
 
   static const String SELL_POINT_CATEGORY = 'SELL_POINT_CATEGORY';
 
   static const String RETAIL_CATEGORY = 'RETAIL_CATEGORY';
   static const String RETAIL_CREATE_TRANSACTION = 'RETAIL_CREATE_TRANSACTION';
-  static const String RETAIL_READ_ALL_TRANSACTION =
-      'RETAIL_READ_ALL_TRANSACTION';
-  static const String RETAIL_READ_OWN_TRANSACTION =
-      'RETAIL_READ_OWN_TRANSACTION';
-  static const String RETAIL_EDIT_ALL_TRANSACTION =
-      'RETAIL_EDIT_ALL_TRANSACTION';
-  static const String RETAIL_EDIT_OWN_TRANSACTION =
-      'RETAIL_EDIT_OWN_TRANSACTION';
-  static const String RETAIL_DELETE_ALL_TRANSACTION =
-      'RETAIL_DELETE_ALL_TRANSACTION';
-  static const String RETAIL_DELETE_OWN_TRANSACTION =
-      'RETAIL_DELETE_OWN_TRANSACTION';
+  static const String RETAIL_READ_ALL_TRANSACTION = 'RETAIL_READ_ALL_TRANSACTION';
+  static const String RETAIL_READ_OWN_TRANSACTION = 'RETAIL_READ_OWN_TRANSACTION';
+  static const String RETAIL_EDIT_ALL_TRANSACTION = 'RETAIL_EDIT_ALL_TRANSACTION';
+  static const String RETAIL_EDIT_OWN_TRANSACTION = 'RETAIL_EDIT_OWN_TRANSACTION';
+  static const String RETAIL_DELETE_ALL_TRANSACTION = 'RETAIL_DELETE_ALL_TRANSACTION';
+  static const String RETAIL_DELETE_OWN_TRANSACTION = 'RETAIL_DELETE_OWN_TRANSACTION';
 
   static const String WHOLESALE_CATEGORY = 'WHOLESALE_CATEGORY';
-  static const String WHOLESALE_CREATE_TRANSACTION =
-      'WHOLESALE_CREATE_TRANSACTION';
-  static const String WHOLESALE_READ_ALL_TRANSACTION =
-      'WHOLESALE_READ_ALL_TRANSACTION';
-  static const String WHOLESALE_READ_OWN_TRANSACTION =
-      'WHOLESALE_READ_OWN_TRANSACTION';
-  static const String WHOLESALE_EDIT_ALL_TRANSACTION =
-      'WHOLESALE_EDIT_ALL_TRANSACTION';
-  static const String WHOLESALE_EDIT_OWN_TRANSACTION =
-      'WHOLESALE_EDIT_OWN_TRANSACTION';
-  static const String WHOLESALE_DELETE_ALL_TRANSACTION =
-      'WHOLESALE_DELETE_ALL_TRANSACTION';
-  static const String WHOLESALE_DELETE_OWN_TRANSACTION =
-      'WHOLESALE_DELETE_OWN_TRANSACTION';
+  static const String WHOLESALE_CREATE_TRANSACTION = 'WHOLESALE_CREATE_TRANSACTION';
+  static const String WHOLESALE_READ_ALL_TRANSACTION = 'WHOLESALE_READ_ALL_TRANSACTION';
+  static const String WHOLESALE_READ_OWN_TRANSACTION = 'WHOLESALE_READ_OWN_TRANSACTION';
+  static const String WHOLESALE_EDIT_ALL_TRANSACTION = 'WHOLESALE_EDIT_ALL_TRANSACTION';
+  static const String WHOLESALE_EDIT_OWN_TRANSACTION = 'WHOLESALE_EDIT_OWN_TRANSACTION';
+  static const String WHOLESALE_DELETE_ALL_TRANSACTION = 'WHOLESALE_DELETE_ALL_TRANSACTION';
+  static const String WHOLESALE_DELETE_OWN_TRANSACTION = 'WHOLESALE_DELETE_OWN_TRANSACTION';
 
   static const String PURCHAS_CATEGORY = 'PURCHAS_CATEGORY';
   static const String PURCHAS_CREATE_TRANSACTION = 'PURCHAS_CREATE_TRANSACTION';
-  static const String PURCHAS_READ_ALL_TRANSACTION =
-      'PURCHAS_READ_ALL_TRANSACTION';
-  static const String PURCHAS_READ_OWN_TRANSACTION =
-      'PURCHAS_READ_OWN_TRANSACTION';
-  static const String PURCHAS_EDIT_ALL_TRANSACTION =
-      'PURCHAS_EDIT_ALL_TRANSACTION';
-  static const String PURCHAS_EDIT_OWN_TRANSACTION =
-      'PURCHAS_EDIT_OWN_TRANSACTION';
-  static const String PURCHAS_DELETE_ALL_TRANSACTION =
-      'PURCHAS_DELETE_ALL_TRANSACTION';
-  static const String PURCHAS_DELETE_OWN_TRANSACTION =
-      'PURCHAS_DELETE_OWN_TRANSACTION';
+  static const String PURCHAS_READ_ALL_TRANSACTION = 'PURCHAS_READ_ALL_TRANSACTION';
+  static const String PURCHAS_READ_OWN_TRANSACTION = 'PURCHAS_READ_OWN_TRANSACTION';
+  static const String PURCHAS_EDIT_ALL_TRANSACTION = 'PURCHAS_EDIT_ALL_TRANSACTION';
+  static const String PURCHAS_EDIT_OWN_TRANSACTION = 'PURCHAS_EDIT_OWN_TRANSACTION';
+  static const String PURCHAS_DELETE_ALL_TRANSACTION = 'PURCHAS_DELETE_ALL_TRANSACTION';
+  static const String PURCHAS_DELETE_OWN_TRANSACTION = 'PURCHAS_DELETE_OWN_TRANSACTION';
 
   static const String ITEM_CATEGORY = 'ITEM_CATEGORY';
   static const String ITEM_CREATE_TRANSACTION = 'ITEM_CREATE_TRANSACTION';
@@ -359,45 +303,31 @@ class PermissionModel {
   static const String ITEM_READ_OWN_TRANSACTION = 'ITEM_READ_OWN_TRANSACTION';
   static const String ITEM_EDIT_ALL_TRANSACTION = 'ITEM_EDIT_ALL_TRANSACTION';
   static const String ITEM_EDIT_OWN_TRANSACTION = 'ITEM_EDIT_OWN_TRANSACTION';
-  static const String ITEM_DELETE_ALL_TRANSACTION =
-      'ITEM_DELETE_ALL_TRANSACTION';
-  static const String ITEM_DELETE_OWN_TRANSACTION =
-      'ITEM_DELETE_OWN_TRANSACTION';
+  static const String ITEM_DELETE_ALL_TRANSACTION = 'ITEM_DELETE_ALL_TRANSACTION';
+  static const String ITEM_DELETE_OWN_TRANSACTION = 'ITEM_DELETE_OWN_TRANSACTION';
 
   static const String MONEY_MOVEMENT_CATEGORY = 'MONEY_MOVEMENT_CATEGORY';
-  static const String MONEY_MOVEMENT_CREATE_TRANSACTION =
-      'MONEY_MOVEMENT_CREATE_TRANSACTION';
-  static const String MONEY_MOVEMENT_READ_ALL_TRANSACTION =
-      'MONEY_MOVEMENT_READ_ALL_TRANSACTION';
-  static const String MONEY_MOVEMENT_READ_OWN_TRANSACTION =
-      'MONEY_MOVEMENT_READ_OWN_TRANSACTION';
-  static const String MONEY_MOVEMENT_EDIT_ALL_TRANSACTION =
-      'MONEY_MOVEMENT_EDIT_ALL_TRANSACTION';
-  static const String MONEY_MOVEMENT_EDIT_OWN_TRANSACTION =
-      'MONEY_MOVEMENT_EDIT_OWN_TRANSACTION';
-  static const String MONEY_MOVEMENT_DELETE_ALL_TRANSACTION =
-      'MONEY_MOVEMENT_DELETE_ALL_TRANSACTION';
-  static const String MONEY_MOVEMENT_DELETE_OWN_TRANSACTION =
-      'MONEY_MOVEMENT_DELETE_OWN_TRANSACTION';
+  static const String MONEY_MOVEMENT_CREATE_TRANSACTION = 'MONEY_MOVEMENT_CREATE_TRANSACTION';
+  static const String MONEY_MOVEMENT_READ_ALL_TRANSACTION = 'MONEY_MOVEMENT_READ_ALL_TRANSACTION';
+  static const String MONEY_MOVEMENT_READ_OWN_TRANSACTION = 'MONEY_MOVEMENT_READ_OWN_TRANSACTION';
+  static const String MONEY_MOVEMENT_EDIT_ALL_TRANSACTION = 'MONEY_MOVEMENT_EDIT_ALL_TRANSACTION';
+  static const String MONEY_MOVEMENT_EDIT_OWN_TRANSACTION = 'MONEY_MOVEMENT_EDIT_OWN_TRANSACTION';
+  static const String MONEY_MOVEMENT_DELETE_ALL_TRANSACTION = 'MONEY_MOVEMENT_DELETE_ALL_TRANSACTION';
+  static const String MONEY_MOVEMENT_DELETE_OWN_TRANSACTION = 'MONEY_MOVEMENT_DELETE_OWN_TRANSACTION';
 
   static const String REPORT_CATEGORY = 'REPORT_CATEGORY';
-  static const String REPORT_READ_ALL_TRANSACTION =
-      'REPORT_READ_ALL_TRANSACTION';
+  static const String REPORT_READ_ALL_TRANSACTION = 'REPORT_READ_ALL_TRANSACTION';
 
   static const String ACCOUNT_CATEGORY = 'ACCOUNT_CATEGORY';
   static const String ACCOUNT_CREATE_TRANSACTION = 'ACCOUNT_CREATE_TRANSACTION';
-  static const String ACCOUNT_READ_ALL_TRANSACTION =
-      'ACCOUNT_READ_ALL_TRANSACTION';
-  static const String ACCOUNT_READ_OWN_TRANSACTION =
-      'ACCOUNT_READ_OWN_TRANSACTION';
-  static const String ACCOUNT_EDIT_ALL_TRANSACTION =
-      'ACCOUNT_EDIT_ALL_TRANSACTION';
-  static const String ACCOUNT_EDIT_OWN_TRANSACTION =
-      'ACCOUNT_EDIT_OWN_TRANSACTION';
-  static const String ACCOUNT_DELETE_ALL_TRANSACTION =
-      'ACCOUNT_DELETE_ALL_TRANSACTION';
-  static const String ACCOUNT_DELETE_OWN_TRANSACTION =
-      'ACCOUNT_DELETE_OWN_TRANSACTION';
+  static const String ACCOUNT_READ_ALL_TRANSACTION = 'ACCOUNT_READ_ALL_TRANSACTION';
+  static const String ACCOUNT_READ_OWN_TRANSACTION = 'ACCOUNT_READ_OWN_TRANSACTION';
+  static const String ACCOUNT_EDIT_ALL_TRANSACTION = 'ACCOUNT_EDIT_ALL_TRANSACTION';
+  static const String ACCOUNT_EDIT_OWN_TRANSACTION = 'ACCOUNT_EDIT_OWN_TRANSACTION';
+  static const String ACCOUNT_DELETE_ALL_TRANSACTION = 'ACCOUNT_DELETE_ALL_TRANSACTION';
+  static const String ACCOUNT_DELETE_OWN_TRANSACTION = 'ACCOUNT_DELETE_OWN_TRANSACTION';
 
   static const String ITEM_SUMMERY_CATEGORY = 'ITEM_SUMMERY_CATEGORY';
+
+  static const String TRANSACTION_CLASS_CRED = 'TRANSACTION_CLASS_CRED';
 }

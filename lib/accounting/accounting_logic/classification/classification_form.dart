@@ -6,21 +6,17 @@ import 'package:shop/accounting/accounting_logic/classification/transaction_clas
 import 'package:shop/accounting/accounting_logic/float_dropdown_menu.dart';
 import 'package:shop/accounting/accounting_logic/floating_account.dart';
 import 'package:shop/accounting/accounting_logic/floating_account_tree.dart';
-import 'package:shop/accounting/accounting_logic/run_code.dart';
-// import 'package:shop/auth/run_code.dart';
 
 import 'package:provider/provider.dart';
 import 'package:shop/accounting/accounting_logic/account_dropdown_menu.dart';
 import 'package:shop/accounting/expenditure/expenditure_class_tree.dart';
 import 'package:shop/accounting/expenditure/expenditure_dropdown_menu.dart';
 import 'package:shop/accounting/expenditure/expenditure_screen_form.dart';
-import 'package:shop/auth/auth_db_helper.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
 
 import 'package:flutter/material.dart';
 import 'package:shop/accounting/accounting_logic/account_ids.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
-import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/accounting/environment/environment_provider.dart';
 import 'package:shop/auth/has_access.dart';
 import 'package:shop/exceptions/not_handled_exception.dart';
@@ -29,15 +25,18 @@ import 'package:shop/shared/show_error_dialog.dart';
 class ClassificationForm extends StatefulWidget {
   final VoucherModel? voucher;
   final int? expenseId;
+
+  final TransactionClassification? tranClass;
   final FormDuty formDuty;
-  final Function notifyNewVoucher;
+  final Function notifyTranClassChanged;
 
   const ClassificationForm({
     Key? key,
+    this.tranClass,
+    required this.formDuty,
+    required this.notifyTranClassChanged,
     this.voucher,
     this.expenseId,
-    required this.formDuty,
-    required this.notifyNewVoucher,
   }) : super(key: key);
 
   @override
@@ -66,7 +65,9 @@ class _ClassificationFormState extends State<ClassificationForm> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     if (_didChangeRun) return;
-
+    // here
+    // think for permission ...
+    // ?
     authProviderSQL = Provider.of<AuthProviderSQL>(context, listen: true);
     _fields.authId = authProviderSQL.authId;
     _fields.paidBy = hasAccess(
@@ -106,7 +107,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
     widget.voucher!.deleteMeFromDB(authProviderSQL).then((deleteResult) {
       loadingEnd();
       print('EXP_SCN_FRM| initStateDelete() 01 | deleteResult: $deleteResult');
-      widget.notifyNewVoucher();
+      widget.notifyTranClassChanged();
     }).catchError((e) {
       loadingEnd();
       showErrorDialog(
@@ -383,7 +384,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
     loadingStart();
     try {
       await dbOperationHandler();
-      widget.notifyNewVoucher();
+      widget.notifyTranClassChanged();
       loadingEnd();
     } catch (e) {
       loadingEnd();

@@ -558,4 +558,12 @@ const PERMISSIONS_LIST = const [
     titlePersian: 'مشاهده تمام اسناد بستانكاران',
     titleArabic: 'قراة كل اسناد داينين',
   ),
+
+  // ## TRANSACTION_CLASS_CRED
+  PermissionModel(
+    id: PermissionModel.TRANSACTION_CLASS_CRED,
+    titleEnglish: PermissionModel.TRANSACTION_CLASS_CRED,
+    titlePersian: 'مديريت فهرست بندي تراكنش ها',
+    titleArabic: 'تصنيف ايصال',
+  ),
 ];
