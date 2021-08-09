@@ -12,12 +12,12 @@ import 'package:shop/shared/result_status.dart';
 class ClassificationFormFields {
   final formKey = GlobalKey<FormState>();
 
-  int? id;
+  String? id;
   int? authId;
   Function? resetState;
 
   ClassificationFormFields({
-    int? id,
+    String? id,
     int? authId,
     AuthProviderSQL? authProvider,
     TransactionClassification? parentClass,
@@ -27,17 +27,17 @@ class ClassificationFormFields {
     double? amount,
     AccountModel? paidBy,
     String? note,
-    TransactionClassification? expClass,
+    TransactionClassification? tranClass,
     FloatingAccount? floatAccount,
     DateTime? date,
     Function? resetState,
   }) {
-    this.id = id;
     this.authId = authId;
     this.parentClass = parentClass;
-    this.titleEnglish = titleEnglish;
-    this.titlePersian = titlePersian;
-    this.titleArabic = titleArabic;
+    // this.id = id;
+    // this.titleEnglish = titleEnglish;
+    // this.titlePersian = titlePersian;
+    // this.titleArabic = titleArabic;
   }
 
   // # parentClass
@@ -66,6 +66,36 @@ class ClassificationFormFields {
         parentClassification!.titlePersian != parentClassText &&
         parentClassification!.titleArabic != parentClassText) {
       return 'parentClassification.titleE|P|A is mismatch with input text';
+    }
+    return null;
+  }
+
+  // # tranClass
+  TransactionClassification? tranClassification;
+  bool hasErrorParentClass = false;
+  final tranClassFocusNode = FocusNode();
+  TextEditingController tranClassController = TextEditingController();
+  TransactionClassification? get tranClass {
+    return tranClassification;
+  }
+
+  set tranClass(TransactionClassification? tranClassification) {
+    this.tranClassification = tranClassification;
+    this.tranClassController.text = (tranClassification == null) ? '' : tranClassification.titleEnglish;
+  }
+
+  String? validateParentClass(String? tranClassText) {
+    // print('EXP_FRM_FLD | validateParentClass() 01 | input: $tranClassText');
+    if (tranClassText == null || tranClassText.isEmpty) {
+      return 'tranClass should not be empty';
+    }
+    if (tranClassification == null) {
+      return 'tranClassification should not be null inside expenditureFields';
+    }
+    if (tranClassification!.titleEnglish != tranClassText &&
+        tranClassification!.titlePersian != tranClassText &&
+        tranClassification!.titleArabic != tranClassText) {
+      return 'tranClassification.titleE|P|A is mismatch with input text';
     }
     return null;
   }
@@ -232,7 +262,7 @@ class ClassificationFormFields {
       paidBy: cashDrawer,
       note: 'nescafee and cup',
       date: DateTime.now(),
-      expClass: EXP_CLASS_TREE.firstWhere((expClass) => expClass.id == ExpClassIds.GENERAL_EXP_CLASS_ID),
+      tranClass: EXP_CLASS_TREE.firstWhere((expClass) => expClass.id == ExpClassIds.GENERAL_EXP_CLASS_ID),
       floatAccount: FLOAT_ACCOUNT_TREE.firstWhere((float) => float.id == FloatAccountIds.GENERAL_FLOAT_ACCOUNT_ID),
     );
   }

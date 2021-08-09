@@ -1,4 +1,6 @@
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
+import 'package:shop/auth/auth_provider_sql.dart';
+import 'package:shop/auth/permission_model.dart';
 import 'package:shop/exceptions/join_exception.dart';
 
 import '../account_model.dart';
@@ -104,10 +106,12 @@ class TransactionClassification {
     }
   }
 
-  Future<int> deleteMeFromDB() async {
-    if (id == null) {
+  Future<int> deleteMeFromDB(AuthProviderSQL authProvider) async {
+    if (authProvider.isNotPermitted(PermissionModel.TRANSACTION_CLASS_CRED)) {
+      print('TRN_CLSS | deleteMeFromDB() 01 | auth is not permitted for TRANSACTION_CLASS_CRED');
       return 0;
     }
+
     final query = '''
     DELETE FROM $tableName
     WHERE $column1Id = ? ;

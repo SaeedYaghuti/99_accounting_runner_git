@@ -3,22 +3,17 @@ import 'dart:async';
 import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/accounting_logic/classification/classification_form_fields.dart';
 import 'package:shop/accounting/accounting_logic/classification/transaction_classification.dart';
-import 'package:shop/accounting/accounting_logic/float_dropdown_menu.dart';
-import 'package:shop/accounting/accounting_logic/floating_account.dart';
-import 'package:shop/accounting/accounting_logic/floating_account_tree.dart';
 
 import 'package:provider/provider.dart';
-import 'package:shop/accounting/accounting_logic/account_dropdown_menu.dart';
 import 'package:shop/accounting/expenditure/expenditure_class_tree.dart';
 import 'package:shop/accounting/expenditure/expenditure_dropdown_menu.dart';
 import 'package:shop/accounting/expenditure/expenditure_screen_form.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
 
 import 'package:flutter/material.dart';
-import 'package:shop/accounting/accounting_logic/account_ids.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/environment/environment_provider.dart';
-import 'package:shop/auth/has_access.dart';
+import 'package:shop/exceptions/curropted_input.dart';
 import 'package:shop/exceptions/not_handled_exception.dart';
 import 'package:shop/shared/show_error_dialog.dart';
 
@@ -69,7 +64,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
     authProviderSQL = Provider.of<AuthProviderSQL>(context, listen: true);
     _fields.authId = authProviderSQL.authId;
     _fields.expClass = ClassificationFormFields.expenditureExample.expClass;
-    _fields.floatAccount = ClassificationFormFields.expenditureExample.floatAccount;
+    _fields.parentClass = ClassificationFormFields.expenditureExample.parentClass;
     switch (widget.formDuty) {
       case FormDuty.READ:
       case FormDuty.CREATE:
@@ -95,57 +90,44 @@ class _ClassificationFormState extends State<ClassificationForm> {
 
   void initStateDelete() {
     // print('EF | init_state | form rebuild for DELETE');
-    if (widget.voucher == null) return;
+    if (widget.tranClass == null) return;
     loadingStart();
-    widget.voucher!.deleteMeFromDB(authProviderSQL).then((deleteResult) {
+    widget.tranClass!.deleteMeFromDB(authProviderSQL).then((deleteResult) {
       loadingEnd();
-      print('EXP_SCN_FRM| initStateDelete() 01 | deleteResult: $deleteResult');
+      print('CLSS_FORM | initStateDelete() 01 | deleteResult: $deleteResult');
       widget.notifyTranClassChanged();
     }).catchError((e) {
       loadingEnd();
       showErrorDialog(
         context,
-        'voucher .deleteMeFromDB()',
-        'ExpenditureForm at initState while deleting a voucher happend error:',
+        'tranClass .deleteMeFromDB()',
+        'ClassificationForm at initState while deleting a tranClass happend error:',
         e,
       );
     });
   }
 
   void initStateEdit() {
-    // print('EXP_FRM | initStateEdit() 01|');
+    // print('CLSS_FORM | initStateEdit() 01|');
     // print(widget.voucher);
-
-    if (widget.voucher!.transactions.length > 2) {
-      print('EXP_FRM | initStateEdit() | we can not show voucher with more than two transactions in this form ...');
-      _formDuty = FormDuty.CREATE;
-      // maybe show money_movement form
+    if (widget.tranClass == null) {
+      print('CLSS_FORM | initStateEdit() 01| formDuty is Edit but given tranClass is null');
+      throw CurroptedInputException('CLSS_FORM | initStateEdit() 01| formDuty is Edit but given tranClass is null');
     }
-    // print('EXP_FRM | initStateEdit() | voucher to edite');
-    // print(widget.voucher!);
+    TransactionClassification.fetchTranClassById(widget.tranClass!.parentId).then(
+      (parentClass) {
+        _fields.id = widget.tranClass!.id;
+        _fields.parentClass = parentClass;
+        _fields.expClass = widget.tranClass!;
+        _fields.note = widget.tranClass!.note;
 
-    var debitTransaction = widget.voucher!.transactions.firstWhere(
-      (tran) => tran!.isDebit,
-    );
-
-    var creditTransaction = widget.voucher!.transactions.firstWhere(
-      (tran) => !tran!.isDebit,
-    );
-    AccountModel.fetchAccountById(debitTransaction!.accountId).then((paidByAccount) {
-      _fields.id = creditTransaction!.id;
-      _fields.amount = creditTransaction.amount;
-      _fields.paidBy = paidByAccount;
-      _fields.expClass = creditTransaction.tranClass;
-      _fields.floatAccount = creditTransaction.floatAccount;
-      _fields.date = creditTransaction.date;
-      _fields.note = creditTransaction.note;
-
-      // print('EXP_FRM init_state| EDIT 03| prepared _expenditureFormFields');
-      // print(_fields);
-      setState(() {});
-    }).catchError((e) {
+        // print('CLSS_FORM init_state| EDIT 03| prepared _expenditureFormFields');
+        // print(_fields);
+        setState(() {});
+      },
+    ).catchError((e) {
       print(
-        'EXP_FRM initState 01| @ catchError while catching account ${debitTransaction.accountId} from db e: $e',
+        'CLSS_FORM initState 01| @ catchError while catching account ${debitTransaction.accountId} from db e: $e',
       );
       // exit from edit_mode
       _formDuty = FormDuty.CREATE;
@@ -469,7 +451,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
       },
     ).catchError((e) {
       print(
-        'EXP_FRM initializeForm 04| e in fetching account: ${debitTransaction.accountId} e: $e',
+        'CLSS_FORM initializeForm 04| e in fetching account: ${debitTransaction.accountId} e: $e',
       );
       _formDuty = FormDuty.CREATE;
       setState(() {});
