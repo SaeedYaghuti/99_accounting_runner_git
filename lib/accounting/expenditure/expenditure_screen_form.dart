@@ -217,6 +217,8 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     return TextFormField(
       decoration: _buildInputDecoration('Paid By', Icons.credit_card),
       style: _buildTextStyle(),
+      showCursor: false,
+      readOnly: true,
       focusNode: _fields.paidByFocusNode,
       controller: _fields.paidByController,
       textInputAction: TextInputAction.next,
@@ -254,12 +256,14 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     return TextFormField(
       decoration: _buildInputDecoration('Tag', Icons.bookmark_outline_rounded),
       style: _buildTextStyle(),
+      showCursor: false,
+      readOnly: true,
       focusNode: _fields.expClassFocusNode,
       controller: _fields.expClassController,
       textInputAction: TextInputAction.next,
       onTap: () {
         _pickExpClass();
-        FocusScope.of(context).requestFocus(_fields.dateFocusNode);
+        FocusScope.of(context).requestFocus(_fields.floatFocusNode);
       },
       validator: _fields.validateExpClass,
       // onSaved: (amount) {
@@ -272,6 +276,8 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     return TextFormField(
       decoration: _buildInputDecoration('Float Account', Icons.account_box_outlined),
       style: _buildTextStyle(),
+      showCursor: false,
+      readOnly: true,
       focusNode: _fields.floatFocusNode,
       controller: _fields.floatController,
       textInputAction: TextInputAction.next,
@@ -290,6 +296,8 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     return TextFormField(
       decoration: _buildInputDecoration('Date', Icons.date_range_rounded),
       style: _buildTextStyle(),
+      showCursor: false,
+      readOnly: true,
       focusNode: _fields.dateFocusNode,
       controller: _fields.dateController,
       textInputAction: TextInputAction.next,

@@ -141,7 +141,6 @@ class _ClassificationFormState extends State<ClassificationForm> {
           width: 1200,
           child: ListView(
             children: [
-              Text('Hello'),
               SizedBox(height: 20, width: 20),
               _buildParentClass(context),
               SizedBox(height: 20, width: 20),
