@@ -63,7 +63,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
     // when we reach hear it means we have perm; perms should be controll first at caller and then at code
     authProviderSQL = Provider.of<AuthProviderSQL>(context, listen: true);
     _fields.authId = authProviderSQL.authId;
-    _fields.expClass = ClassificationFormFields.expenditureExample.expClass;
+    _fields.tranClass = ClassificationFormFields.expenditureExample.tranClass;
     _fields.parentClass = ClassificationFormFields.expenditureExample.parentClass;
     switch (widget.formDuty) {
       case FormDuty.READ:
@@ -116,10 +116,11 @@ class _ClassificationFormState extends State<ClassificationForm> {
     }
     TransactionClassification.fetchTranClassById(widget.tranClass!.parentId).then(
       (parentClass) {
-        _fields.id = widget.tranClass!.id;
         _fields.parentClass = parentClass;
-        _fields.expClass = widget.tranClass!;
-        _fields.note = widget.tranClass!.note;
+        _fields.tranClass = widget.tranClass!;
+        // will be set while setting tranClass
+        // _fields.id = widget.tranClass!.id;
+        // _fields.note = widget.tranClass!.note;
 
         // print('CLSS_FORM init_state| EDIT 03| prepared _expenditureFormFields');
         // print(_fields);
@@ -127,7 +128,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
       },
     ).catchError((e) {
       print(
-        'CLSS_FORM initState 01| @ catchError while catching account ${debitTransaction.accountId} from db e: $e',
+        'CLSS_FORM initState 01| @ catchError while catching parentClss ${widget.tranClass!.parentId} from db e: $e',
       );
       // exit from edit_mode
       _formDuty = FormDuty.CREATE;
@@ -175,7 +176,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
         _pickExpClass((tappedExpClass) {
           _fields.parentClass = tappedExpClass;
         });
-        FocusScope.of(context).requestFocus(_fields.dateFocusNode);
+        FocusScope.of(context).requestFocus(_fields.tranClassFocusNode);
       },
       validator: _fields.validateParentClass,
       // onSaved: (amount) {
@@ -191,7 +192,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
       textInputAction: TextInputAction.next,
       controller: _fields.titleEnglishController,
       onFieldSubmitted: (value) {
-        FocusScope.of(context).requestFocus(_fields.paidByFocusNode);
+        FocusScope.of(context).requestFocus(_fields.titlePersianFocusNode);
       },
       validator: _fields.validateTitleEnglish,
       onSaved: (titleEnglish) {
@@ -208,7 +209,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
       textInputAction: TextInputAction.next,
       controller: _fields.titlePersianController,
       onFieldSubmitted: (value) {
-        FocusScope.of(context).requestFocus(_fields.paidByFocusNode);
+        FocusScope.of(context).requestFocus(_fields.titleArabicFocusNode);
       },
       validator: _fields.validateTitlePersian,
       onSaved: (titlePersian) {
@@ -225,7 +226,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
       textInputAction: TextInputAction.next,
       controller: _fields.titleArabicController,
       onFieldSubmitted: (value) {
-        FocusScope.of(context).requestFocus(_fields.paidByFocusNode);
+        FocusScope.of(context).requestFocus(_fields.noteFocusNode);
       },
       validator: _fields.validateTitleArabic,
       onSaved: (titleArabic) {
@@ -244,7 +245,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
       textInputAction: TextInputAction.next,
       controller: _fields.noteController,
       onFieldSubmitted: (value) {
-        FocusScope.of(context).requestFocus(_fields.paidByFocusNode);
+        FocusScope.of(context).requestFocus(_fields.titleEnglishFocusNode);
       },
       validator: _fields.validateNote,
       onSaved: (note) {
@@ -311,12 +312,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
               () {
                 setState(() {
                   _formDuty = FormDuty.CREATE;
-                  _fields = ClassificationFormFields(
-                    amount: 0,
-                    note: '',
-                    date: DateTime.now(),
-                    paidBy: ClassificationFormFields.expenditureExample.paidByAccount,
-                  );
+                  _fields = ClassificationFormFields.expenditureExample;
                 });
               },
             ),
@@ -397,7 +393,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
                 tapHandler: (TransactionClassification tappedExpClass) {
                   Navigator.of(context).pop();
                   setState(() {
-                    // _fields.expClass = tappedExpClass;
+                    // _fields.tranClass = tappedExpClass;
                     selectedClassHandler(tappedExpClass);
                   });
                 },

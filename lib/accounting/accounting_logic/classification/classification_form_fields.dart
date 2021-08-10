@@ -17,27 +17,68 @@ class ClassificationFormFields {
   Function? resetState;
 
   ClassificationFormFields({
-    String? id,
     int? authId,
     AuthProviderSQL? authProvider,
     TransactionClassification? parentClass,
-    String? titleEnglish,
-    String? titlePersian,
-    String? titleArabic,
-    double? amount,
-    AccountModel? paidBy,
-    String? note,
     TransactionClassification? tranClass,
-    FloatingAccount? floatAccount,
-    DateTime? date,
     Function? resetState,
+
+    // String? id,
+    // String? titleEnglish,
+    // String? titlePersian,
+    // String? titleArabic,
+    // String? note,
+
+    // double? amount,
+    // AccountModel? paidBy,
+    // FloatingAccount? floatAccount,
+    // DateTime? date,
   }) {
     this.authId = authId;
     this.parentClass = parentClass;
+    this.tranClass = tranClass;
+
+    // we would assign from tranClass
     // this.id = id;
     // this.titleEnglish = titleEnglish;
     // this.titlePersian = titlePersian;
     // this.titleArabic = titleArabic;
+    // this.note = note;
+  }
+
+  // # tranClass
+  TransactionClassification? tranClassification;
+  bool hasErrorTranClass = false;
+  final tranClassFocusNode = FocusNode();
+  TextEditingController tranClassController = TextEditingController();
+  TransactionClassification? get tranClass {
+    return tranClassification;
+  }
+
+  set tranClass(TransactionClassification? tranClassification) {
+    this.tranClassification = tranClassification;
+    this.tranClassController.text = (tranClassification == null) ? '' : tranClassification.titleEnglish;
+    id = tranClassification?.id;
+    titleEnglish = tranClassification?.titleEnglish;
+    titlePersian = tranClassification?.titlePersian;
+    titleArabic = tranClassification?.titleArabic;
+    note = tranClassification?.note;
+  }
+
+  String? validateTranClass(String? tranClassText) {
+    // print('EXP_FRM_FLD | validateTranClass() 01 | input: $tranClassText');
+    if (tranClassText == null || tranClassText.isEmpty) {
+      return 'tranClass should not be empty';
+    }
+    if (tranClassification == null) {
+      return 'tranClassification should not be null inside expenditureFields';
+    }
+    if (tranClassification!.titleEnglish != tranClassText &&
+        tranClassification!.titlePersian != tranClassText &&
+        tranClassification!.titleArabic != tranClassText) {
+      return 'tranClassification.titleE|P|A is mismatch with input text';
+    }
+    return null;
   }
 
   // # parentClass
@@ -66,36 +107,6 @@ class ClassificationFormFields {
         parentClassification!.titlePersian != parentClassText &&
         parentClassification!.titleArabic != parentClassText) {
       return 'parentClassification.titleE|P|A is mismatch with input text';
-    }
-    return null;
-  }
-
-  // # tranClass
-  TransactionClassification? tranClassification;
-  bool hasErrorParentClass = false;
-  final tranClassFocusNode = FocusNode();
-  TextEditingController tranClassController = TextEditingController();
-  TransactionClassification? get tranClass {
-    return tranClassification;
-  }
-
-  set tranClass(TransactionClassification? tranClassification) {
-    this.tranClassification = tranClassification;
-    this.tranClassController.text = (tranClassification == null) ? '' : tranClassification.titleEnglish;
-  }
-
-  String? validateParentClass(String? tranClassText) {
-    // print('EXP_FRM_FLD | validateParentClass() 01 | input: $tranClassText');
-    if (tranClassText == null || tranClassText.isEmpty) {
-      return 'tranClass should not be empty';
-    }
-    if (tranClassification == null) {
-      return 'tranClassification should not be null inside expenditureFields';
-    }
-    if (tranClassification!.titleEnglish != tranClassText &&
-        tranClassification!.titlePersian != tranClassText &&
-        tranClassification!.titleArabic != tranClassText) {
-      return 'tranClassification.titleE|P|A is mismatch with input text';
     }
     return null;
   }
@@ -176,37 +187,6 @@ class ClassificationFormFields {
     return null;
   }
 
-  // # expClass
-  TransactionClassification? expClassification;
-  bool hasErrorExpClass = false;
-  final expClassFocusNode = FocusNode();
-  TextEditingController expClassController = TextEditingController();
-  TransactionClassification? get expClass {
-    return expClassification;
-  }
-
-  set expClass(TransactionClassification? expClassification) {
-    this.expClassification = expClassification;
-    this.expClassController.text = (expClassification == null) ? '' : expClassification.titleEnglish;
-  }
-
-  String? validateExpClass(String? expClassText) {
-    // print('EXP_FRM_FLD | validateExpClass() 01 | input: $expClassText');
-    if (expClassText == null || expClassText.isEmpty) {
-      return 'expClass should not be empty';
-    }
-
-    if (expClassification == null) {
-      return 'expClassification should not be null inside expenditureFields';
-    }
-    if (expClassification!.titleEnglish != expClassText &&
-        expClassification!.titlePersian != expClassText &&
-        expClassification!.titleArabic != expClassText) {
-      return 'expClassification.titleE|P|A is mismatch with input text';
-    }
-    return null;
-  }
-
   // # validate
   Result<bool> validate() {
     if (formKey.currentState == null) {
@@ -219,6 +199,10 @@ class ClassificationFormFields {
       hasErrorParentClass = true;
       errorMessages += '\nParentClass is empty';
     }
+    if (tranClass == null) {
+      hasErrorTranClass = true;
+      errorMessages += '\nTranClass is empty';
+    }
     if (titleEnglish == null) {
       hasErrorTitleEnglish = true;
       errorMessages += '\nTitleEnglish is empty';
@@ -230,10 +214,6 @@ class ClassificationFormFields {
     if (titleArabic == null) {
       hasErrorTitleArabic = true;
       errorMessages += '\nTitleArabic is empty';
-    }
-    if (expClass == null) {
-      hasErrorExpClass = true;
-      errorMessages += '\nExpClass is empty';
     }
 
     // step#2 validate FormField that have predifined validate() method
@@ -255,15 +235,9 @@ class ClassificationFormFields {
 
   // # Example
   static ClassificationFormFields get expenditureExample {
-    AccountModel cashDrawer = ACCOUNTS_TREE.firstWhere((acc) => acc.id == PAID_EXPENDITURE_BY);
     return ClassificationFormFields(
-      id: null,
-      amount: 3.750,
-      paidBy: cashDrawer,
-      note: 'nescafee and cup',
-      date: DateTime.now(),
-      tranClass: EXP_CLASS_TREE.firstWhere((expClass) => expClass.id == ExpClassIds.GENERAL_EXP_CLASS_ID),
-      floatAccount: FLOAT_ACCOUNT_TREE.firstWhere((float) => float.id == FloatAccountIds.GENERAL_FLOAT_ACCOUNT_ID),
+      parentClass: EXP_CLASS_TREE.firstWhere((parent) => parent.id == ExpClassIds.MAIN_EXP_CLASS_ID),
+      tranClass: EXP_CLASS_TREE.firstWhere((tranClass) => tranClass.id == ExpClassIds.GENERAL_EXP_CLASS_ID),
     );
   }
 
@@ -271,12 +245,12 @@ class ClassificationFormFields {
   String toString() {
     return '''
       id: $id,
-      parentClass: $parentClass,
+      tranClass: {$tranClass}, 
+      parentClass: {$parentClass},
       titleEnglish: $titleEnglish,
       titlePersian: $titlePersian,
       titleArabic: $titleArabic,
       note: $note, 
-      expClass: {$expClass}, 
     ''';
   }
 }
