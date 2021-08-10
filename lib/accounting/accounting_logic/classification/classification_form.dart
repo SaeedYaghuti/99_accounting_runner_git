@@ -16,9 +16,6 @@ import 'package:shop/exceptions/not_handled_exception.dart';
 import 'package:shop/shared/show_error_dialog.dart';
 
 class ClassificationForm extends StatefulWidget {
-  // final VoucherModel? voucher;
-  // final int? expenseId;
-
   final TransactionClassification? tranClass;
   final FormDuty formDuty;
   final Function notifyTranClassChanged;
@@ -28,8 +25,6 @@ class ClassificationForm extends StatefulWidget {
     this.tranClass,
     required this.formDuty,
     required this.notifyTranClassChanged,
-    // this.voucher,
-    // this.expenseId,
   }) : super(key: key);
 
   @override
@@ -136,6 +131,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
 
   @override
   Widget build(BuildContext context) {
+    print('CLS_FORM | build() 01 | run ...');
     return Container(
       width: 1200,
       padding: EdgeInsets.all(16),
@@ -145,6 +141,8 @@ class _ClassificationFormState extends State<ClassificationForm> {
           width: 1200,
           child: ListView(
             children: [
+              Text('Hello'),
+              SizedBox(height: 20, width: 20),
               _buildParentClass(context),
               SizedBox(height: 20, width: 20),
               _buildTitleEnglish(context),

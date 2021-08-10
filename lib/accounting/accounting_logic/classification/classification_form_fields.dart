@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:shop/accounting/accounting_logic/account_model.dart';
-import 'package:shop/accounting/accounting_logic/accounts_tree.dart';
 import 'package:shop/accounting/accounting_logic/classification/transaction_classification.dart';
-import 'package:shop/accounting/accounting_logic/floating_account.dart';
-import 'package:shop/accounting/accounting_logic/floating_account_tree.dart';
 import 'package:shop/accounting/expenditure/expenditure_class_tree.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
-import 'package:shop/constants.dart';
 import 'package:shop/shared/result_status.dart';
+
+import 'classification_tree.dart';
 
 class ClassificationFormFields {
   final formKey = GlobalKey<FormState>();
@@ -22,28 +19,10 @@ class ClassificationFormFields {
     TransactionClassification? parentClass,
     TransactionClassification? tranClass,
     Function? resetState,
-
-    // String? id,
-    // String? titleEnglish,
-    // String? titlePersian,
-    // String? titleArabic,
-    // String? note,
-
-    // double? amount,
-    // AccountModel? paidBy,
-    // FloatingAccount? floatAccount,
-    // DateTime? date,
   }) {
     this.authId = authId;
     this.parentClass = parentClass;
     this.tranClass = tranClass;
-
-    // we would assign from tranClass
-    // this.id = id;
-    // this.titleEnglish = titleEnglish;
-    // this.titlePersian = titlePersian;
-    // this.titleArabic = titleArabic;
-    // this.note = note;
   }
 
   // # tranClass
@@ -236,7 +215,7 @@ class ClassificationFormFields {
   // # Example
   static ClassificationFormFields get expenditureExample {
     return ClassificationFormFields(
-      parentClass: EXP_CLASS_TREE.firstWhere((parent) => parent.id == ExpClassIds.MAIN_EXP_CLASS_ID),
+      parentClass: TRANS_CLASS_TREE.firstWhere((parent) => parent.id == ExpClassIds.MAIN_EXP_CLASS_ID),
       tranClass: EXP_CLASS_TREE.firstWhere((tranClass) => tranClass.id == ExpClassIds.GENERAL_EXP_CLASS_ID),
     );
   }
