@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:shop/accounting/accounting_logic/account_ids.dart';
+import 'package:shop/accounting/accounting_logic/classification/classification_form.dart';
 import 'package:shop/accounting/accounting_logic/classification/transaction_classification.dart';
 
 import 'expenditure_class_tree.dart';
+import 'expenditure_screen_form.dart';
 
 class ExpClassDropdownMenu extends StatefulWidget {
   final List<String?> unwantedExpClassIds;
@@ -89,6 +91,7 @@ class _ExpClassDropdownMenuState extends State<ExpClassDropdownMenu> {
               icon: Icon(Icons.account_tree_rounded),
               onPressed: () {
                 print('88 you want add child to ${parent.titleEnglish}');
+                _showTranClassCreate(context);
               },
             ),
             IconButton(
@@ -130,6 +133,7 @@ class _ExpClassDropdownMenuState extends State<ExpClassDropdownMenu> {
                             icon: Icon(Icons.account_tree_rounded),
                             onPressed: () {
                               print('88 you want add child to ${child.titleEnglish}');
+                              _showTranClassCreate(context);
                             },
                           ),
                           IconButton(
@@ -154,6 +158,26 @@ class _ExpClassDropdownMenuState extends State<ExpClassDropdownMenu> {
           .whereType<Widget>()
           .toList(),
     );
+  }
+
+  void _showTranClassCreate(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return SimpleDialog(
+            title: Text('Create new Transaction Class'),
+            children: [
+              Container(
+                height: 700,
+                child: ClassificationForm(
+                  formDuty: FormDuty.CREATE,
+                  // notifyTranClassChanged: notifyNewVoucher,
+                  notifyTranClassChanged: () {},
+                ),
+              ),
+            ],
+          );
+        });
   }
 
   bool isParent(String accountId) {

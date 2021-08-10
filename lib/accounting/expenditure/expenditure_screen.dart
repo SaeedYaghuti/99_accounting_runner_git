@@ -164,7 +164,7 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
             SizedBox(
               height: 10,
             ),
-            _buildClassificationForm(context),
+            // _buildClassificationForm(context),
           ],
         ),
       ),

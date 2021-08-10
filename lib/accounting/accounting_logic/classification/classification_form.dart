@@ -164,6 +164,8 @@ class _ClassificationFormState extends State<ClassificationForm> {
     return TextFormField(
       decoration: _buildInputDecoration('Parent Class', Icons.bookmark_outline_rounded),
       style: _buildTextStyle(),
+      showCursor: false,
+      readOnly: true,
       focusNode: _fields.parentClassFocusNode,
       controller: _fields.parentClassController,
       textInputAction: TextInputAction.next,
