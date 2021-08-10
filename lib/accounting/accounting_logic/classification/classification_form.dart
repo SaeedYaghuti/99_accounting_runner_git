@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/accounting_logic/classification/classification_form_fields.dart';
 import 'package:shop/accounting/accounting_logic/classification/transaction_classification.dart';
 
@@ -11,15 +10,14 @@ import 'package:shop/accounting/expenditure/expenditure_screen_form.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
 
 import 'package:flutter/material.dart';
-import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/environment/environment_provider.dart';
 import 'package:shop/exceptions/curropted_input.dart';
 import 'package:shop/exceptions/not_handled_exception.dart';
 import 'package:shop/shared/show_error_dialog.dart';
 
 class ClassificationForm extends StatefulWidget {
-  final VoucherModel? voucher;
-  final int? expenseId;
+  // final VoucherModel? voucher;
+  // final int? expenseId;
 
   final TransactionClassification? tranClass;
   final FormDuty formDuty;
@@ -30,8 +28,8 @@ class ClassificationForm extends StatefulWidget {
     this.tranClass,
     required this.formDuty,
     required this.notifyTranClassChanged,
-    this.voucher,
-    this.expenseId,
+    // this.voucher,
+    // this.expenseId,
   }) : super(key: key);
 
   @override
@@ -403,56 +401,54 @@ class _ClassificationFormState extends State<ClassificationForm> {
         });
   }
 
-  void initializeForm(VoucherModel? voucherToShowInForm, int? expenseIdToShowInForm) {
-    // Exp_Form called without passing voucher: means we are in create mode
-    if (voucherToShowInForm == null || expenseIdToShowInForm == null) {
-      print('EF 01| we need form for create new voucher ...');
-      _formDuty = FormDuty.CREATE;
-      if (EnvironmentProvider.initializeExpenditureForm) {
-        // _expenditureFormFields = ClassificationFormFields.expenditureExample;
-        // _selectedDate = ClassificationFormFields.expenditureExample.date;
-        _fields.date = ClassificationFormFields.expenditureExample.date;
-      }
-      setState(() {});
-      return;
-    }
-
-    // Exp_Form called with voucher that contains 3 trans or more: we can not show in this simple form
-    if (voucherToShowInForm.transactions.length > 2) {
-      print(
-        'EF 02| we can not show voucher with more than two transactions in this form ...',
-      );
-      _formDuty = FormDuty.CREATE;
-      // show money_movement form
-      // ...
-      setState(() {});
-      return;
-    }
-
-    // we want to edit voucher in form; we don't have read mode for voucher in form
-    _formDuty = FormDuty.EDIT;
-    var debitTransaction = voucherToShowInForm.transactions.firstWhere((tran) => tran!.isDebit);
-    var creditTransaction = voucherToShowInForm.transactions.firstWhere((tran) => !tran!.isDebit);
-    AccountModel.fetchAccountById(debitTransaction!.accountId).then(
-      (acc) {
-        _fields = ClassificationFormFields(
-          id: creditTransaction!.id,
-          amount: creditTransaction.amount,
-          paidBy: acc,
-          note: creditTransaction.note,
-          date: creditTransaction.date,
-          // tag: creditTransaction.tag,
-        );
-        setState(() {});
-      },
-    ).catchError((e) {
-      print(
-        'CLSS_FORM initializeForm 04| e in fetching account: ${debitTransaction.accountId} e: $e',
-      );
-      _formDuty = FormDuty.CREATE;
-      setState(() {});
-    });
-  }
+  // void initializeForm0(VoucherModel? voucherToShowInForm, int? expenseIdToShowInForm) {
+  //   // Exp_Form called without passing voucher: means we are in create mode
+  //   if (voucherToShowInForm == null || expenseIdToShowInForm == null) {
+  //     print('EF 01| we need form for create new voucher ...');
+  //     _formDuty = FormDuty.CREATE;
+  //     if (EnvironmentProvider.initializeExpenditureForm) {
+  //       // _expenditureFormFields = ClassificationFormFields.expenditureExample;
+  //       // _selectedDate = ClassificationFormFields.expenditureExample.date;
+  //       _fields.date = ClassificationFormFields.expenditureExample.date;
+  //     }
+  //     setState(() {});
+  //     return;
+  //   }
+  //   // Exp_Form called with voucher that contains 3 trans or more: we can not show in this simple form
+  //   if (voucherToShowInForm.transactions.length > 2) {
+  //     print(
+  //       'EF 02| we can not show voucher with more than two transactions in this form ...',
+  //     );
+  //     _formDuty = FormDuty.CREATE;
+  //     // show money_movement form
+  //     // ...
+  //     setState(() {});
+  //     return;
+  //   }
+  //   // we want to edit voucher in form; we don't have read mode for voucher in form
+  //   _formDuty = FormDuty.EDIT;
+  //   var debitTransaction = voucherToShowInForm.transactions.firstWhere((tran) => tran!.isDebit);
+  //   var creditTransaction = voucherToShowInForm.transactions.firstWhere((tran) => !tran!.isDebit);
+  //   AccountModel.fetchAccountById(debitTransaction!.accountId).then(
+  //     (acc) {
+  //       _fields = ClassificationFormFields(
+  //         id: creditTransaction!.id,
+  //         amount: creditTransaction.amount,
+  //         paidBy: acc,
+  //         note: creditTransaction.note,
+  //         date: creditTransaction.date,
+  //         // tag: creditTransaction.tag,
+  //       );
+  //       setState(() {});
+  //     },
+  //   ).catchError((e) {
+  //     print(
+  //       'CLSS_FORM initializeForm 04| e in fetching account: ${debitTransaction.accountId} e: $e',
+  //     );
+  //     _formDuty = FormDuty.CREATE;
+  //     setState(() {});
+  //   });
+  // }
 
   InputDecoration _buildInputDecoration(String labelText, [IconData? icon]) {
     return InputDecoration(
