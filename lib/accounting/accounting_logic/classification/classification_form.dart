@@ -16,12 +16,14 @@ import 'package:shop/exceptions/not_handled_exception.dart';
 import 'package:shop/shared/show_error_dialog.dart';
 
 class ClassificationForm extends StatefulWidget {
+  final TransactionClassification parentClass;
   final TransactionClassification? tranClass;
   final FormDuty formDuty;
   final Function notifyTranClassChanged;
 
   const ClassificationForm({
     Key? key,
+    required this.parentClass,
     this.tranClass,
     required this.formDuty,
     required this.notifyTranClassChanged,
@@ -56,8 +58,6 @@ class _ClassificationFormState extends State<ClassificationForm> {
     // when we reach hear it means we have perm; perms should be controll first at caller and then at code
     authProviderSQL = Provider.of<AuthProviderSQL>(context, listen: true);
     _fields.authId = authProviderSQL.authId;
-    _fields.tranClass = ClassificationFormFields.expenditureExample.tranClass;
-    _fields.parentClass = ClassificationFormFields.expenditureExample.parentClass;
     switch (widget.formDuty) {
       case FormDuty.READ:
       case FormDuty.CREATE:
@@ -76,8 +76,14 @@ class _ClassificationFormState extends State<ClassificationForm> {
 
   void initStateCreate() {
     // print('EF | init_state | form rebuild for READ or CREATE ...');
-    if (EnvironmentProvider.initializeExpenditureForm) {
-      _fields = ClassificationFormFields.expenditureExample;
+    if (widget.parentClass == null) {
+      throw CurroptedInputException(
+        'CLASS_FORM | initStateCreate() 01 | parentClass should not be null at create_mode',
+      );
+    }
+    _fields.parentClass = widget.parentClass;
+    if (EnvironmentProvider.initializeTransClassForm) {
+      _fields.tranClass = ClassificationFormFields.expenditureExample.tranClass;
     }
   }
 

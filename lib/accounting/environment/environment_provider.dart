@@ -14,4 +14,5 @@ class EnvironmentProvider with ChangeNotifier {
   }
 
   static const initializeExpenditureForm = false;
+  static const initializeTransClassForm = false;
 }

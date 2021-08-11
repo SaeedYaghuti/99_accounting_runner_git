@@ -290,16 +290,6 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
     return dataRows;
   }
 
-  Widget _buildClassificationForm(BuildContext context) {
-    return Container(
-      height: 700,
-      child: ClassificationForm(
-        formDuty: FormDuty.CREATE,
-        notifyTranClassChanged: notifyNewVoucher,
-      ),
-    );
-  }
-
   void rebuildExpForm(
     VoucherModel? voucherToShowInForm,
     int? expenseIdToShowInForm,

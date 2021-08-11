@@ -91,7 +91,7 @@ class _ExpClassDropdownMenuState extends State<ExpClassDropdownMenu> {
               icon: Icon(Icons.account_tree_rounded),
               onPressed: () {
                 print('88 you want add child to ${parent.titleEnglish}');
-                _showTranClassCreate(context);
+                _showTranClassCreate(context, parent);
               },
             ),
             IconButton(
@@ -133,7 +133,7 @@ class _ExpClassDropdownMenuState extends State<ExpClassDropdownMenu> {
                             icon: Icon(Icons.account_tree_rounded),
                             onPressed: () {
                               print('88 you want add child to ${child.titleEnglish}');
-                              _showTranClassCreate(context);
+                              _showTranClassCreate(context, child);
                             },
                           ),
                           IconButton(
@@ -160,7 +160,7 @@ class _ExpClassDropdownMenuState extends State<ExpClassDropdownMenu> {
     );
   }
 
-  void _showTranClassCreate(BuildContext context) {
+  void _showTranClassCreate(BuildContext context, TransactionClassification parent) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -171,6 +171,7 @@ class _ExpClassDropdownMenuState extends State<ExpClassDropdownMenu> {
                 height: 700,
                 child: ClassificationForm(
                   formDuty: FormDuty.CREATE,
+                  parentClass: parent,
                   // notifyTranClassChanged: notifyNewVoucher,
                   notifyTranClassChanged: () {},
                 ),
