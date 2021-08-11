@@ -270,12 +270,12 @@ class _ClassificationFormState extends State<ClassificationForm> {
           'Create',
           Colors.green,
           () async {
-            // await _saveForm(
-            //   () => ExpenditureModel.createExpenditureInDB(
-            //     authProviderSQL,
-            //     _fields,
-            //   ),
-            // );
+            await _saveForm(
+              // () => TransactionClassification.insertIntoDB(
+              //   authProviderSQL,
+              //   _fields,
+              // ),
+            );
           },
         );
       // do: we should clear form data after create
@@ -289,22 +289,22 @@ class _ClassificationFormState extends State<ClassificationForm> {
               Colors.green,
               () {
                 _saveForm(
-                  () async {
-                    try {
-                      // await ExpenditureModel.updateVoucher(
-                      //   widget.voucher!,
-                      //   _fields,
-                      //   authProviderSQL,
-                      // );
-                    } catch (e) {
-                      showErrorDialog(
-                        context,
-                        'UpdateVoucher',
-                        'while updating voucher an error accoured',
-                        e,
-                      );
-                    }
-                  },
+                  // () async {
+                  //   try {
+                  //     // await ExpenditureModel.updateVoucher(
+                  //     //   widget.voucher!,
+                  //     //   _fields,
+                  //     //   authProviderSQL,
+                  //     // );
+                  //   } catch (e) {
+                  //     showErrorDialog(
+                  //       context,
+                  //       'UpdateVoucher',
+                  //       'while updating voucher an error accoured',
+                  //       e,
+                  //     );
+                  //   }
+                  // },
                 );
               },
             ),
@@ -327,7 +327,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
     }
   }
 
-  Future<void> _saveForm(Function dbOperationHandler) async {
+  Future<void> _saveForm() async {
     final isValid = _fields.validate();
     if (!isValid.outcome) {
       print('EF21| Warn: ${isValid.errorMessage}');
@@ -336,6 +336,15 @@ class _ClassificationFormState extends State<ClassificationForm> {
     _fields.formKey.currentState!.save(); // run all onSaved method
     loadingStart();
     try {
+      switch (_formDuty) {
+        case FormDuty.CREATE:
+        await TransactionClassification.insertIntoDB(
+                authProviderSQL,
+                _fields,
+              ),
+          break;
+        default:
+      }
       await dbOperationHandler();
       widget.notifyTranClassChanged();
       loadingEnd();

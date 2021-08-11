@@ -34,6 +34,16 @@ class TransactionClassification {
     }
   }
 
+  static Future<int> insertIntoDB(TransactionClassification tranClass) async {
+    // do some logic on variables
+    try {
+      return AccountingDB.insert(tableName, tranClass.toMap());
+    } catch (e) {
+      print('TransactionClassification insertIntoDB() 01| error:$e');
+      throw e;
+    }
+  }
+
   Future<int> updateMeIntoDB() async {
     // do some logic on variables
     try {
