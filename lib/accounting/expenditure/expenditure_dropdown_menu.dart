@@ -90,7 +90,7 @@ class _ExpClassDropdownMenuState extends State<ExpClassDropdownMenu> {
             IconButton(
               icon: Icon(Icons.account_tree_rounded),
               onPressed: () {
-                print('88 you want add child to ${parent.titleEnglish}');
+                // print('88 you want add child to ${parent.titleEnglish}');
                 _showTranClassCreate(context, parent);
               },
             ),
@@ -132,7 +132,7 @@ class _ExpClassDropdownMenuState extends State<ExpClassDropdownMenu> {
                           IconButton(
                             icon: Icon(Icons.account_tree_rounded),
                             onPressed: () {
-                              print('88 you want add child to ${child.titleEnglish}');
+                              // print('88 you want add child to ${child.titleEnglish}');
                               _showTranClassCreate(context, child);
                             },
                           ),

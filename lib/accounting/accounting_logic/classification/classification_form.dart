@@ -137,7 +137,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
 
   @override
   Widget build(BuildContext context) {
-    print('CLS_FORM | build() 01 | run ...');
+    // print('CLS_FORM | build() 01 | run ...');
     return Container(
       width: 1200,
       padding: EdgeInsets.all(16),
@@ -169,9 +169,10 @@ class _ClassificationFormState extends State<ClassificationForm> {
   Widget _buildParentClass(BuildContext context) {
     return TextFormField(
       decoration: _buildInputDecoration('Parent Class', Icons.bookmark_outline_rounded),
-      style: _buildTextStyle(),
+      style: _buildTextStyle(context, enabled: _formDuty == FormDuty.CREATE ? false : true),
       showCursor: false,
       readOnly: true,
+      enabled: _formDuty == FormDuty.CREATE ? false : true,
       focusNode: _fields.parentClassFocusNode,
       controller: _fields.parentClassController,
       textInputAction: TextInputAction.next,
@@ -191,7 +192,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
   Widget _buildTitleEnglish(BuildContext context) {
     return TextFormField(
       decoration: _buildInputDecoration('English Title', Icons.title_outlined),
-      style: _buildTextStyle(),
+      style: _buildTextStyle(context),
       textInputAction: TextInputAction.next,
       controller: _fields.titleEnglishController,
       onFieldSubmitted: (value) {
@@ -208,7 +209,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
   Widget _buildTitlePersian(BuildContext context) {
     return TextFormField(
       decoration: _buildInputDecoration('Persian Title', Icons.language_outlined),
-      style: _buildTextStyle(),
+      style: _buildTextStyle(context),
       textInputAction: TextInputAction.next,
       controller: _fields.titlePersianController,
       onFieldSubmitted: (value) {
@@ -225,7 +226,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
   Widget _buildTitleArabic(BuildContext context) {
     return TextFormField(
       decoration: _buildInputDecoration('Arabic Title', Icons.language_outlined),
-      style: _buildTextStyle(),
+      style: _buildTextStyle(context),
       textInputAction: TextInputAction.next,
       controller: _fields.titleArabicController,
       onFieldSubmitted: (value) {
@@ -242,7 +243,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
   Widget _buildNote(BuildContext context) {
     return TextFormField(
       decoration: _buildInputDecoration('Note', Icons.note_outlined),
-      style: _buildTextStyle(),
+      style: _buildTextStyle(context),
       maxLines: 2,
       keyboardType: TextInputType.multiline,
       textInputAction: TextInputAction.next,
@@ -483,10 +484,10 @@ class _ClassificationFormState extends State<ClassificationForm> {
     );
   }
 
-  TextStyle _buildTextStyle() {
+  TextStyle _buildTextStyle(BuildContext context, {bool enabled = true}) {
     return TextStyle(
       fontSize: 23,
-      color: Colors.black,
+      color: enabled ? Colors.black : Theme.of(context).primaryColor.withOpacity(0.6),
     );
   }
 
