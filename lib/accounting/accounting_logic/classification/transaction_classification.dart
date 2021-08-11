@@ -1,6 +1,7 @@
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/auth/permission_model.dart';
+import 'package:shop/exceptions/access_denied_exception.dart';
 import 'package:shop/exceptions/join_exception.dart';
 
 import '../account_model.dart';
@@ -34,12 +35,22 @@ class TransactionClassification {
     }
   }
 
-  static Future<int> insertIntoDB(TransactionClassification tranClass) async {
+  static Future<int> insertIntoDB(AuthProviderSQL authProvider, TransactionClassification tranClass) async {
+    // check authority
+    if (authProvider.isNotPermitted(PermissionModel.TRANSACTION_CLASS_CRED)) {
+      print(
+        'TRN_CLASS | insertIntoDB() 01 | authProvider ${authProvider.authId} has not access to ${PermissionModel.TRANSACTION_CLASS_CRED}',
+      );
+      throw AccessDeniedException(
+        'TRN_CLASS | insertIntoDB() 01 | authProvider ${authProvider.authId} has not access to ${PermissionModel.TRANSACTION_CLASS_CRED}',
+      );
+    }
+
     // do some logic on variables
     try {
       return AccountingDB.insert(tableName, tranClass.toMap());
     } catch (e) {
-      print('TransactionClassification insertIntoDB() 01| error:$e');
+      print('TransactionClassification insertIntoDB() 02| error:$e');
       throw e;
     }
   }
