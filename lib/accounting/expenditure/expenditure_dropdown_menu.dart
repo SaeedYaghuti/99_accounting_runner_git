@@ -109,10 +109,10 @@ class _ExpClassDropdownMenuState extends State<ExpClassDropdownMenu> {
           ],
         ),
       ),
-      children: childs(parent.id)
+      children: childs(parent.id!)
           .map((child) {
             // parent should continue running recursively
-            if (isParent(child!.id) && !widget.unwantedExpClassIds.contains(child.id)) {
+            if (isParent(child!.id!) && !widget.unwantedExpClassIds.contains(child.id)) {
               return _buildTileTree(child);
             }
             // check permition for child

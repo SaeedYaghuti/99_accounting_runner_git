@@ -7,7 +7,7 @@ import 'package:shop/exceptions/join_exception.dart';
 import '../account_model.dart';
 
 class TransactionClassification {
-  final String id;
+  final String? id;
   final String parentId;
   final String accountType;
   final String titleEnglish;
@@ -16,13 +16,13 @@ class TransactionClassification {
   final String note;
 
   const TransactionClassification({
-    required this.id,
+    this.id,
     required this.parentId,
     required this.accountType,
     required this.titleEnglish,
     required this.titlePersian,
     required this.titleArabic,
-    this.note = '',
+    required this.note,
   });
 
   Future<int> insertMeIntoDB() async {

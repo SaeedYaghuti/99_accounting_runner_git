@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:shop/accounting/accounting_logic/classification/classification_form_fields.dart';
+import 'package:shop/accounting/accounting_logic/classification/trans_class_manage.dart';
 import 'package:shop/accounting/accounting_logic/classification/transaction_classification.dart';
 
 import 'package:provider/provider.dart';
@@ -83,7 +84,11 @@ class _ClassificationFormState extends State<ClassificationForm> {
     }
     _fields.parentClass = widget.parentClass;
     if (EnvironmentProvider.initializeTransClassForm) {
-      _fields.tranClass = ClassificationFormFields.expenditureExample.tranClass;
+      var example = ClassificationFormFields.expenditureExample;
+      _fields.titleEnglish = example.titleEnglish;
+      _fields.titlePersian = example.titlePersian;
+      _fields.titleArabic = example.titleArabic;
+      _fields.note = example.note;
     }
   }
 
@@ -116,7 +121,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
     TransactionClassification.fetchTranClassById(widget.tranClass!.parentId).then(
       (parentClass) {
         _fields.parentClass = parentClass;
-        _fields.tranClass = widget.tranClass!;
+        // _fields.tranClass = widget.tranClass!;
         // will be set while setting tranClass
         // _fields.id = widget.tranClass!.id;
         // _fields.note = widget.tranClass!.note;
@@ -180,7 +185,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
         _pickExpClass((tappedExpClass) {
           _fields.parentClass = tappedExpClass;
         });
-        FocusScope.of(context).requestFocus(_fields.tranClassFocusNode);
+        FocusScope.of(context).requestFocus(_fields.titleEnglishFocusNode);
       },
       validator: _fields.validateParentClass,
       // onSaved: (amount) {
@@ -269,14 +274,15 @@ class _ClassificationFormState extends State<ClassificationForm> {
           context,
           'Create',
           Colors.green,
-          () async {
-            await _saveForm(
-              // () => TransactionClassification.insertIntoDB(
-              //   authProviderSQL,
-              //   _fields,
-              // ),
-            );
-          },
+          _saveForm,
+          // () async {
+          //   await _saveForm(
+          //     // () => TransactionClassification.insertIntoDB(
+          //     //   authProviderSQL,
+          //     //   _fields,
+          //     // ),
+          //   );
+          // },
         );
       // do: we should clear form data after create
       case FormDuty.EDIT:
@@ -287,26 +293,27 @@ class _ClassificationFormState extends State<ClassificationForm> {
               context,
               'Save Changes',
               Colors.green,
-              () {
-                _saveForm(
-                  // () async {
-                  //   try {
-                  //     // await ExpenditureModel.updateVoucher(
-                  //     //   widget.voucher!,
-                  //     //   _fields,
-                  //     //   authProviderSQL,
-                  //     // );
-                  //   } catch (e) {
-                  //     showErrorDialog(
-                  //       context,
-                  //       'UpdateVoucher',
-                  //       'while updating voucher an error accoured',
-                  //       e,
-                  //     );
-                  //   }
-                  // },
-                );
-              },
+              _saveForm,
+              // () {
+              //   _saveForm(
+              //     // () async {
+              //     //   try {
+              //     //     // await ExpenditureModel.updateVoucher(
+              //     //     //   widget.voucher!,
+              //     //     //   _fields,
+              //     //     //   authProviderSQL,
+              //     //     // );
+              //     //   } catch (e) {
+              //     //     showErrorDialog(
+              //     //       context,
+              //     //       'UpdateVoucher',
+              //     //       'while updating voucher an error accoured',
+              //     //       e,
+              //     //     );
+              //     //   }
+              //     // },
+              //   );
+              // },
             ),
             SizedBox(height: 10),
             _buildButton(
@@ -328,35 +335,34 @@ class _ClassificationFormState extends State<ClassificationForm> {
   }
 
   Future<void> _saveForm() async {
-    final isValid = _fields.validate();
+    final isValid = _fields.validate(_formDuty);
     if (!isValid.outcome) {
       print('EF21| Warn: ${isValid.errorMessage}');
       return;
     }
     _fields.formKey.currentState!.save(); // run all onSaved method
     loadingStart();
-    try {
-      switch (_formDuty) {
-        case FormDuty.CREATE:
-        await TransactionClassification.insertIntoDB(
-                authProviderSQL,
-                _fields,
-              ),
-          break;
-        default:
-      }
-      await dbOperationHandler();
-      widget.notifyTranClassChanged();
-      loadingEnd();
-    } catch (e) {
-      loadingEnd();
-      showErrorDialog(
-        context,
-        'Error while _saveForm',
-        'source: createExpenditureInDB <EF22>',
-        e,
-      );
+    switch (_formDuty) {
+      case FormDuty.CREATE:
+        try {
+          await TranClassManagement.createTranClassInDB(
+            authProviderSQL,
+            _fields,
+          );
+        } catch (e) {
+          loadingEnd();
+          showErrorDialog(
+            context,
+            'Error while _saveForm() > TranClassManagement.createTranClassInDB()',
+            'source: CLASS_FRM 11',
+            e,
+          );
+        }
+        break;
+      default:
     }
+    widget.notifyTranClassChanged();
+    loadingEnd();
   }
 
   Widget _buildButton(

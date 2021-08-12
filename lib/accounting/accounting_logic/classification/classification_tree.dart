@@ -3,7 +3,7 @@ import 'package:shop/accounting/expenditure/expenditure_class_tree.dart';
 
 import 'transaction_classification.dart';
 
-const TRANS_CLASS_TREE = const [
+var TRANS_CLASS_TREE = [
   // GENERAL
   TransactionClassification(
     id: TranClassIds.GENERAL_TRAN_CLASS_ID,

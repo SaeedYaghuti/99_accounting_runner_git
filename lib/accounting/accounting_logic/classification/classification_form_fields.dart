@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop/accounting/accounting_logic/classification/transaction_classification.dart';
 import 'package:shop/accounting/expenditure/expenditure_class_tree.dart';
+import 'package:shop/accounting/expenditure/expenditure_screen_form.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/shared/result_status.dart';
 
@@ -175,13 +176,17 @@ class ClassificationFormFields {
   }
 
   // # validate
-  Result<bool> validate() {
+  Result<bool> validate(FormDuty duty) {
     if (formKey.currentState == null) {
       print('EF20| Warn: _formKey.currentState == null');
       return Result(false, '_formKey.currentState is null');
     }
     // step#1 validate custom fields that have no predifined validate() method
     var errorMessages = '';
+    // at create_duty id should not be null
+    if (id == null && duty != FormDuty.CREATE ) {
+      errorMessages += '\nid is null while it is not in create mode';
+    }
     if (parentClass == null) {
       hasErrorParentClass = true;
       errorMessages += '\nParentClass is empty';
