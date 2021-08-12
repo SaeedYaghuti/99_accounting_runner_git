@@ -17,48 +17,56 @@ class ClassificationFormFields {
     int? authId,
     AuthProviderSQL? authProvider,
     TransactionClassification? parentClass,
-    TransactionClassification? tranClass,
+    String? id,
+    String? titleEnglish,
+    String? titlePersian,
+    String? titleArabic,
+    String? note,
+    // TransactionClassification? tranClass,
     Function? resetState,
   }) {
     this.authId = authId;
     this.parentClass = parentClass;
-    this.tranClass = tranClass;
+    // this.tranClass = tranClass;
+    this.id = id;
+    this.titleEnglish = titleEnglish;
+    this.titlePersian = titlePersian;
+    this.titleArabic = titleArabic;
+    this.note = note;
   }
 
   // # tranClass
-  TransactionClassification? tranClassification;
-  bool hasErrorTranClass = false;
-  final tranClassFocusNode = FocusNode();
-  TextEditingController tranClassController = TextEditingController();
-  TransactionClassification? get tranClass {
-    return tranClassification;
-  }
-
-  set tranClass(TransactionClassification? tranClassification) {
-    this.tranClassification = tranClassification;
-    this.tranClassController.text = (tranClassification == null) ? '' : tranClassification.titleEnglish;
-    id = tranClassification?.id;
-    titleEnglish = tranClassification?.titleEnglish;
-    titlePersian = tranClassification?.titlePersian;
-    titleArabic = tranClassification?.titleArabic;
-    note = tranClassification?.note;
-  }
-
-  String? validateTranClass(String? tranClassText) {
-    // print('EXP_FRM_FLD | validateTranClass() 01 | input: $tranClassText');
-    if (tranClassText == null || tranClassText.isEmpty) {
-      return 'tranClass should not be empty';
-    }
-    if (tranClassification == null) {
-      return 'tranClassification should not be null inside expenditureFields';
-    }
-    if (tranClassification!.titleEnglish != tranClassText &&
-        tranClassification!.titlePersian != tranClassText &&
-        tranClassification!.titleArabic != tranClassText) {
-      return 'tranClassification.titleE|P|A is mismatch with input text';
-    }
-    return null;
-  }
+  // TransactionClassification? tranClassification;
+  // bool hasErrorTranClass = false;
+  // final tranClassFocusNode = FocusNode();
+  // TextEditingController tranClassController = TextEditingController();
+  // TransactionClassification? get tranClass {
+  //   return tranClassification;
+  // }
+  // set tranClass(TransactionClassification? tranClassification) {
+  //   this.tranClassification = tranClassification;
+  //   this.tranClassController.text = (tranClassification == null) ? '' : tranClassification.titleEnglish;
+  //   id = tranClassification?.id;
+  //   titleEnglish = tranClassification?.titleEnglish;
+  //   titlePersian = tranClassification?.titlePersian;
+  //   titleArabic = tranClassification?.titleArabic;
+  //   note = tranClassification?.note;
+  // }
+  // String? validateTranClass(String? tranClassText) {
+  //   // print('EXP_FRM_FLD | validateTranClass() 01 | input: $tranClassText');
+  //   if (tranClassText == null || tranClassText.isEmpty) {
+  //     return 'tranClass should not be empty';
+  //   }
+  //   if (tranClassification == null) {
+  //     return 'tranClassification should not be null inside expenditureFields';
+  //   }
+  //   if (tranClassification!.titleEnglish != tranClassText &&
+  //       tranClassification!.titlePersian != tranClassText &&
+  //       tranClassification!.titleArabic != tranClassText) {
+  //     return 'tranClassification.titleE|P|A is mismatch with input text';
+  //   }
+  //   return null;
+  // }
 
   // # parentClass
   TransactionClassification? parentClassification;
@@ -178,10 +186,10 @@ class ClassificationFormFields {
       hasErrorParentClass = true;
       errorMessages += '\nParentClass is empty';
     }
-    if (tranClass == null) {
-      hasErrorTranClass = true;
-      errorMessages += '\nTranClass is empty';
-    }
+    // if (tranClass == null) {
+    //   hasErrorTranClass = true;
+    //   errorMessages += '\nTranClass is empty';
+    // }
     if (titleEnglish == null) {
       hasErrorTitleEnglish = true;
       errorMessages += '\nTitleEnglish is empty';
@@ -214,9 +222,14 @@ class ClassificationFormFields {
 
   // # Example
   static ClassificationFormFields get expenditureExample {
+    var tranClass = EXP_CLASS_TREE.firstWhere((tranClass) => tranClass.id == ExpClassIds.GENERAL_EXP_CLASS_ID);
     return ClassificationFormFields(
       parentClass: TRANS_CLASS_TREE.firstWhere((parent) => parent.id == ExpClassIds.MAIN_EXP_CLASS_ID),
-      tranClass: EXP_CLASS_TREE.firstWhere((tranClass) => tranClass.id == ExpClassIds.GENERAL_EXP_CLASS_ID),
+      id: tranClass.id,
+      titleEnglish: tranClass.titleEnglish,
+      titlePersian: tranClass.titlePersian,
+      titleArabic: tranClass.titleArabic,
+      note: tranClass.note,
     );
   }
 
@@ -224,7 +237,6 @@ class ClassificationFormFields {
   String toString() {
     return '''
       id: $id,
-      tranClass: {$tranClass}, 
       parentClass: {$parentClass},
       titleEnglish: $titleEnglish,
       titlePersian: $titlePersian,
