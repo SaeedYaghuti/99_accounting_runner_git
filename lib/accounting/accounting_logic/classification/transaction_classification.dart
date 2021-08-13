@@ -157,7 +157,7 @@ class TransactionClassification {
   static const String column7Note = 'tranClass_note';
 
   static const String QUERY_CREATE_EXPENDITURE_CLASSIFICATION_TABLE = '''CREATE TABLE $tableName (
-    $column1Id TEXT PRIMARY KEY, 
+    $column1Id TEXT NOT NULL PRIMARY KEY, 
     $column2ParentId TEXT NOT NULL, 
     $column3AccountType TEXT NOT NULL, 
     $column4TitleEnglish TEXT NOT NULL, 

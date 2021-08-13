@@ -53,6 +53,7 @@ class _ExpClassDropdownMenuState extends State<ExpClassDropdownMenu> {
     ).catchError((e) {
       _loadingEnd();
       print('ACC_DROP_MENU initState() 01| unable to fetchExpClass from db or assign it to variables; e: $e ');
+      throw e;
     });
 
     super.initState();

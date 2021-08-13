@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:shop/accounting/accounting_logic/account_ids.dart';
 import 'package:shop/accounting/accounting_logic/classification/classification_form_fields.dart';
 import 'package:shop/accounting/accounting_logic/classification/transaction_classification.dart';
@@ -6,11 +8,26 @@ import 'package:shop/accounting/accounting_logic/voucher_model.dart';
 import 'package:shop/accounting/expenditure/expenditure_form_fields.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/exceptions/curropted_input.dart';
+import 'package:shop/shared/random_string.dart';
 
 class TranClassManagement {
   static Future<void> createTranClassInDB(AuthProviderSQL authProvider, ClassificationFormFields fields) async {
+    // create unique id
+    var uniqueIdIsCreated = false;
+    var uniqueId = fields.titleEnglish!.trim().replaceAll(RegExp(' +'), '_').toUpperCase();
+    while (!uniqueIdIsCreated) {
+      var tranClass = await TransactionClassification.fetchTranClassById(uniqueId);
+      if (tranClass == null) {
+        // we fetched an id that there is not in db
+        uniqueIdIsCreated = false;
+        break;
+      } else {
+        uniqueId += '_' + getRandString(3);
+      }
+    }
+
     var tranClass = TransactionClassification(
-      id: fields.id,
+      id: uniqueId,
       parentId: fields.parentClass!.parentId,
       // TODO: we select from list
       accountType: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
@@ -24,7 +41,8 @@ class TranClassManagement {
       await TransactionClassification.insertIntoDB(authProvider, tranClass);
     } on Exception catch (e) {
       print(
-          'TRN_CLASS_MANAGMENT | createTranClassInDB() 01 | @ catch error while run TransactionClassification.insertIntoDB() e: $e');
+        'TRN_CLASS_MANAGMENT | createTranClassInDB() 01 | @ catch error while run TransactionClassification.insertIntoDB() e: $e',
+      );
       throw e;
     }
   }
