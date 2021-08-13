@@ -77,7 +77,7 @@ class TransactionClassification {
     WHERE $column3AccountType = ?
     ''';
     }
-    List<TransactionClassification?> expClasses = [];
+    List<TransactionClassification?> tranClasses = [];
 
     try {
       var result = await AccountingDB.runRawQuery(query, [accountType]);
@@ -88,12 +88,12 @@ class TransactionClassification {
       if (result.isEmpty) return [];
 
       result.forEach(
-        (accMap) => expClasses.add(fromMap(accMap)),
+        (tranMap) => tranClasses.add(fromMap(tranMap)),
       );
-      // print('TransactionClassification allTransactionClasses 03| fetched Accounts:');
-      // print('accounts count: ${accounts.length}');
-      // print(accounts);
-      return expClasses;
+      print('TRN_CLSS | allTransactionClasses() 03| fetched tranClass:');
+      print('tranClass count: ${tranClasses.length}');
+      print(tranClasses.reversed);
+      return tranClasses;
     } on Exception catch (e) {
       print('TransactionClassification allTransactionClasses 02| @ catch wile fromMap e: $e');
       throw e;

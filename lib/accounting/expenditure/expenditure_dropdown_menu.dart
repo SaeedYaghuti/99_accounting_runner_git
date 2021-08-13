@@ -134,6 +134,7 @@ class _ExpClassDropdownMenuState extends State<ExpClassDropdownMenu> {
                             icon: Icon(Icons.account_tree_rounded),
                             onPressed: () {
                               // print('88 you want add child to ${child.titleEnglish}');
+                              Navigator.pop(context);
                               _showTranClassCreate(context, child);
                             },
                           ),

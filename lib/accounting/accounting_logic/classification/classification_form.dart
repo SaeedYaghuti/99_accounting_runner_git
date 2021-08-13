@@ -182,9 +182,11 @@ class _ClassificationFormState extends State<ClassificationForm> {
       controller: _fields.parentClassController,
       textInputAction: TextInputAction.next,
       onTap: () {
-        _pickExpClass((tappedExpClass) {
-          _fields.parentClass = tappedExpClass;
-        });
+        _pickExpClass(
+          (tappedExpClass) {
+            _fields.parentClass = tappedExpClass;
+          },
+        );
         FocusScope.of(context).requestFocus(_fields.titleEnglishFocusNode);
       },
       validator: _fields.validateParentClass,

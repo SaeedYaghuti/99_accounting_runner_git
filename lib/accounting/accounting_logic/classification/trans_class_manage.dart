@@ -12,6 +12,9 @@ import 'package:shop/shared/random_string.dart';
 
 class TranClassManagement {
   static Future<void> createTranClassInDB(AuthProviderSQL authProvider, ClassificationFormFields fields) async {
+    // print('TRN_CLASS_MANAGMENT | createTranClassInDB() 01 | input fields:');
+    // print(fields);
+
     // create unique id
     var uniqueIdIsCreated = false;
     var uniqueId = fields.titleEnglish!.trim().replaceAll(RegExp(' +'), '_').toUpperCase();
@@ -28,7 +31,7 @@ class TranClassManagement {
 
     var tranClass = TransactionClassification(
       id: uniqueId,
-      parentId: fields.parentClass!.parentId,
+      parentId: fields.parentClass!.id!,
       // TODO: we select from list
       accountType: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
       titleEnglish: fields.titleEnglish!,
@@ -41,7 +44,7 @@ class TranClassManagement {
       await TransactionClassification.insertIntoDB(authProvider, tranClass);
     } on Exception catch (e) {
       print(
-        'TRN_CLASS_MANAGMENT | createTranClassInDB() 01 | @ catch error while run TransactionClassification.insertIntoDB() e: $e',
+        'TRN_CLASS_MANAGMENT | createTranClassInDB() 02 | @ catch error while run TransactionClassification.insertIntoDB() e: $e',
       );
       throw e;
     }
