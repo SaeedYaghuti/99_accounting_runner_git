@@ -3,25 +3,25 @@ import 'package:shop/accounting/accounting_logic/account_ids.dart';
 import 'package:shop/accounting/accounting_logic/classification/classification_form.dart';
 import 'package:shop/accounting/accounting_logic/classification/transaction_classification.dart';
 
-import 'expenditure_class_tree.dart';
-import 'expenditure_screen_form.dart';
+import '../../expenditure/expenditure_class_tree.dart';
+import '../../expenditure/expenditure_screen_form.dart';
 
-class ExpClassDropdownMenu extends StatefulWidget {
+class TranClassDropdownMenu extends StatefulWidget {
   final List<String?> unwantedExpClassIds;
   final List<String?> expandedExpClassIds;
   final Function(TransactionClassification) tapHandler;
 
-  ExpClassDropdownMenu({
+  TranClassDropdownMenu({
     required this.unwantedExpClassIds,
     required this.expandedExpClassIds,
     required this.tapHandler,
   });
 
   @override
-  _ExpClassDropdownMenuState createState() => _ExpClassDropdownMenuState();
+  _TranClassDropdownMenuState createState() => _TranClassDropdownMenuState();
 }
 
-class _ExpClassDropdownMenuState extends State<ExpClassDropdownMenu> {
+class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
   late List<TransactionClassification> accounts;
 
   late TransactionClassification ledgerExpClass;

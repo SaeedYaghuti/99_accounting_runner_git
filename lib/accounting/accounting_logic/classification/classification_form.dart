@@ -6,7 +6,7 @@ import 'package:shop/accounting/accounting_logic/classification/transaction_clas
 
 import 'package:provider/provider.dart';
 import 'package:shop/accounting/expenditure/expenditure_class_tree.dart';
-import 'package:shop/accounting/expenditure/expenditure_dropdown_menu.dart';
+import 'package:shop/accounting/accounting_logic/classification/tran_class_dropdown_menu.dart';
 import 'package:shop/accounting/expenditure/expenditure_screen_form.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
 
@@ -404,7 +404,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
           return SimpleDialog(
             title: Text('SELECT EXPENDITURE CLASS:'),
             children: [
-              ExpClassDropdownMenu(
+              TranClassDropdownMenu(
                 expandedExpClassIds: [
                   ExpClassIds.MAIN_EXP_CLASS_ID,
                   ExpClassIds.SHOP_EXP_CLASS_ID,

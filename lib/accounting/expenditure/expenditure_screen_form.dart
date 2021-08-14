@@ -23,7 +23,7 @@ import 'package:shop/accounting/expenditure/expenditure_model.dart';
 import 'package:shop/auth/has_access.dart';
 import 'package:shop/exceptions/not_handled_exception.dart';
 import 'package:shop/shared/show_error_dialog.dart';
-import 'expenditure_dropdown_menu.dart';
+import '../accounting_logic/classification/tran_class_dropdown_menu.dart';
 import 'expenditure_form_fields.dart';
 
 class ExpenditureForm extends StatefulWidget {
@@ -493,7 +493,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
           return SimpleDialog(
             title: Text('SELECT EXPENDITURE CLASS:'),
             children: [
-              ExpClassDropdownMenu(
+              TranClassDropdownMenu(
                 expandedExpClassIds: [
                   ExpClassIds.MAIN_EXP_CLASS_ID,
                   ExpClassIds.SHOP_EXP_CLASS_ID,
