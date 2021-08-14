@@ -90,9 +90,9 @@ class TransactionClassification {
       result.forEach(
         (tranMap) => tranClasses.add(fromMap(tranMap)),
       );
-      print('TRN_CLSS | allTransactionClasses() 03| fetched tranClass:');
-      print('tranClass count: ${tranClasses.length}');
-      print(tranClasses.reversed);
+      // print('TRN_CLSS | allTransactionClasses() 03| fetched tranClass:');
+      // print('tranClass count: ${tranClasses.length}');
+      // print(tranClasses.reversed);
       return tranClasses;
     } on Exception catch (e) {
       print('TransactionClassification allTransactionClasses 02| @ catch wile fromMap e: $e');

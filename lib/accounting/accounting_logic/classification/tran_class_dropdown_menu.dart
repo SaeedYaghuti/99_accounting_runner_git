@@ -85,31 +85,32 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
         parent.titleEnglish,
         style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
       ),
-      trailing: FittedBox(
-        child: Row(
-          children: [
-            IconButton(
-              icon: Icon(Icons.account_tree_rounded),
-              onPressed: () {
-                // print('88 you want add child to ${parent.titleEnglish}');
-                _showTranClassCreate(context, parent);
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.edit),
-              onPressed: () {
-                print('88 you want edit ${parent.titleEnglish}');
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.delete),
-              onPressed: () {
-                print('88 you want delete ${parent.titleEnglish}');
-              },
-            ),
-          ],
-        ),
-      ),
+      trailing: _buildTrailingCredIcon(parent),
+      // trailing: FittedBox(
+      //   child: Row(
+      //     children: [
+      //       IconButton(
+      //         icon: Icon(Icons.account_tree_rounded),
+      //         onPressed: () {
+      //           // print('88 you want add child to ${parent.titleEnglish}');
+      //           _showTranClassCreate(context, parent);
+      //         },
+      //       ),
+      //       IconButton(
+      //         icon: Icon(Icons.edit),
+      //         onPressed: () {
+      //           print('88 you want edit ${parent.titleEnglish}');
+      //         },
+      //       ),
+      //       IconButton(
+      //         icon: Icon(Icons.delete),
+      //         onPressed: () {
+      //           print('88 you want delete ${parent.titleEnglish}');
+      //         },
+      //       ),
+      //     ],
+      //   ),
+      // ),
       children: childs(parent.id!)
           .map((child) {
             // parent should continue running recursively
@@ -126,39 +127,70 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
                         Text(child.titleEnglish),
                       ],
                     ),
-                    trailing: FittedBox(
-                      // width: 50,
-                      child: Row(
-                        children: [
-                          IconButton(
-                            icon: Icon(Icons.account_tree_rounded),
-                            onPressed: () {
-                              // print('88 you want add child to ${child.titleEnglish}');
-                              Navigator.pop(context);
-                              _showTranClassCreate(context, child);
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.edit),
-                            onPressed: () {
-                              print('88 you want edit ${child.titleEnglish}');
-                            },
-                          ),
-                          IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () {
-                              print('88 you want delete ${child.titleEnglish}');
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
+                    trailing: _buildTrailingCredIcon(child),
+                    // trailing: FittedBox(
+                    //   // width: 50,
+                    //   child: Row(
+                    //     children: [
+                    //       IconButton(
+                    //         icon: Icon(Icons.account_tree_rounded),
+                    //         onPressed: () {
+                    //           // print('88 you want add child to ${child.titleEnglish}');
+                    //           Navigator.pop(context);
+                    //           _showTranClassCreate(context, child);
+                    //         },
+                    //       ),
+                    //       IconButton(
+                    //         icon: Icon(Icons.edit),
+                    //         onPressed: () {
+                    //           print('88 you want edit ${child.titleEnglish}');
+                    //         },
+                    //       ),
+                    //       IconButton(
+                    //         icon: Icon(Icons.delete),
+                    //         onPressed: () {
+                    //           print('88 you want delete ${child.titleEnglish}');
+                    //         },
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
                     onTap: () => widget.tapHandler(child),
                   )
                 : null;
           })
           .whereType<Widget>()
           .toList(),
+    );
+  }
+
+  Widget _buildTrailingCredIcon(TransactionClassification tranClass) {
+    return FittedBox(
+      // width: 50,
+      child: Row(
+        children: [
+          IconButton(
+            icon: Icon(Icons.account_tree_rounded),
+            onPressed: () {
+              // print('88 you want add child to ${child.titleEnglish}');
+              Navigator.pop(context);
+              _showTranClassCreate(context, tranClass);
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.edit),
+            onPressed: () {
+              print('88 you want edit ${tranClass.titleEnglish}');
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: () {
+              print('88 you want delete ${tranClass.titleEnglish}');
+            },
+          ),
+        ],
+      ),
     );
   }
 
