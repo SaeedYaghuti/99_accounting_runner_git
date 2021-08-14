@@ -35,7 +35,8 @@ class TransactionClassification {
     }
   }
 
-  static Future<int> insertIntoDB(AuthProviderSQL authProvider, TransactionClassification tranClass) async {
+  static Future<TransactionClassification> insertIntoDB(
+      AuthProviderSQL authProvider, TransactionClassification tranClass) async {
     // check authority
     if (authProvider.isNotPermitted(PermissionModel.TRANSACTION_CLASS_CRED)) {
       print(
@@ -48,7 +49,8 @@ class TransactionClassification {
 
     // do some logic on variables
     try {
-      return AccountingDB.insert(tableName, tranClass.toMap());
+      await AccountingDB.insert(tableName, tranClass.toMap());
+      return tranClass;
     } catch (e) {
       print('TransactionClassification insertIntoDB() 02| error:$e');
       throw e;

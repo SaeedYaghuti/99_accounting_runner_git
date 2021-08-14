@@ -20,7 +20,7 @@ class ClassificationForm extends StatefulWidget {
   final TransactionClassification parentClass;
   final TransactionClassification? tranClass;
   final FormDuty formDuty;
-  final Function notifyTranClassChanged;
+  final Function(TransactionClassification?) notifyTranClassChanged;
 
   const ClassificationForm({
     Key? key,
@@ -99,7 +99,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
     widget.tranClass!.deleteMeFromDB(authProviderSQL).then((deleteResult) {
       loadingEnd();
       print('CLSS_FORM | initStateDelete() 01 | deleteResult: $deleteResult');
-      widget.notifyTranClassChanged();
+      widget.notifyTranClassChanged(widget.tranClass!);
     }).catchError((e) {
       loadingEnd();
       showErrorDialog(
@@ -344,10 +344,11 @@ class _ClassificationFormState extends State<ClassificationForm> {
     }
     _fields.formKey.currentState!.save(); // run all onSaved method
     loadingStart();
+    TransactionClassification? operandClass;
     switch (_formDuty) {
       case FormDuty.CREATE:
         try {
-          await TranClassManagement.createTranClassInDB(
+          operandClass = await TranClassManagement.createTranClassInDB(
             authProviderSQL,
             _fields,
           );
@@ -363,7 +364,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
         break;
       default:
     }
-    widget.notifyTranClassChanged();
+    widget.notifyTranClassChanged(operandClass);
     loadingEnd();
   }
 

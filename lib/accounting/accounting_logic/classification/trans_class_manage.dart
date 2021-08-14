@@ -11,7 +11,8 @@ import 'package:shop/exceptions/curropted_input.dart';
 import 'package:shop/shared/random_string.dart';
 
 class TranClassManagement {
-  static Future<void> createTranClassInDB(AuthProviderSQL authProvider, ClassificationFormFields fields) async {
+  static Future<TransactionClassification> createTranClassInDB(
+      AuthProviderSQL authProvider, ClassificationFormFields fields) async {
     // print('TRN_CLASS_MANAGMENT | createTranClassInDB() 01 | input fields:');
     // print(fields);
 
@@ -41,7 +42,7 @@ class TranClassManagement {
     );
 
     try {
-      await TransactionClassification.insertIntoDB(authProvider, tranClass);
+      return await TransactionClassification.insertIntoDB(authProvider, tranClass);
     } on Exception catch (e) {
       print(
         'TRN_CLASS_MANAGMENT | createTranClassInDB() 02 | @ catch error while run TransactionClassification.insertIntoDB() e: $e',

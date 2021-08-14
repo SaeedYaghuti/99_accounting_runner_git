@@ -8,7 +8,7 @@ import '../../expenditure/expenditure_screen_form.dart';
 
 class TranClassDropdownMenu extends StatefulWidget {
   final List<String?> unwantedExpClassIds;
-  final List<String?> expandedExpClassIds;
+  List<String?> expandedExpClassIds;
   final Function(TransactionClassification) tapHandler;
 
   TranClassDropdownMenu({
@@ -23,12 +23,18 @@ class TranClassDropdownMenu extends StatefulWidget {
 
 class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
   late List<TransactionClassification> accounts;
+  List<TransactionClassification> boldTranClasses = [];
 
   late TransactionClassification ledgerExpClass;
   bool vriablesAreInitialized = false;
 
   @override
   void initState() {
+    _initializeState();
+    super.initState();
+  }
+
+  void _initializeState() {
     _loadingStart();
     TransactionClassification.allTransactionClasses(ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID).then(
       (fetchExpClasss) {
@@ -55,8 +61,11 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
       print('ACC_DROP_MENU initState() 01| unable to fetchExpClass from db or assign it to variables; e: $e ');
       throw e;
     });
+  }
 
-    super.initState();
+  void notifyTranClassChanged(TransactionClassification? tranClass) {
+    if (tranClass != null) boldTranClasses.add(tranClass);
+    _initializeState();
   }
 
   @override
@@ -80,12 +89,13 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
   ExpansionTile _buildTileTree(TransactionClassification parent) {
     return ExpansionTile(
       childrenPadding: EdgeInsets.symmetric(horizontal: 5),
-      initiallyExpanded: widget.expandedExpClassIds.contains(parent.id),
+      initiallyExpanded:
+          widget.expandedExpClassIds.contains(parent.id) || boldTranClasses.any((bold) => bold.parentId == parent.id),
       title: Text(
         parent.titleEnglish,
         style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
       ),
-      trailing: _buildTrailingCredIcon(parent),
+      trailing: _buildTrailingCredIcon(parent, true),
       children: childs(parent.id!)
           .map((child) {
             // parent should continue running recursively
@@ -97,9 +107,18 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
                 ? ListTile(
                     title: Row(
                       children: [
-                        Icon(Icons.filter_tilt_shift_outlined, size: 12),
+                        Icon(
+                          Icons.filter_tilt_shift_outlined,
+                          size: 12,
+                          color: classIsBold(child) ? Colors.blue : Colors.black87,
+                        ),
                         SizedBox(width: 3),
-                        Text(child.titleEnglish),
+                        Text(
+                          child.titleEnglish,
+                          style: TextStyle(
+                            color: classIsBold(child) ? Colors.blue : Colors.black87,
+                          ),
+                        ),
                       ],
                     ),
                     trailing: _buildTrailingCredIcon(child),
@@ -112,27 +131,52 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
     );
   }
 
-  Widget _buildTrailingCredIcon(TransactionClassification tranClass) {
+  bool classIsBold(TransactionClassification tranClass) {
+    return boldTranClasses.any((bold) => bold.id == tranClass.id);
+  }
+
+  Widget _buildTrailingCredIcon(TransactionClassification tranClass, [isParent = false]) {
     return FittedBox(
       // width: 50,
       child: Row(
         children: [
           IconButton(
-            icon: Icon(Icons.account_tree_rounded),
+            icon: Icon(
+              Icons.account_tree_rounded,
+              color: classIsBold(tranClass)
+                  ? Colors.blue
+                  : isParent
+                      ? Theme.of(context).accentColor.withOpacity(0.8)
+                      : Colors.black45,
+            ),
             onPressed: () {
               // print('88 you want add child to ${child.titleEnglish}');
               // Navigator.pop(context);
-              _showTranClassCreate(context, tranClass);
+              _showTranClassCreateForm(context, tranClass);
             },
           ),
           IconButton(
-            icon: Icon(Icons.edit),
+            icon: Icon(
+              Icons.edit,
+              color: classIsBold(tranClass)
+                  ? Colors.blue
+                  : isParent
+                      ? Theme.of(context).accentColor.withOpacity(0.8)
+                      : Colors.black45,
+            ),
             onPressed: () {
               print('88 you want edit ${tranClass.titleEnglish}');
             },
           ),
           IconButton(
-            icon: Icon(Icons.delete),
+            icon: Icon(
+              Icons.delete,
+              color: classIsBold(tranClass)
+                  ? Colors.blue
+                  : isParent
+                      ? Theme.of(context).accentColor.withOpacity(0.8)
+                      : Colors.black45,
+            ),
             onPressed: () {
               print('88 you want delete ${tranClass.titleEnglish}');
             },
@@ -142,7 +186,7 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
     );
   }
 
-  void _showTranClassCreate(BuildContext context, TransactionClassification parent) {
+  void _showTranClassCreateForm(BuildContext context, TransactionClassification parent) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -154,8 +198,7 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
                 child: ClassificationForm(
                   formDuty: FormDuty.CREATE,
                   parentClass: parent,
-                  // notifyTranClassChanged: notifyNewVoucher,
-                  notifyTranClassChanged: () {},
+                  notifyTranClassChanged: notifyTranClassChanged,
                 ),
               ),
             ],
