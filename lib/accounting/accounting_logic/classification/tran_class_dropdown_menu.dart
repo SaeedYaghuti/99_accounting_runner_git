@@ -86,31 +86,6 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
         style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
       ),
       trailing: _buildTrailingCredIcon(parent),
-      // trailing: FittedBox(
-      //   child: Row(
-      //     children: [
-      //       IconButton(
-      //         icon: Icon(Icons.account_tree_rounded),
-      //         onPressed: () {
-      //           // print('88 you want add child to ${parent.titleEnglish}');
-      //           _showTranClassCreate(context, parent);
-      //         },
-      //       ),
-      //       IconButton(
-      //         icon: Icon(Icons.edit),
-      //         onPressed: () {
-      //           print('88 you want edit ${parent.titleEnglish}');
-      //         },
-      //       ),
-      //       IconButton(
-      //         icon: Icon(Icons.delete),
-      //         onPressed: () {
-      //           print('88 you want delete ${parent.titleEnglish}');
-      //         },
-      //       ),
-      //     ],
-      //   ),
-      // ),
       children: childs(parent.id!)
           .map((child) {
             // parent should continue running recursively
@@ -128,33 +103,6 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
                       ],
                     ),
                     trailing: _buildTrailingCredIcon(child),
-                    // trailing: FittedBox(
-                    //   // width: 50,
-                    //   child: Row(
-                    //     children: [
-                    //       IconButton(
-                    //         icon: Icon(Icons.account_tree_rounded),
-                    //         onPressed: () {
-                    //           // print('88 you want add child to ${child.titleEnglish}');
-                    //           Navigator.pop(context);
-                    //           _showTranClassCreate(context, child);
-                    //         },
-                    //       ),
-                    //       IconButton(
-                    //         icon: Icon(Icons.edit),
-                    //         onPressed: () {
-                    //           print('88 you want edit ${child.titleEnglish}');
-                    //         },
-                    //       ),
-                    //       IconButton(
-                    //         icon: Icon(Icons.delete),
-                    //         onPressed: () {
-                    //           print('88 you want delete ${child.titleEnglish}');
-                    //         },
-                    //       ),
-                    //     ],
-                    //   ),
-                    // ),
                     onTap: () => widget.tapHandler(child),
                   )
                 : null;
@@ -173,7 +121,7 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
             icon: Icon(Icons.account_tree_rounded),
             onPressed: () {
               // print('88 you want add child to ${child.titleEnglish}');
-              Navigator.pop(context);
+              // Navigator.pop(context);
               _showTranClassCreate(context, tranClass);
             },
           ),
