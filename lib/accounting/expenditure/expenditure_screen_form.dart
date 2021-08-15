@@ -21,6 +21,7 @@ import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/accounting/environment/environment_provider.dart';
 import 'package:shop/accounting/expenditure/expenditure_model.dart';
 import 'package:shop/auth/has_access.dart';
+import 'package:shop/exceptions/curropted_input.dart';
 import 'package:shop/exceptions/not_handled_exception.dart';
 import 'package:shop/shared/show_error_dialog.dart';
 import '../accounting_logic/classification/tran_class_dropdown_menu.dart';
@@ -405,8 +406,8 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   Future<void> _saveForm(Function dbOperationHandler) async {
     final isValid = _fields.validate();
     if (!isValid.outcome) {
-      print('EF21| Warn: ${isValid.errorMessage}');
-      return;
+      print('EF21| Error: ${isValid.errorMessage}');
+      throw CurroptedInputException('EF21| Error: ${isValid.errorMessage}');
     }
     _fields.formKey.currentState!.save(); // run all onSaved method
     loadingStart();
@@ -494,12 +495,12 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
             title: Text('SELECT EXPENDITURE CLASS:'),
             children: [
               TranClassDropdownMenu(
-                expandedExpClassIds: [
+                expandedTranClassIds: [
                   ExpClassIds.MAIN_EXP_CLASS_ID,
                   ExpClassIds.SHOP_EXP_CLASS_ID,
                   ExpClassIds.STAFF_EXP_CLASS_ID,
                 ],
-                unwantedExpClassIds: [],
+                unwantedTranClassIds: [],
                 tapHandler: (TransactionClassification tappedExpClass) {
                   Navigator.of(context).pop();
                   setState(() {

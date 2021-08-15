@@ -7,13 +7,13 @@ import '../../expenditure/expenditure_class_tree.dart';
 import '../../expenditure/expenditure_screen_form.dart';
 
 class TranClassDropdownMenu extends StatefulWidget {
-  final List<String?> unwantedExpClassIds;
-  List<String?> expandedExpClassIds;
+  final List<String?> unwantedTranClassIds;
+  List<String?> expandedTranClassIds;
   final Function(TransactionClassification) tapHandler;
 
   TranClassDropdownMenu({
-    required this.unwantedExpClassIds,
-    required this.expandedExpClassIds,
+    required this.unwantedTranClassIds,
+    required this.expandedTranClassIds,
     required this.tapHandler,
   });
 
@@ -22,7 +22,7 @@ class TranClassDropdownMenu extends StatefulWidget {
 }
 
 class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
-  late List<TransactionClassification> accounts;
+  late List<TransactionClassification> tranClasses;
   List<TransactionClassification> boldTranClasses = [];
 
   late TransactionClassification ledgerExpClass;
@@ -45,10 +45,10 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
           vriablesAreInitialized = false;
           return;
         }
-        accounts = fetchExpClasss.cast<TransactionClassification>();
+        tranClasses = fetchExpClasss.cast<TransactionClassification>();
 
-        if (accounts.any((acc) => acc.id == ExpClassIds.MAIN_EXP_CLASS_ID)) {
-          ledgerExpClass = accounts.firstWhere(
+        if (tranClasses.any((acc) => acc.id == ExpClassIds.MAIN_EXP_CLASS_ID)) {
+          ledgerExpClass = tranClasses.firstWhere(
             (acc) => acc.id == ExpClassIds.MAIN_EXP_CLASS_ID,
           );
           vriablesAreInitialized = true;
@@ -90,7 +90,7 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
     return ExpansionTile(
       childrenPadding: EdgeInsets.symmetric(horizontal: 5),
       initiallyExpanded:
-          widget.expandedExpClassIds.contains(parent.id) || boldTranClasses.any((bold) => bold.parentId == parent.id),
+          widget.expandedTranClassIds.contains(parent.id) || boldTranClasses.any((bold) => bold.parentId == parent.id),
       title: Text(
         parent.titleEnglish,
         style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
@@ -99,11 +99,11 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
       children: childs(parent.id!)
           .map((child) {
             // parent should continue running recursively
-            if (isParent(child!.id!) && !widget.unwantedExpClassIds.contains(child.id)) {
+            if (isParent(child!.id!) && !widget.unwantedTranClassIds.contains(child.id)) {
               return _buildTileTree(child);
             }
             // check permition for child
-            return !widget.unwantedExpClassIds.contains(child.id)
+            return !widget.unwantedTranClassIds.contains(child.id)
                 ? ListTile(
                     title: Row(
                       children: [
@@ -168,9 +168,10 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
             ),
             onPressed: () {
               // print('88 you want edit ${tranClass.titleEnglish}');
-              _showTranClassEditForm(context, formParent: formParent, formTranClass: tranClass);
+              _showTranClassEditForm(context, tranClass);
             },
           ),
+          // button: delete
           IconButton(
             icon: Icon(
               Icons.delete,
@@ -209,11 +210,8 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
         });
   }
 
-  void _showTranClassEditForm(
-    BuildContext context, {
-    required TransactionClassification formParent,
-    required TransactionClassification formTranClass,
-  }) {
+  void _showTranClassEditForm(BuildContext context, TransactionClassification tranClass) {
+    var parentClass = tranClassById(tranClass.parentId);
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -224,8 +222,8 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
               height: 700,
               child: ClassificationForm(
                 formDuty: FormDuty.EDIT,
-                parentClass: formParent,
-                tranClass: formTranClass,
+                parentClass: parentClass,
+                tranClass: tranClass,
                 notifyTranClassChanged: notifyTranClassChanged,
               ),
             ),
@@ -235,12 +233,16 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
     );
   }
 
-  bool isParent(String accountId) {
-    return accounts.any((account) => account.parentId == accountId);
+  TransactionClassification tranClassById(String classId) {
+    return tranClasses.firstWhere((tranClass) => tranClass.id == classId);
+  }
+
+  bool isParent(String classId) {
+    return tranClasses.any((account) => account.parentId == classId);
   }
 
   List<TransactionClassification?> childs(String accountId) {
-    return accounts.where((account) => account.parentId == accountId).toList();
+    return tranClasses.where((account) => account.parentId == accountId).toList();
   }
 
   bool _isLoading = false;

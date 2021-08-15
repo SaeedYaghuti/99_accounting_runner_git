@@ -24,8 +24,8 @@ class ClassificationForm extends StatefulWidget {
 
   const ClassificationForm({
     Key? key,
-    required this.parentClass,
     this.tranClass,
+    required this.parentClass,
     required this.formDuty,
     required this.notifyTranClassChanged,
   }) : super(key: key);
@@ -37,7 +37,7 @@ class ClassificationForm extends StatefulWidget {
 class _ClassificationFormState extends State<ClassificationForm> {
   late AuthProviderSQL authProviderSQL;
   var _fields = ClassificationFormFields();
-  var _formDuty = FormDuty.CREATE;
+  late FormDuty _formDuty;
   var _didChangeRun = false;
 
   @override
@@ -64,13 +64,15 @@ class _ClassificationFormState extends State<ClassificationForm> {
       case FormDuty.CREATE:
         initStateCreate();
         break;
-      case FormDuty.DELETE:
-        initStateDelete();
-        break;
       case FormDuty.EDIT:
         initStateEdit();
         break;
+      case FormDuty.DELETE:
+        initStateDelete();
+        break;
       default:
+        throw NotHandledException(
+            'CLSS_FORM | didChangeDependencies() 01 | We have a FormDuty element that is not handled: ${widget.formDuty}');
     }
     _didChangeRun = true;
   }
@@ -92,6 +94,25 @@ class _ClassificationFormState extends State<ClassificationForm> {
     }
   }
 
+  void initStateEdit() {
+    // print('CLSS_FORM | initStateEdit() 01|');
+    // print(widget.voucher);
+    if (widget.tranClass == null || widget.parentClass == null) {
+      print('CLSS_FORM | initStateEdit() 01| formDuty is Edit but given tranClass is null');
+      throw CurroptedInputException('CLSS_FORM | initStateEdit() 01| formDuty is Edit but given tranClass is null');
+    }
+    _fields.id = widget.tranClass!.id;
+    _fields.parentClass = widget.parentClass;
+    _fields.titleEnglish = widget.tranClass!.titleEnglish;
+    _fields.titlePersian = widget.tranClass!.titlePersian;
+    _fields.titleArabic = widget.tranClass!.titleArabic;
+    _fields.note = widget.tranClass!.note;
+
+    // print('CLSS_FORM init_state| EDIT 03| prepared _expenditureFormFields');
+    // print(_fields);
+    setState(() {});
+  }
+
   void initStateDelete() {
     // print('EF | init_state | form rebuild for DELETE');
     if (widget.tranClass == null) return;
@@ -109,25 +130,6 @@ class _ClassificationFormState extends State<ClassificationForm> {
         e,
       );
     });
-  }
-
-  void initStateEdit() {
-    // print('CLSS_FORM | initStateEdit() 01|');
-    // print(widget.voucher);
-    if (widget.tranClass == null || widget.parentClass == null) {
-      print('CLSS_FORM | initStateEdit() 01| formDuty is Edit but given tranClass is null');
-      throw CurroptedInputException('CLSS_FORM | initStateEdit() 01| formDuty is Edit but given tranClass is null');
-    }
-
-    _fields.parentClass = widget.parentClass;
-    _fields.titleEnglish = widget.tranClass!.titleEnglish;
-    _fields.titlePersian = widget.tranClass!.titlePersian;
-    _fields.titleArabic = widget.tranClass!.titleArabic;
-    _fields.note = widget.tranClass!.note;
-
-    // print('CLSS_FORM init_state| EDIT 03| prepared _expenditureFormFields');
-    // print(_fields);
-    setState(() {});
   }
 
   @override
@@ -301,8 +303,8 @@ class _ClassificationFormState extends State<ClassificationForm> {
   Future<void> _saveForm() async {
     final isValid = _fields.validate(_formDuty);
     if (!isValid.outcome) {
-      print('EF21| Warn: ${isValid.errorMessage}');
-      return;
+      print('EF21| Error: ${isValid.errorMessage}');
+      throw CurroptedInputException('CLSS_FORM| _saveForm() 01 | Error: ${isValid.errorMessage}');
     }
     _fields.formKey.currentState!.save(); // run all onSaved method
     loadingStart();
@@ -384,12 +386,12 @@ class _ClassificationFormState extends State<ClassificationForm> {
             title: Text('SELECT EXPENDITURE CLASS:'),
             children: [
               TranClassDropdownMenu(
-                expandedExpClassIds: [
+                expandedTranClassIds: [
                   ExpClassIds.MAIN_EXP_CLASS_ID,
                   ExpClassIds.SHOP_EXP_CLASS_ID,
                   ExpClassIds.STAFF_EXP_CLASS_ID,
                 ],
-                unwantedExpClassIds: [],
+                unwantedTranClassIds: [],
                 tapHandler: (TransactionClassification tappedExpClass) {
                   Navigator.of(context).pop();
                   setState(() {
