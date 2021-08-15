@@ -73,7 +73,8 @@ class TranClassManagement {
     );
 
     try {
-      return await TransactionClassification.updateMeIn;
+      await tranClass.updateMeIntoDB();
+      return tranClass;
     } on Exception catch (e) {
       print(
         'TRN_CLASS_MANAGMENT | createTranClassInDB() 02 | @ catch error while run TransactionClassification.insertIntoDB() e: $e',

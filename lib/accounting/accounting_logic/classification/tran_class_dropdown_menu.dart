@@ -140,6 +140,7 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
       // width: 50,
       child: Row(
         children: [
+          // button: add child
           IconButton(
             icon: Icon(
               Icons.account_tree_rounded,
@@ -152,9 +153,10 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
             onPressed: () {
               // print('88 you want add child to ${child.titleEnglish}');
               // Navigator.pop(context);
-              _showTranClassCreateForm(context, tranClass);
+              _showTranClassCreateForm(context, formParent: tranClass);
             },
           ),
+          // button: edit
           IconButton(
             icon: Icon(
               Icons.edit,
@@ -165,7 +167,8 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
                       : Colors.black45,
             ),
             onPressed: () {
-              print('88 you want edit ${tranClass.titleEnglish}');
+              // print('88 you want edit ${tranClass.titleEnglish}');
+              _showTranClassEditForm(context, formParent: formParent, formTranClass: tranClass);
             },
           ),
           IconButton(
@@ -186,7 +189,7 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
     );
   }
 
-  void _showTranClassCreateForm(BuildContext context, TransactionClassification parent) {
+  void _showTranClassCreateForm(BuildContext context, {required TransactionClassification formParent}) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -197,13 +200,39 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
                 height: 700,
                 child: ClassificationForm(
                   formDuty: FormDuty.CREATE,
-                  parentClass: parent,
+                  parentClass: formParent,
                   notifyTranClassChanged: notifyTranClassChanged,
                 ),
               ),
             ],
           );
         });
+  }
+
+  void _showTranClassEditForm(
+    BuildContext context, {
+    required TransactionClassification formParent,
+    required TransactionClassification formTranClass,
+  }) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          title: Text('Edit Transaction Class'),
+          children: [
+            Container(
+              height: 700,
+              child: ClassificationForm(
+                formDuty: FormDuty.EDIT,
+                parentClass: formParent,
+                tranClass: formTranClass,
+                notifyTranClassChanged: notifyTranClassChanged,
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   bool isParent(String accountId) {

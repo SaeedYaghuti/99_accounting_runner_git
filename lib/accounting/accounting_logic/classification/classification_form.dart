@@ -326,7 +326,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
         break;
       case FormDuty.EDIT:
         try {
-          operandClass = await TranClassManagement.createTranClassInDB(
+          operandClass = await TranClassManagement.editTranClassInDB(
             authProviderSQL,
             _fields,
           );
@@ -334,8 +334,8 @@ class _ClassificationFormState extends State<ClassificationForm> {
           loadingEnd();
           showErrorDialog(
             context,
-            'Error while _saveForm() > TranClassManagement.createTranClassInDB()',
-            'source: CLASS_FRM 11',
+            'Error while _saveForm() > TranClassManagement.editTranClassInDB()',
+            'source: CLASS_FRM 12',
             e,
           );
         }
