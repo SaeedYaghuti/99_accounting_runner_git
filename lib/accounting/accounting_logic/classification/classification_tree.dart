@@ -4,10 +4,20 @@ import 'package:shop/accounting/expenditure/expenditure_class_tree.dart';
 import 'transaction_classification.dart';
 
 var TRANS_CLASS_TREE = [
+  // ROOT
+  TransactionClassification(
+    id: TranClassIds.ROOT_TRAN_CLASS_ID,
+    parentId: TranClassIds.ROOT_PARENT_TRAN_CLASS_ID,
+    accountType: ACCOUNTS_ID.LEDGER_ACCOUNT_ID,
+    titleEnglish: 'Root Transaction Class',
+    titlePersian: 'طبقه پایه',
+    titleArabic: 'تصنيف اساسی',
+    note: 'Never use this class; It is only for having valid parent class for General tran class',
+  ),
   // GENERAL
   TransactionClassification(
     id: TranClassIds.GENERAL_TRAN_CLASS_ID,
-    parentId: TranClassIds.TOP_TRAN_CLASS_ID,
+    parentId: TranClassIds.ROOT_TRAN_CLASS_ID,
     accountType: ACCOUNTS_ID.LEDGER_ACCOUNT_ID,
     titleEnglish: 'General Transaction Class',
     titlePersian: 'طبقه عمومى',
@@ -35,6 +45,7 @@ List<TransactionClassification> childs(String expClassId) {
 }
 
 class TranClassIds {
-  static const TOP_TRAN_CLASS_ID = 'TOP_TRAN';
+  static const ROOT_PARENT_TRAN_CLASS_ID = 'ROOT_PARENT_TRAN';
+  static const ROOT_TRAN_CLASS_ID = 'ROOT_TRAN';
   static const GENERAL_TRAN_CLASS_ID = 'GENERAL_TRAN';
 }

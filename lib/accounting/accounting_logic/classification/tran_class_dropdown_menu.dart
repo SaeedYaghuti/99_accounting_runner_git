@@ -10,11 +10,13 @@ class TranClassDropdownMenu extends StatefulWidget {
   final List<String?> unwantedTranClassIds;
   List<String?> expandedTranClassIds;
   final Function(TransactionClassification) tapHandler;
+  final bool selectableParent;
 
   TranClassDropdownMenu({
     required this.unwantedTranClassIds,
     required this.expandedTranClassIds,
     required this.tapHandler,
+    this.selectableParent = false,
   });
 
   @override
@@ -140,6 +142,19 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
       // width: 50,
       child: Row(
         children: [
+          // button: select parent
+          if (isParent && widget.selectableParent)
+            IconButton(
+              icon: Icon(
+                Icons.touch_app_outlined,
+                color: classIsBold(tranClass)
+                    ? Colors.blue
+                    : isParent
+                        ? Theme.of(context).accentColor.withOpacity(0.8)
+                        : Colors.black45,
+              ),
+              onPressed: () => widget.tapHandler(tranClass),
+            ),
           // button: add child
           IconButton(
             icon: Icon(
@@ -150,11 +165,7 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
                       ? Theme.of(context).accentColor.withOpacity(0.8)
                       : Colors.black45,
             ),
-            onPressed: () {
-              // print('88 you want add child to ${child.titleEnglish}');
-              // Navigator.pop(context);
-              _showTranClassCreateForm(context, formParent: tranClass);
-            },
+            onPressed: () => _showTranClassCreateForm(context, formParent: tranClass),
           ),
           // button: edit
           IconButton(
@@ -166,10 +177,7 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
                       ? Theme.of(context).accentColor.withOpacity(0.8)
                       : Colors.black45,
             ),
-            onPressed: () {
-              // print('88 you want edit ${tranClass.titleEnglish}');
-              _showTranClassEditForm(context, tranClass);
-            },
+            onPressed: () => _showTranClassEditForm(context, tranClass),
           ),
           // button: delete
           IconButton(
@@ -212,6 +220,7 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
 
   void _showTranClassEditForm(BuildContext context, TransactionClassification tranClass) {
     var parentClass = tranClassById(tranClass.parentId);
+    print('TRN_CLSS_DDM | _showTranClassEditForm() | parentClass: $parentClass');
     showDialog(
       context: context,
       builder: (BuildContext context) {
