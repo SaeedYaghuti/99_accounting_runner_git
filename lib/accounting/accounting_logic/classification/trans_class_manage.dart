@@ -12,7 +12,9 @@ import 'package:shop/shared/random_string.dart';
 
 class TranClassManagement {
   static Future<TransactionClassification> createTranClassInDB(
-      AuthProviderSQL authProvider, ClassificationFormFields fields) async {
+    AuthProviderSQL authProvider,
+    ClassificationFormFields fields,
+  ) async {
     // print('TRN_CLASS_MANAGMENT | createTranClassInDB() 01 | input fields:');
     // print(fields);
 
@@ -43,6 +45,35 @@ class TranClassManagement {
 
     try {
       return await TransactionClassification.insertIntoDB(authProvider, tranClass);
+    } on Exception catch (e) {
+      print(
+        'TRN_CLASS_MANAGMENT | createTranClassInDB() 02 | @ catch error while run TransactionClassification.insertIntoDB() e: $e',
+      );
+      throw e;
+    }
+  }
+
+  static Future<TransactionClassification> editTranClassInDB(
+    AuthProviderSQL authProvider,
+    ClassificationFormFields fields,
+  ) async {
+    // print('TRN_CLASS_MANAGMENT | createTranClassInDB() 01 | input fields:');
+    // print(fields);
+
+    var tranClass = TransactionClassification(
+      // TODO: currently id is title, if we change title we can not change the id; they mismatch!
+      id: fields.id,
+      parentId: fields.parentClass!.id!,
+      // TODO: we select from list
+      accountType: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
+      titleEnglish: fields.titleEnglish!,
+      titlePersian: fields.titlePersian!,
+      titleArabic: fields.titleArabic!,
+      note: fields.note ?? '_',
+    );
+
+    try {
+      return await TransactionClassification.updateMeIn;
     } on Exception catch (e) {
       print(
         'TRN_CLASS_MANAGMENT | createTranClassInDB() 02 | @ catch error while run TransactionClassification.insertIntoDB() e: $e',

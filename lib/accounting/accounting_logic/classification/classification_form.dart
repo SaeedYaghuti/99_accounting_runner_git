@@ -114,30 +114,20 @@ class _ClassificationFormState extends State<ClassificationForm> {
   void initStateEdit() {
     // print('CLSS_FORM | initStateEdit() 01|');
     // print(widget.voucher);
-    if (widget.tranClass == null) {
+    if (widget.tranClass == null || widget.parentClass == null) {
       print('CLSS_FORM | initStateEdit() 01| formDuty is Edit but given tranClass is null');
       throw CurroptedInputException('CLSS_FORM | initStateEdit() 01| formDuty is Edit but given tranClass is null');
     }
-    TransactionClassification.fetchTranClassById(widget.tranClass!.parentId).then(
-      (parentClass) {
-        _fields.parentClass = parentClass;
-        // _fields.tranClass = widget.tranClass!;
-        // will be set while setting tranClass
-        // _fields.id = widget.tranClass!.id;
-        // _fields.note = widget.tranClass!.note;
 
-        // print('CLSS_FORM init_state| EDIT 03| prepared _expenditureFormFields');
-        // print(_fields);
-        setState(() {});
-      },
-    ).catchError((e) {
-      print(
-        'CLSS_FORM initState 01| @ catchError while catching parentClss ${widget.tranClass!.parentId} from db e: $e',
-      );
-      // exit from edit_mode
-      _formDuty = FormDuty.CREATE;
-      setState(() {});
-    });
+    _fields.parentClass = widget.parentClass;
+    _fields.titleEnglish = widget.tranClass!.titleEnglish;
+    _fields.titlePersian = widget.tranClass!.titlePersian;
+    _fields.titleArabic = widget.tranClass!.titleArabic;
+    _fields.note = widget.tranClass!.note;
+
+    // print('CLSS_FORM init_state| EDIT 03| prepared _expenditureFormFields');
+    // print(_fields);
+    setState(() {});
   }
 
   @override
@@ -277,14 +267,6 @@ class _ClassificationFormState extends State<ClassificationForm> {
           'Create',
           Colors.green,
           _saveForm,
-          // () async {
-          //   await _saveForm(
-          //     // () => TransactionClassification.insertIntoDB(
-          //     //   authProviderSQL,
-          //     //   _fields,
-          //     // ),
-          //   );
-          // },
         );
       // do: we should clear form data after create
       case FormDuty.EDIT:
@@ -296,26 +278,6 @@ class _ClassificationFormState extends State<ClassificationForm> {
               'Save Changes',
               Colors.green,
               _saveForm,
-              // () {
-              //   _saveForm(
-              //     // () async {
-              //     //   try {
-              //     //     // await ExpenditureModel.updateVoucher(
-              //     //     //   widget.voucher!,
-              //     //     //   _fields,
-              //     //     //   authProviderSQL,
-              //     //     // );
-              //     //   } catch (e) {
-              //     //     showErrorDialog(
-              //     //       context,
-              //     //       'UpdateVoucher',
-              //     //       'while updating voucher an error accoured',
-              //     //       e,
-              //     //     );
-              //     //   }
-              //     // },
-              //   );
-              // },
             ),
             SizedBox(height: 10),
             _buildButton(
@@ -347,6 +309,22 @@ class _ClassificationFormState extends State<ClassificationForm> {
     TransactionClassification? operandClass;
     switch (_formDuty) {
       case FormDuty.CREATE:
+        try {
+          operandClass = await TranClassManagement.createTranClassInDB(
+            authProviderSQL,
+            _fields,
+          );
+        } catch (e) {
+          loadingEnd();
+          showErrorDialog(
+            context,
+            'Error while _saveForm() > TranClassManagement.createTranClassInDB()',
+            'source: CLASS_FRM 11',
+            e,
+          );
+        }
+        break;
+      case FormDuty.EDIT:
         try {
           operandClass = await TranClassManagement.createTranClassInDB(
             authProviderSQL,
