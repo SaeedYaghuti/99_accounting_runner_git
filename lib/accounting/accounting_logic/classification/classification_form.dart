@@ -1,6 +1,6 @@
 import 'dart:async';
-import 'dart:html';
 
+import 'package:flutter/widgets.dart';
 import 'package:shop/accounting/accounting_logic/classification/classification_form_fields.dart';
 import 'package:shop/accounting/accounting_logic/classification/trans_class_manage.dart';
 import 'package:shop/accounting/accounting_logic/classification/transaction_classification.dart';
@@ -175,7 +175,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
       controller: _fields.parentClassController,
       textInputAction: TextInputAction.next,
       onTap: () {
-        _pickExpClass(
+        _pickClass(
           (tappedExpClass) {
             _fields.parentClass = tappedExpClass;
           },
@@ -288,10 +288,11 @@ class _ClassificationFormState extends State<ClassificationForm> {
               'Cancel Editing',
               Colors.grey,
               () {
-                setState(() {
-                  _formDuty = FormDuty.CREATE;
-                  _fields = ClassificationFormFields.expenditureExample;
-                });
+                Navigator.of(context).pop();
+                // setState(() {
+                //   _formDuty = FormDuty.CREATE;
+                //   _fields = ClassificationFormFields.expenditureExample;
+                // });
               },
             ),
           ],
@@ -381,7 +382,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
     );
   }
 
-  void _pickExpClass(Function(TransactionClassification) selectedClassHandler) {
+  void _pickClass(Function(TransactionClassification) selectedClassHandler) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
