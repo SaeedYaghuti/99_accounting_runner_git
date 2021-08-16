@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:html';
 
 import 'package:shop/accounting/accounting_logic/classification/classification_form_fields.dart';
 import 'package:shop/accounting/accounting_logic/classification/trans_class_manage.dart';
@@ -316,6 +317,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
             authProviderSQL,
             _fields,
           );
+          Navigator.of(context).pop();
         } catch (e) {
           loadingEnd();
           showErrorDialog(
@@ -332,6 +334,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
             authProviderSQL,
             _fields,
           );
+          Navigator.of(context).pop();
         } catch (e) {
           loadingEnd();
           showErrorDialog(
@@ -386,12 +389,13 @@ class _ClassificationFormState extends State<ClassificationForm> {
             title: Text('SELECT EXPENDITURE CLASS:'),
             children: [
               TranClassDropdownMenu(
+                selectableParent: _formDuty == FormDuty.EDIT,
+                unwantedTranClassIds: [],
                 expandedTranClassIds: [
                   ExpClassIds.EXP_ROOT_CLASS_ID,
                   ExpClassIds.EXP_SHOP_CLASS_ID,
                   ExpClassIds.EXP_STAFF_CLASS_ID,
                 ],
-                unwantedTranClassIds: [],
                 tapHandler: (TransactionClassification tappedExpClass) {
                   Navigator.of(context).pop();
                   setState(() {

@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:shop/accounting/accounting_logic/account_ids.dart';
 import 'package:shop/accounting/accounting_logic/classification/classification_form_fields.dart';
+import 'package:shop/accounting/accounting_logic/classification/classification_types.dart';
 import 'package:shop/accounting/accounting_logic/classification/transaction_classification.dart';
 import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/accounting/accounting_logic/voucher_model.dart';
@@ -57,7 +58,7 @@ class TranClassManagement {
     AuthProviderSQL authProvider,
     ClassificationFormFields fields,
   ) async {
-    // print('TRN_CLASS_MANAGMENT | createTranClassInDB() 01 | input fields:');
+    // print('TRN_CLASS_MANAGMENT | editTranClassInDB() 01 | input fields:');
     // print(fields);
 
     var tranClass = TransactionClassification(
@@ -65,7 +66,7 @@ class TranClassManagement {
       id: fields.id,
       parentId: fields.parentClass!.id!,
       // TODO: we select from list
-      classType: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
+      classType: ClassificationTypes.EXPENDITURE_TYPE,
       titleEnglish: fields.titleEnglish!,
       titlePersian: fields.titlePersian!,
       titleArabic: fields.titleArabic!,

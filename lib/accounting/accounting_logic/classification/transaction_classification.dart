@@ -150,7 +150,7 @@ class TransactionClassification {
     }
   }
 
-  static const String tableName = 'expenditure_classification';
+  static const String tableName = 'TranClasses';
   static const String column1Id = 'tranClass_id';
   static const String column2ParentId = 'tranClass_parentId';
   static const String column3ClassType = 'tranClass_classType';
@@ -167,9 +167,9 @@ class TransactionClassification {
     $column5TitlePersian TEXT NOT NULL, 
     $column6TitleArabic TEXT NOT NULL, 
     $column7Note TEXT NOT NULL DEFAULT '_',
-    FOREIGN KEY ($column2ParentId) REFERENCES $tableName ($column1Id),
-    FOREIGN KEY ($column3ClassType) REFERENCES ${AccountModel.tableName} (${AccountModel.column1Id})
+    FOREIGN KEY ($column2ParentId) REFERENCES $tableName ($column1Id)
   )''';
+  // FOREIGN KEY ($column3ClassType) REFERENCES ${AccountModel.tableName} (${AccountModel.column1Id})
 
   Map<String, Object?> toMap() {
     return {

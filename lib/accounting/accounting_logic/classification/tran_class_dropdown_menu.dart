@@ -221,7 +221,7 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
 
   void _showTranClassEditForm(BuildContext context, TransactionClassification tranClass) {
     var parentClass = tranClassById(tranClass.parentId);
-    print('TRN_CLSS_DDM | _showTranClassEditForm() | parentClass: $parentClass');
+    // print('TRN_CLSS_DDM | _showTranClassEditForm() | parentClass: $parentClass');
     showDialog(
       context: context,
       builder: (BuildContext context) {
