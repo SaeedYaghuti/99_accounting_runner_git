@@ -496,9 +496,9 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
             children: [
               TranClassDropdownMenu(
                 expandedTranClassIds: [
-                  ExpClassIds.MAIN_EXP_CLASS_ID,
-                  ExpClassIds.SHOP_EXP_CLASS_ID,
-                  ExpClassIds.STAFF_EXP_CLASS_ID,
+                  ExpClassIds.EXP_ROOT_CLASS_ID,
+                  ExpClassIds.EXP_SHOP_CLASS_ID,
+                  ExpClassIds.EXP_STAFF_CLASS_ID,
                 ],
                 unwantedTranClassIds: [],
                 tapHandler: (TransactionClassification tappedExpClass) {

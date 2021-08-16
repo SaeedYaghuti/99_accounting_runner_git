@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shop/accounting/accounting_logic/account_ids.dart';
 import 'package:shop/accounting/accounting_logic/classification/classification_form.dart';
+import 'package:shop/accounting/accounting_logic/classification/classification_types.dart';
 import 'package:shop/accounting/accounting_logic/classification/transaction_classification.dart';
 
 import '../../expenditure/expenditure_class_tree.dart';
@@ -38,7 +39,7 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
 
   void _initializeState() {
     _loadingStart();
-    TransactionClassification.allTransactionClasses(ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID).then(
+    TransactionClassification.allTransactionClasses(ClassificationTypes.EXPENDITURE_TYPE).then(
       (fetchExpClasss) {
         // print('ACC DRP init() 02| fetchExpClasss: $fetchExpClasss');
         _loadingEnd();
@@ -49,9 +50,9 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
         }
         tranClasses = fetchExpClasss.cast<TransactionClassification>();
 
-        if (tranClasses.any((acc) => acc.id == ExpClassIds.MAIN_EXP_CLASS_ID)) {
+        if (tranClasses.any((acc) => acc.id == ExpClassIds.EXP_ROOT_CLASS_ID)) {
           ledgerExpClass = tranClasses.firstWhere(
-            (acc) => acc.id == ExpClassIds.MAIN_EXP_CLASS_ID,
+            (acc) => acc.id == ExpClassIds.EXP_ROOT_CLASS_ID,
           );
           vriablesAreInitialized = true;
         } else {

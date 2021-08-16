@@ -36,7 +36,7 @@ class TranClassManagement {
       id: uniqueId,
       parentId: fields.parentClass!.id!,
       // TODO: we select from list
-      accountType: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
+      classType: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
       titleEnglish: fields.titleEnglish!,
       titlePersian: fields.titlePersian!,
       titleArabic: fields.titleArabic!,
@@ -65,7 +65,7 @@ class TranClassManagement {
       id: fields.id,
       parentId: fields.parentClass!.id!,
       // TODO: we select from list
-      accountType: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
+      classType: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
       titleEnglish: fields.titleEnglish!,
       titlePersian: fields.titlePersian!,
       titleArabic: fields.titleArabic!,

@@ -256,7 +256,7 @@ class ExpenditurFormFields {
       paidBy: cashDrawer,
       note: 'nescafee and cup',
       date: DateTime.now(),
-      expClass: EXP_CLASS_TREE.firstWhere((expClass) => expClass.id == ExpClassIds.GENERAL_EXP_CLASS_ID),
+      expClass: EXP_CLASS_TREE.firstWhere((expClass) => expClass.id == ExpClassIds.EXP_NOT_SPECIFIED_CLASS_ID),
       floatAccount: FLOAT_ACCOUNT_TREE.firstWhere((float) => float.id == FloatAccountIds.GENERAL_FLOAT_ACCOUNT_ID),
     );
   }

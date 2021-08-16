@@ -5,11 +5,12 @@ import 'package:shop/exceptions/access_denied_exception.dart';
 import 'package:shop/exceptions/join_exception.dart';
 
 import '../account_model.dart';
+import 'classification_types.dart';
 
 class TransactionClassification {
   final String? id;
   final String parentId;
-  final String accountType;
+  final String classType;
   final String titleEnglish;
   final String titlePersian;
   final String titleArabic;
@@ -18,7 +19,7 @@ class TransactionClassification {
   const TransactionClassification({
     this.id,
     required this.parentId,
-    required this.accountType,
+    required this.classType,
     required this.titleEnglish,
     required this.titlePersian,
     required this.titleArabic,
@@ -67,22 +68,22 @@ class TransactionClassification {
     }
   }
 
-  static Future<List<TransactionClassification?>> allTransactionClasses(String? accountType) async {
+  static Future<List<TransactionClassification?>> allTransactionClasses(String? classType) async {
     var query = '''
     SELECT *
     FROM $tableName
     ''';
-    if (accountType != null && accountType.trim() != '') {
+    if (classType != null && classType.trim() != '') {
       query = '''
-    SELECT *
-    FROM $tableName
-    WHERE $column3AccountType = ?
-    ''';
+      SELECT *
+      FROM $tableName
+      WHERE $column3ClassType = ? OR $column3ClassType = '${ClassificationTypes.ROOT_TYPE}'
+      ''';
     }
     List<TransactionClassification?> tranClasses = [];
 
     try {
-      var result = await AccountingDB.runRawQuery(query, [accountType]);
+      var result = await AccountingDB.runRawQuery(query, [classType]);
       // print('TransactionClassification allTransactionClasses 01| all tranClasses: ########');
       // print(result);
       // print('##################');
@@ -152,7 +153,7 @@ class TransactionClassification {
   static const String tableName = 'expenditure_classification';
   static const String column1Id = 'tranClass_id';
   static const String column2ParentId = 'tranClass_parentId';
-  static const String column3AccountType = 'tranClass_account_type';
+  static const String column3ClassType = 'tranClass_classType';
   static const String column4TitleEnglish = 'tranClass_titleEnglish';
   static const String column5TitlePersian = 'tranClass_titlePersian';
   static const String column6TitleArabic = 'tranClass_titleArabic';
@@ -161,20 +162,20 @@ class TransactionClassification {
   static const String QUERY_CREATE_EXPENDITURE_CLASSIFICATION_TABLE = '''CREATE TABLE $tableName (
     $column1Id TEXT NOT NULL PRIMARY KEY, 
     $column2ParentId TEXT NOT NULL, 
-    $column3AccountType TEXT NOT NULL, 
+    $column3ClassType TEXT NOT NULL, 
     $column4TitleEnglish TEXT NOT NULL, 
     $column5TitlePersian TEXT NOT NULL, 
     $column6TitleArabic TEXT NOT NULL, 
     $column7Note TEXT NOT NULL DEFAULT '_',
     FOREIGN KEY ($column2ParentId) REFERENCES $tableName ($column1Id),
-    FOREIGN KEY ($column3AccountType) REFERENCES ${AccountModel.tableName} (${AccountModel.column1Id})
+    FOREIGN KEY ($column3ClassType) REFERENCES ${AccountModel.tableName} (${AccountModel.column1Id})
   )''';
 
   Map<String, Object?> toMap() {
     return {
       column1Id: id,
       column2ParentId: parentId,
-      column3AccountType: accountType,
+      column3ClassType: classType,
       column4TitleEnglish: titleEnglish,
       column5TitlePersian: titlePersian,
       column6TitleArabic: titleArabic,
@@ -199,7 +200,7 @@ class TransactionClassification {
       tranClass = TransactionClassification(
         id: tranClassMap[TransactionClassification.column1Id] as String,
         parentId: tranClassMap[TransactionClassification.column2ParentId] as String,
-        accountType: tranClassMap[TransactionClassification.column3AccountType] as String,
+        classType: tranClassMap[TransactionClassification.column3ClassType] as String,
         titleEnglish: tranClassMap[TransactionClassification.column4TitleEnglish] as String,
         titlePersian: tranClassMap[TransactionClassification.column5TitlePersian] as String,
         titleArabic: tranClassMap[TransactionClassification.column6TitleArabic] as String,
@@ -218,7 +219,7 @@ class TransactionClassification {
     return '''
     id: $id, 
     parentId: $parentId,
-    accountType: $accountType,
+    classType: $classType,
     titleEnglish: $titleEnglish,
     titlePersian: $titlePersian,
     titleArabic: $titleArabic, note: $note,

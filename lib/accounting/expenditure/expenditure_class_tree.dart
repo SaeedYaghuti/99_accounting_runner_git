@@ -1,33 +1,58 @@
 import 'package:shop/accounting/accounting_logic/account_ids.dart';
+import 'package:shop/accounting/accounting_logic/classification/classification_tree.dart';
+import 'package:shop/accounting/accounting_logic/classification/classification_types.dart';
 import 'package:shop/accounting/accounting_logic/classification/transaction_classification.dart';
 
 const EXP_CLASS_TREE = const [
-  // MAIN => DEFINE AT TRNS_CLASS_TREE
+  // SOIL
+  // note: parent of root; this class is not defined;
+
+  // ROOT
   // TransactionClassification(
-  //   id: ExpClassIds.MAIN_EXP_CLASS_ID,
-  //   parentId: ExpClassIds.TOP_EXP_CLASS_ID,
-  //   accountType: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
-  //   titleEnglish: 'Expenses Classifications',
+  //   id: TranClassIds.ROOT_TRAN_CLASS_ID,
+  //   parentId: TranClassIds.SOIL_TRAN_CLASS_ID,
+  //   classType: ClassificationTypes.ROOT_TYPE,
+  //   titleEnglish: 'Root Transaction Class',
+  //   titlePersian: 'طبقه پایه',
+  //   titleArabic: 'تصنيف اساسی',
+  //   note: 'Never use this class; It is only for having valid parent class for General tran class',
+  // ),
+  // NOT_SPECIFIED
+  // TransactionClassification(
+  //   id: TranClassIds.NOT_SPECIFIED_TRAN_CLASS_ID,
+  //   parentId: TranClassIds.ROOT_TRAN_CLASS_ID,
+  //   classType: ClassificationTypes.NOT_SPECIFIED_TYPE,
+  //   titleEnglish: 'Not Specified Transaction Class',
+  //   titlePersian: 'طبقه مشخص نشده',
+  //   titleArabic: 'غير محدد',
+  //   note: 'Use this class when classification is not specified',
+  // ),
+  // EXPENDITURE_ROOT
+  // TransactionClassification(
+  //   id: ExpClassIds.EXP_ROOT_CLASS_ID,
+  //   parentId: ClassIds.ROOT_CLASS_ID,
+  //   classType: ClassificationTypes.EXPENDITURE_TYPE,
+  //   titleEnglish: 'Root Expenses Classifications',
   //   titlePersian: 'طبقه بندى هزينه ها',
   //   titleArabic: 'تصنيف مصاريف',
-  //   note: '_',
+  //   note: 'Parent of all expenditure classes',
   // ),
-  // GENERAL
 
+  // NOT_SPECIFIED
   TransactionClassification(
-    id: ExpClassIds.GENERAL_EXP_CLASS_ID,
-    parentId: ExpClassIds.MAIN_EXP_CLASS_ID,
-    accountType: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
-    titleEnglish: 'General',
-    titlePersian: 'عمومى',
-    titleArabic: 'عامة',
+    id: ExpClassIds.EXP_NOT_SPECIFIED_CLASS_ID,
+    parentId: ExpClassIds.EXP_ROOT_CLASS_ID,
+    classType: ClassificationTypes.EXPENDITURE_TYPE,
+    titleEnglish: 'Not Specified',
+    titlePersian: 'طبقه مشخص نشده',
+    titleArabic: 'غير محدد',
     note: '_',
   ),
   // SHOP
   TransactionClassification(
-    id: ExpClassIds.SHOP_EXP_CLASS_ID,
-    parentId: ExpClassIds.MAIN_EXP_CLASS_ID,
-    accountType: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
+    id: ExpClassIds.EXP_SHOP_CLASS_ID,
+    parentId: ExpClassIds.EXP_ROOT_CLASS_ID,
+    classType: ClassificationTypes.EXPENDITURE_TYPE,
     titleEnglish: 'Shop',
     titleArabic: 'محل',
     titlePersian: 'فروشگاه',
@@ -35,9 +60,9 @@ const EXP_CLASS_TREE = const [
   ),
   // SHOP_HOSPITALITY
   TransactionClassification(
-    id: ExpClassIds.SHOP_HOSPITALITY_EXP_CLASS_ID,
-    parentId: ExpClassIds.SHOP_EXP_CLASS_ID,
-    accountType: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
+    id: ExpClassIds.EXP_SHOP_HOSPITALITY_CLASS_ID,
+    parentId: ExpClassIds.EXP_SHOP_CLASS_ID,
+    classType: ClassificationTypes.EXPENDITURE_TYPE,
     titleEnglish: 'Hospitality',
     titleArabic: 'ضيافة',
     titlePersian: 'ميزبانى',
@@ -45,9 +70,9 @@ const EXP_CLASS_TREE = const [
   ),
   // SHOP_BILLS
   TransactionClassification(
-    id: ExpClassIds.SHOP_BILLS_EXP_CLASS_ID,
-    parentId: ExpClassIds.SHOP_EXP_CLASS_ID,
-    accountType: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
+    id: ExpClassIds.EXP_SHOP_BILLS_CLASS_ID,
+    parentId: ExpClassIds.EXP_SHOP_CLASS_ID,
+    classType: ClassificationTypes.EXPENDITURE_TYPE,
     titleEnglish: 'Bills',
     titleArabic: 'قبوض',
     titlePersian: 'قبض',
@@ -55,9 +80,9 @@ const EXP_CLASS_TREE = const [
   ),
   // SHOP_RENT
   TransactionClassification(
-    id: ExpClassIds.SHOP_RENT_EXP_CLASS_ID,
-    parentId: ExpClassIds.SHOP_EXP_CLASS_ID,
-    accountType: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
+    id: ExpClassIds.EXP_SHOP_RENT_CLASS_ID,
+    parentId: ExpClassIds.EXP_SHOP_CLASS_ID,
+    classType: ClassificationTypes.EXPENDITURE_TYPE,
     titleEnglish: 'Rent',
     titleArabic: 'ايجار',
     titlePersian: 'اجاره',
@@ -65,9 +90,9 @@ const EXP_CLASS_TREE = const [
   ),
   // STAFF
   TransactionClassification(
-    id: ExpClassIds.STAFF_EXP_CLASS_ID,
-    parentId: ExpClassIds.MAIN_EXP_CLASS_ID,
-    accountType: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
+    id: ExpClassIds.EXP_STAFF_CLASS_ID,
+    parentId: ExpClassIds.EXP_ROOT_CLASS_ID,
+    classType: ClassificationTypes.EXPENDITURE_TYPE,
     titleEnglish: 'Staff',
     titleArabic: 'موظفين',
     titlePersian: 'كاركنان',
@@ -75,9 +100,9 @@ const EXP_CLASS_TREE = const [
   ),
   // STAFF_SALLARY
   TransactionClassification(
-    id: ExpClassIds.STAFF_SALLARY_EXP_CLASS_ID,
-    parentId: ExpClassIds.STAFF_EXP_CLASS_ID,
-    accountType: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
+    id: ExpClassIds.EXP_STAFF_SALLARY_CLASS_ID,
+    parentId: ExpClassIds.EXP_STAFF_CLASS_ID,
+    classType: ClassificationTypes.EXPENDITURE_TYPE,
     titleEnglish: 'Staff Salary',
     titleArabic: 'رواتب',
     titlePersian: 'حقوقق',
@@ -85,9 +110,9 @@ const EXP_CLASS_TREE = const [
   ),
   // STAFF_REWARD
   TransactionClassification(
-    id: ExpClassIds.STAFF_REWARD_EXP_CLASS_ID,
-    parentId: ExpClassIds.STAFF_EXP_CLASS_ID,
-    accountType: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
+    id: ExpClassIds.EXP_STAFF_REWARD_CLASS_ID,
+    parentId: ExpClassIds.EXP_STAFF_CLASS_ID,
+    classType: ClassificationTypes.EXPENDITURE_TYPE,
     titleEnglish: 'Staff Rewards',
     titleArabic: 'جائزة',
     titlePersian: 'پاداش',
@@ -95,19 +120,19 @@ const EXP_CLASS_TREE = const [
   ),
   // ADMINISTRATIVE_COST
   TransactionClassification(
-    id: ExpClassIds.ADMINISTRATIVE_COST_EXP_CLASS_ID,
-    parentId: ExpClassIds.MAIN_EXP_CLASS_ID,
+    id: ExpClassIds.EXP_ADMINISTRATIVE_COST_CLASS_ID,
+    parentId: ExpClassIds.EXP_ROOT_CLASS_ID,
     titleEnglish: 'Administrative Cost',
-    accountType: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
+    classType: ClassificationTypes.EXPENDITURE_TYPE,
     titleArabic: 'مكتب سند',
     titlePersian: 'ادارى',
     note: '_',
   ),
   // POS
   TransactionClassification(
-    id: ExpClassIds.POS_EXP_CLASS_ID,
-    parentId: ExpClassIds.MAIN_EXP_CLASS_ID,
-    accountType: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
+    id: ExpClassIds.EXP_POS_CLASS_ID,
+    parentId: ExpClassIds.EXP_ROOT_CLASS_ID,
+    classType: ClassificationTypes.EXPENDITURE_TYPE,
     titleEnglish: 'POS',
     titleArabic: 'POS',
     titlePersian: 'POS',
@@ -124,16 +149,15 @@ List<TransactionClassification> childs(String expClassId) {
 }
 
 class ExpClassIds {
-  static const MAIN_EXP_CLASS_ID = 'EXP_MAIN';
-  static const TOP_EXP_CLASS_ID = 'EXP_TOP';
-  static const SHOP_EXP_CLASS_ID = 'EXP_SHOP';
-  static const GENERAL_EXP_CLASS_ID = 'EXP_GENERAL';
-  static const SHOP_HOSPITALITY_EXP_CLASS_ID = 'EXP_SHOP_HOSPITALITY';
-  static const SHOP_RENT_EXP_CLASS_ID = 'EXP_SHOP_RENT';
-  static const SHOP_BILLS_EXP_CLASS_ID = 'EXP_SHOP_BILLS';
-  static const STAFF_EXP_CLASS_ID = 'EXP_STAFF';
-  static const STAFF_SALLARY_EXP_CLASS_ID = 'EXP_STAFF_SALLARY';
-  static const STAFF_REWARD_EXP_CLASS_ID = 'EXP_STAFF_REWARD';
-  static const ADMINISTRATIVE_COST_EXP_CLASS_ID = 'EXP_ADMINISTRATIVE_COST';
-  static const POS_EXP_CLASS_ID = 'EXP_POS';
+  static const EXP_ROOT_CLASS_ID = 'EXP_ROOT';
+  static const EXP_SHOP_CLASS_ID = 'EXP_SHOP';
+  static const EXP_NOT_SPECIFIED_CLASS_ID = 'EXP_NOT_SPECIFIED';
+  static const EXP_SHOP_HOSPITALITY_CLASS_ID = 'EXP_SHOP_HOSPITALITY';
+  static const EXP_SHOP_RENT_CLASS_ID = 'EXP_SHOP_RENT';
+  static const EXP_SHOP_BILLS_CLASS_ID = 'EXP_SHOP_BILLS';
+  static const EXP_STAFF_CLASS_ID = 'EXP_STAFF';
+  static const EXP_STAFF_SALLARY_CLASS_ID = 'EXP_STAFF_SALLARY';
+  static const EXP_STAFF_REWARD_CLASS_ID = 'EXP_STAFF_REWARD';
+  static const EXP_ADMINISTRATIVE_COST_CLASS_ID = 'EXP_ADMINISTRATIVE_COST';
+  static const EXP_POS_CLASS_ID = 'EXP_POS';
 }

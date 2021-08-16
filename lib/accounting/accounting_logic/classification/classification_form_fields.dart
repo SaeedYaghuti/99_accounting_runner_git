@@ -184,7 +184,7 @@ class ClassificationFormFields {
     // step#1 validate custom fields that have no predifined validate() method
     var errorMessages = '';
     // at create_duty id should not be null
-    if (id == null && duty != FormDuty.CREATE ) {
+    if (id == null && duty != FormDuty.CREATE) {
       errorMessages += '\nid is null while it is not in create mode';
     }
     if (parentClass == null) {
@@ -227,9 +227,9 @@ class ClassificationFormFields {
 
   // # Example
   static ClassificationFormFields get expenditureExample {
-    var tranClass = EXP_CLASS_TREE.firstWhere((tranClass) => tranClass.id == ExpClassIds.GENERAL_EXP_CLASS_ID);
+    var tranClass = EXP_CLASS_TREE.firstWhere((tranClass) => tranClass.id == ExpClassIds.EXP_NOT_SPECIFIED_CLASS_ID);
     return ClassificationFormFields(
-      parentClass: TRANS_CLASS_TREE.firstWhere((parent) => parent.id == ExpClassIds.MAIN_EXP_CLASS_ID),
+      parentClass: TRANS_CLASS_TREE.firstWhere((parent) => parent.id == ExpClassIds.EXP_ROOT_CLASS_ID),
       id: tranClass.id,
       titleEnglish: tranClass.titleEnglish,
       titlePersian: tranClass.titlePersian,

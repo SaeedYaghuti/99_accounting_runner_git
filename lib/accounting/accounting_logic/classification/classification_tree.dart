@@ -1,35 +1,39 @@
 import 'package:shop/accounting/accounting_logic/account_ids.dart';
+import 'package:shop/accounting/accounting_logic/classification/classification_types.dart';
 import 'package:shop/accounting/expenditure/expenditure_class_tree.dart';
 
 import 'transaction_classification.dart';
 
 var TRANS_CLASS_TREE = [
+  // SOIL
+  // note: parent of root; this class is not defined;
+
   // ROOT
   TransactionClassification(
-    id: TranClassIds.ROOT_TRAN_CLASS_ID,
-    parentId: TranClassIds.ROOT_PARENT_TRAN_CLASS_ID,
-    accountType: ACCOUNTS_ID.LEDGER_ACCOUNT_ID,
+    id: ClassIds.ROOT_CLASS_ID,
+    parentId: ClassIds.SOIL_CLASS_ID,
+    classType: ClassificationTypes.ROOT_TYPE,
     titleEnglish: 'Root Transaction Class',
     titlePersian: 'طبقه پایه',
     titleArabic: 'تصنيف اساسی',
     note: 'Never use this class; It is only for having valid parent class for General tran class',
   ),
-  // GENERAL
+  // NOT_SPECIFIED
   TransactionClassification(
-    id: TranClassIds.GENERAL_TRAN_CLASS_ID,
-    parentId: TranClassIds.ROOT_TRAN_CLASS_ID,
-    accountType: ACCOUNTS_ID.LEDGER_ACCOUNT_ID,
-    titleEnglish: 'General Transaction Class',
-    titlePersian: 'طبقه عمومى',
-    titleArabic: 'تصنيف عامة',
-    note: 'Use this class when classification is not defined for account',
+    id: ClassIds.NOT_SPECIFIED_CLASS_ID,
+    parentId: ClassIds.ROOT_CLASS_ID,
+    classType: ClassificationTypes.NOT_SPECIFIED_TYPE,
+    titleEnglish: 'Not Specified Transaction Class',
+    titlePersian: 'طبقه مشخص نشده',
+    titleArabic: 'غير محدد',
+    note: 'Use this class when classification is not specified',
   ),
-  // MAIN_EXPENDITURE
+  // EXPENDITURE_ROOT
   TransactionClassification(
-    id: ExpClassIds.MAIN_EXP_CLASS_ID,
-    parentId: ExpClassIds.TOP_EXP_CLASS_ID,
-    accountType: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
-    titleEnglish: 'Expenses Classifications',
+    id: ExpClassIds.EXP_ROOT_CLASS_ID,
+    parentId: ClassIds.ROOT_CLASS_ID,
+    classType: ClassificationTypes.EXPENDITURE_TYPE,
+    titleEnglish: 'Root Expenses Classifications',
     titlePersian: 'طبقه بندى هزينه ها',
     titleArabic: 'تصنيف مصاريف',
     note: 'Parent of all expenditure classes',
@@ -44,8 +48,8 @@ List<TransactionClassification> childs(String expClassId) {
   return TRANS_CLASS_TREE.where((expClass) => expClass.parentId == expClassId).toList();
 }
 
-class TranClassIds {
-  static const ROOT_PARENT_TRAN_CLASS_ID = 'ROOT_PARENT_TRAN';
-  static const ROOT_TRAN_CLASS_ID = 'ROOT_TRAN';
-  static const GENERAL_TRAN_CLASS_ID = 'GENERAL_TRAN';
+class ClassIds {
+  static const SOIL_CLASS_ID = 'SOIL_TRAN';
+  static const ROOT_CLASS_ID = 'ROOT_TRAN';
+  static const NOT_SPECIFIED_CLASS_ID = 'NOT_SPECIFIED';
 }
