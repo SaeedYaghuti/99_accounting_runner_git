@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:shop/accounting/accounting_logic/account_ids.dart';
 import 'package:shop/accounting/accounting_logic/classification/classification_form.dart';
 import 'package:shop/accounting/accounting_logic/classification/classification_types.dart';
 import 'package:shop/accounting/accounting_logic/classification/transaction_classification.dart';
@@ -159,7 +158,7 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
           // button: add child
           IconButton(
             icon: Icon(
-              Icons.account_tree_rounded,
+              Icons.account_tree_outlined,
               color: classIsBold(tranClass)
                   ? Colors.blue
                   : isParent
@@ -171,7 +170,7 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
           // button: edit
           IconButton(
             icon: Icon(
-              Icons.edit,
+              Icons.edit_outlined,
               color: classIsBold(tranClass)
                   ? Colors.blue
                   : isParent
@@ -181,9 +180,11 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
             onPressed: () => _showTranClassEditForm(context, tranClass),
           ),
           // button: delete
+          // if (!isParent)
           IconButton(
             icon: Icon(
-              Icons.delete,
+              // Icons.delete,
+              Icons.delete_outlined,
               color: classIsBold(tranClass)
                   ? Colors.blue
                   : isParent

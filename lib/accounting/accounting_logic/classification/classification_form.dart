@@ -391,7 +391,7 @@ class _ClassificationFormState extends State<ClassificationForm> {
             children: [
               TranClassDropdownMenu(
                 selectableParent: _formDuty == FormDuty.EDIT,
-                unwantedTranClassIds: [],
+                unwantedTranClassIds: [if (_formDuty == FormDuty.EDIT) widget.tranClass!.id],
                 expandedTranClassIds: [
                   ExpClassIds.EXP_ROOT_CLASS_ID,
                   ExpClassIds.EXP_SHOP_CLASS_ID,

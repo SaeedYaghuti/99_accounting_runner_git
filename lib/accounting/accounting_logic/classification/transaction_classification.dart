@@ -3,8 +3,6 @@ import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/auth/permission_model.dart';
 import 'package:shop/exceptions/access_denied_exception.dart';
 import 'package:shop/exceptions/join_exception.dart';
-
-import '../account_model.dart';
 import 'classification_types.dart';
 
 class TransactionClassification {
@@ -60,6 +58,12 @@ class TransactionClassification {
 
   Future<int> updateMeIntoDB() async {
     // do some logic on variables
+
+    // TODO: new parent should not be an child
+    // fetch from db old class
+    var oldClass = await fetchTranClassById(id!);
+    // fetch child of oldClass
+
     try {
       return await AccountingDB.update(tableName, toMap());
     } catch (e) {
@@ -99,6 +103,33 @@ class TransactionClassification {
       return tranClasses;
     } on Exception catch (e) {
       print('TransactionClassification allTransactionClasses 02| @ catch wile fromMap e: $e');
+      throw e;
+    }
+  }
+
+  static Future<TransactionClassification?> fetchChildClass(String parentId) async {
+    // print('TRN_CLASS fetchTranClassById() 01| accountId: <$accountId>');
+    final query = '''
+    SELECT *
+    FROM $tableName
+    WHERE $column1Id = ? ;
+    ''';
+    try {
+      var fetchResult = await AccountingDB.runRawQuery(query, [expClassId]);
+      // print(
+      //   'TransactionClassification fetchTranClassById 01| fetchResult for expClassId: $expClassId',
+      // );
+      // print(fetchResult);
+
+      // before list.first always you should check isEmpty
+      if (fetchResult.isEmpty) return null;
+
+      TransactionClassification? expClass = fromMap(fetchResult.first);
+      // print(account);
+      return expClass;
+      // return fetchResult;
+    } catch (e) {
+      print('TRN_CLASS fetchTranClassById() 01| e: $e');
       throw e;
     }
   }
