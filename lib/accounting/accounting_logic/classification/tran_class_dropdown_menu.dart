@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:shop/accounting/accounting_logic/classification/classification_form.dart';
 import 'package:shop/accounting/accounting_logic/classification/classification_types.dart';
 import 'package:shop/accounting/accounting_logic/classification/transaction_classification.dart';
+import 'package:shop/exceptions/curropted_input.dart';
+import 'package:shop/shared/confirm_dialog.dart';
 
 import '../../expenditure/expenditure_class_tree.dart';
 import '../../expenditure/expenditure_screen_form.dart';
@@ -191,8 +193,20 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
                       ? Theme.of(context).accentColor.withOpacity(0.8)
                       : Colors.black45,
             ),
-            onPressed: () {
+            onPressed: () async {
               print('88 you want delete ${tranClass.titleEnglish}');
+              // print('ES 80| you delete ...');
+              var confirmResult = await confirmDialog(
+                context: context,
+                title: 'Are sure to delete this classification?',
+                content: 'This would delete "${tranClass.titleEnglish}" from database!',
+                noTitle: 'No',
+                yesTitle: 'Delete it!',
+              );
+              // print('ES 70| confirmResult: $confirmResult');
+              if (confirmResult == true) {
+                await _showTranClassDeleteForm(context, tranClass);
+              }
             },
           ),
         ],
@@ -242,6 +256,41 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
         );
       },
     );
+  }
+
+  Future<void> _showTranClassDeleteForm(BuildContext context, TransactionClassification tranClass) async {
+    var parent = await TransactionClassification.fetchTranClassById(tranClass.parentId);
+    if (parent == null) {
+      throw CurroptedInputException(
+          'TRN_CLSS_DDM | _showTranClassDeleteForm() 01| unable to fetch tranClass with id: ${tranClass.parentId}');
+    }
+    ClassificationForm(
+      formDuty: FormDuty.DELETE,
+      parentClass: parent,
+      tranClass: tranClass,
+      notifyTranClassChanged: notifyTranClassChanged,
+    );
+    // var parentClass = tranClassById(tranClass.parentId);
+    // // print('TRN_CLSS_DDM | _showTranClassEditForm() | parentClass: $parentClass');
+    // showDialog(
+    //   context: context,
+    //   builder: (BuildContext context) {
+    //     return SimpleDialog(
+    //       title: Text('Edit Transaction Class'),
+    //       children: [
+    //         Container(
+    //           height: 700,
+    //           child: ClassificationForm(
+    //             formDuty: FormDuty.EDIT,
+    //             parentClass: parentClass,
+    //             tranClass: tranClass,
+    //             notifyTranClassChanged: notifyTranClassChanged,
+    //           ),
+    //         ),
+    //       ],
+    //     );
+    //   },
+    // );
   }
 
   TransactionClassification tranClassById(String classId) {

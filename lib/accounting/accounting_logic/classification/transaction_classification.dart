@@ -179,9 +179,10 @@ class TransactionClassification {
   }
 
   Future<int> deleteMeFromDB(AuthProviderSQL authProvider) async {
+    print('TRN_CLSS | deleteMeFromDB() 01 | run ...');
     if (authProvider.isNotPermitted(PermissionModel.TRANSACTION_CLASS_CRED)) {
       print('TRN_CLSS | deleteMeFromDB() 01 | auth is not permitted for TRANSACTION_CLASS_CRED');
-      return 0;
+      throw AccessDeniedException('TRN_CLSS | deleteMeFromDB() 01 | auth is not permitted for TRANSACTION_CLASS_CRED');
     }
 
     final query = '''
