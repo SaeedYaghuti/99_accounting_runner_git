@@ -36,8 +36,7 @@ class TranClassManagement {
     var tranClass = TransactionClassification(
       id: uniqueId,
       parentId: fields.parentClass!.id!,
-      // TODO: we select from list
-      classType: ACCOUNTS_ID.EXPENDITURE_ACCOUNT_ID,
+      classType: ClassificationTypes.EXPENDITURE_TYPE,
       titleEnglish: fields.titleEnglish!,
       titlePersian: fields.titlePersian!,
       titleArabic: fields.titleArabic!,
@@ -62,10 +61,9 @@ class TranClassManagement {
     // print(fields);
 
     var tranClass = TransactionClassification(
-      // TODO: currently id is title, if we change title we can not change the id; they mismatch!
+      // currently id is title, if we change title we can not change the id; they mismatch!
       id: fields.id,
       parentId: fields.parentClass!.id!,
-      // TODO: we select from list
       classType: ClassificationTypes.EXPENDITURE_TYPE,
       titleEnglish: fields.titleEnglish!,
       titlePersian: fields.titlePersian!,

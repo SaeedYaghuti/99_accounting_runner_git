@@ -49,6 +49,7 @@ void runCode() async {
   // print('Account RunCode 01 pety: $pety');
 
   // var classes = await ExpenditureClassification.allExpenditureClasses();
-  var classes = await TransactionClassification.fetchTranClassById('MAIN');
-  print('Account RunCode 01 classes: $classes');
+  // var classes = await TransactionClassification.fetchTranClassById('MAIN');
+  var classes = await TransactionClassification.allTransactionClasses(null);
+  print('Account RunCode 01 classes: ${classes.reversed}');
 }

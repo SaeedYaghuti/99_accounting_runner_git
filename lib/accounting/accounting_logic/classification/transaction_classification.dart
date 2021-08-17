@@ -2,6 +2,7 @@ import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/auth/permission_model.dart';
 import 'package:shop/exceptions/access_denied_exception.dart';
+import 'package:shop/exceptions/curropted_input.dart';
 import 'package:shop/exceptions/join_exception.dart';
 import 'classification_types.dart';
 
@@ -59,11 +60,19 @@ class TransactionClassification {
   Future<int> updateMeIntoDB() async {
     // do some logic on variables
 
-    // TODO: new parent should not be an child
+    // new parent should not be it's child
     // fetch from db old class
     var oldClass = await fetchTranClassById(id!);
+    if (oldClass == null) {
+      throw CurroptedInputException('TRN_CLSS | updateMeIntoDB() 01| There is no tranClass with id: $id');
+    }
     // fetch child of oldClass
-
+    var children = await fetchChildClasses(oldClass.id!);
+    if (children.any((child) => child.id == parentId)) {
+      throw CurroptedInputException(
+        'TRN_CLSS | updateMeIntoDB() 02| We can not choose current child as parent of a tranClass',
+      );
+    }
     try {
       return await AccountingDB.update(tableName, toMap());
     } catch (e) {
@@ -73,21 +82,24 @@ class TransactionClassification {
   }
 
   static Future<List<TransactionClassification?>> allTransactionClasses(String? classType) async {
-    var query = '''
-    SELECT *
-    FROM $tableName
-    ''';
-    if (classType != null && classType.trim() != '') {
-      query = '''
-      SELECT *
-      FROM $tableName
-      WHERE $column3ClassType = ? OR $column3ClassType = '${ClassificationTypes.ROOT_TYPE}'
-      ''';
-    }
     List<TransactionClassification?> tranClasses = [];
+    List<Map<String, Object?>> result;
 
     try {
-      var result = await AccountingDB.runRawQuery(query, [classType]);
+      if (classType != null && classType.trim() != '') {
+        var query = '''
+        SELECT *
+        FROM $tableName
+        WHERE $column3ClassType = ? OR $column3ClassType = '${ClassificationTypes.ROOT_TYPE}'
+        ''';
+        result = await AccountingDB.runRawQuery(query, [classType]);
+      } else {
+        var query = '''
+        SELECT *
+        FROM $tableName
+        ''';
+        result = await AccountingDB.runRawQuery(query);
+      }
       // print('TransactionClassification allTransactionClasses 01| all tranClasses: ########');
       // print(result);
       // print('##################');
@@ -107,29 +119,34 @@ class TransactionClassification {
     }
   }
 
-  static Future<TransactionClassification?> fetchChildClass(String parentId) async {
-    // print('TRN_CLASS fetchTranClassById() 01| accountId: <$accountId>');
+  static Future<List<TransactionClassification>> fetchChildClasses(String parentId) async {
+    // print('TRN_CLASS fetchChildClasses() 01| accountId: <$accountId>');
     final query = '''
     SELECT *
     FROM $tableName
-    WHERE $column1Id = ? ;
+    WHERE $column2ParentId = ? ;
     ''';
     try {
-      var fetchResult = await AccountingDB.runRawQuery(query, [expClassId]);
+      var fetchResult = await AccountingDB.runRawQuery(query, [parentId]);
       // print(
-      //   'TransactionClassification fetchTranClassById 01| fetchResult for expClassId: $expClassId',
+      //   'TransactionClassification fetchChildClasses 01| fetchResult for expClassId: $expClassId',
       // );
       // print(fetchResult);
 
       // before list.first always you should check isEmpty
-      if (fetchResult.isEmpty) return null;
+      if (fetchResult.isEmpty) return [];
 
-      TransactionClassification? expClass = fromMap(fetchResult.first);
+      List<TransactionClassification?> tranClasses = [];
+
+      fetchResult.forEach(
+        (tranMap) => tranClasses.add(fromMap(tranMap)),
+      );
+
       // print(account);
-      return expClass;
+      return tranClasses.whereType<TransactionClassification>().toList();
       // return fetchResult;
     } catch (e) {
-      print('TRN_CLASS fetchTranClassById() 01| e: $e');
+      print('TRN_CLASS fetchChildClasses() 01| e: $e');
       throw e;
     }
   }
