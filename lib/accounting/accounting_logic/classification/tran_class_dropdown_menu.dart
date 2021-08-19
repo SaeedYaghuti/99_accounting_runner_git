@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop/accounting/accounting_logic/classification/classification_form.dart';
 import 'package:shop/accounting/accounting_logic/classification/classification_types.dart';
 import 'package:shop/accounting/accounting_logic/classification/transaction_classification.dart';
+import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/exceptions/curropted_input.dart';
 import 'package:shop/shared/confirm_dialog.dart';
+import 'package:shop/shared/show_error_dialog.dart';
 
 import '../../expenditure/expenditure_class_tree.dart';
 import '../../expenditure/expenditure_screen_form.dart';
@@ -40,7 +43,7 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
 
   void _initializeState() {
     _loadingStart();
-    TransactionClassification.allTransactionClasses(ClassificationTypes.EXPENDITURE_TYPE).then(
+    TransactionClassification.allClasses(ClassificationTypes.EXPENDITURE_TYPE).then(
       (fetchExpClasss) {
         // print('ACC DRP init() 02| fetchExpClasss: $fetchExpClasss');
         _loadingEnd();
@@ -194,7 +197,7 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
                       : Colors.black45,
             ),
             onPressed: () async {
-              print('88 you want delete ${tranClass.titleEnglish}');
+              // print('88 you want delete ${tranClass.titleEnglish}');
               // print('ES 80| you delete ...');
               var confirmResult = await confirmDialog(
                 context: context,
@@ -205,7 +208,8 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
               );
               // print('ES 70| confirmResult: $confirmResult');
               if (confirmResult == true) {
-                await _showTranClassDeleteForm(context, tranClass);
+                // print('TRN_CLSS_DDM| 90| YOU confirmed to delete!');
+                await _doTranClassDeleteForm(context, tranClass);
               }
             },
           ),
@@ -258,31 +262,43 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
     );
   }
 
-  Future<void> _showTranClassDeleteForm(BuildContext context, TransactionClassification tranClass) async {
-    var parent = await TransactionClassification.fetchTranClassById(tranClass.parentId);
+  Future<void> _doTranClassDeleteForm(BuildContext context, TransactionClassification tranClass) async {
+    // print('TRN_CLASS_DDM| _showTranClassDeleteForm() 01| run...');
+    var parent = await TransactionClassification.fetchClassById(tranClass.parentId);
     if (parent == null) {
       throw CurroptedInputException(
-          'TRN_CLSS_DDM | _showTranClassDeleteForm() 01| unable to fetch tranClass with id: ${tranClass.parentId}');
+        'TRN_CLSS_DDM | _showTranClassDeleteForm() 01| unable to fetch tranClass with id: ${tranClass.parentId}',
+      );
     }
-    ClassificationForm(
-      formDuty: FormDuty.DELETE,
-      parentClass: parent,
-      tranClass: tranClass,
-      notifyTranClassChanged: notifyTranClassChanged,
-    );
-    // var parentClass = tranClassById(tranClass.parentId);
-    // // print('TRN_CLSS_DDM | _showTranClassEditForm() | parentClass: $parentClass');
+    _loadingStart();
+    try {
+      var authProviderSQL = Provider.of<AuthProviderSQL>(context, listen: false);
+      var deleteResult = await tranClass.deleteMeFromDB(authProviderSQL);
+      _loadingEnd();
+      // print('CLSS_FORM | initStateDelete() 01 | deleteResult: $deleteResult');
+      notifyTranClassChanged(parent);
+    } catch (e) {
+      _loadingEnd();
+      print('TRN_CLSS_DDM | _showTranClassDeleteForm() 02 | @ catheError() e: $e');
+      showErrorDialog(
+        context,
+        'tranClass .deleteMeFromDB()',
+        'ClassificationForm at initState while deleting a tranClass happend error:',
+        e,
+      );
+    }
+
     // showDialog(
     //   context: context,
     //   builder: (BuildContext context) {
     //     return SimpleDialog(
-    //       title: Text('Edit Transaction Class'),
+    //       title: Text('Delete Transaction Class'),
     //       children: [
     //         Container(
     //           height: 700,
     //           child: ClassificationForm(
-    //             formDuty: FormDuty.EDIT,
-    //             parentClass: parentClass,
+    //             formDuty: FormDuty.DELETE,
+    //             parentClass: parent,
     //             tranClass: tranClass,
     //             notifyTranClassChanged: notifyTranClassChanged,
     //           ),

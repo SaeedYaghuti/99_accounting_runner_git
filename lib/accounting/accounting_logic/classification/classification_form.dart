@@ -13,6 +13,7 @@ import 'package:shop/auth/auth_provider_sql.dart';
 
 import 'package:flutter/material.dart';
 import 'package:shop/accounting/environment/environment_provider.dart';
+import 'package:shop/exceptions/code_flow_exception.dart';
 import 'package:shop/exceptions/curropted_input.dart';
 import 'package:shop/exceptions/not_handled_exception.dart';
 import 'package:shop/shared/show_error_dialog.dart';
@@ -69,11 +70,15 @@ class _ClassificationFormState extends State<ClassificationForm> {
         initStateEdit();
         break;
       case FormDuty.DELETE:
-        initStateDelete();
+        xInitStateDelete();
+        throw CodeFlowException(
+          'CLSS_FORM | didChangeDependencies() 02| FormDuty.DELETE currently not handled by Class_Form; It will done directly',
+        );
         break;
       default:
         throw NotHandledException(
-            'CLSS_FORM | didChangeDependencies() 01 | We have a FormDuty element that is not handled: ${widget.formDuty}');
+          'CLSS_FORM | didChangeDependencies() 01 | We have a FormDuty element that is not handled: ${widget.formDuty}',
+        );
     }
     _didChangeRun = true;
   }
@@ -114,14 +119,16 @@ class _ClassificationFormState extends State<ClassificationForm> {
     setState(() {});
   }
 
-  void initStateDelete() {
+  // currently delete is handled directly by tranClassDDM; not by form
+  void xInitStateDelete() {
     // print('EF | init_state | form rebuild for DELETE');
     if (widget.tranClass == null) return;
     loadingStart();
     widget.tranClass!.deleteMeFromDB(authProviderSQL).then((deleteResult) {
       loadingEnd();
-      print('CLSS_FORM | initStateDelete() 01 | deleteResult: $deleteResult');
+      // print('CLSS_FORM | initStateDelete() 01 | deleteResult: $deleteResult');
       widget.notifyTranClassChanged(widget.tranClass!);
+      Navigator.of(context).pop();
     }).catchError((e) {
       loadingEnd();
       showErrorDialog(
@@ -163,6 +170,25 @@ class _ClassificationFormState extends State<ClassificationForm> {
       ),
     );
   } // build
+
+  Widget _buildDeleteResult(BuildContext context) {
+    return Container(
+      width: 1200,
+      padding: EdgeInsets.all(16),
+      child: Form(
+        key: _fields.formKey,
+        child: Container(
+          width: 1200,
+          child: ListView(
+            children: [
+              SizedBox(height: 20, width: 20),
+              Text('You deleted node! maybe ...'),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   Widget _buildParentClass(BuildContext context) {
     return TextFormField(

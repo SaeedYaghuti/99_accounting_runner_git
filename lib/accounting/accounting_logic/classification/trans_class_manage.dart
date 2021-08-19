@@ -23,7 +23,7 @@ class TranClassManagement {
     var uniqueIdIsCreated = false;
     var uniqueId = fields.titleEnglish!.trim().replaceAll(RegExp(' +'), '_').toUpperCase();
     while (!uniqueIdIsCreated) {
-      var tranClass = await TransactionClassification.fetchTranClassById(uniqueId);
+      var tranClass = await TransactionClassification.fetchClassById(uniqueId);
       if (tranClass == null) {
         // we fetched an id that there is not in db
         uniqueIdIsCreated = false;

@@ -110,15 +110,25 @@ class TransactionModel {
     return count;
   }
 
-  static Future<List<Map<String, Object?>>> allTransactionsForAccount(
-    String accountId,
-  ) async {
+  static Future<List<Map<String, Object?>>> allTransactionsForAccount(String accountId) async {
     final query = '''
     SELECT *
     FROM $transactionTableName
     WHERE $transactionTableName.$column2AccountId = ?
     ''';
     var result = await AccountingDB.runRawQuery(query, [accountId]);
+    // print('TM11| SELECT * FROM $transactionTableName for $accountId>');
+    // print(result);
+    return result;
+  }
+
+  static Future<List<Map<String, Object?>>> allTransactionsForClass(String classId) async {
+    final query = '''
+    SELECT *
+    FROM $transactionTableName
+    WHERE $transactionTableName.$column8TranClassId = ?
+    ''';
+    var result = await AccountingDB.runRawQuery(query, [classId]);
     // print('TM11| SELECT * FROM $transactionTableName for $accountId>');
     // print(result);
     return result;

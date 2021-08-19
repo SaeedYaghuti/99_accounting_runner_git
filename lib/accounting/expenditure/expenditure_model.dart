@@ -13,7 +13,7 @@ import 'package:shop/exceptions/curropted_input.dart';
 
 class ExpenditureModel {
   static Future<void> createExpenditureInDB(AuthProviderSQL authProvider, ExpenditurFormFields fields) async {
-    var generalTranClass = await TransactionClassification.fetchTranClassById(ClassIds.NOT_SPECIFIED_CLASS_ID);
+    var generalTranClass = await TransactionClassification.fetchClassById(ClassIds.NOT_SPECIFIED_CLASS_ID);
     var generalFloatAccount = await FloatingAccount.fetchFloatAccountById(FloatAccountIds.GENERAL_FLOAT_ACCOUNT_ID);
 
     var voucherFeed = VoucherFeed(date: fields.date!);

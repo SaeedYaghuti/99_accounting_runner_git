@@ -1,4 +1,5 @@
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
+import 'package:shop/accounting/accounting_logic/transaction_model.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/auth/permission_model.dart';
 import 'package:shop/exceptions/access_denied_exception.dart';
@@ -36,7 +37,9 @@ class TransactionClassification {
   }
 
   static Future<TransactionClassification> insertIntoDB(
-      AuthProviderSQL authProvider, TransactionClassification tranClass) async {
+    AuthProviderSQL authProvider,
+    TransactionClassification tranClass,
+  ) async {
     // check authority
     if (authProvider.isNotPermitted(PermissionModel.TRANSACTION_CLASS_CRED)) {
       print(
@@ -62,7 +65,7 @@ class TransactionClassification {
 
     // new parent should not be it's child
     // fetch from db old class
-    var oldClass = await fetchTranClassById(id!);
+    var oldClass = await fetchClassById(id!);
     if (oldClass == null) {
       throw CurroptedInputException('TRN_CLSS | updateMeIntoDB() 01| There is no tranClass with id: $id');
     }
@@ -81,7 +84,7 @@ class TransactionClassification {
     }
   }
 
-  static Future<List<TransactionClassification?>> allTransactionClasses(String? classType) async {
+  static Future<List<TransactionClassification?>> allClasses(String? classType) async {
     List<TransactionClassification?> tranClasses = [];
     List<Map<String, Object?>> result;
 
@@ -151,7 +154,7 @@ class TransactionClassification {
     }
   }
 
-  static Future<TransactionClassification?> fetchTranClassById(String expClassId) async {
+  static Future<TransactionClassification?> fetchClassById(String expClassId) async {
     // print('TRN_CLASS fetchTranClassById() 01| accountId: <$accountId>');
     final query = '''
     SELECT *
@@ -179,10 +182,28 @@ class TransactionClassification {
   }
 
   Future<int> deleteMeFromDB(AuthProviderSQL authProvider) async {
-    print('TRN_CLSS | deleteMeFromDB() 01 | run ...');
+    // print('TRN_CLSS | deleteMeFromDB() 01 | run ...');
+
+    // check permission
     if (authProvider.isNotPermitted(PermissionModel.TRANSACTION_CLASS_CRED)) {
-      print('TRN_CLSS | deleteMeFromDB() 01 | auth is not permitted for TRANSACTION_CLASS_CRED');
-      throw AccessDeniedException('TRN_CLSS | deleteMeFromDB() 01 | auth is not permitted for TRANSACTION_CLASS_CRED');
+      print('TRN_CLSS | deleteMeFromDB() 02 | auth is not permitted for TRANSACTION_CLASS_CRED');
+      throw AccessDeniedException('TRN_CLSS | deleteMeFromDB() 03 | auth is not permitted for TRANSACTION_CLASS_CRED');
+    }
+
+    // tranClass should not have children
+    var children = await fetchChildClasses(id!);
+    if (children.length != 0) {
+      throw CurroptedInputException(
+        'TRN_CLSS | deleteMeFromDB() 04 | we can not delete a tranClass that has children: $children',
+      );
+    }
+
+    // we shouldn't have any transaction in db with this tranClass
+    var transactions = await TransactionModel.allTransactionsForClass(id!);
+    if (transactions.length != 0) {
+      throw CurroptedInputException(
+        'TRN_CLSS | deleteMeFromDB() 05 | we can not delete a tranClass that has Transaction in db!',
+      );
     }
 
     final query = '''
@@ -191,7 +212,7 @@ class TransactionClassification {
     ''';
     try {
       var count = await AccountingDB.deleteRawQuery(query, [id]);
-      print('TransactionClassification deleteMeFromDB 01| DELETE $id; count: $count');
+      // print('TransactionClassification deleteMeFromDB 01| DELETE $id; count: $count');
       return count;
     } catch (e) {
       print('TransactionClassification deleteMeFromDB 01| e: $e');

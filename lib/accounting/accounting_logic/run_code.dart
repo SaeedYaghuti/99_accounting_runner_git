@@ -50,6 +50,6 @@ void runCode() async {
 
   // var classes = await ExpenditureClassification.allExpenditureClasses();
   // var classes = await TransactionClassification.fetchTranClassById('MAIN');
-  var classes = await TransactionClassification.allTransactionClasses(null);
+  var classes = await TransactionClassification.allClasses(null);
   print('Account RunCode 01 classes: ${classes.reversed}');
 }
