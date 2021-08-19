@@ -329,23 +329,25 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
     }
 
     // we have at list one perm:
-    return DataCell(GestureDetector(
-      child: Icon(Icons.more_vert),
-      onTapDown: (TapDownDetails details) async {
-        rebuildExpForm(
-          voucher,
-          expTranId,
-          FormDuty.CREATE,
-        );
-        await _showEditDeletePopupMenu(
-          offset: details.globalPosition,
-          voucher: voucher,
-          expTranId: expTranId,
-          showEdit: hasAccessToEdit.outcome,
-          showDelete: hasAccessToDelete.outcome,
-        );
-      },
-    ));
+    return DataCell(
+      GestureDetector(
+        child: Icon(Icons.more_vert),
+        onTapDown: (TapDownDetails details) async {
+          rebuildExpForm(
+            voucher,
+            expTranId,
+            FormDuty.CREATE,
+          );
+          await _showEditDeletePopupMenu(
+            offset: details.globalPosition,
+            voucher: voucher,
+            expTranId: expTranId,
+            showEdit: hasAccessToEdit.outcome,
+            showDelete: hasAccessToDelete.outcome,
+          );
+        },
+      ),
+    );
   }
 
   _showEditDeletePopupMenu({

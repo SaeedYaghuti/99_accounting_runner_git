@@ -4,12 +4,17 @@ import 'package:shop/accounting/accounting_logic/classification/classification_f
 import 'package:shop/accounting/accounting_logic/classification/classification_types.dart';
 import 'package:shop/accounting/accounting_logic/classification/transaction_classification.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
+import 'package:shop/auth/has_access.dart';
+import 'package:shop/auth/permission_model.dart';
 import 'package:shop/exceptions/curropted_input.dart';
+import 'package:shop/exceptions/not_handled_exception.dart';
 import 'package:shop/shared/confirm_dialog.dart';
+import 'package:shop/shared/result_status.dart';
 import 'package:shop/shared/show_error_dialog.dart';
 
 import '../../expenditure/expenditure_class_tree.dart';
 import '../../expenditure/expenditure_screen_form.dart';
+import '../voucher_model.dart';
 
 class TranClassDropdownMenu extends StatefulWidget {
   final List<String?> unwantedTranClassIds;
@@ -31,6 +36,7 @@ class TranClassDropdownMenu extends StatefulWidget {
 class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
   late List<TransactionClassification> tranClasses;
   List<TransactionClassification> boldTranClasses = [];
+  late AuthProviderSQL authProvider;
 
   late TransactionClassification ledgerExpClass;
   bool vriablesAreInitialized = false;
@@ -70,6 +76,12 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
     });
   }
 
+  @override
+  void didChangeDependencies() {
+    authProvider = Provider.of<AuthProviderSQL>(context, listen: true);
+    super.didChangeDependencies();
+  }
+
   void notifyTranClassChanged(TransactionClassification? tranClass) {
     if (tranClass != null) boldTranClasses.add(tranClass);
     _initializeState();
@@ -102,7 +114,7 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
         parent.titleEnglish,
         style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
       ),
-      trailing: _buildTrailingCredIcon(parent, true),
+      trailing: _buildTrailingIcons(parent, true),
       children: childs(parent.id!)
           .map((child) {
             // parent should continue running recursively
@@ -128,7 +140,7 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
                         ),
                       ],
                     ),
-                    trailing: _buildTrailingCredIcon(child),
+                    trailing: _buildTrailingIcons(child),
                     onTap: () => widget.tapHandler(child),
                   )
                 : null;
@@ -142,12 +154,12 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
     return boldTranClasses.any((bold) => bold.id == tranClass.id);
   }
 
-  Widget _buildTrailingCredIcon(TransactionClassification tranClass, [isParent = false]) {
+  Widget _buildTrailingIcons(TransactionClassification tranClass, [isParent = false]) {
     return FittedBox(
       // width: 50,
       child: Row(
         children: [
-          // button: select parent
+          // ## Parent
           if (isParent && widget.selectableParent)
             IconButton(
               icon: Icon(
@@ -160,7 +172,7 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
               ),
               onPressed: () => widget.tapHandler(tranClass),
             ),
-          // button: add child
+          // ## Add
           IconButton(
             icon: Icon(
               Icons.account_tree_outlined,
@@ -172,7 +184,7 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
             ),
             onPressed: () => _showTranClassCreateForm(context, formParent: tranClass),
           ),
-          // button: edit
+          // ## Edit
           IconButton(
             icon: Icon(
               Icons.edit_outlined,
@@ -184,7 +196,7 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
             ),
             onPressed: () => _showTranClassEditForm(context, tranClass),
           ),
-          // button: delete
+          // ## Delete
           // if (!isParent)
           IconButton(
             icon: Icon(
@@ -213,6 +225,7 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
               }
             },
           ),
+          _buildClassActionMenu(),
         ],
       ),
     );
@@ -307,6 +320,120 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
     //     );
     //   },
     // );
+  }
+
+  Widget _buildClassActionMenu() {
+    // we don't have any perm: return block icon
+    if (!authProvider.isNotPermitted(PermissionModel.TRANSACTION_CLASS_CRED)) {
+      // print(
+      //   'TRN_CLSS_DDM | 33 _buildEditDeletePopupMenueCell() | not have access to \nedit: ${hasAccessToEdit.errorMessage} \n:delete: ${hasAccessToDelete.errorMessage}',
+      // );
+      return Icon(Icons.block_rounded);
+    }
+
+    // we have at list one perm:
+    return GestureDetector(
+      child: Icon(Icons.more_vert),
+      onTapDown: (TapDownDetails details) async {
+        // rebuildExpForm(
+        //   voucher,
+        //   expTranId,
+        //   FormDuty.CREATE,
+        // );
+        await _showEditDeletePopupMenu(
+          offset: details.globalPosition,
+          showEdit: true,
+          showDelete: true,
+        );
+      },
+    );
+  }
+
+  _showEditDeletePopupMenu({
+    required Offset offset,
+    required bool showEdit,
+    required bool showDelete,
+  }) async {
+    double left = offset.dx;
+    double top = offset.dy;
+    String? selectedItem = await showMenu<String>(
+      elevation: 8.0,
+      context: context,
+      position: RelativeRect.fromLTRB(left, top, left, top),
+      items: [
+        if (showEdit)
+          PopupMenuItem(
+            child: Row(
+              children: [
+                Icon(
+                  Icons.edit,
+                  color: Colors.blue,
+                ),
+                SizedBox(width: 10),
+                Text(
+                  'Edit',
+                  style: TextStyle(
+                    color: Colors.blue,
+                  ),
+                ),
+              ],
+            ),
+            value: 'edit',
+          ),
+        if (showDelete)
+          PopupMenuItem(
+            child: Row(
+              children: [
+                Icon(
+                  Icons.delete,
+                  color: Colors.pinkAccent,
+                ),
+                SizedBox(width: 10),
+                Text(
+                  'Delete',
+                  style: TextStyle(
+                    color: Colors.pinkAccent,
+                  ),
+                ),
+              ],
+            ),
+            value: 'delete',
+          ),
+      ],
+    );
+    if (selectedItem == null) {
+      // print('ES 80| you select nothing ...');
+      // rebuildExpForm(null, null, null);
+      return;
+    }
+
+    if (selectedItem == "edit") {
+      // print('ES 80| you edit ...');
+      // rebuildExpForm(
+      //   voucher,
+      //   expTranId,
+      //   FormDuty.EDIT,
+      // );
+    } else if (selectedItem == "delete") {
+      // print('ES 80| you delete ...');
+      var confirmResult = await confirmDialog(
+        context: context,
+        title: 'Are sure to delete this expense?',
+        content: 'This would delete voucher and all it is transactions from database',
+        noTitle: 'No',
+        yesTitle: 'Delete it!',
+      );
+      // print('ES 70| confirmResult: $confirmResult');
+      if (confirmResult == true) {
+        // rebuildExpForm(
+        //   voucher,
+        //   expTranId,
+        //   FormDuty.DELETE,
+        // );
+      }
+    } else {
+      throw NotHandledException('ES 80| ');
+    }
   }
 
   TransactionClassification tranClassById(String classId) {
