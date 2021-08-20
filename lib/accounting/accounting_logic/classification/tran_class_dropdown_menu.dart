@@ -225,7 +225,7 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
               }
             },
           ),
-          _buildClassActionMenu(),
+          _buildClassActionMenu(tranClass, isParent),
         ],
       ),
     );
@@ -322,9 +322,9 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
     // );
   }
 
-  Widget _buildClassActionMenu() {
+  Widget _buildClassActionMenu(TransactionClassification tranClass, [isParent = false]) {
     // we don't have any perm: return block icon
-    if (!authProvider.isNotPermitted(PermissionModel.TRANSACTION_CLASS_CRED)) {
+    if (authProvider.isNotPermitted(PermissionModel.TRANSACTION_CLASS_CRED)) {
       // print(
       //   'TRN_CLSS_DDM | 33 _buildEditDeletePopupMenueCell() | not have access to \nedit: ${hasAccessToEdit.errorMessage} \n:delete: ${hasAccessToDelete.errorMessage}',
       // );
@@ -340,20 +340,23 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
         //   expTranId,
         //   FormDuty.CREATE,
         // );
-        await _showEditDeletePopupMenu(
+        await _showActionsPopup(
           offset: details.globalPosition,
           showEdit: true,
           showDelete: true,
+          tranClass: tranClass,
+          isParent: isParent,
         );
       },
     );
   }
 
-  _showEditDeletePopupMenu({
-    required Offset offset,
-    required bool showEdit,
-    required bool showDelete,
-  }) async {
+  _showActionsPopup(
+      {required Offset offset,
+      required bool showEdit,
+      required bool showDelete,
+      required TransactionClassification tranClass,
+      bool isParent = false}) async {
     double left = offset.dx;
     double top = offset.dy;
     String? selectedItem = await showMenu<String>(
@@ -366,38 +369,56 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
             child: Row(
               children: [
                 Icon(
-                  Icons.edit,
-                  color: Colors.blue,
+                  Icons.account_tree_outlined,
+                  color: Colors.green[300],
                 ),
                 SizedBox(width: 10),
                 Text(
-                  'Edit',
+                  'Add child',
                   style: TextStyle(
-                    color: Colors.blue,
+                    color: Colors.green[600],
                   ),
                 ),
               ],
             ),
-            value: 'edit',
+            value: 'add_child',
           ),
+        PopupMenuItem(
+          child: Row(
+            children: [
+              Icon(
+                Icons.edit_outlined,
+                color: Colors.blue,
+              ),
+              SizedBox(width: 10),
+              Text(
+                'Edit',
+                style: TextStyle(
+                  color: Colors.blue,
+                ),
+              ),
+            ],
+          ),
+          value: 'edit',
+        ),
         if (showDelete)
           PopupMenuItem(
             child: Row(
               children: [
                 Icon(
-                  Icons.delete,
-                  color: Colors.pinkAccent,
+                  Icons.delete_outlined,
+                  color: isParent ? Colors.black45 : Theme.of(context).accentColor.withOpacity(0.8),
                 ),
                 SizedBox(width: 10),
                 Text(
                   'Delete',
                   style: TextStyle(
-                    color: Colors.pinkAccent,
+                    color: isParent ? Colors.black45 : Theme.of(context).accentColor,
                   ),
                 ),
               ],
             ),
-            value: 'delete',
+            value: isParent ? 'disable_delete' : 'delete',
           ),
       ],
     );
@@ -407,13 +428,11 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
       return;
     }
 
-    if (selectedItem == "edit") {
+    if (selectedItem == "add_child") {
       // print('ES 80| you edit ...');
-      // rebuildExpForm(
-      //   voucher,
-      //   expTranId,
-      //   FormDuty.EDIT,
-      // );
+      _showTranClassCreateForm(context, formParent: tranClass);
+    } else if (selectedItem == "edit") {
+      _showTranClassEditForm(context, tranClass);
     } else if (selectedItem == "delete") {
       // print('ES 80| you delete ...');
       var confirmResult = await confirmDialog(
@@ -422,6 +441,23 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
         content: 'This would delete voucher and all it is transactions from database',
         noTitle: 'No',
         yesTitle: 'Delete it!',
+      );
+      // print('ES 70| confirmResult: $confirmResult');
+      if (confirmResult == true) {
+        // rebuildExpForm(
+        //   voucher,
+        //   expTranId,
+        //   FormDuty.DELETE,
+        // );
+      }
+    } else if (selectedItem == "disable_delete") {
+      // print('ES 80| you delete ...');
+      var confirmResult = await confirmDialog(
+        context: context,
+        title: 'You can not Delete',
+        content: 'This item is Parent and until it has child you can not delete it',
+        noTitle: '',
+        yesTitle: 'OK',
       );
       // print('ES 70| confirmResult: $confirmResult');
       if (confirmResult == true) {
