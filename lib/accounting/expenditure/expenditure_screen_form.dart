@@ -21,6 +21,7 @@ import 'package:shop/accounting/accounting_logic/accounting_db.dart';
 import 'package:shop/accounting/environment/environment_provider.dart';
 import 'package:shop/accounting/expenditure/expenditure_model.dart';
 import 'package:shop/auth/has_access.dart';
+import 'package:shop/auth/permission_model.dart';
 import 'package:shop/exceptions/curropted_input.dart';
 import 'package:shop/exceptions/not_handled_exception.dart';
 import 'package:shop/shared/show_error_dialog.dart';
@@ -495,6 +496,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
             title: Text('SELECT EXPENDITURE CLASS:'),
             children: [
               TranClassDropdownMenu(
+                showMoreIcon: authProviderSQL.isPermitted(PermissionModel.TRANSACTION_CLASS_CRED),
                 expandedTranClassIds: [
                   ExpClassIds.EXP_ROOT_CLASS_ID,
                   ExpClassIds.EXP_SHOP_CLASS_ID,

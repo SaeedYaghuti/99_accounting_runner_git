@@ -4,29 +4,28 @@ import 'package:shop/accounting/accounting_logic/classification/classification_f
 import 'package:shop/accounting/accounting_logic/classification/classification_types.dart';
 import 'package:shop/accounting/accounting_logic/classification/transaction_classification.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
-import 'package:shop/auth/has_access.dart';
 import 'package:shop/auth/permission_model.dart';
 import 'package:shop/exceptions/curropted_input.dart';
 import 'package:shop/exceptions/not_handled_exception.dart';
 import 'package:shop/shared/confirm_dialog.dart';
-import 'package:shop/shared/result_status.dart';
 import 'package:shop/shared/show_error_dialog.dart';
 
 import '../../expenditure/expenditure_class_tree.dart';
 import '../../expenditure/expenditure_screen_form.dart';
-import '../voucher_model.dart';
 
 class TranClassDropdownMenu extends StatefulWidget {
   final List<String?> unwantedTranClassIds;
   List<String?> expandedTranClassIds;
   final Function(TransactionClassification) tapHandler;
   final bool selectableParent;
+  final bool showMoreIcon;
 
   TranClassDropdownMenu({
     required this.unwantedTranClassIds,
     required this.expandedTranClassIds,
     required this.tapHandler,
     this.selectableParent = false,
+    required this.showMoreIcon,
   });
 
   @override
@@ -114,7 +113,13 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
         parent.titleEnglish,
         style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
       ),
-      trailing: _buildTrailingIcons(parent, true),
+      // trailing: _buildTrailingIcons(parent, true),
+      trailing: _buildTrailingIcons(
+        tranClass: parent,
+        isParent: true,
+        selectableParent: widget.selectableParent,
+        showMoreIcon: widget.showMoreIcon,
+      ),
       children: childs(parent.id!)
           .map((child) {
             // parent should continue running recursively
@@ -140,7 +145,13 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
                         ),
                       ],
                     ),
-                    trailing: _buildTrailingIcons(child),
+                    // trailing: widget.showMoreIcon ? _buildTrailingIcons(child) : null,
+                    trailing: _buildTrailingIcons(
+                      tranClass: child,
+                      isParent: false,
+                      selectableParent: widget.selectableParent,
+                      showMoreIcon: widget.showMoreIcon,
+                    ),
                     onTap: () => widget.tapHandler(child),
                   )
                 : null;
@@ -154,80 +165,37 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
     return boldTranClasses.any((bold) => bold.id == tranClass.id);
   }
 
-  Widget _buildTrailingIcons(TransactionClassification tranClass, [isParent = false]) {
+  Widget? _buildTrailingIcons({
+    required TransactionClassification tranClass,
+    required bool isParent,
+    required bool selectableParent,
+    required bool showMoreIcon,
+  }) {
+    // for child we only show more Icon when it is not need we don't sow anything
+    List<Widget> iconsList = [
+      // ## Parent
+      if (isParent && selectableParent)
+        IconButton(
+          icon: Icon(
+            Icons.touch_app_outlined,
+            color: classIsBold(tranClass)
+                ? Colors.blue
+                : isParent
+                    ? Theme.of(context).accentColor.withOpacity(0.8)
+                    : Colors.black45,
+          ),
+          onPressed: () => widget.tapHandler(tranClass),
+        ),
+      // # MoreIcon
+      if (showMoreIcon) _buildClassActionMenu(tranClass, isParent),
+    ];
+
+    // we don't have any icon to show
+    if (iconsList.whereType<Widget>().isEmpty) return null;
+
     return FittedBox(
       // width: 50,
-      child: Row(
-        children: [
-          // ## Parent
-          if (isParent && widget.selectableParent)
-            IconButton(
-              icon: Icon(
-                Icons.touch_app_outlined,
-                color: classIsBold(tranClass)
-                    ? Colors.blue
-                    : isParent
-                        ? Theme.of(context).accentColor.withOpacity(0.8)
-                        : Colors.black45,
-              ),
-              onPressed: () => widget.tapHandler(tranClass),
-            ),
-          // ## Add
-          IconButton(
-            icon: Icon(
-              Icons.account_tree_outlined,
-              color: classIsBold(tranClass)
-                  ? Colors.blue
-                  : isParent
-                      ? Theme.of(context).accentColor.withOpacity(0.8)
-                      : Colors.black45,
-            ),
-            onPressed: () => _showTranClassCreateForm(context, formParent: tranClass),
-          ),
-          // ## Edit
-          IconButton(
-            icon: Icon(
-              Icons.edit_outlined,
-              color: classIsBold(tranClass)
-                  ? Colors.blue
-                  : isParent
-                      ? Theme.of(context).accentColor.withOpacity(0.8)
-                      : Colors.black45,
-            ),
-            onPressed: () => _showTranClassEditForm(context, tranClass),
-          ),
-          // ## Delete
-          // if (!isParent)
-          IconButton(
-            icon: Icon(
-              // Icons.delete,
-              Icons.delete_outlined,
-              color: classIsBold(tranClass)
-                  ? Colors.blue
-                  : isParent
-                      ? Theme.of(context).accentColor.withOpacity(0.8)
-                      : Colors.black45,
-            ),
-            onPressed: () async {
-              // print('88 you want delete ${tranClass.titleEnglish}');
-              // print('ES 80| you delete ...');
-              var confirmResult = await confirmDialog(
-                context: context,
-                title: 'Are sure to delete this classification?',
-                content: 'This would delete "${tranClass.titleEnglish}" from database!',
-                noTitle: 'No',
-                yesTitle: 'Delete it!',
-              );
-              // print('ES 70| confirmResult: $confirmResult');
-              if (confirmResult == true) {
-                // print('TRN_CLSS_DDM| 90| YOU confirmed to delete!');
-                await _doTranClassDeleteForm(context, tranClass);
-              }
-            },
-          ),
-          _buildClassActionMenu(tranClass, isParent),
-        ],
-      ),
+      child: Row(children: iconsList),
     );
   }
 
