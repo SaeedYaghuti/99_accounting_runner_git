@@ -429,12 +429,10 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
     }
 
     if (selectedItem == "add_child") {
-      // print('ES 80| you edit ...');
       _showTranClassCreateForm(context, formParent: tranClass);
     } else if (selectedItem == "edit") {
       _showTranClassEditForm(context, tranClass);
     } else if (selectedItem == "delete") {
-      // print('ES 80| you delete ...');
       var confirmResult = await confirmDialog(
         context: context,
         title: 'Are sure to delete this expense?',
@@ -442,31 +440,18 @@ class _TranClassDropdownMenuState extends State<TranClassDropdownMenu> {
         noTitle: 'No',
         yesTitle: 'Delete it!',
       );
-      // print('ES 70| confirmResult: $confirmResult');
       if (confirmResult == true) {
-        // rebuildExpForm(
-        //   voucher,
-        //   expTranId,
-        //   FormDuty.DELETE,
-        // );
+        // print('TRN_CLSS_DDM| 90| YOU confirmed to delete!');
+        await _doTranClassDeleteForm(context, tranClass);
       }
     } else if (selectedItem == "disable_delete") {
-      // print('ES 80| you delete ...');
-      var confirmResult = await confirmDialog(
+      await confirmDialog(
         context: context,
         title: 'You can not Delete',
         content: 'This item is Parent and until it has child you can not delete it',
         noTitle: '',
         yesTitle: 'OK',
       );
-      // print('ES 70| confirmResult: $confirmResult');
-      if (confirmResult == true) {
-        // rebuildExpForm(
-        //   voucher,
-        //   expTranId,
-        //   FormDuty.DELETE,
-        // );
-      }
     } else {
       throw NotHandledException('ES 80| ');
     }
