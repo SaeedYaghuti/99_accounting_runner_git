@@ -108,6 +108,16 @@ const CATEGORIES_TREE = const [
     parentId: 'items',
     requiredPermission: PermissionModel.ITEM_SUMMERY_CATEGORY,
   ),
+  CategoryModel(
+    id: 'test_screen',
+    titleEnglish: 'Test Screen',
+    titlePersian: 'آزمايش',
+    titleArabic: ' امتحان',
+    color: Colors.deepOrange,
+    parentId: 'root',
+    // TODO: defined Permitted
+    requiredPermission: PermissionModel.SELL_POINT_CATEGORY,
+  ),
 ];
 
 List<CategoryModel> getSubcategoriesOf(BuildContext context, String parentId) {
@@ -119,8 +129,6 @@ List<CategoryModel> getSubcategoriesOf(BuildContext context, String parentId) {
 
   // print('CAT_TREES getSubcats 02| authProvider.userId: ${authProvider.userId}');
   return CATEGORIES_TREE
-      .where((category) =>
-          category.parentId == parentId &&
-          authProvider.isPermitted(category.requiredPermission))
+      .where((category) => category.parentId == parentId && authProvider.isPermitted(category.requiredPermission))
       .toList();
 }

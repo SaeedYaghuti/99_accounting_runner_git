@@ -4,11 +4,11 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:shop/shared/custom_form_fields/switch_form_field.dart';
-import 'package:shop/shared/custom_form_fields/text_form_field.dart';
-import 'package:shop/shared/custom_form_fields/toggle_buttons_form_field.dart';
+// import 'package:shop/shared/custom_form_fields/switch_form_field.dartx';
+// import 'package:shop/shared/custom_form_fields/text_form_field.dartx';
+// import 'package:shop/shared/custom_form_fields/toggle_buttons_form_field.dartx';
 
-import 'date_form_field.dart';
+import 'date_form_field.dartx';
 import 'multi_selection_form_field.dart';
 
 void main() => runApp(MyApp());
@@ -100,7 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
               _buildMultiSelection(),
               // SizedBox(height: 8.0),
               // _buildSwitch(),
-             ],
+            ],
           ),
         ),
       ),
@@ -115,7 +115,6 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  
   // Widget _buildText() {
   //   return MyTextFormField(
   //     decoration: const InputDecoration(
@@ -217,27 +216,25 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Widget _buildMultiSelection() {
     return MyMultiSelectionFormField<Interest>(
-                decoration: InputDecoration(
-                  labelText: 'Interests',
-                ),
-                hint: Text('Select more interests'),
-                isDense: true,
-                focusNode: interestsFocusNode,
-                options: Interest.values,
-                titleBuilder: (interest) => Text(describeEnum(interest)),
-                chipLabelBuilder: (interest) => Text(describeEnum(interest)),
-                initialValues: _formResult.interests,
-                validator: (interests) =>
-                    interests == null || interests.length < 3 ? 'Please select at least 3 interests' : null,
-                onSaved: (interests) {
-                  _formResult.interests = interests!;
-                },
-                onChanged: (_) {
-                  FocusScope.of(context).unfocus();
-                  FocusScope.of(context).requestFocus(interestsFocusNode);
-                },
-              ),
-              
+      decoration: InputDecoration(
+        labelText: 'Interests',
+      ),
+      hint: Text('Select more interests'),
+      isDense: true,
+      focusNode: interestsFocusNode,
+      options: Interest.values,
+      titleBuilder: (interest) => Text(describeEnum(interest)),
+      chipLabelBuilder: (interest) => Text(describeEnum(interest)),
+      initialValues: _formResult.interests!,
+      validator: (interests) => interests == null || interests.length < 3 ? 'Please select at least 3 interests' : null,
+      onSaved: (interests) {
+        _formResult.interests = interests!;
+      },
+      onChanged: (_) {
+        FocusScope.of(context).unfocus();
+        FocusScope.of(context).requestFocus(interestsFocusNode);
+      },
+    );
   }
 
   // Widget _buildSwitch() {
@@ -270,5 +267,4 @@ class _MyHomePageState extends State<MyHomePage> {
       print(_formResult.toJson());
     }
   }
-
 }

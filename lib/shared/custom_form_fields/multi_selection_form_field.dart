@@ -48,7 +48,8 @@ class MyMultiSelectionFormField<T> extends FormField<List<T>> {
     EdgeInsetsGeometry? chipPadding,
     Widget? chipDeleteIcon,
     Color? chipDeleteIconColor,
-    ShapeBorder? chipShape,
+    // ShapeBorder? chipShape,
+    OutlinedBorder? chipShape,
     Clip chipClipBehavior = Clip.none,
     Color? chipBackgroundColor,
     Color? chipShadowColor,
@@ -135,19 +136,19 @@ class MyMultiSelectionFormField<T> extends FormField<List<T>> {
 }
 
 class _MyMultiSelectionFormFieldState<T> extends FormFieldState<List<T>> {
-  @override
-  MyMultiSelectionFormField<T> get widget => super.widget;
+  // @override
+  // MyMultiSelectionFormField<T> get widget => super.widget;
 
-  @override
-  void didChange(List<T> values) {
-    super.didChange(values);
-    if (this.hasError) {
-      this.validate();
-    }
-    if (widget.onChanged != null) {
-      widget.onChanged(values);
-    }
-  }
+  // @override
+  // void didChange(List<T>? values) {
+  //   super.didChange(values);
+  //   if (this.hasError) {
+  //     this.validate();
+  //   }
+  //   if (widget.onChanged != null) {
+  //     widget.onChanged(values!);
+  //   }
+  // }
 }
 
 // fields/myMultiselectionField.dart ************************
@@ -188,7 +189,8 @@ class MyMultiSelectionField<T> extends StatelessWidget {
   final EdgeInsetsGeometry? chipPadding;
   final Widget? chipDeleteIcon;
   final Color? chipDeleteIconColor;
-  final ShapeBorder? chipShape;
+  // final ShapeBorder? chipShape;
+  final OutlinedBorder? chipShape;
   final Clip? chipClipBehavior;
   final Color? chipBackgroundColor;
   final Color? chipShadowColor;
@@ -310,24 +312,24 @@ class MyMultiSelectionField<T> extends StatelessWidget {
           children: [
             Expanded(
               child: MyChipList<T>(
-                values: values,
-                spacing: chipListSpacing,
-                alignment: chipListAlignment,
+                values: values!,
+                spacing: chipListSpacing!,
+                alignment: chipListAlignment!,
                 chipBuilder: (T value) {
                   return Chip(
-                    label: chipLabelBuilder(value),
+                    label: chipLabelBuilder!(value),
                     labelStyle: chipLabelStyle,
                     labelPadding: chipLabelPadding,
-                    avatar: chipAvatarBuilder != null ? chipAvatarBuilder(value) : null,
+                    avatar: chipAvatarBuilder != null ? chipAvatarBuilder!(value) : null,
                     onDeleted: () {
-                      values.remove(value);
-                      onChanged(values);
+                      values!.remove(value);
+                      onChanged(values!);
                     },
                     deleteIcon: chipDeleteIcon,
                     deleteIconColor: chipDeleteIconColor,
                     deleteButtonTooltipMessage: deleteButtonTooltipMessage,
                     shape: chipShape,
-                    clipBehavior: chipClipBehavior,
+                    clipBehavior: chipClipBehavior!,
                     backgroundColor: chipBackgroundColor,
                     padding: chipPadding,
                     materialTapTargetSize: chipMaterialTapTargetSize,
@@ -346,20 +348,17 @@ class MyMultiSelectionField<T> extends StatelessWidget {
 
 class MyCheckboxListTile<T> extends StatefulWidget {
   MyCheckboxListTile(
-      {Key key,
-      @required this.title,
+      {Key? key,
+      required this.title,
       this.subtitle,
-      @required this.onChanged,
-      @required this.selected,
+      required this.onChanged,
+      required this.selected,
       this.activeColor,
       this.checkColor,
       this.dense,
       this.isThreeLine = false,
       this.secondary})
-      : assert(title != null),
-        assert(onChanged != null),
-        assert(selected != null),
-        super(key: key);
+      : super(key: key);
 
   final Widget title;
   final Widget? subtitle;
@@ -378,7 +377,7 @@ class MyCheckboxListTile<T> extends StatefulWidget {
 class _MyCheckboxListTileState<T> extends State<MyCheckboxListTile<T>> {
   _MyCheckboxListTileState();
 
-  bool _checked;
+  bool? _checked;
 
   @override
   void initState() {
@@ -390,14 +389,14 @@ class _MyCheckboxListTileState<T> extends State<MyCheckboxListTile<T>> {
   Widget build(BuildContext context) {
     return CheckboxListTile(
       value: _checked,
-      selected: _checked,
+      selected: _checked ?? false,
       title: widget.title,
       subtitle: widget.subtitle,
       controlAffinity: ListTileControlAffinity.leading,
       onChanged: (checked) {
         widget.onChanged(checked);
         setState(() {
-          _checked = checked;
+          _checked = checked ?? false;
         });
       },
       activeColor: widget.activeColor,
@@ -411,8 +410,8 @@ class _MyCheckboxListTileState<T> extends State<MyCheckboxListTile<T>> {
 
 class MyChipList<T> extends StatelessWidget {
   const MyChipList({
-    @required this.values,
-    @required this.chipBuilder,
+    required this.values,
+    required this.chipBuilder,
     this.spacing = 8.0,
     this.alignment = WrapAlignment.start,
   });
