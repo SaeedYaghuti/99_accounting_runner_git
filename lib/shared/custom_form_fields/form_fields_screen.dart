@@ -11,20 +11,21 @@ import 'package:flutter/services.dart';
 import 'date_form_field.dartx';
 import 'multi_selection_form_field.dart';
 
-void main() => runApp(MyApp());
+// void main() => runApp(MyApp());
 
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Dating App - Signup Form',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: MyHomePage(title: 'Signup Form'),
-    );
-  }
-}
+// class MyApp extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: 'Dating App - Signup Form',
+//       theme: ThemeData(
+//         primarySwatch: Colors.blue,
+//       ),
+//       // home: FormFieldsPage(title: 'Signup Form'),
+//       home: FormFieldsPage(),
+//     );
+//   }
+// }
 
 enum Gender {
   Male,
@@ -58,15 +59,17 @@ class SignupUser {
       };
 }
 
-class MyHomePage extends StatefulWidget {
-  MyHomePage({Key? key, required this.title}) : super(key: key);
-  final String title;
+class FormFieldsScreen extends StatefulWidget {
+  static const String routeName = '/formFieldsPage';
+  // FormFieldsPage({Key? key, required this.title}) : super(key: key);
+  FormFieldsScreen({Key? key}) : super(key: key);
+  final String title = 'Form Field Example';
 
   @override
-  _MyHomePageState createState() => _MyHomePageState();
+  _FormFieldsScreenState createState() => _FormFieldsScreenState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _FormFieldsScreenState extends State<FormFieldsScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final _formResult = SignupUser();
@@ -97,7 +100,7 @@ class _MyHomePageState extends State<MyHomePage> {
               // SizedBox(height: 8.0),
               // _buildDate(),
               // SizedBox(height: 8.0),
-              _buildMultiSelection(),
+              _buildMultiSelection(context),
               // SizedBox(height: 8.0),
               // _buildSwitch(),
             ],
@@ -214,7 +217,7 @@ class _MyHomePageState extends State<MyHomePage> {
   //   );
   // }
 
-  Widget _buildMultiSelection() {
+  Widget _buildMultiSelection(BuildContext context) {
     return MyMultiSelectionFormField<Interest>(
       decoration: InputDecoration(
         labelText: 'Interests',

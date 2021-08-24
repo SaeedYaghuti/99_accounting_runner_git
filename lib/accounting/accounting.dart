@@ -10,6 +10,7 @@ import 'package:shop/auth/firebase/auth_provider.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/auth/auth_screen.dart';
 import 'package:shop/constants.dart';
+import 'package:shop/shared/custom_form_fields/form_fields_screen.dart';
 import 'package:shop/shared/loading_screen.dart';
 import 'package:shop/shared/storage_type.dart';
 
@@ -45,8 +46,7 @@ class AccountingApp extends StatelessWidget {
 
   Widget _buildCategoriesOverviewScreenOrAuthSQL() {
     return Consumer<AuthProviderSQL>(
-      builder: (ctx, authProvider, child) =>
-          authProvider.isAuth ? CategoriesOverviewScreen() : AuthScreen(),
+      builder: (ctx, authProvider, child) => authProvider.isAuth ? CategoriesOverviewScreen() : AuthScreen(),
     );
   }
 
@@ -57,9 +57,7 @@ class AccountingApp extends StatelessWidget {
           : FutureBuilder(
               future: authProvider.tryAutoLogin(),
               builder: (ctx, snapshot) =>
-                  snapshot.connectionState == ConnectionState.waiting
-                      ? LoadingScreen()
-                      : AuthScreen(),
+                  snapshot.connectionState == ConnectionState.waiting ? LoadingScreen() : AuthScreen(),
             ),
     );
   }
@@ -69,6 +67,7 @@ class AccountingApp extends StatelessWidget {
       SubCategoriesScreen.routeName: (ctx) => SubCategoriesScreen(),
       RetailScreen.routeName: (ctx) => RetailScreen(),
       ExpenditureScreen.routeName: (ctx) => ExpenditureScreen(),
+      FormFieldsScreen.routeName: (ctx) => FormFieldsScreen(),
     };
   }
 }

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/accounting/accounting_logic/account_ids.dart';
@@ -13,6 +14,8 @@ import 'package:shop/accounting/expenditure/expenditure_screen_form.dart';
 import 'package:shop/auth/permission_model.dart';
 import 'package:shop/shared/confirm_dialog.dart';
 import 'package:shop/exceptions/not_handled_exception.dart';
+import 'package:shop/shared/custom_form_fields/form_fields_screen.dart';
+import 'package:shop/shared/custom_form_fields/multi_selection_form_field.dart';
 import 'package:shop/shared/readible_date.dart';
 import 'package:shop/shared/result_status.dart';
 import 'package:shop/shared/show_error_dialog.dart';
@@ -170,6 +173,29 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
       ),
     );
   } // build
+
+  // Widget _buildMultiSelection(BuildContext context) {
+  //   return MyMultiSelectionFormField<Interest>(
+  //     decoration: InputDecoration(
+  //       labelText: 'Interests',
+  //     ),
+  //     hint: Text('Select more interests'),
+  //     isDense: true,
+  //     focusNode: interestsFocusNode,
+  //     options: Interest.values,
+  //     titleBuilder: (interest) => Text(describeEnum(interest)),
+  //     chipLabelBuilder: (interest) => Text(describeEnum(interest)),
+  //     initialValues: _formResult.interests!,
+  //     validator: (interests) => interests == null || interests.length < 3 ? 'Please select at least 3 interests' : null,
+  //     onSaved: (interests) {
+  //       _formResult.interests = interests!;
+  //     },
+  //     onChanged: (_) {
+  //       FocusScope.of(context).unfocus();
+  //       FocusScope.of(context).requestFocus(interestsFocusNode);
+  //     },
+  //   );
+  // }
 
   List<DataColumn> _buildTableColumns() {
     return [
