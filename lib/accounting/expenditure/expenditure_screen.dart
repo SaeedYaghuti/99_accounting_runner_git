@@ -174,29 +174,6 @@ class _ExpenditureScreenState extends State<ExpenditureScreen> {
     );
   } // build
 
-  // Widget _buildMultiSelection(BuildContext context) {
-  //   return MyMultiSelectionFormField<Interest>(
-  //     decoration: InputDecoration(
-  //       labelText: 'Interests',
-  //     ),
-  //     hint: Text('Select more interests'),
-  //     isDense: true,
-  //     focusNode: interestsFocusNode,
-  //     options: Interest.values,
-  //     titleBuilder: (interest) => Text(describeEnum(interest)),
-  //     chipLabelBuilder: (interest) => Text(describeEnum(interest)),
-  //     initialValues: _formResult.interests!,
-  //     validator: (interests) => interests == null || interests.length < 3 ? 'Please select at least 3 interests' : null,
-  //     onSaved: (interests) {
-  //       _formResult.interests = interests!;
-  //     },
-  //     onChanged: (_) {
-  //       FocusScope.of(context).unfocus();
-  //       FocusScope.of(context).requestFocus(interestsFocusNode);
-  //     },
-  //   );
-  // }
-
   List<DataColumn> _buildTableColumns() {
     return [
       DataColumn(label: Icon(Icons.settings)),

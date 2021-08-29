@@ -39,6 +39,9 @@ class ExpenditurFormFields {
     this.resetState = resetState;
   }
 
+  // # multiSelection
+  final multiselectionFocusNode = FocusNode();
+
   // # amount
   final amountFocusNode = FocusNode();
   TextEditingController amountController = TextEditingController();

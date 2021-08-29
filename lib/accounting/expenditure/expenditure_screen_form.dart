@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/accounting_logic/classification/transaction_classification.dart';
 import 'package:shop/accounting/accounting_logic/float_dropdown_menu.dart';
@@ -24,6 +25,8 @@ import 'package:shop/auth/has_access.dart';
 import 'package:shop/auth/permission_model.dart';
 import 'package:shop/exceptions/curropted_input.dart';
 import 'package:shop/exceptions/not_handled_exception.dart';
+import 'package:shop/shared/custom_form_fields/form_fields_screen.dart';
+import 'package:shop/shared/custom_form_fields/multi_selection_form_field.dart';
 import 'package:shop/shared/show_error_dialog.dart';
 import '../accounting_logic/classification/tran_class_dropdown_menu.dart';
 import 'expenditure_form_fields.dart';
@@ -189,12 +192,37 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
               _buildDeleteDB(context),
               SizedBox(height: 20, width: 20),
               _buildRunCode(context),
+              SizedBox(height: 20, width: 20),
+              _buildMultiSelection(context),
             ],
           ),
         ),
       ),
     );
   } // build
+
+  Widget _buildMultiSelection(BuildContext context) {
+    return MyMultiSelectionFormField<Interest>(
+      decoration: InputDecoration(
+        labelText: 'Interests',
+      ),
+      hint: Text('Select more interests'),
+      isDense: true,
+      focusNode: _fields.multiselectionFocusNode,
+      options: Interest.values,
+      titleBuilder: (interest) => Text(describeEnum(interest)),
+      chipLabelBuilder: (interest) => Text(describeEnum(interest)),
+      initialValues: [Interest.Art, Interest.Blogging, Interest.Cooking],
+      validator: (interests) => interests == null || interests.length < 3 ? 'Please select at least 3 interests' : null,
+      onSaved: (interests) {
+        // _formResult.interests = interests!;
+      },
+      onChanged: (_) {
+        FocusScope.of(context).unfocus();
+        // FocusScope.of(context).requestFocus(interestsFocusNode);
+      },
+    );
+  }
 
   Widget _buildAmount(BuildContext context) {
     // print('EXP_FRM | _buildAmount | run ...');
