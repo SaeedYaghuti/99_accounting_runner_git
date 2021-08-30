@@ -187,13 +187,13 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
               SizedBox(height: 20, width: 20),
               _buildFloatAccount(context),
               SizedBox(height: 20, width: 20),
+              _buildMultiSelection(context),
+              SizedBox(height: 20, width: 20),
               _buildSubmitButtons(context),
               SizedBox(height: 20, width: 20),
               _buildDeleteDB(context),
               SizedBox(height: 20, width: 20),
               _buildRunCode(context),
-              SizedBox(height: 20, width: 20),
-              _buildMultiSelection(context),
             ],
           ),
         ),
@@ -203,15 +203,18 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   Widget _buildMultiSelection(BuildContext context) {
     return MyMultiSelectionFormField<Interest>(
-      decoration: InputDecoration(
-        labelText: 'Interests',
-      ),
+      // decoration: InputDecoration(
+      //   labelText: 'Interests',
+      // ),
+      decoration: _buildInputDecoration('Floating Accounts', Icons.account_box_outlined),
       hint: Text('Select more interests'),
       isDense: true,
       focusNode: _fields.multiselectionFocusNode,
       options: Interest.values,
       titleBuilder: (interest) => Text(describeEnum(interest)),
       chipLabelBuilder: (interest) => Text(describeEnum(interest)),
+      chipBackgroundColor: Colors.purple.withOpacity(0.1),
+      chipDeleteIconColor: Colors.purple.withOpacity(0.5),
       initialValues: [Interest.Art, Interest.Blogging, Interest.Cooking],
       validator: (interests) => interests == null || interests.length < 3 ? 'Please select at least 3 interests' : null,
       onSaved: (interests) {

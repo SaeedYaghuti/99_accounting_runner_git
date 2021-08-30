@@ -256,6 +256,7 @@ class MyMultiSelectionField<T> extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        // # Dropdown Button
         DropdownButtonHideUnderline(
           child: DropdownButton<T>(
             value: null,
@@ -308,6 +309,7 @@ class MyMultiSelectionField<T> extends StatelessWidget {
           ),
         ),
         SizedBox(height: 8.0),
+        // # Chip List
         Row(
           children: [
             Expanded(
