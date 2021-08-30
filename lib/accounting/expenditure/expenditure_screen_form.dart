@@ -203,9 +203,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   Widget _buildMultiSelection(BuildContext context) {
     return MyMultiSelectionFormField<Interest>(
-      // decoration: InputDecoration(
-      //   labelText: 'Interests',
-      // ),
+      dropDownMenu: _buildFloatAccount(context),
       decoration: _buildInputDecoration('Floating Accounts', Icons.account_box_outlined),
       hint: Text('Select more interests'),
       isDense: true,

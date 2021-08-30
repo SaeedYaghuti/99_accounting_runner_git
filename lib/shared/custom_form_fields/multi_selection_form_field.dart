@@ -55,7 +55,8 @@ class MyMultiSelectionFormField<T> extends FormField<List<T>> {
     Color? chipShadowColor,
     MaterialTapTargetSize? chipMaterialTapTargetSize,
     double? chipElevation,
-  })  : assert(
+    required Widget dropDownMenu,
+  })   : assert(
           options == null ||
               options.isEmpty ||
               initialValues == null ||
@@ -85,6 +86,7 @@ class MyMultiSelectionFormField<T> extends FormField<List<T>> {
               isEmpty: field.value!.isEmpty,
               isFocused: focusNode?.hasFocus ?? false,
               child: MyMultiSelectionField<T>(
+                dropDownMenue: dropDownMenu,
                 values: field.value!,
                 options: options,
                 titleBuilder: titleBuilder,
@@ -196,8 +198,10 @@ class MyMultiSelectionField<T> extends StatelessWidget {
   final Color? chipShadowColor;
   final MaterialTapTargetSize? chipMaterialTapTargetSize;
   final double? chipElevation;
+  final Widget dropDownMenue;
 
   MyMultiSelectionField({
+    required this.dropDownMenue,
     Key? key,
     this.values,
     required this.options,
@@ -257,91 +261,100 @@ class MyMultiSelectionField<T> extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         // # Dropdown Button
-        DropdownButtonHideUnderline(
-          child: DropdownButton<T>(
-            value: null,
-            items: options!
-                .map<DropdownMenuItem<T>>(
-                  (T option) => DropdownMenuItem<T>(
-                    value: option,
-                    child: MyCheckboxListTile<T>(
-                      selected: values?.contains(option) ?? false,
-                      title: titleBuilder(option),
-                      subtitle: subtitleBuilder != null ? subtitleBuilder!(option) : null,
-                      secondary: secondaryBuilder != null ? secondaryBuilder!(option) : null,
-                      isThreeLine: isItemThreeLine ?? false,
-                      dense: isItemdense,
-                      activeColor: activeColor,
-                      checkColor: checkColor,
-                      onChanged: (_) {
-                        if (!values!.contains(option)) {
-                          values!.add(option);
-                        } else {
-                          values!.remove(option);
-                        }
-                        onChanged(values!);
-                      },
-                    ),
-                  ),
-                )
-                .toList(),
-            selectedItemBuilder: (BuildContext context) {
-              return options!.map<Widget>((T option) {
-                return Text('');
-              }).toList();
-            },
-            hint: hint,
-            onChanged: onChanged == null ? null : (T? value) {},
-            disabledHint: disabledHint,
-            elevation: elevation,
-            style: style,
-            underline: underline,
-            icon: icon,
-            iconDisabledColor: iconDisabledColor,
-            iconEnabledColor: iconEnabledColor,
-            iconSize: iconSize,
-            isDense: isDense,
-            isExpanded: isExpanded,
-            itemHeight: itemHeight,
-            focusNode: focusNode,
-            focusColor: focusColor,
-            autofocus: autofocus,
-          ),
-        ),
+        // _buildDropDownButton(context),
+        dropDownMenue,
         SizedBox(height: 8.0),
         // # Chip List
-        Row(
-          children: [
-            Expanded(
-              child: MyChipList<T>(
-                values: values!,
-                spacing: chipListSpacing!,
-                alignment: chipListAlignment!,
-                chipBuilder: (T value) {
-                  return Chip(
-                    label: chipLabelBuilder!(value),
-                    labelStyle: chipLabelStyle,
-                    labelPadding: chipLabelPadding,
-                    avatar: chipAvatarBuilder != null ? chipAvatarBuilder!(value) : null,
-                    onDeleted: () {
-                      values!.remove(value);
-                      onChanged(values!);
-                    },
-                    deleteIcon: chipDeleteIcon,
-                    deleteIconColor: chipDeleteIconColor,
-                    deleteButtonTooltipMessage: deleteButtonTooltipMessage,
-                    shape: chipShape,
-                    clipBehavior: chipClipBehavior!,
-                    backgroundColor: chipBackgroundColor,
-                    padding: chipPadding,
-                    materialTapTargetSize: chipMaterialTapTargetSize,
-                    elevation: chipElevation,
-                    shadowColor: chipShadowColor,
-                  );
-                },
+        _buildChipList(context),
+      ],
+    );
+  }
+
+  Widget _buildDropDownButton(BuildContext context) {
+    return DropdownButtonHideUnderline(
+      child: DropdownButton<T>(
+        value: null,
+        items: options!
+            .map<DropdownMenuItem<T>>(
+              (T option) => DropdownMenuItem<T>(
+                value: option,
+                child: MyCheckboxListTile<T>(
+                  selected: values?.contains(option) ?? false,
+                  title: titleBuilder(option),
+                  subtitle: subtitleBuilder != null ? subtitleBuilder!(option) : null,
+                  secondary: secondaryBuilder != null ? secondaryBuilder!(option) : null,
+                  isThreeLine: isItemThreeLine ?? false,
+                  dense: isItemdense,
+                  activeColor: activeColor,
+                  checkColor: checkColor,
+                  onChanged: (_) {
+                    if (!values!.contains(option)) {
+                      values!.add(option);
+                    } else {
+                      values!.remove(option);
+                    }
+                    onChanged(values!);
+                  },
+                ),
               ),
-            ),
-          ],
+            )
+            .toList(),
+        selectedItemBuilder: (BuildContext context) {
+          return options!.map<Widget>((T option) {
+            return Text('');
+          }).toList();
+        },
+        hint: hint,
+        onChanged: onChanged == null ? null : (T? value) {},
+        disabledHint: disabledHint,
+        elevation: elevation,
+        style: style,
+        underline: underline,
+        icon: icon,
+        iconDisabledColor: iconDisabledColor,
+        iconEnabledColor: iconEnabledColor,
+        iconSize: iconSize,
+        isDense: isDense,
+        isExpanded: isExpanded,
+        itemHeight: itemHeight,
+        focusNode: focusNode,
+        focusColor: focusColor,
+        autofocus: autofocus,
+      ),
+    );
+  }
+
+  Widget _buildChipList(BuildContext context) {
+    return Row(
+      children: [
+        Expanded(
+          child: MyChipList<T>(
+            values: values!,
+            spacing: chipListSpacing!,
+            alignment: chipListAlignment!,
+            chipBuilder: (T value) {
+              return Chip(
+                label: chipLabelBuilder!(value),
+                labelStyle: chipLabelStyle,
+                labelPadding: chipLabelPadding,
+                avatar: chipAvatarBuilder != null ? chipAvatarBuilder!(value) : null,
+                onDeleted: () {
+                  values!.remove(value);
+                  onChanged(values!);
+                },
+                deleteIcon: chipDeleteIcon,
+                deleteIconColor: chipDeleteIconColor,
+                deleteButtonTooltipMessage: deleteButtonTooltipMessage,
+                shape: chipShape,
+                clipBehavior: chipClipBehavior!,
+                backgroundColor: chipBackgroundColor,
+                padding: chipPadding,
+                materialTapTargetSize: chipMaterialTapTargetSize,
+                elevation: chipElevation,
+                shadowColor: chipShadowColor,
+              );
+            },
+          ),
         ),
       ],
     );
