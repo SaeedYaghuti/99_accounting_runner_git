@@ -6,6 +6,7 @@ import 'package:shop/accounting/sell_point/sell_point_screen.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
 import 'package:shop/auth/permission_model.dart';
 import 'package:shop/shared/custom_form_fields/form_fields_screen.dart';
+import 'package:shop/shared/test_screen/test_screen.dart';
 
 const CATEGORIES_TREE = const [
   CategoryModel(
@@ -118,7 +119,7 @@ const CATEGORIES_TREE = const [
     parentId: 'root',
     // TODO: defined Permitted
     requiredPermission: PermissionModel.SELL_POINT_CATEGORY,
-    routeName: FormFieldsScreen.routeName,
+    routeName: TestScreen.routeName,
   ),
 ];
 

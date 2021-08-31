@@ -203,7 +203,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
 
   Widget _buildMultiSelection(BuildContext context) {
     return MyMultiSelectionFormField<Interest>(
-      dropDownMenu: _buildFloatAccount(context),
+      dropDownMenu: _buildFloatAccountDDM(context),
       decoration: _buildInputDecoration('Floating Accounts', Icons.account_box_outlined),
       hint: Text('Select more interests'),
       isDense: true,
@@ -297,6 +297,26 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         FocusScope.of(context).requestFocus(_fields.floatFocusNode);
       },
       validator: _fields.validateExpClass,
+      // onSaved: (amount) {
+      //   we do add saving at expFormFields when setting data
+      // },
+    );
+  }
+
+  Widget _buildFloatAccountDDM(BuildContext context) {
+    return TextFormField(
+      // decoration: _buildInputDecoration('Float Account', Icons.account_box_outlined),
+      style: _buildTextStyle(),
+      showCursor: false,
+      readOnly: true,
+      focusNode: _fields.floatFocusNode,
+      controller: _fields.floatController,
+      textInputAction: TextInputAction.next,
+      onTap: () {
+        _pickFloat();
+        FocusScope.of(context).requestFocus(_fields.dateFocusNode);
+      },
+      validator: _fields.validateFloatAccount,
       // onSaved: (amount) {
       //   we do add saving at expFormFields when setting data
       // },

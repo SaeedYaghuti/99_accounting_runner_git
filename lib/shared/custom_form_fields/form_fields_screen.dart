@@ -10,22 +10,6 @@ import 'package:flutter/services.dart';
 
 import 'multi_selection_form_field.dart';
 
-// void main() => runApp(MyApp());
-
-// class MyApp extends StatelessWidget {
-//   @override
-//   Widget build(BuildContext context) {
-//     return MaterialApp(
-//       title: 'Dating App - Signup Form',
-//       theme: ThemeData(
-//         primarySwatch: Colors.blue,
-//       ),
-//       // home: FormFieldsPage(title: 'Signup Form'),
-//       home: FormFieldsPage(),
-//     );
-//   }
-// }
-
 enum Gender {
   Male,
   Female,
@@ -58,17 +42,16 @@ class SignupUser {
       };
 }
 
-class FormFieldsScreen extends StatefulWidget {
-  static const String routeName = '/formFieldsPage';
-  // FormFieldsPage({Key? key, required this.title}) : super(key: key);
-  FormFieldsScreen({Key? key}) : super(key: key);
-  final String title = 'Form Field Example';
+class FormFieldScreen extends StatefulWidget {
+  static const String routeName = '/formFieldScreen';
+  FormFieldScreen({Key? key}) : super(key: key);
+  final String title = 'Form Field Screen';
 
   @override
-  _FormFieldsScreenState createState() => _FormFieldsScreenState();
+  _FormFieldScreenState createState() => _FormFieldScreenState();
 }
 
-class _FormFieldsScreenState extends State<FormFieldsScreen> {
+class _FormFieldScreenState extends State<FormFieldScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final _formResult = SignupUser();

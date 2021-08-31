@@ -13,6 +13,7 @@ import 'package:shop/constants.dart';
 import 'package:shop/shared/custom_form_fields/form_fields_screen.dart';
 import 'package:shop/shared/loading_screen.dart';
 import 'package:shop/shared/storage_type.dart';
+import 'package:shop/shared/test_screen/test_screen.dart';
 
 class AccountingApp extends StatelessWidget {
   const AccountingApp({Key? key}) : super(key: key);
@@ -67,7 +68,8 @@ class AccountingApp extends StatelessWidget {
       SubCategoriesScreen.routeName: (ctx) => SubCategoriesScreen(),
       RetailScreen.routeName: (ctx) => RetailScreen(),
       ExpenditureScreen.routeName: (ctx) => ExpenditureScreen(),
-      FormFieldsScreen.routeName: (ctx) => FormFieldsScreen(),
+      FormFieldScreen.routeName: (ctx) => FormFieldScreen(),
+      TestScreen.routeName: (ctx) => TestScreen(),
     };
   }
 }
