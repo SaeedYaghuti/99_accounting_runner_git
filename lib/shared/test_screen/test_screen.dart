@@ -60,7 +60,16 @@ class _TestScreenState extends State<TestScreen> {
                     }
                   },
                 ),
-                Counter(),
+                // Counter(),
+                CounterFormField(
+                  autovalidate: false,
+                  validator: (value) {
+                    if (value == null || value < 0) {
+                      return 'Negative values not supported';
+                    }
+                  },
+                  onSaved: (value) => this._age = value,
+                ),
                 RaisedButton(
                   child: Text('Submit'),
                   onPressed: () {
@@ -82,76 +91,36 @@ class _TestScreenState extends State<TestScreen> {
   }
 }
 
-class Counter extends StatefulWidget {
-  @override
-  _CounterState createState() => _CounterState();
-}
-
-class _CounterState extends State<Counter> {
-  late int value;
-
-  @override
-  void initState() {
-    super.initState();
-    this.value = 0;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        IconButton(
-          icon: Icon(Icons.remove),
-          onPressed: () {
-            setState(() {
-              this.value--;
-            });
-          },
-        ),
-        Text(this.value.toString()),
-        IconButton(
-          icon: Icon(Icons.add),
-          onPressed: () {
-            setState(() {
-              this.value++;
-            });
-          },
-        ),
-      ],
-    );
-  }
-}
-
 class CounterFormField extends FormField<int> {
-  CounterFormField(
-      {required FormFieldSetter<int> onSaved,
-      required FormFieldValidator<int> validator,
-      int initialValue = 0,
-      bool autovalidate = false})
-      : super(
-            onSaved: onSaved,
-            validator: validator,
-            initialValue: initialValue,
-            autovalidate: autovalidate,
-            builder: (FormFieldState<int> state) {
-              return Row(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.remove),
-                    onPressed: () {
-                      state.didChange(state.value - 1);
-                    },
-                  ),
-                  Text(state.value.toString()),
-                  IconButton(
-                    icon: Icon(Icons.add),
-                    onPressed: () {
-                      state.didChange(state.value + 1);
-                    },
-                  ),
-                ],
-              );
-            });
+  CounterFormField({
+    required FormFieldSetter<int> onSaved,
+    required FormFieldValidator<int> validator,
+    int initialValue = 0,
+    bool autovalidate = false,
+  }) : super(
+          onSaved: onSaved,
+          validator: validator,
+          initialValue: initialValue,
+          autovalidate: autovalidate,
+          builder: (FormFieldState<int> state) {
+            return Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.remove),
+                  onPressed: () {
+                    if (state.value != null) state.didChange(state.value! - 1);
+                  },
+                ),
+                Text(state.value.toString()),
+                IconButton(
+                  icon: Icon(Icons.add),
+                  onPressed: () {
+                    if (state.value != null) state.didChange(state.value! + 1);
+                  },
+                ),
+              ],
+            );
+          },
+        );
 }
