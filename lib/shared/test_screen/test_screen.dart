@@ -64,7 +64,9 @@ class _TestScreenState extends State<TestScreen> {
                 CounterFormField(
                   autovalidate: false,
                   validator: (value) {
+                    print('01 CounterFF validator run ...');
                     if (value == null || value < 0) {
+                      print('02 CounterFF validator not valid');
                       return 'Negative values not supported';
                     }
                   },
@@ -106,13 +108,16 @@ class CounterFormField extends FormField<int> {
             return Row(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
+                // # -
                 IconButton(
                   icon: Icon(Icons.remove),
                   onPressed: () {
                     if (state.value != null) state.didChange(state.value! - 1);
                   },
                 ),
+                // # text
                 Text(state.value.toString()),
+                // # +
                 IconButton(
                   icon: Icon(Icons.add),
                   onPressed: () {
