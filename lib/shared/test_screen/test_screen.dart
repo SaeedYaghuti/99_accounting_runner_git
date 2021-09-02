@@ -105,25 +105,32 @@ class CounterFormField extends FormField<int> {
           initialValue: initialValue,
           autovalidate: autovalidate,
           builder: (FormFieldState<int> state) {
-            return Row(
-              mainAxisSize: MainAxisSize.min,
+            return Column(
               children: <Widget>[
-                // # -
-                IconButton(
-                  icon: Icon(Icons.remove),
-                  onPressed: () {
-                    if (state.value != null) state.didChange(state.value! - 1);
-                  },
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    IconButton(
+                      icon: Icon(Icons.remove),
+                      onPressed: () {
+                        if (state.value != null) state.didChange(state.value! - 1);
+                      },
+                    ),
+                    Text(state.value.toString()),
+                    IconButton(
+                      icon: Icon(Icons.add),
+                      onPressed: () {
+                        if (state.value != null) state.didChange(state.value! + 1);
+                      },
+                    ),
+                  ],
                 ),
-                // # text
-                Text(state.value.toString()),
-                // # +
-                IconButton(
-                  icon: Icon(Icons.add),
-                  onPressed: () {
-                    if (state.value != null) state.didChange(state.value! + 1);
-                  },
-                ),
+                state.hasError
+                    ? Text(
+                        state.errorText!,
+                        style: TextStyle(color: Colors.red),
+                      )
+                    : Container()
               ],
             );
           },

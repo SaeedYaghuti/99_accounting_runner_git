@@ -1,4 +1,4 @@
-#Wed Sep 01 09:04:17 GST 2021
+#Thu Sep 02 09:14:59 GST 2021
 base.0=/Users/saeid/Documents/GitHub/99_accounting_runner_git/build/app/intermediates/dex/debug/mergeDexDebug/classes.dex
 renamed.0=classes.dex
 path.0=classes.dex
