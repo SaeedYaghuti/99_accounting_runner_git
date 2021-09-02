@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/material.dart';
+import 'package:shop/shared/custom_form_fields/counter.dart';
 
 class TestScreen extends StatefulWidget {
   static const String routeName = '/testScreen';
@@ -60,7 +61,6 @@ class _TestScreenState extends State<TestScreen> {
                     }
                   },
                 ),
-                // Counter(),
                 CounterFormField(
                   autovalidate: false,
                   validator: (value) {
@@ -91,48 +91,4 @@ class _TestScreenState extends State<TestScreen> {
       ),
     );
   }
-}
-
-class CounterFormField extends FormField<int> {
-  CounterFormField({
-    required FormFieldSetter<int> onSaved,
-    required FormFieldValidator<int> validator,
-    int initialValue = 0,
-    bool autovalidate = false,
-  }) : super(
-          onSaved: onSaved,
-          validator: validator,
-          initialValue: initialValue,
-          autovalidate: autovalidate,
-          builder: (FormFieldState<int> state) {
-            return Column(
-              children: <Widget>[
-                Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    IconButton(
-                      icon: Icon(Icons.remove),
-                      onPressed: () {
-                        if (state.value != null) state.didChange(state.value! - 1);
-                      },
-                    ),
-                    Text(state.value.toString()),
-                    IconButton(
-                      icon: Icon(Icons.add),
-                      onPressed: () {
-                        if (state.value != null) state.didChange(state.value! + 1);
-                      },
-                    ),
-                  ],
-                ),
-                state.hasError
-                    ? Text(
-                        state.errorText!,
-                        style: TextStyle(color: Colors.red),
-                      )
-                    : Container()
-              ],
-            );
-          },
-        );
 }

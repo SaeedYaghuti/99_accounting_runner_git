@@ -4,12 +4,16 @@ import 'package:flutter/material.dart';
 
 class MyMultiSelectionFormField<T> extends FormField<List<T>> {
   final ValueChanged<List<T>> onChanged;
-
   final InputDecoration decoration;
 
   MyMultiSelectionFormField({
+    // FormField requirement
     Key? key,
+    FormFieldSetter<List<T>>? onSaved,
+    FormFieldValidator<List<T>>? validator,
     required List<T> initialValues,
+    bool autovalidate = false,
+    // other requirement
     required List<T> options,
     required Widget Function(T) titleBuilder,
     Widget Function(T)? subtitleBuilder,
@@ -19,9 +23,6 @@ class MyMultiSelectionFormField<T> extends FormField<List<T>> {
     Widget? hint,
     this.decoration = const InputDecoration(),
     required this.onChanged,
-    FormFieldSetter<List<T>>? onSaved,
-    FormFieldValidator<List<T>>? validator,
-    bool autovalidate = false,
     Widget? disabledHint,
     int elevation = 8,
     TextStyle? style,
@@ -74,18 +75,17 @@ class MyMultiSelectionFormField<T> extends FormField<List<T>> {
         super(
           key: key,
           onSaved: onSaved,
-          initialValue: initialValues,
           validator: validator,
+          initialValue: initialValues,
           autovalidate: autovalidate,
           builder: (FormFieldState<List<T>> field) {
-            final InputDecoration effectiveDecoration = decoration.applyDefaults(
-              Theme.of(field.context).inputDecorationTheme,
-            );
+            final InputDecoration effectiveDecoration =
+                decoration.applyDefaults(Theme.of(field.context).inputDecorationTheme);
             return InputDecorator(
               decoration: effectiveDecoration.copyWith(errorText: field.errorText),
               isEmpty: field.value!.isEmpty,
               isFocused: focusNode?.hasFocus ?? false,
-              child: MyMultiSelectionField<T>(
+              child: MyMultiSelectionUI<T>(
                 dropDownMenue: dropDownMenu,
                 values: field.value!,
                 options: options,
@@ -153,9 +153,9 @@ class _MyMultiSelectionFormFieldState<T> extends FormFieldState<List<T>> {
   // }
 }
 
-// fields/myMultiselectionField.dart ************************
-
-class MyMultiSelectionField<T> extends StatelessWidget {
+// fields/myMultiselectionUI.dart ************************
+// include: build icon for showing DDM and Chip list
+class MyMultiSelectionUI<T> extends StatelessWidget {
   final ValueChanged<List<T>> onChanged;
   final List<T>? values;
   final List<T>? options;
@@ -200,7 +200,7 @@ class MyMultiSelectionField<T> extends StatelessWidget {
   final double? chipElevation;
   final Widget dropDownMenue;
 
-  MyMultiSelectionField({
+  MyMultiSelectionUI({
     required this.dropDownMenue,
     Key? key,
     this.values,
