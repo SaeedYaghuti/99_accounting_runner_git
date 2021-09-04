@@ -25,6 +25,7 @@ import 'package:shop/auth/has_access.dart';
 import 'package:shop/auth/permission_model.dart';
 import 'package:shop/exceptions/curropted_input.dart';
 import 'package:shop/exceptions/not_handled_exception.dart';
+import 'package:shop/shared/custom_form_fields/float_selection_form_field.dart';
 import 'package:shop/shared/custom_form_fields/form_fields_screen.dart';
 import 'package:shop/shared/custom_form_fields/multi_selection_form_field.dart';
 import 'package:shop/shared/show_error_dialog.dart';
@@ -202,8 +203,34 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   } // build
 
   Widget _buildMultiSelection(BuildContext context) {
+    return FloatSelectionFormField<FloatingAccount>(
+      dropDownMenu: (selectFloatHandler) => _buildFloatAccountDDM(context, selectFloatHandler),
+      decoration: _buildInputDecoration('Floating Accounts', Icons.account_box_outlined),
+      hint: Text('Select more interests'),
+      isDense: true,
+      focusNode: _fields.multiselectionFocusNode,
+      // options: Interest.values,
+      options: [],
+      titleBuilder: (float) => Text(float.titleEnglish),
+      chipLabelBuilder: (float) => Text(float.titleEnglish),
+      chipBackgroundColor: Colors.purple.withOpacity(0.1),
+      chipDeleteIconColor: Colors.purple.withOpacity(0.5),
+      // initialValues: [Interest.Art, Interest.Blogging, Interest.Cooking],
+      initialValues: [],
+      validator: (interests) => interests == null || interests.length < 3 ? 'Please select at least 3 interests' : null,
+      onSaved: (interests) {
+        // _formResult.interests = interests!;
+      },
+      onChanged: (_) {
+        FocusScope.of(context).unfocus();
+        // FocusScope.of(context).requestFocus(interestsFocusNode);
+      },
+    );
+  }
+
+  Widget _buildMultiSelection0(BuildContext context) {
     return MyMultiSelectionFormField<Interest>(
-      dropDownMenu: _buildFloatAccountDDM(context),
+      dropDownMenu: (selectFloatHandler) => _buildFloatAccountDDM(context, (selectFloatHandler) {}),
       decoration: _buildInputDecoration('Floating Accounts', Icons.account_box_outlined),
       hint: Text('Select more interests'),
       isDense: true,
@@ -303,17 +330,23 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     );
   }
 
-  Widget _buildFloatAccountDDM(BuildContext context) {
+  Widget _buildFloatAccountDDM(BuildContext context, Function(FloatingAccount) floatHandlerSelection) {
     return TextFormField(
       // decoration: _buildInputDecoration('Float Account', Icons.account_box_outlined),
       style: _buildTextStyle(),
       showCursor: false,
       readOnly: true,
-      focusNode: _fields.floatFocusNode,
-      controller: _fields.floatController,
+      // focusNode: _fields.floatFocusNode,
+      // controller: _fields.floatController,
       textInputAction: TextInputAction.next,
       onTap: () {
-        _pickFloat();
+        _pickFloat((FloatingAccount tappedFloat) {
+          Navigator.of(context).pop();
+          floatHandlerSelection(tappedFloat);
+          // setState(() {
+          //   _fields.floatAccount = tappedFloat;
+          // });
+        });
         FocusScope.of(context).requestFocus(_fields.dateFocusNode);
       },
       validator: _fields.validateFloatAccount,
@@ -333,7 +366,12 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       controller: _fields.floatController,
       textInputAction: TextInputAction.next,
       onTap: () {
-        _pickFloat();
+        _pickFloat((FloatingAccount tappedFloat) {
+          Navigator.of(context).pop();
+          setState(() {
+            _fields.floatAccount = tappedFloat;
+          });
+        });
         FocusScope.of(context).requestFocus(_fields.dateFocusNode);
       },
       validator: _fields.validateFloatAccount,
@@ -564,7 +602,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         });
   }
 
-  void _pickFloat() {
+  void _pickFloat(Function(FloatingAccount) tapHandler) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
@@ -579,12 +617,13 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
                   FloatAccountIds.SALESMAN_FLOAT_ACCOUNT_ID,
                 ],
                 unwantedAccountIds: [],
-                tapHandler: (FloatingAccount tappedFloat) {
-                  Navigator.of(context).pop();
-                  setState(() {
-                    _fields.floatAccount = tappedFloat;
-                  });
-                },
+                tapHandler: (FloatingAccount tappedFloat) => tapHandler(tappedFloat),
+                // tapHandler: (FloatingAccount tappedFloat) {
+                //   Navigator.of(context).pop();
+                //   setState(() {
+                //     _fields.floatAccount = tappedFloat;
+                //   });
+                // },
               ),
             ],
           );

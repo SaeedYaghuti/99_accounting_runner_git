@@ -1,6 +1,7 @@
 // formFields/myMultiselectionFormField.dart ********************
 
 import 'package:flutter/material.dart';
+import 'package:shop/accounting/accounting_logic/floating_account.dart';
 
 class MyMultiSelectionFormField<T> extends FormField<List<T>> {
   final ValueChanged<List<T>> onChanged;
@@ -56,7 +57,7 @@ class MyMultiSelectionFormField<T> extends FormField<List<T>> {
     Color? chipShadowColor,
     MaterialTapTargetSize? chipMaterialTapTargetSize,
     double? chipElevation,
-    required Widget dropDownMenu,
+    required Widget Function(Function(T)) dropDownMenu,
   })   : assert(
           options == null ||
               options.isEmpty ||
@@ -78,24 +79,24 @@ class MyMultiSelectionFormField<T> extends FormField<List<T>> {
           validator: validator,
           initialValue: initialValues,
           autovalidate: autovalidate,
-          builder: (FormFieldState<List<T>> field) {
+          builder: (FormFieldState<List<T>> state) {
             final InputDecoration effectiveDecoration =
-                decoration.applyDefaults(Theme.of(field.context).inputDecorationTheme);
+                decoration.applyDefaults(Theme.of(state.context).inputDecorationTheme);
             return InputDecorator(
-              decoration: effectiveDecoration.copyWith(errorText: field.errorText),
-              isEmpty: field.value!.isEmpty,
+              decoration: effectiveDecoration.copyWith(errorText: state.errorText),
+              isEmpty: state.value!.isEmpty,
               isFocused: focusNode?.hasFocus ?? false,
               child: MyMultiSelectionUI<T>(
                 dropDownMenue: dropDownMenu,
-                values: field.value!,
+                values: state.value!,
                 options: options,
                 titleBuilder: titleBuilder,
                 subtitleBuilder: subtitleBuilder,
                 secondaryBuilder: secondaryBuilder,
                 chipLabelBuilder: chipLabelBuilder,
                 chipAvatarBuilder: chipAvatarBuilder,
-                hint: field.value!.isNotEmpty ? hint : null,
-                onChanged: field.didChange,
+                hint: state.value!.isNotEmpty ? hint : null,
+                onChanged: state.didChange,
                 disabledHint: disabledHint,
                 elevation: elevation,
                 style: style,
@@ -198,7 +199,7 @@ class MyMultiSelectionUI<T> extends StatelessWidget {
   final Color? chipShadowColor;
   final MaterialTapTargetSize? chipMaterialTapTargetSize;
   final double? chipElevation;
-  final Widget dropDownMenue;
+  final Widget Function(Function(T)) dropDownMenue;
 
   MyMultiSelectionUI({
     required this.dropDownMenue,
@@ -262,7 +263,13 @@ class MyMultiSelectionUI<T> extends StatelessWidget {
       children: <Widget>[
         // # Dropdown Button
         // _buildDropDownButton(context),
-        dropDownMenue,
+        dropDownMenue(
+          (T selectedItem) {
+            if (!values!.contains(selectedItem)) {
+              values!.add(selectedItem);
+            }
+          },
+        ),
         SizedBox(height: 8.0),
         // # Chip List
         _buildChipList(context),
