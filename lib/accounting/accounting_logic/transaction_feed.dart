@@ -1,4 +1,4 @@
-import 'package:shop/accounting/accounting_logic/floating_account.dart';
+import 'package:shop/accounting/accounting_logic/float/floating_account.dart';
 
 import 'classification/transaction_classification.dart';
 

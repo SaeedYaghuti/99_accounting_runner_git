@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shop/accounting/accounting_logic/floating_account.dart';
-import 'package:shop/accounting/accounting_logic/floating_account_tree.dart';
+import 'package:shop/accounting/accounting_logic/float/floating_account.dart';
+import 'package:shop/accounting/accounting_logic/float/floating_account_tree.dart';
 import 'package:shop/accounting/expenditure/expenditure_screen_form.dart';
 import 'package:shop/auth/auth_provider_sql.dart';
 

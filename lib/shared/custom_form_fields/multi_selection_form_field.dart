@@ -1,7 +1,7 @@
 // formFields/myMultiselectionFormField.dart ********************
 
 import 'package:flutter/material.dart';
-import 'package:shop/accounting/accounting_logic/floating_account.dart';
+import 'package:shop/accounting/accounting_logic/float/floating_account.dart';
 
 class MyMultiSelectionFormField<T> extends FormField<List<T>> {
   final ValueChanged<List<T>> onChanged;

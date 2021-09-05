@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:shop/accounting/accounting_logic/account_model.dart';
 import 'package:shop/accounting/accounting_logic/classification/transaction_classification.dart';
-import 'package:shop/accounting/accounting_logic/float_dropdown_menu.dart';
-import 'package:shop/accounting/accounting_logic/floating_account.dart';
-import 'package:shop/accounting/accounting_logic/floating_account_tree.dart';
+import 'package:shop/accounting/accounting_logic/float/float_dropdown_menu.dart';
+import 'package:shop/accounting/accounting_logic/float/floating_account.dart';
+import 'package:shop/accounting/accounting_logic/float/floating_account_tree.dart';
 import 'package:shop/accounting/accounting_logic/run_code.dart';
 // import 'package:shop/auth/run_code.dart';
 
@@ -206,7 +206,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     return FloatSelectionFormField<FloatingAccount>(
       dropDownMenu: (selectFloatHandler) => _buildFloatAccountDDM(context, selectFloatHandler),
       decoration: _buildInputDecoration('Floating Accounts', Icons.account_box_outlined),
-      hint: Text('Select more interests'),
+      hint: Text('Select more floating account'),
       isDense: true,
       focusNode: _fields.multiselectionFocusNode,
       // options: Interest.values,

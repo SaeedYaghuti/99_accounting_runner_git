@@ -1,5 +1,5 @@
 import 'package:shop/accounting/accounting_logic/account_ids.dart';
-import 'package:shop/accounting/accounting_logic/floating_account.dart';
+import 'package:shop/accounting/accounting_logic/float/floating_account.dart';
 import 'package:shop/accounting/expenditure/expenditure_class_tree.dart';
 
 const FLOAT_ACCOUNT_TREE = const [

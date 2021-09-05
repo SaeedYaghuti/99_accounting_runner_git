@@ -20,7 +20,7 @@ import 'package:shop/shared/result_status.dart';
 import 'package:shop/shared/seconds_of_time.dart';
 
 import 'classification/transaction_classification.dart';
-import 'floating_account.dart';
+import 'float/floating_account.dart';
 
 class VoucherModel {
   int? id;
