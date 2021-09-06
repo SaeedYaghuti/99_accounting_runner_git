@@ -217,8 +217,10 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       chipDeleteIconColor: Colors.purple.withOpacity(0.5),
       // initialValues: [Interest.Art, Interest.Blogging, Interest.Cooking],
       initialValues: [],
-      validator: (interests) => interests == null || interests.length < 3 ? 'Please select at least 3 interests' : null,
-      onSaved: (interests) {
+      validator: (floatList) => floatList == null || floatList.length < 3 ? 'Please select at least 3 interests' : null,
+      onSaved: (floatList) {
+        print('EXP_FRM | _buildMultiSelection() | onSaved()');
+        print('floatList: $floatList');
         // _formResult.interests = interests!;
       },
       onChanged: (_) {
