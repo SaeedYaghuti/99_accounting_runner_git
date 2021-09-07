@@ -185,8 +185,8 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
               _buildPaidBy(context),
               SizedBox(height: 20, width: 20),
               _buildExpClass(context),
-              SizedBox(height: 20, width: 20),
-              _buildFloatAccount(context),
+              // SizedBox(height: 20, width: 20),
+              // _buildFloatAccount(context),
               SizedBox(height: 20, width: 20),
               _buildMultiSelection(context),
               SizedBox(height: 20, width: 20),
@@ -339,12 +339,14 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       showCursor: false,
       readOnly: true,
       // focusNode: _fields.floatFocusNode,
-      // controller: _fields.floatController,
+      controller: _fields.floatController,
+      // initialValue: 'Select More Float Account',
       textInputAction: TextInputAction.next,
       onTap: () {
         _pickFloat((FloatingAccount tappedFloat) {
           Navigator.of(context).pop();
           floatHandlerSelection(tappedFloat);
+          _fields.floatController.text = 'Select More Float Account';
           // setState(() {
           //   _fields.floatAccount = tappedFloat;
           // });

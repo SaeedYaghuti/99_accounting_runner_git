@@ -261,14 +261,14 @@ class MyMultiSelectionUI<T> extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         // # Dropdown Button
-        // _buildDropDownButton(context),
-        dropDownMenue(
-          (T selectedItem) {
-            if (!values!.contains(selectedItem)) {
-              values!.add(selectedItem);
-            }
-          },
-        ),
+        _buildDropDownButton(context),
+        // dropDownMenue(
+        //   (T selectedItem) {
+        //     if (!values!.contains(selectedItem)) {
+        //       values!.add(selectedItem);
+        //     }
+        //   },
+        // ),
         SizedBox(height: 8.0),
         // # Chip List
         _buildChipList(context),
