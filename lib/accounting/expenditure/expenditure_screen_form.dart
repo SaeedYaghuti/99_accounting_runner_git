@@ -205,7 +205,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   Widget _buildMultiSelection(BuildContext context) {
     return FloatSelectionFormField<FloatingAccount>(
       dropDownMenu: (selectFloatHandler) => _buildFloatAccountDDM(context, selectFloatHandler),
-      decoration: _buildInputDecoration('Floating Accounts', Icons.account_box_outlined),
+      decoration: _buildInputDecoration('Floating Accounts', Icons.account_box_outlined, true),
       hint: Text('Select more floating account'),
       isDense: true,
       focusNode: _fields.multiselectionFocusNode,
@@ -702,8 +702,9 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
     });
   }
 
-  InputDecoration _buildInputDecoration(String labelText, [IconData? icon]) {
+  InputDecoration _buildInputDecoration(String labelText, [IconData? icon, bool alwaysLabel = false]) {
     return InputDecoration(
+      floatingLabelBehavior: alwaysLabel ? FloatingLabelBehavior.always : FloatingLabelBehavior.auto,
       border: OutlineInputBorder(),
       labelText: labelText,
       labelStyle: TextStyle(
