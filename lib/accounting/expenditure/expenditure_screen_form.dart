@@ -346,7 +346,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         _pickFloat((FloatingAccount tappedFloat) {
           Navigator.of(context).pop();
           floatHandlerSelection(tappedFloat);
-          _fields.floatController.text = 'Select More Float Account';
+          _fields.floatController.text = 'Select More Float';
           // setState(() {
           //   _fields.floatAccount = tappedFloat;
           // });

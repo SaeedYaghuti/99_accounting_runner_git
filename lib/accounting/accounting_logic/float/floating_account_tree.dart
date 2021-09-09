@@ -18,7 +18,7 @@ const FLOAT_ACCOUNT_TREE = const [
     id: FloatAccountIds.NOT_SPECIFIED_FLOAT_ACCOUNT_ID,
     parentId: FloatAccountIds.ROOT_FLOAT_ACCOUNT_ID,
     isNode: false,
-    titleEnglish: 'General Floating Account',
+    titleEnglish: 'Not Specified Floating Account',
     titlePersian: 'شناور عمومى',
     titleArabic: 'سيال عامة',
     note: 'Use this class when float account is not need for transaction',
@@ -73,16 +73,6 @@ const FLOAT_ACCOUNT_TREE = const [
     titleArabic: 'سيال بائعين',
     note: 'Salesman floating account',
   ),
-  // NOT_SPECIFIED_CAR
-  FloatingAccount(
-    id: FloatAccountIds.NOT_SPECIFIED_CAR_FLOAT_ACCOUNT_ID,
-    parentId: FloatAccountIds.CAR_FLOAT_ACCOUNT_ID,
-    isNode: false,
-    titleEnglish: 'Not Specified Car',
-    titlePersian: 'شناور عمومى',
-    titleArabic: 'سيال عامة',
-    note: 'Use this class when salesman float account is not need for transaction',
-  ),
   // AVALON_12_CAR
   FloatingAccount(
     id: FloatAccountIds.AVALON_12_CAR_FLOAT_ACCOUNT_ID,
@@ -99,6 +89,16 @@ const FLOAT_ACCOUNT_TREE = const [
     parentId: FloatAccountIds.CAR_FLOAT_ACCOUNT_ID,
     isNode: false,
     titleEnglish: 'Maxima 55',
+    titlePersian: 'شناور عمومى',
+    titleArabic: 'سيال عامة',
+    note: 'Use this class when salesman float account is not need for transaction',
+  ),
+  // NOT_SPECIFIED_CAR
+  FloatingAccount(
+    id: FloatAccountIds.NOT_SPECIFIED_CAR_FLOAT_ACCOUNT_ID,
+    parentId: FloatAccountIds.CAR_FLOAT_ACCOUNT_ID,
+    isNode: false,
+    titleEnglish: 'Not Specified Car',
     titlePersian: 'شناور عمومى',
     titleArabic: 'سيال عامة',
     note: 'Use this class when salesman float account is not need for transaction',
