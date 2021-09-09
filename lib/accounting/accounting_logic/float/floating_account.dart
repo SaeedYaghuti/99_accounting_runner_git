@@ -1,17 +1,20 @@
 import 'package:shop/accounting/accounting_logic/accounting_db.dart';
+import 'package:shop/exceptions/DBException.dart';
 import 'package:shop/exceptions/join_exception.dart';
 
 class FloatingAccount {
   final String id;
   final String parentId;
+  final String note;
   final String titleEnglish;
   final String titlePersian;
   final String titleArabic;
-  final String note;
+  final bool isNode;
 
   const FloatingAccount({
     required this.id,
     required this.parentId,
+    required this.isNode,
     required this.titleEnglish,
     required this.titlePersian,
     required this.titleArabic,
@@ -138,18 +141,20 @@ class FloatingAccount {
   static const String tableName = 'floating_account';
   static const String column1Id = 'float_id';
   static const String column2ParentId = 'float_parentId';
-  static const String column3TitleEnglish = 'float_titleEnglish';
-  static const String column4TitlePersian = 'float_titlePersian';
-  static const String column5TitleArabic = 'float_titleArabic';
-  static const String column6Note = 'float_note';
+  static const String column3IsNode = 'float_isNode';
+  static const String column4TitleEnglish = 'float_titleEnglish';
+  static const String column5TitlePersian = 'float_titlePersian';
+  static const String column6TitleArabic = 'float_titleArabic';
+  static const String column7Note = 'float_note';
 
   static const String QUERY_CREATE_FLOAT_ACCOUNT_TABLE = '''CREATE TABLE $tableName (
     $column1Id TEXT PRIMARY KEY, 
     $column2ParentId TEXT NOT NULL, 
-    $column3TitleEnglish TEXT NOT NULL, 
-    $column4TitlePersian TEXT NOT NULL, 
-    $column5TitleArabic TEXT NOT NULL, 
-    $column6Note TEXT NOT NULL DEFAULT '_',
+    $column3IsNode BOOLEAN NOT NULL CHECK( $column3IsNode IN (0, 1) ),
+    $column4TitleEnglish TEXT NOT NULL, 
+    $column5TitlePersian TEXT NOT NULL, 
+    $column6TitleArabic TEXT NOT NULL, 
+    $column7Note TEXT NOT NULL DEFAULT '_',
     FOREIGN KEY ($column2ParentId) REFERENCES $tableName ($column1Id)
   )''';
 
@@ -157,10 +162,11 @@ class FloatingAccount {
     return {
       column1Id: id,
       column2ParentId: parentId,
-      column3TitleEnglish: titleEnglish,
-      column4TitlePersian: titlePersian,
-      column5TitleArabic: titleArabic,
-      column6Note: note,
+      column3IsNode: isNode ? 1 : 0,
+      column4TitleEnglish: titleEnglish,
+      column5TitlePersian: titlePersian,
+      column6TitleArabic: titleArabic,
+      column7Note: note,
     };
   }
 
@@ -181,10 +187,11 @@ class FloatingAccount {
       floatAcc = FloatingAccount(
         id: floatAccountMap[FloatingAccount.column1Id] as String,
         parentId: floatAccountMap[FloatingAccount.column2ParentId] as String,
-        titleEnglish: floatAccountMap[FloatingAccount.column3TitleEnglish] as String,
-        titlePersian: floatAccountMap[FloatingAccount.column4TitlePersian] as String,
-        titleArabic: floatAccountMap[FloatingAccount.column5TitleArabic] as String,
-        note: floatAccountMap[FloatingAccount.column6Note] as String,
+        isNode: convertIntToBoolean(floatAccountMap[FloatingAccount.column3IsNode] as int),
+        titleEnglish: floatAccountMap[FloatingAccount.column4TitleEnglish] as String,
+        titlePersian: floatAccountMap[FloatingAccount.column5TitlePersian] as String,
+        titleArabic: floatAccountMap[FloatingAccount.column6TitleArabic] as String,
+        note: floatAccountMap[FloatingAccount.column7Note] as String,
       );
 
       // print('FLT_ACC | fromMap 04| output: \n$tranClass');
@@ -199,9 +206,20 @@ class FloatingAccount {
     return '''
     id: $id, 
     parentId: $parentId,
+    isNode: $isNode,
     titleEnglish: $titleEnglish,
     titlePersian: $titlePersian,
     titleArabic: $titleArabic, note: $note,
     ''';
+  }
+
+  static bool convertIntToBoolean(int num) {
+    if (num == 0) {
+      return false;
+    } else if (num == 1) {
+      return true;
+    } else {
+      throw DBException('FLOAT_ACC | convertIntToBoolean() | $num is NOT 0 or 1 !');
+    }
   }
 }
