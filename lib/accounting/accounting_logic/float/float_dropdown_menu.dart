@@ -10,6 +10,7 @@ class FloatDropdownMenu extends StatefulWidget {
   final List<String?> unwantedAccountIds;
   final List<String?>? expandedAccountIds;
   final Function(FloatingAccount) tapHandler;
+  final FloatingAccount? node;
 
   FloatDropdownMenu({
     required this.authProvider,
@@ -17,6 +18,7 @@ class FloatDropdownMenu extends StatefulWidget {
     this.unwantedAccountIds = const [],
     this.expandedAccountIds,
     required this.tapHandler,
+    this.node,
   });
 
   @override
@@ -42,8 +44,10 @@ class _FloatDropdownMenuState extends State<FloatDropdownMenu> {
         }
         // floatAccounts = fetchFloats.cast<FloatingAccount>();
         floatAccounts = fetchFloats.whereType<FloatingAccount>().toList();
-
-        if (floatAccounts.any((acc) => acc.id == FloatAccountIds.ROOT_FLOAT_ACCOUNT_ID)) {
+        if (widget.node != null) {
+          rootFloatAccount = widget.node!;
+          vriablesAreInitialized = true;
+        } else if (floatAccounts.any((acc) => acc.id == FloatAccountIds.ROOT_FLOAT_ACCOUNT_ID)) {
           rootFloatAccount = floatAccounts.firstWhere(
             (acc) => acc.id == FloatAccountIds.ROOT_FLOAT_ACCOUNT_ID,
           );

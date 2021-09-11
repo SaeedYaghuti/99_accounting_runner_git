@@ -28,6 +28,7 @@ import 'package:shop/exceptions/not_handled_exception.dart';
 import 'package:shop/shared/custom_form_fields/float_selection_form_field.dart';
 import 'package:shop/shared/custom_form_fields/form_fields_screen.dart';
 import 'package:shop/shared/custom_form_fields/multi_selection_form_field.dart';
+import 'package:shop/shared/custom_tab_view.dart';
 import 'package:shop/shared/show_error_dialog.dart';
 import '../accounting_logic/classification/tran_class_dropdown_menu.dart';
 import 'expenditure_form_fields.dart';
@@ -607,12 +608,101 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
   }
 
   void _pickFloat(Function(FloatingAccount) tapHandler) {
+    List<String> data = ['Page 0', 'Page 1', 'Page 2'];
+    int initPosition = 1;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return SimpleDialog(
+          // title: Text('SELECT FLOAT ACCOUNT:'),
+          children: [
+            // tab for node of float account
+            Container(
+              // width: 500,
+              height: 500,
+              child: CustomTabView(
+                initPosition: initPosition,
+                itemCount: data.length,
+                tabBuilder: (context, index) => Tab(text: data[index]),
+                pageBuilder: (context, index) => Center(child: Text(data[index])),
+                onPositionChange: (index) {
+                  print('current position: $index');
+                  initPosition = index;
+                },
+                onScroll: (position) => print('$position'),
+              ),
+            ),
+            FloatDropdownMenu(
+              authProvider: authProviderSQL,
+              formDuty: _formDuty,
+              expandedAccountIds: [
+                FloatAccountIds.ROOT_FLOAT_ACCOUNT_ID,
+                FloatAccountIds.SALESMAN_FLOAT_ACCOUNT_ID,
+              ],
+              unwantedAccountIds: [],
+              tapHandler: (FloatingAccount tappedFloat) => tapHandler(tappedFloat),
+              // tapHandler: (FloatingAccount tappedFloat) {
+              //   Navigator.of(context).pop();
+              //   setState(() {
+              //     _fields.floatAccount = tappedFloat;
+              //   });
+              // },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _pickFloat0(Function(FloatingAccount) tapHandler) {
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return SimpleDialog(
-            title: Text('SELECT FLOAT ACCOUNT:'),
+            // title: Text('SELECT FLOAT ACCOUNT:'),
             children: [
+              // tab for node of float account
+              Container(
+                height: 200,
+                child: DefaultTabController(
+                  length: 3,
+                  child: Scaffold(
+                    appBar: AppBar(
+                      bottom: const TabBar(
+                        tabs: [
+                          Tab(text: 'CAR', icon: Icon(Icons.directions_car)),
+                          Tab(text: 'TRAN', icon: Icon(Icons.directions_transit)),
+                          Tab(text: 'BICICLE', icon: Icon(Icons.directions_bike)),
+                        ],
+                      ),
+                      title: const Text('Select Float Aaccount'),
+                    ),
+                    body: TabBarView(
+                      children: [
+                        FloatDropdownMenu(
+                          authProvider: authProviderSQL,
+                          formDuty: _formDuty,
+                          expandedAccountIds: [
+                            FloatAccountIds.ROOT_FLOAT_ACCOUNT_ID,
+                            FloatAccountIds.SALESMAN_FLOAT_ACCOUNT_ID,
+                          ],
+                          unwantedAccountIds: [],
+                          tapHandler: (FloatingAccount tappedFloat) => tapHandler(tappedFloat),
+                          // tapHandler: (FloatingAccount tappedFloat) {
+                          //   Navigator.of(context).pop();
+                          //   setState(() {
+                          //     _fields.floatAccount = tappedFloat;
+                          //   });
+                          // },
+                        ),
+                        Icon(Icons.directions_transit),
+                        Icon(Icons.directions_bike),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
               FloatDropdownMenu(
                 authProvider: authProviderSQL,
                 formDuty: _formDuty,
@@ -849,3 +939,47 @@ enum FormDuty {
   EDIT,
   DELETE,
 }
+
+/*
+Container(
+                height: 200,
+                child: DefaultTabController(
+                  length: 3,
+                  child: Scaffold(
+                    appBar: AppBar(
+                      bottom: const TabBar(
+                        tabs: [
+                          Tab(text: 'CAR', icon: Icon(Icons.directions_car)),
+                          Tab(text: 'TRAN', icon: Icon(Icons.directions_transit)),
+                          Tab(text: 'BICICLE', icon: Icon(Icons.directions_bike)),
+                        ],
+                      ),
+                      title: const Text('Select Float Aaccount'),
+                    ),
+                    body: TabBarView(
+                      children: [
+                        FloatDropdownMenu(
+                          authProvider: authProviderSQL,
+                          formDuty: _formDuty,
+                          expandedAccountIds: [
+                            FloatAccountIds.ROOT_FLOAT_ACCOUNT_ID,
+                            FloatAccountIds.SALESMAN_FLOAT_ACCOUNT_ID,
+                          ],
+                          unwantedAccountIds: [],
+                          tapHandler: (FloatingAccount tappedFloat) => tapHandler(tappedFloat),
+                          // tapHandler: (FloatingAccount tappedFloat) {
+                          //   Navigator.of(context).pop();
+                          //   setState(() {
+                          //     _fields.floatAccount = tappedFloat;
+                          //   });
+                          // },
+                        ),
+                        Icon(Icons.directions_transit),
+                        Icon(Icons.directions_bike),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              
+*/
