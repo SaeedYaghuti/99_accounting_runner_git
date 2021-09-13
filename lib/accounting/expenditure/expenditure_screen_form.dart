@@ -607,8 +607,9 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
         });
   }
 
-  void _pickFloat(Function(FloatingAccount) tapHandler) {
-    List<String> data = ['Page 0', 'Page 1', 'Page 2'];
+  void _pickFloat(Function(FloatingAccount) tapHandler) async {
+    // List<String> data = ['Page 0', 'Page 1', 'Page 2'];
+    List<FloatingAccount> floatNodes = await FloatingAccount.allFloatNodes();
     int initPosition = 1;
 
     showDialog(
@@ -619,13 +620,31 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
           children: [
             // tab for node of float account
             Container(
-              // width: 500,
+              width: 500,
               height: 500,
               child: CustomTabView(
                 initPosition: initPosition,
-                itemCount: data.length,
-                tabBuilder: (context, index) => Tab(text: data[index]),
-                pageBuilder: (context, index) => Center(child: Text(data[index])),
+                itemCount: floatNodes.length,
+                tabBuilder: (context, index) => Tab(text: floatNodes[index].titleEnglish),
+                // pageBuilder: (context, index) => Center(child: Text(floatNodes[index].titleEnglish)),
+                pageBuilder: (context, index) => FloatDropdownMenu(
+                  node: floatNodes[index],
+                  authProvider: authProviderSQL,
+                  formDuty: _formDuty,
+                  expandedAccountIds: [
+                    FloatAccountIds.ROOT_FLOAT_ACCOUNT_ID,
+                    // FloatAccountIds.SALESMAN_FLOAT_ACCOUNT_ID,
+                    floatNodes[index].id,
+                  ],
+                  unwantedAccountIds: [],
+                  tapHandler: (FloatingAccount tappedFloat) => tapHandler(tappedFloat),
+                  // tapHandler: (FloatingAccount tappedFloat) {
+                  //   Navigator.of(context).pop();
+                  //   setState(() {
+                  //     _fields.floatAccount = tappedFloat;
+                  //   });
+                  // },
+                ),
                 onPositionChange: (index) {
                   print('current position: $index');
                   initPosition = index;
@@ -633,22 +652,22 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
                 onScroll: (position) => print('$position'),
               ),
             ),
-            FloatDropdownMenu(
-              authProvider: authProviderSQL,
-              formDuty: _formDuty,
-              expandedAccountIds: [
-                FloatAccountIds.ROOT_FLOAT_ACCOUNT_ID,
-                FloatAccountIds.SALESMAN_FLOAT_ACCOUNT_ID,
-              ],
-              unwantedAccountIds: [],
-              tapHandler: (FloatingAccount tappedFloat) => tapHandler(tappedFloat),
-              // tapHandler: (FloatingAccount tappedFloat) {
-              //   Navigator.of(context).pop();
-              //   setState(() {
-              //     _fields.floatAccount = tappedFloat;
-              //   });
-              // },
-            ),
+            // FloatDropdownMenu(
+            //   authProvider: authProviderSQL,
+            //   formDuty: _formDuty,
+            //   expandedAccountIds: [
+            //     FloatAccountIds.ROOT_FLOAT_ACCOUNT_ID,
+            //     FloatAccountIds.SALESMAN_FLOAT_ACCOUNT_ID,
+            //   ],
+            //   unwantedAccountIds: [],
+            //   tapHandler: (FloatingAccount tappedFloat) => tapHandler(tappedFloat),
+            //   // tapHandler: (FloatingAccount tappedFloat) {
+            //   //   Navigator.of(context).pop();
+            //   //   setState(() {
+            //   //     _fields.floatAccount = tappedFloat;
+            //   //   });
+            //   // },
+            // ),
           ],
         );
       },

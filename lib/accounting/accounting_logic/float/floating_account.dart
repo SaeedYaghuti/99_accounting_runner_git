@@ -120,6 +120,37 @@ class FloatingAccount {
     }
   }
 
+  static Future<List<FloatingAccount>> allFloatNodes() async {
+    // print('FLT_ACC allFloatAccounts() 01| run ...');
+    final query = '''
+    SELECT *
+    FROM $tableName
+    WHERE $column3IsNode = 1 ;
+    ''';
+    try {
+      var fetchResult = await AccountingDB.runRawQuery(query);
+      // print(
+      //   'FloatingAccount allFloatNodes 02| fetchResult',
+      // );
+      // print(fetchResult);
+
+      // before list.first always you should check isEmpty
+      if (fetchResult.isEmpty) return [];
+
+      List<FloatingAccount?> floatAccounts = [];
+
+      for (var floatMap in fetchResult) {
+        floatAccounts.add(fromMap(floatMap));
+      }
+      // print('FLT_ACC allFloatNodes() 04| floatAccounts: $floatAccounts');
+      // print(floatAccounts);
+      return floatAccounts.whereType<FloatingAccount>().toList();
+    } catch (e) {
+      print('FLT_ACC allFloatNodes() 05| e: $e');
+      throw e;
+    }
+  }
+
   Future<int> deleteMeFromDB() async {
     if (id == null) {
       return 0;
