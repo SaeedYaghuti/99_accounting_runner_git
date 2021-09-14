@@ -372,7 +372,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       textInputAction: TextInputAction.next,
       onTap: () {
         _pickFloat((FloatingAccount tappedFloat) {
-          Navigator.of(context).pop();
+          // Navigator.of(context).pop();
           setState(() {
             _fields.floatAccount = tappedFloat;
           });
@@ -652,22 +652,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
                 onScroll: (position) => print('$position'),
               ),
             ),
-            // FloatDropdownMenu(
-            //   authProvider: authProviderSQL,
-            //   formDuty: _formDuty,
-            //   expandedAccountIds: [
-            //     FloatAccountIds.ROOT_FLOAT_ACCOUNT_ID,
-            //     FloatAccountIds.SALESMAN_FLOAT_ACCOUNT_ID,
-            //   ],
-            //   unwantedAccountIds: [],
-            //   tapHandler: (FloatingAccount tappedFloat) => tapHandler(tappedFloat),
-            //   // tapHandler: (FloatingAccount tappedFloat) {
-            //   //   Navigator.of(context).pop();
-            //   //   setState(() {
-            //   //     _fields.floatAccount = tappedFloat;
-            //   //   });
-            //   // },
-            // ),
           ],
         );
       },
