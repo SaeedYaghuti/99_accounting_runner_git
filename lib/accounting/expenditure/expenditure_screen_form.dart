@@ -186,8 +186,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
               _buildPaidBy(context),
               SizedBox(height: 20, width: 20),
               _buildExpClass(context),
-              // SizedBox(height: 20, width: 20),
-              // _buildFloatAccount(context),
               SizedBox(height: 20, width: 20),
               _buildMultiSelection(context),
               SizedBox(height: 20, width: 20),
@@ -216,7 +214,6 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
       chipLabelBuilder: (float) => Text(float.titleEnglish),
       chipBackgroundColor: Colors.purple.withOpacity(0.1),
       chipDeleteIconColor: Colors.purple.withOpacity(0.5),
-      // initialValues: [Interest.Art, Interest.Blogging, Interest.Cooking],
       initialValues: [],
       validator: (floatList) => floatList == null || floatList.length < 3 ? 'Please select at least 3 interests' : null,
       onSaved: (floatList) {
@@ -649,7 +646,7 @@ class _ExpenditureFormState extends State<ExpenditureForm> {
                   print('current position: $index');
                   initPosition = index;
                 },
-                onScroll: (position) => print('$position'),
+                onScroll: (position) => print('EX_S_f posittion: $position'),
               ),
             ),
           ],
